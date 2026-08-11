@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "rlvr-core",
+    "rlvr-verify",
+    "rlvr-telemetry",
+    "rlvr-py",
+]
+resolver = "2"
