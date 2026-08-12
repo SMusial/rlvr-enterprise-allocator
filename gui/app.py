@@ -28,6 +28,9 @@ ch_num = int(chapter.split()[-1])
 if ch_num == 1:
     from chapters.ch01 import render
     render()
+elif ch_num == 2:
+    from chapters.ch02 import render
+    render()
 else:
     st.info(
         f"🚧 Chapter {ch_num:02d} is not yet implemented." if lang == "EN" else

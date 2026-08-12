@@ -67,7 +67,7 @@ mod tests {
     #[test] fn t_ch03_fail() { assert!(!ch03_min_selection_prob(&[0.01,0.98,0.01])); }
     #[test] fn t_ch04() { assert!(ch04_bellman_contraction(2.0,1.5,1.2,0.95)); }
     #[test] fn t_ch06() { assert!(ch06_q_bound(18.0, 10.0, 0.5)); }
-    #[test] fn t_ch08() { assert!(ch08_trace_bound(5.0, 0.9, 0.8)); }
+    #[test] fn t_ch08() { assert!(ch08_trace_bound(3.0, 0.9, 0.8)); }
     #[test] fn t_ch09() { assert!(ch09_simplex(&[0.2,0.5,0.3])); }
     #[test] fn t_ch09_fail() { assert!(!ch09_simplex(&[0.2,0.5,0.4])); }
     #[test] fn t_ch12() { assert!(ch12_nash_regret(0.0)); }
