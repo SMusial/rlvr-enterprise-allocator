@@ -34,6 +34,9 @@ elif ch_num == 2:
 elif ch_num == 3:
     from chapters.ch03 import render
     render()
+elif ch_num == 4:
+    from chapters.ch04 import render
+    render()
 else:
     st.info(
         f"🚧 Chapter {ch_num:02d} is not yet implemented." if lang == "EN" else
