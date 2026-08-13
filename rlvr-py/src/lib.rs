@@ -4,6 +4,7 @@ use rlvr_core::ch01_asp_dispatch::{run_episode, AspConfig};
 use rlvr_core::ch02_bellman::{
     run_ch02, Ch02Config, N_STATES, N_ACTIONS, STATE_NAMES, ACTION_NAMES,
 };
+use rlvr_core::ch03_bandit::{run_ch03, Ch03Config, ARM_NAMES, TRUE_SLA_RATES};
 
 // ---------------------------------------------------------------------------
 // Ch01
@@ -69,25 +70,15 @@ fn run_ch02_value_iteration(
     let config = Ch02Config { seed, gamma, theta };
     let result = run_ch02(config);
 
-    // values
     let values = PyList::empty_bound(py);
-    for v in &result.values {
-        values.append(v)?;
-    }
+    for v in &result.values { values.append(v)?; }
 
-    // policy
     let policy = PyList::empty_bound(py);
-    for &a in &result.policy {
-        policy.append(a)?;
-    }
+    for &a in &result.policy { policy.append(a)?; }
 
-    // convergence curve
     let curve = PyList::empty_bound(py);
-    for v in &result.convergence_curve {
-        curve.append(v)?;
-    }
+    for v in &result.convergence_curve { curve.append(v)?; }
 
-    // bellman trace
     let trace = PyList::empty_bound(py);
     for step in &result.bellman_trace {
         let d = PyDict::new_bound(py);
@@ -103,22 +94,102 @@ fn run_ch02_value_iteration(
         trace.append(d)?;
     }
 
-    // state and action names
     let snames = PyList::empty_bound(py);
     for n in STATE_NAMES { snames.append(n)?; }
     let anames = PyList::empty_bound(py);
     for n in ACTION_NAMES { anames.append(n)?; }
 
     let out = PyDict::new_bound(py);
-    out.set_item("values",           values)?;
-    out.set_item("policy",           policy)?;
-    out.set_item("iterations",       result.iterations)?;
+    out.set_item("values",            values)?;
+    out.set_item("policy",            policy)?;
+    out.set_item("iterations",        result.iterations)?;
     out.set_item("convergence_curve", curve)?;
-    out.set_item("bellman_trace",    trace)?;
-    out.set_item("state_names",      snames)?;
-    out.set_item("action_names",     anames)?;
-    out.set_item("n_states",         N_STATES)?;
-    out.set_item("n_actions",        N_ACTIONS)?;
+    out.set_item("bellman_trace",     trace)?;
+    out.set_item("state_names",       snames)?;
+    out.set_item("action_names",      anames)?;
+    out.set_item("n_states",          N_STATES)?;
+    out.set_item("n_actions",         N_ACTIONS)?;
+
+    Ok(out.into())
+}
+
+// ---------------------------------------------------------------------------
+// Ch03
+// ---------------------------------------------------------------------------
+#[pyfunction]
+fn run_ch03_bandits(
+    py: Python,
+    seed: u64,
+    n_steps: usize,
+    epsilon: f64,
+    epsilon_decay: f64,
+    ucb_c: f64,
+) -> PyResult<PyObject> {
+    let config = Ch03Config {
+        seed,
+        n_steps,
+        epsilon,
+        epsilon_decay,
+        ucb_c,
+        gamma: 0.95,
+    };
+
+    let results = run_ch03(config);
+    let out_list = PyList::empty_bound(py);
+
+    for result in &results {
+        let steps_list = PyList::empty_bound(py);
+        for s in &result.steps {
+            let d = PyDict::new_bound(py);
+            d.set_item("step",               s.step)?;
+            d.set_item("algorithm",          &s.algorithm)?;
+            d.set_item("arm",                s.arm)?;
+            d.set_item("reward",             s.reward)?;
+            d.set_item("regret",             s.regret)?;
+            d.set_item("cumulative_regret",  s.cumulative_regret)?;
+            let qv = PyList::empty_bound(py);
+            for q in &s.q_values { qv.append(q)?; }
+            d.set_item("q_values",           qv)?;
+            let np = PyList::empty_bound(py);
+            for n in &s.n_pulls { np.append(n)?; }
+            d.set_item("n_pulls",            np)?;
+            let uv = PyList::empty_bound(py);
+            for u in &s.ucb_values { uv.append(u)?; }
+            d.set_item("ucb_values",         uv)?;
+            let tv = PyList::empty_bound(py);
+            for t in &s.thompson_samples { tv.append(t)?; }
+            d.set_item("thompson_samples",   tv)?;
+            d.set_item("epsilon",            s.epsilon)?;
+            d.set_item("explored",           s.explored)?;
+            steps_list.append(d)?;
+        }
+
+        let fq = PyList::empty_bound(py);
+        for q in &result.final_q_values { fq.append(q)?; }
+        let fn_ = PyList::empty_bound(py);
+        for n in &result.final_n_pulls { fn_.append(n)?; }
+
+        let r = PyDict::new_bound(py);
+        r.set_item("algorithm",       &result.algorithm)?;
+        r.set_item("steps",           steps_list)?;
+        r.set_item("total_reward",    result.total_reward)?;
+        r.set_item("total_regret",    result.total_regret)?;
+        r.set_item("final_q_values",  fq)?;
+        r.set_item("final_n_pulls",   fn_)?;
+        r.set_item("best_arm",        result.best_arm)?;
+        out_list.append(r)?;
+    }
+
+    // arm metadata
+    let arm_names = PyList::empty_bound(py);
+    for n in ARM_NAMES { arm_names.append(n)?; }
+    let true_rates = PyList::empty_bound(py);
+    for r in TRUE_SLA_RATES { true_rates.append(r)?; }
+
+    let out = PyDict::new_bound(py);
+    out.set_item("results",     out_list)?;
+    out.set_item("arm_names",   arm_names)?;
+    out.set_item("true_rates",  true_rates)?;
 
     Ok(out.into())
 }
@@ -128,7 +199,8 @@ fn run_ch02_value_iteration(
 // ---------------------------------------------------------------------------
 #[pymodule]
 fn rlvr_py(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(run_ch01_episode, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch01_episode,        m)?)?;
     m.add_function(wrap_pyfunction!(run_ch02_value_iteration, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch03_bandits,        m)?)?;
     Ok(())
 }
