@@ -5,7 +5,7 @@
 [![Rust](https://img.shields.io/badge/Rust-1.75+-orange?logo=rust)](https://www.rust-lang.org/)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Progress](https://img.shields.io/badge/Progress-Ch01--02%20%E2%9C%85%20%7C%20Ch03--20%20%F0%9F%9A%A7-lightgrey)]()
+[![Progress](https://img.shields.io/badge/Progress-Ch01--04%20%E2%9C%85%20%7C%20Ch05--20%20%F0%9F%9A%A7-lightgrey)]()
 
 ---
 
@@ -33,8 +33,8 @@ gui/       (Python) <- Streamlit UI only -- renders data, zero RL logic
 |---------|-------|-----------|--------|
 | **01** | Introduction to RL | MDP, epsilon-greedy, Gt | ✅ Complete |
 | **02** | Discrete MDP & Bellman | Value Iteration, nalgebra LU | ✅ Complete |
-| 03 | Multi-Armed Bandit | UCB, Thompson Sampling | 🚧 Planned |
-| 04 | Dynamic Programming | Policy Iteration | 🚧 Planned |
+| **03** | Multi-Armed Bandit | UCB1, Thompson Sampling | ✅ Complete |
+| **04** | Dynamic Programming | Policy Iteration, Async VI | ✅ Complete |
 | 05 | Monte Carlo Methods | MC Control, Off-policy | 🚧 Planned |
 | 06 | Temporal Difference | SARSA, Q-Learning | 🚧 Planned |
 | 07 | n-Step TD & Planning | Dyna-Q | 🚧 Planned |
@@ -67,6 +67,8 @@ rlvr-enterprise-allocator/
 │       ├── rng.rs                      # Seedable StdRng
 │       ├── ch01_asp_dispatch.rs        # Ch01: MDP, epsilon-greedy, Gt
 │       ├── ch02_bellman.rs             # Ch02: Value iteration, Bellman, nalgebra LU
+│       ├── ch03_bandit.rs              # Ch03: UCB1, Thompson Sampling, regret
+│       ├── ch04_dp.rs                  # Ch04: Policy Iteration, Async VI, residuals
 │       └── samplers/                   # Synthetic data generators
 │
 ├── rlvr-verify/                        # Safety invariant harness (Rust)
@@ -86,7 +88,9 @@ rlvr-enterprise-allocator/
     ├── requirements.txt
     └── chapters/
         ├── ch01.py                     # Ch01 UI: Warsaw map, glass-box, theory
-        └── ch02.py                     # Ch02 UI: value function, policy table, convergence
+        ├── ch02.py                     # Ch02 UI: value function, policy table, convergence
+        ├── ch03.py                     # Ch03 UI: regret curves, arm pulls, Q-values
+        └── ch04.py                     # Ch04 UI: PI vs VI vs Async VI comparison
 ```
 
 ---
@@ -117,7 +121,7 @@ pip install maturin
 # Build Rust engine + PyO3 bridge
 cd rlvr-py && maturin develop && cd ..
 
-# Run tests (20 passing)
+# Run tests (39 passing)
 cargo test --workspace
 
 # Launch UI
@@ -135,24 +139,37 @@ cargo test --workspace
 
 ---
 
-## Chapter 01 -- What you will see
+## Chapter Summaries
 
+### Chapter 01 -- Introduction to RL
 - **Warsaw map** -- technicians (blue) and work orders (amber/red) on real OpenStreetMap tiles
 - **epsilon-greedy policy** -- move the epsilon slider to control exploration vs exploitation
 - **Glass-Box inspector** -- every step shows the full MDP tuple (St, At, Rt, Gt, epsilon)
 - **Learning curve** -- Gt over N episodes
 - **Episode summary** -- quantified business results + pros/cons of the algorithm
-- **Theory panel** -- 5 collapsible sections with math, code references, and book citations
 - **4 languages** -- EN / FR / ES / PL
 
-## Chapter 02 -- What you will see
-
+### Chapter 02 -- Discrete MDP & Bellman
 - **Value function chart** -- V*(s) for all 8 ASP operational states
 - **Optimal policy table** -- best dispatch strategy per operational state
 - **Convergence curve** -- Bellman contraction decaying to zero (log scale)
-- **Transition matrix heatmap** -- P(s'|s,a) visualised
 - **Glass-Box: Bellman trace** -- exact V update for each state, first 3 iterations
-- **Theory panel** -- Bellman equation, value iteration, contraction mapping, LU solution
+- **4 languages** -- EN / FR / ES / PL
+
+### Chapter 03 -- Multi-Armed Bandit
+- **Cumulative regret** -- all 3 algorithms compared (epsilon-greedy, UCB1, Thompson)
+- **Arm pull distribution** -- which skill slots each algorithm favoured
+- **Q-value convergence** -- learned Q(a) vs true hidden SLA rates
+- **Glass-Box** -- per-step UCB values and Thompson Beta posterior samples
+- **4 languages** -- EN / FR / ES / PL
+
+### Chapter 04 -- Dynamic Programming
+- **3-algorithm comparison** -- Policy Iteration vs Value Iteration vs Async VI side by side
+- **Policy evolution table** -- how the policy changes at each PI outer iteration
+- **Bellman residual heatmap** -- which states were hardest to optimise (S5-S7 highest)
+- **Convergence comparison** -- PI sweeps vs VI iterations vs Async VI (log scale)
+- **Glass-Box** -- exact policy change trace per PI step
+- **Verification** -- PI and VI must find identical optimal policy (auto-checked)
 - **4 languages** -- EN / FR / ES / PL
 
 ---
@@ -186,7 +203,7 @@ cargo test --workspace
 
 This project follows the [Reinforcement Learning via Rust](https://rlvr.rantai.dev/docs/reinforcement-learning-via-rust/) curriculum:
 
-- **Part I** (Ch01-Ch04): Foundations -- MDP, Bandits, Dynamic Programming
+- **Part I** (Ch01-Ch04): Foundations -- MDP, Bandits, Dynamic Programming ✅
 - **Part II** (Ch05-Ch10): Algorithms -- MC, TD, Policy Gradient, Model-Based
 - **Part III** (Ch11-Ch14): Multi-Agent RL -- MARL, Game Theory
 - **Part IV** (Ch15-Ch20): Deep RL -- DQN, Actor-Critic, Federated, PyO3 Safety
