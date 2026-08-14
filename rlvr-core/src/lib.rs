@@ -6,3 +6,4 @@ pub mod ch02_bellman;
 pub mod ch03_bandit;
 pub mod ch04_dp;
 pub mod ch05_mc;
+pub mod ch06_td;
