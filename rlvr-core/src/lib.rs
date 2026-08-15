@@ -8,3 +8,4 @@ pub mod ch04_dp;
 pub mod ch05_mc;
 pub mod ch06_td;
 pub mod ch07_nstep;
+pub mod ch08_eligibility;

@@ -7,6 +7,7 @@ use rlvr_core::ch04_dp::{run_ch04, Ch04Config};
 use rlvr_core::ch05_mc::{run_ch05, McConfig};
 use rlvr_core::ch06_td::{run_ch06, TdConfig};
 use rlvr_core::ch07_nstep::{run_ch07, NStepConfig};
+use rlvr_core::ch08_eligibility::{run_ch08, EligibilityConfig};
 
 #[pyfunction]
 fn run_ch01_episode(py: Python, seed: u64, n_tech: usize, n_task: usize, epsilon: f64, gamma: f64) -> PyResult<PyObject> {
@@ -350,6 +351,75 @@ fn run_ch07_nstep(
     Ok(out.into())
 }
 
+
+#[pyfunction]
+#[pyo3(signature = (seed, n_episodes, gamma, alpha, epsilon, epsilon_decay, lambda_, replacing))]
+fn run_ch08_eligibility(
+    py:            Python,
+    seed:          u64,
+    n_episodes:    usize,
+    gamma:         f64,
+    alpha:         f64,
+    epsilon:       f64,
+    epsilon_decay: f64,
+    lambda_:       f64,
+    replacing:     bool,
+) -> PyResult<PyObject> {
+    let config = EligibilityConfig {
+        seed, n_episodes, gamma, alpha, epsilon, epsilon_decay,
+        lambda: lambda_, replacing,
+    };
+    let result = run_ch08(config);
+
+    let serialize = |r: &rlvr_core::ch08_eligibility::EligibilityResult| -> PyResult<Py<PyDict>> {
+        let d = PyDict::new_bound(py);
+        let vals = PyList::empty_bound(py);
+        for v in &r.values { vals.append(v)?; }
+        d.set_item("values", vals)?;
+        let pol = PyList::empty_bound(py);
+        for &a in &r.policy { pol.append(a)?; }
+        d.set_item("policy", pol)?;
+        let qt = PyList::empty_bound(py);
+        for row in &r.q_table {
+            let rr = PyList::empty_bound(py);
+            for &q in row { rr.append(q)?; }
+            qt.append(rr)?;
+        }
+        d.set_item("q_table", qt)?;
+        let rc = PyList::empty_bound(py);
+        for v in &r.returns_curve { rc.append(v)?; }
+        d.set_item("returns_curve", rc)?;
+        let te = PyList::empty_bound(py);
+        for v in &r.td_error_curve { te.append(v)?; }
+        d.set_item("td_error_curve", te)?;
+        let cc = PyList::empty_bound(py);
+        for v in &r.convergence_curve { cc.append(v)?; }
+        d.set_item("convergence_curve", cc)?;
+        let ts = PyList::empty_bound(py);
+        for v in &r.trace_stats { ts.append(v)?; }
+        d.set_item("trace_stats", ts)?;
+        d.set_item("algorithm",   &r.algorithm)?;
+        d.set_item("n_episodes",  r.n_episodes)?;
+        d.set_item("total_steps", r.total_steps)?;
+        Ok(d.into())
+    };
+
+    let snames = PyList::empty_bound(py);
+    for n in rlvr_core::ch02_bellman::STATE_NAMES { snames.append(n)?; }
+    let anames = PyList::empty_bound(py);
+    for n in rlvr_core::ch02_bellman::ACTION_NAMES { anames.append(n)?; }
+
+    let out = PyDict::new_bound(py);
+    out.set_item("sarsa_lambda", serialize(&result.sarsa_lambda)?)?;
+    out.set_item("q_lambda",     serialize(&result.q_lambda)?)?;
+    out.set_item("sarsa_td0",    serialize(&result.sarsa_td0)?)?;
+    out.set_item("sarsa_mc",     serialize(&result.sarsa_mc)?)?;
+    out.set_item("state_names",  snames)?;
+    out.set_item("action_names", anames)?;
+    out.set_item("n_states",     rlvr_core::ch02_bellman::N_STATES)?;
+    out.set_item("n_actions",    rlvr_core::ch02_bellman::N_ACTIONS)?;
+    Ok(out.into())
+}
 #[pymodule]
 fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch01_episode,         m)?)?;
@@ -359,5 +429,6 @@ fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch05_mc,              m)?)?;
     m.add_function(wrap_pyfunction!(run_ch06_td,              m)?)?;
     m.add_function(wrap_pyfunction!(run_ch07_nstep,           m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch08_eligibility, m)?)?;
     Ok(())
 }
