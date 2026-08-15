@@ -1,7 +1,6 @@
 use ndarray::{Array2, Array3};
 use rand::rngs::StdRng;
-use rand::{Rng, SeedableRng};
-use std::collections::BinaryHeap;
+use rand::SeedableRng;
 use std::cmp::Ordering;
 
 // ---------------------------------------------------------------------------
@@ -9,7 +8,7 @@ use std::cmp::Ordering;
 // ---------------------------------------------------------------------------
 use crate::ch02_bellman::{
     build_asp_transitions, build_asp_rewards, verify_transition_matrix,
-    N_STATES, N_ACTIONS, STATE_NAMES, ACTION_NAMES,
+    N_STATES, N_ACTIONS,
 };
 
 // ---------------------------------------------------------------------------
