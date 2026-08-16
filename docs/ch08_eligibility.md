@@ -1,33 +1,34 @@
 # Chapter 08 — Eligibility Traces & TD(λ)
 
-> **RLVR Enterprise Allocator** · Warsaw ASP Field-Service Optimisation
-> Rust crate: `rlvr-core` · Module: `ch08_eligibility` · GUI: `gui/chapters/ch08.py`
+> **RLVR Enterprise Allocator** · Warsaw ASP · `rlvr-core::ch08_eligibility`
 
----
-
-## Overview
-
-Chapter 08 introduces **eligibility traces** — a memory mechanism that bridges
-TD(0) (single-step bootstrapping) and Monte Carlo (full-episode returns) through
-a single parameter **λ ∈ [0, 1]**.
-
-Four algorithms are implemented and compared:
+## Algorithms
 
 | Algorithm | Type | λ | Notes |
 |---|---|---|---|
-| **SARSA(λ)** | On-policy | user-set (default 0.7) | Backward-view, replacing traces |
-| **Q(λ) Watkins** | Off-policy | user-set (default 0.7) | Traces cut on non-greedy action |
-| **SARSA λ=0** | On-policy | 0.0 | Baseline ≡ TD(0) / SARSA (Ch06) |
-| **SARSA λ=0.99** | On-policy | 0.99 | Baseline ≈ Monte Carlo (Ch05) |
+| SARSA(λ) | On-policy | user (default 0.7) | Replacing traces |
+| Q(λ) Watkins | Off-policy | user (default 0.7) | Traces cut on non-greedy |
+| SARSA λ=0 | On-policy | 0.0 | Baseline ≡ TD(0) |
+| SARSA λ=0.99 | On-policy | 0.99 | Baseline ≈ MC |
 
----
+## Key Formula
 
-## The Problem — Credit Assignment in Warsaw ASP
+```
+e_t(s,a) = γλ · e_{t-1}(s,a) + 𝟙[s=S_t, a=A_t]   (replacing: set to 1)
+δ_t = R + γ Q(S',A') − Q(S,A)
+Q(s,a) ← Q(s,a) + α δ_t e_t(s,a)   for ALL (s,a)
+```
 
-A dispatcher assigns Technician #2 to Job #5. The technician drives 20 minutes.
-The SLA reward (+12.3) arrives only on arrival.
+## Tests (14 inline)
 
-- **TD(0)**: updates only the last step — reward propagates back over *many episodes*
-- **TD(λ=0.7)**: propagates reward back through the entire trace *within one episode*
+smoke × 3, shape × 2, curves, finite, λ=0 no traces, trace stats positive,
+replacing vs accumulating differ, converges, Q(λ) converges, deterministic, worst state lower value.
 
-The eligibility trace for the dispatch decision decays as `(γλ)^k`:
+## Hyperparameters
+
+| Param | Default | Notes |
+|---|---|---|
+| λ | 0.7 | Start here; reduce to 0.5 if stochastic env |
+| α | 0.1 | Standard TD rate |
+| γ | 0.95 | Same as Ch01–Ch07 |
+| Traces | Replacing | Stable for tabular |

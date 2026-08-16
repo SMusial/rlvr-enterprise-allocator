@@ -40,7 +40,7 @@
 
 ```bash
 cd rlvr-py && maturin develop && cd ..
-cargo test --workspace   # 69 tests passing
+cargo test --workspace   # 97 tests passing
 streamlit run gui/app.py
 ```
 

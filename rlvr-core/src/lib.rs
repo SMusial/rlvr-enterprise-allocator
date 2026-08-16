@@ -9,3 +9,4 @@ pub mod ch05_mc;
 pub mod ch06_td;
 pub mod ch07_nstep;
 pub mod ch08_eligibility;
+pub mod ch09_policy_gradient;
