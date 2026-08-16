@@ -20,8 +20,8 @@
 | **05** | Monte Carlo Methods | First-Visit, Every-Visit, On/Off-Policy | ✅ Complete |
 | **06** | Temporal Difference | TD(0), SARSA, Q-Learning | ✅ Complete |
 | **07** | n-Step TD & Planning | n-Step TD, n-Step SARSA, Dyna-Q, Dyna-Q+ | ✅ Complete |
-| 08 | Eligibility Traces | TD(lambda), SARSA(lambda) | 🚧 Planned |
-| 09 | Policy Gradient | REINFORCE, Softmax | 🚧 Planned |
+| 08 | Eligibility Traces | TD(λ), SARSA(λ), Q(λ) Watkins | ✅ Complete |
+| 09 | Policy Gradient | REINFORCE, Softmax, Actor-Critic | ✅ Complete |
 | 10 | Model-Based RL | World Models | 🚧 Planned |
 | 11 | Multi-Agent RL | Independent Q-Learning | 🚧 Planned |
 | 12 | Game Theory & Nash | Nash Equilibrium | 🚧 Planned |
@@ -58,14 +58,37 @@ streamlit run gui/app.py
 
 ---
 
+
+## Chapter 08 — Eligibility Traces & TD(λ)
+
+- **SARSA(λ)**: on-policy backward-view TD(λ) with eligibility traces
+- **Q(λ) Watkins**: off-policy TD(λ) with trace cutting on non-greedy actions
+- **λ=0 baseline**: equivalent to TD(0) / SARSA (Ch06)
+- **λ=0.99 baseline**: approximates Monte Carlo (Ch05)
+- Sparse HashMap traces, auto-pruned at 1e-8, Replacing & Accumulating variants
+- Returns curve, TD error, active traces, Q-table heatmap, Glass-Box
+- 4 languages: EN / FR / ES / PL
+- 14 inline tests: smoke, shape, convergence, determinism, Watkins cut
+
+## Chapter 09 — Policy Gradient: REINFORCE & Softmax
+
+- **REINFORCE**: Monte Carlo policy gradient (Williams, 1992)
+- **REINFORCE + Baseline**: variance-reduced with state-value baseline
+- **Softmax Actor-Critic**: TD(0) critic + softmax actor, online per-step updates
+- **REINFORCE τ=0.5**: sharper policy via lower softmax temperature
+- Policy: π(a|s) = softmax(θ[s][a] / τ), no Q-table
+- Returns, PG magnitude, policy entropy, θ heatmap, Glass-Box
+- 4 languages: EN / FR / ES / PL
+- 15 inline tests: smoke, shape, softmax correctness, baseline variance reduction, convergence
+
 ## Architecture
 
 ```
 rlvr-core/src/
-  ch01..ch07_nstep.rs   <- ALL RL logic in Rust
-rlvr-py/src/lib.rs      <- PyO3 bridge Ch01-Ch07
+  ch01..ch09_policy_gradient.rs  <- ALL RL logic in Rust
+  rlvr-py/src/lib.rs              <- PyO3 bridge Ch01-Ch09
 gui/chapters/
-  ch01..ch07.py         <- Streamlit UI only
+  ch01..ch09.py                   <- Streamlit UI only
 ```
 
 ## License
