@@ -22,7 +22,7 @@
 | **07** | n-Step TD & Planning | n-Step TD, n-Step SARSA, Dyna-Q, Dyna-Q+ | ✅ Complete |
 | 08 | Eligibility Traces | TD(λ), SARSA(λ), Q(λ) Watkins | ✅ Complete |
 | 09 | Policy Gradient | REINFORCE, Softmax, Actor-Critic | ✅ Complete |
-| 10 | Model-Based RL | World Models | 🚧 Planned |
+| 10 | Model-Based RL | World Model, Prioritised Sweeping, MBPO, Uncertainty | Complete |
 | 11 | Multi-Agent RL | Independent Q-Learning | 🚧 Planned |
 | 12 | Game Theory & Nash | Nash Equilibrium | 🚧 Planned |
 | 13 | Cooperative MARL | VDN, QMIX | 🚧 Planned |
@@ -40,7 +40,7 @@
 
 ```bash
 cd rlvr-py && maturin develop && cd ..
-cargo test --workspace   # 97 tests passing
+cargo test --workspace   # 112 tests passing
 streamlit run gui/app.py
 ```
 
@@ -85,7 +85,7 @@ streamlit run gui/app.py
 
 ```
 rlvr-core/src/
-  ch01..ch09_policy_gradient.rs  <- ALL RL logic in Rust
+  ch01..ch10_world_model.rs        <- ALL RL logic in Rust
   rlvr-py/src/lib.rs              <- PyO3 bridge Ch01-Ch09
 gui/chapters/
   ch01..ch09.py                   <- Streamlit UI only
