@@ -83,6 +83,17 @@ streamlit run gui/app.py
 
 ---
 
+
+## Chapter 11 — Multi-Agent RL
+
+- **IQL**: Independent Q-Learning — each dispatcher ignores the other (baseline)
+- **JAL**: Joint Action Learning — models partner's empirical policy pi_j(a|s)
+- **Lenient Q**: ignores negative TD errors with probability mu — prevents miscoordination
+- **Mean Field Q**: approximates N agents by mean action — scales to large systems
+- Cooperation rate curve, per-agent Q-table heatmaps, joint value function
+- 2 agents (dispatchers) on shared Warsaw ASP MDP
+- 4 languages: EN / FR / ES / PL | 15 inline tests
+
 ## Architecture
 
 ```
