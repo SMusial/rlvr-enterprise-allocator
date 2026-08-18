@@ -19,7 +19,7 @@ and demonstrating RL algorithms through a real enterprise field-service optimisa
 | 08 | Eligibility Traces | TD(λ), SARSA(λ), Q(λ) Watkins | ✅ Complete |
 | 09 | Policy Gradient | REINFORCE, Softmax, Actor-Critic | ✅ Complete |
 | 10 | Model-Based RL | World Model, Prioritised Sweeping, MBPO, Uncertainty | ✅ Complete |
-| 11 | Multi-Agent RL | Independent Q-Learning | Planned |
+| 11 | Multi-Agent RL | IQL, JAL, Lenient Q, Mean Field Q | Complete |
 | 12 | Game Theory & Nash | Nash Equilibrium | Planned |
 | 13 | Cooperative MARL | VDN, QMIX | Planned |
 | 14 | Learning Dynamics | ELO, Fictitious Play | Planned |
@@ -36,7 +36,7 @@ and demonstrating RL algorithms through a real enterprise field-service optimisa
 
 ```bash
 cd rlvr-py && maturin develop && cd ..
-cargo test --workspace   # 112 tests passing
+cargo test --workspace   # 127 tests passing
 streamlit run gui/app.py
 ```
 
@@ -87,10 +87,10 @@ streamlit run gui/app.py
 
 ```
 rlvr-core/src/
-  ch01..ch10_world_model.rs  <- ALL RL logic in Rust
-rlvr-py/src/lib.rs           <- PyO3 bridge Ch01-Ch10
+  ch01..ch11_multiagent.rs         <- ALL RL logic in Rust
+  rlvr-py/src/lib.rs              <- PyO3 bridge Ch01-Ch11
 gui/chapters/
-  ch01..ch10.py              <- Streamlit UI only
+  ch01..ch11.py                   <- Streamlit UI only
 ```
 
 ---

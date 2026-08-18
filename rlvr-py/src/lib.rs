@@ -10,6 +10,7 @@ use rlvr_core::ch07_nstep::{run_ch07, NStepConfig};
 use rlvr_core::ch08_eligibility::{run_ch08, EligibilityConfig};
 use rlvr_core::ch09_policy_gradient::{run_ch09, PgConfig};
 use rlvr_core::ch10_world_model::{run_ch10, WorldModelConfig};
+use rlvr_core::ch11_multiagent::{run_ch11, MarlConfig};
 
 #[pyfunction]
 fn run_ch01_episode(py: Python, seed: u64, n_tech: usize, n_task: usize, epsilon: f64, gamma: f64) -> PyResult<PyObject> {
@@ -503,6 +504,71 @@ fn run_ch10_world_model(
     out.set_item("n_actions",    rlvr_core::ch02_bellman::N_ACTIONS)?;
     Ok(out.into())
 }
+#[pyfunction]
+#[pyo3(signature = (seed, n_episodes, gamma, alpha, epsilon, epsilon_decay, leniency_mu, mf_beta))]
+fn run_ch11_multiagent(
+    py: Python,
+    seed: u64, n_episodes: usize, gamma: f64, alpha: f64,
+    epsilon: f64, epsilon_decay: f64,
+    leniency_mu: f64, mf_beta: f64,
+) -> PyResult<PyObject> {
+    let config = MarlConfig {
+        seed, n_episodes, gamma, alpha, epsilon, epsilon_decay,
+        leniency_mu, mf_beta,
+    };
+    let result = run_ch11(config);
+
+    let serialize = |r: &rlvr_core::ch11_multiagent::MarlResult| -> PyResult<Py<PyDict>> {
+        let d = PyDict::new_bound(py);
+
+        // q_tables: list of [agent][state][action]
+        let qts = PyList::empty_bound(py);
+        for qt in &r.q_tables {
+            let agent_qt = PyList::empty_bound(py);
+            for row in qt {
+                let rr = PyList::empty_bound(py);
+                for &q in row { rr.append(q)?; }
+                agent_qt.append(rr)?;
+            }
+            qts.append(agent_qt)?;
+        }
+        d.set_item("q_tables", qts)?;
+
+        // policies: list of [agent][state]
+        let pols = PyList::empty_bound(py);
+        for pol in &r.policies {
+            let pp = PyList::empty_bound(py);
+            for &a in pol { pp.append(a)?; }
+            pols.append(pp)?;
+        }
+        d.set_item("policies", pols)?;
+
+        let vals = PyList::empty_bound(py); for v in &r.values { vals.append(v)?; } d.set_item("values", vals)?;
+        let rc = PyList::empty_bound(py); for v in &r.returns_curve     { rc.append(v)?; } d.set_item("returns_curve",     rc)?;
+        let te = PyList::empty_bound(py); for v in &r.td_error_curve    { te.append(v)?; } d.set_item("td_error_curve",    te)?;
+        let cc = PyList::empty_bound(py); for v in &r.convergence_curve { cc.append(v)?; } d.set_item("convergence_curve", cc)?;
+        let co = PyList::empty_bound(py); for v in &r.cooperation_curve { co.append(v)?; } d.set_item("cooperation_curve", co)?;
+        d.set_item("algorithm",   &r.algorithm)?;
+        d.set_item("n_episodes",  r.n_episodes)?;
+        d.set_item("total_steps", r.total_steps)?;
+        Ok(d.into())
+    };
+
+    let snames = PyList::empty_bound(py); for n in rlvr_core::ch02_bellman::STATE_NAMES  { snames.append(n)?; }
+    let anames = PyList::empty_bound(py); for n in rlvr_core::ch02_bellman::ACTION_NAMES { anames.append(n)?; }
+
+    let out = PyDict::new_bound(py);
+    out.set_item("iql",       serialize(&result.iql)?)?;
+    out.set_item("jal",       serialize(&result.jal)?)?;
+    out.set_item("lenient",   serialize(&result.lenient)?)?;
+    out.set_item("meanfield", serialize(&result.meanfield)?)?;
+    out.set_item("state_names",  snames)?;
+    out.set_item("action_names", anames)?;
+    out.set_item("n_states",     rlvr_core::ch02_bellman::N_STATES)?;
+    out.set_item("n_actions",    rlvr_core::ch02_bellman::N_ACTIONS)?;
+    out.set_item("n_agents",     rlvr_core::ch11_multiagent::N_AGENTS)?;
+    Ok(out.into())
+}
 #[pymodule]
 fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch01_episode,         m)?)?;
@@ -515,5 +581,6 @@ fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch08_eligibility, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch09_policy_gradient, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch10_world_model, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch11_multiagent, m)?)?;
     Ok(())
 }
