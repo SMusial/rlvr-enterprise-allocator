@@ -19,8 +19,8 @@ and demonstrating RL algorithms through a real enterprise field-service optimisa
 | 08 | Eligibility Traces | TD(λ), SARSA(λ), Q(λ) Watkins | ✅ Complete |
 | 09 | Policy Gradient | REINFORCE, Softmax, Actor-Critic | ✅ Complete |
 | 10 | Model-Based RL | World Model, Prioritised Sweeping, MBPO, Uncertainty | ✅ Complete |
-| 11 | Multi-Agent RL | IQL, JAL, Lenient Q, Mean Field Q | Complete |
-| 12 | Game Theory | Nash Q, Correlated Q, Minimax Q, Fictitious Play | Complete |
+| 11 | Multi-Agent RL | IQL, JAL, Lenient Q, Mean Field Q | ✅ Complete |
+| 12 | Game Theory | Nash Q, Correlated Q, Minimax Q, Fictitious Play | ✅ Complete |
 | 13 | Cooperative MARL | VDN, QMIX | Planned |
 | 14 | Learning Dynamics | ELO, Fictitious Play | Planned |
 | 15 | Deep RL (DQN) | DQN + burn tensors | Planned |
