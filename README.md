@@ -20,7 +20,7 @@ and demonstrating RL algorithms through a real enterprise field-service optimisa
 | 09 | Policy Gradient | REINFORCE, Softmax, Actor-Critic | ✅ Complete |
 | 10 | Model-Based RL | World Model, Prioritised Sweeping, MBPO, Uncertainty | ✅ Complete |
 | 11 | Multi-Agent RL | IQL, JAL, Lenient Q, Mean Field Q | Complete |
-| 12 | Game Theory & Nash | Nash Equilibrium | Planned |
+| 12 | Game Theory | Nash Q, Correlated Q, Minimax Q, Fictitious Play | Complete |
 | 13 | Cooperative MARL | VDN, QMIX | Planned |
 | 14 | Learning Dynamics | ELO, Fictitious Play | Planned |
 | 15 | Deep RL (DQN) | DQN + burn tensors | Planned |
@@ -36,7 +36,7 @@ and demonstrating RL algorithms through a real enterprise field-service optimisa
 
 ```bash
 cd rlvr-py && maturin develop && cd ..
-cargo test --workspace   # 127 tests passing
+cargo test --workspace   # 142 tests passing
 streamlit run gui/app.py
 ```
 
@@ -94,14 +94,26 @@ streamlit run gui/app.py
 - 2 agents (dispatchers) on shared Warsaw ASP MDP
 - 4 languages: EN / FR / ES / PL | 15 inline tests
 
+
+## Chapter 12 - Game Theory and Nash Equilibrium
+
+- Nash Q-Learning: converges to Nash equilibrium
+- Correlated Q-Learning: correlated equilibrium via regret matching
+- Minimax Q-Learning: optimal vs worst-case opponent (zero-sum)
+- Fictitious Play: best response to opponent empirical average
+- Nash gap curve, strategy profile heatmap, exploitability
+- 4 languages: EN / FR / ES / PL | 15 inline tests
+
+---
+
 ## Architecture
 
 ```
 rlvr-core/src/
-  ch01..ch11_multiagent.rs         <- ALL RL logic in Rust
-  rlvr-py/src/lib.rs              <- PyO3 bridge Ch01-Ch11
+  ch01..ch12_game_theory.rs         <- ALL RL logic in Rust
+  rlvr-py/src/lib.rs              <- PyO3 bridge Ch01-Ch12
 gui/chapters/
-  ch01..ch11.py                   <- Streamlit UI only
+  ch01..ch12.py                   <- Streamlit UI only
 ```
 
 ---

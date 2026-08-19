@@ -12,3 +12,4 @@ pub mod ch08_eligibility;
 pub mod ch09_policy_gradient;
 pub mod ch10_world_model;
 pub mod ch11_multiagent;
+pub mod ch12_game_theory;

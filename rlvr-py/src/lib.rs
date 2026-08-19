@@ -11,6 +11,9 @@ use rlvr_core::ch08_eligibility::{run_ch08, EligibilityConfig};
 use rlvr_core::ch09_policy_gradient::{run_ch09, PgConfig};
 use rlvr_core::ch10_world_model::{run_ch10, WorldModelConfig};
 use rlvr_core::ch11_multiagent::{run_ch11, MarlConfig};
+use rlvr_core::ch12_game_theory::{run_ch12, GameConfig};
+
+
 
 #[pyfunction]
 fn run_ch01_episode(py: Python, seed: u64, n_tech: usize, n_task: usize, epsilon: f64, gamma: f64) -> PyResult<PyObject> {
@@ -569,6 +572,48 @@ fn run_ch11_multiagent(
     out.set_item("n_agents",     rlvr_core::ch11_multiagent::N_AGENTS)?;
     Ok(out.into())
 }
+#[pyfunction]
+#[pyo3(signature = (seed, n_episodes, gamma, alpha, epsilon, epsilon_decay, zero_sum))]
+fn run_ch12_game_theory(
+    py: Python, seed: u64, n_episodes: usize, gamma: f64, alpha: f64,
+    epsilon: f64, epsilon_decay: f64, zero_sum: bool,
+) -> PyResult<PyObject> {
+    let config = GameConfig{seed,n_episodes,gamma,alpha,epsilon,epsilon_decay,zero_sum};
+    let result = run_ch12(config);
+    let serialize = |r: &rlvr_core::ch12_game_theory::GameResult| -> PyResult<Py<PyDict>> {
+        let d = PyDict::new_bound(py);
+        let qts = PyList::empty_bound(py);
+        for pqt in &r.q_tables {
+            let pq = PyList::empty_bound(py);
+            for sqt in pqt { let sq = PyList::empty_bound(py); for row in sqt { let rr = PyList::empty_bound(py); for &q in row { rr.append(q)?; } sq.append(rr)?; } pq.append(sq)?; }
+            qts.append(pq)?;
+        }
+        d.set_item("q_tables",qts)?;
+        let sts = PyList::empty_bound(py);
+        for ps in &r.strategies { let pp = PyList::empty_bound(py); for ss in ps { let s = PyList::empty_bound(py); for &p in ss { s.append(p)?; } pp.append(s)?; } sts.append(pp)?; }
+        d.set_item("strategies",sts)?;
+        let vals=PyList::empty_bound(py); for v in &r.values{vals.append(v)?;} d.set_item("values",vals)?;
+        let rc=PyList::empty_bound(py); for v in &r.returns_curve{rc.append(v)?;} d.set_item("returns_curve",rc)?;
+        let ex=PyList::empty_bound(py); for v in &r.exploitability{ex.append(v)?;} d.set_item("exploitability",ex)?;
+        let cc=PyList::empty_bound(py); for v in &r.convergence_curve{cc.append(v)?;} d.set_item("convergence_curve",cc)?;
+        let ng=PyList::empty_bound(py); for v in &r.nash_gap_curve{ng.append(v)?;} d.set_item("nash_gap_curve",ng)?;
+        d.set_item("algorithm",&r.algorithm)?; d.set_item("n_episodes",r.n_episodes)?; d.set_item("total_steps",r.total_steps)?;
+        Ok(d.into())
+    };
+    let sn=PyList::empty_bound(py); for n in rlvr_core::ch02_bellman::STATE_NAMES{sn.append(n)?;}
+    let an=PyList::empty_bound(py); for n in rlvr_core::ch02_bellman::ACTION_NAMES{an.append(n)?;}
+    let out=PyDict::new_bound(py);
+    out.set_item("nash_q",      serialize(&result.nash_q)?)?;
+    out.set_item("correlated_q",serialize(&result.correlated_q)?)?;
+    out.set_item("minimax_q",   serialize(&result.minimax_q)?)?;
+    out.set_item("fictitious",  serialize(&result.fictitious)?)?;
+    out.set_item("state_names", sn)?; out.set_item("action_names",an)?;
+    out.set_item("n_states",    rlvr_core::ch02_bellman::N_STATES)?;
+    out.set_item("n_actions",   rlvr_core::ch02_bellman::N_ACTIONS)?;
+    out.set_item("n_players",   rlvr_core::ch12_game_theory::N_PLAYERS)?;
+    Ok(out.into())
+}
+
 #[pymodule]
 fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch01_episode,         m)?)?;
@@ -582,5 +627,6 @@ fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch09_policy_gradient, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch10_world_model, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch11_multiagent, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch12_game_theory, m)?)?;
     Ok(())
 }
