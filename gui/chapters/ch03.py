@@ -201,6 +201,91 @@ makes a suboptimal choice and how quickly it recovers.
             ],
         },
     },
+        "DE": {
+        "title": "Kapitel 03 — Mehrarmiger Bandit & Explorationsstrategien",
+        "subtitle": "ASP Qualifikationsslot-Optimierung — Region Warschau",
+        "engine_missing": "⚠ Rust-Engine nicht gefunden. Ausführen: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "⚙️ Bandit-Einstellungen",
+        "n_steps": "Schritte (Ziehungen)",
+        "epsilon": "ε — Anfängliche Explorationsrate",
+        "epsilon_decay": "ε-Abklingrate",
+        "ucb_c": "c — UCB-Explorationskonstante",
+        "seed": "Zufallsseed",
+        "run_btn": "▶ Alle drei Algorithmen starten",
+        "guide_title": "ℹ️ Anleitung",
+        "guide": """**Schritt 1** — 5 Qualifikationsslots (Arme): HVAC, Elektrik, Sanitär, Netzwerk, Mechanik.
+**Schritt 2** — Anzahl der Schritte einstellen. Versuchen Sie 200, dann 1000.
+**Schritt 3** — ε und Abklingrate einstellen.
+**Schritt 4** — c (UCB-Konstante) einstellen. Vergleichen Sie c=2.0 vs c=0.5.
+**Schritt 5** — Klicken Sie, um alle drei Algorithmen gleichzeitig zu starten.
+**Schritt 6** — Kumulatives Bedauern lesen. Niedriger = besser.
+**Schritt 7** — Armziehungsverteilung lesen. Haben sie den besten Arm gefunden?
+**Schritt 8** — Q-Wert-Konvergenz zu echten SLA-Raten lesen.""",
+        "regret_title": "📉 Kumulatives Bedauern — Alle drei Algorithmen",
+        "regret_x": "Schritt",
+        "regret_y": "Kumulatives Bedauern",
+        "regret_caption": "Niedriger = besser. Bedauern = Lücke zwischen optimalem und gewähltem Arm.",
+        "pulls_title": "📊 Armziehungsverteilung",
+        "pulls_caption": "Wie oft jeder Qualifikationsslot ausgewählt wurde. Bester Arm = Sanitär (88% SLA).",
+        "qval_title": "📊 Q-Wert-Konvergenz vs. echte SLA-Raten",
+        "qval_caption": "Gestrichelte Linien = echte SLA-Raten. Balken = gelernte Q(a)-Schätzungen.",
+        "reward_title": "📈 Kumulative Belohnung — Alle drei Algorithmen",
+        "reward_x": "Schritt",
+        "reward_y": "Kumulative Belohnung",
+        "glass_title": "🔍 Glass-Box-Inspektor — Schrittprotokoll",
+        "glass_algo": "Algorithmus",
+        "glass_step_slider": "🔍 Schritt hervorheben",
+        "glass_headers": ["Schritt", "Arm", "Qualifikation", "Belohnung", "Bedauern", "Kum. Bedauern", "ε", "Modus"],
+        "summary_title": "📋 Zusammenfassung",
+        "summary_results": "Algorithmenvergleich",
+        "summary_pros_cons": "Bandit-Algorithmen — Vor- & Nachteile",
+        "pros": "✅ Vorteile",
+        "cons": "❌ Nachteile",
+        "algo_labels": {
+            "epsilon_greedy": "ε-Greedy",
+            "ucb": "UCB1",
+            "thompson": "Thompson-Sampling",
+        },
+        "true_rates_label": "Echte SLA-Raten (dem Agenten unbekannt)",
+        "best_arm_label": "Identifizierter bester Arm",
+        "total_regret_label": "Gesamtbedauern",
+        "total_reward_label": "Gesamtbelohnung",
+        "theory_title": "📚 Theorie — Kapitel 03",
+        "theory_sections": {
+            "bandit":   "3.1 Das Mehrarmige-Bandit-Problem",
+            "egreedy":  "3.2 Epsilon-Greedy mit Abkühlung",
+            "ucb":      "3.3 Obere Konfidenzschranke (UCB1)",
+            "thompson": "3.3 Thompson-Sampling",
+            "regret":   "3.1 Bedauernanalyse",
+        },
+        "theory_bandit": r"""**Das Mehrarmige-Bandit-Problem**: K Arme, stochastische Belohnungen, keine Zustandsübergänge.
+$$\text{Bedauern}(T) = \sum_{t=1}^{T} \left[ \mu^* - \mu_{a_t} \right]$$
+Implementiert in `ch03_bandit.rs`.""",
+        "theory_egreedy": r"""**Epsilon-Greedy mit Abkühlung**:
+$$\varepsilon_t = \max\left(\varepsilon_{\min},\ \frac{\varepsilon_0}{1 + \alpha t}\right)$$
+$$Q(a) \leftarrow Q(a) + \frac{1}{N(a)} \left[ R - Q(a) \right]$$""",
+        "theory_ucb": r"""**UCB1** — Optimismus angesichts von Unsicherheit:
+$$\text{UCB}(a) = Q(a) + c \sqrt{\frac{\ln t}{N(a)}}$$
+Bedauernschranke: $O(\sqrt{KT \ln T})$""",
+        "theory_thompson": r"""**Thompson-Sampling**: $\theta_a \sim \text{Beta}(\alpha_a, \beta_a)$, wähle $\arg\max_a \theta_a$.""",
+        "theory_regret": r"""**Bedauernanalyse**:
+| Algorithmus | Bedauernschranke |
+|---|---|
+| Zufällig | $O(T)$ |
+| ε-Greedy | $O(T^{2/3})$ |
+| UCB1 | $O(\sqrt{KT \ln T})$ |
+| Thompson | $O(\sqrt{KT \ln T})$ |""",
+        "pros_list": {
+            "epsilon_greedy": ["Einfach — ein Parameter ε", "Funktioniert mit jeder Verteilung", "Gute Basislinie"],
+            "ucb": ["Deterministisch", "Beweisbare Bedauernschranke", "Kein Vorwissen nötig"],
+            "thompson": ["Beste empirische Leistung", "Berücksichtigt Unsicherheit natürlich"],
+        },
+        "cons_list": {
+            "epsilon_greedy": ["Erkundet gleichmäßig", "Abklingrate muss manuell eingestellt werden"],
+            "ucb": ["Konstante c muss eingestellt werden", "Kann am Anfang über-erkunden"],
+            "thompson": ["Benötigt konjugierten Prior", "Stochastisch"],
+        },
+    },
     "FR": {
         "title": "Chapitre 03 — Bandit Multi-Bras & Stratégies d'Exploration",
         "subtitle": "Optimisation des créneaux de compétences ASP · Région de Varsovie",
@@ -501,9 +586,18 @@ COLORS = {
 # ---------------------------------------------------------------------------
 # Main render
 # ---------------------------------------------------------------------------
+
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
+
 def render():
     lang = st.session_state.get("lang", "EN")
-    tx = T[lang]
+    tx = _tx(lang)
 
     st.title(tx["title"])
     st.caption(tx["subtitle"])
@@ -610,7 +704,7 @@ def _render_regret(results, tx, arm_names):
         yaxis_title=tx["regret_y"],
         legend=dict(orientation="h"),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 # ---------------------------------------------------------------------------
@@ -640,7 +734,7 @@ def _render_reward(results, tx):
         yaxis_title=tx["reward_y"],
         legend=dict(orientation="h"),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 # ---------------------------------------------------------------------------
@@ -664,7 +758,7 @@ def _render_pulls(results, arm_names, true_rates, tx):
         margin=dict(l=40, r=20, t=20, b=40),
         legend=dict(orientation="h"),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 # ---------------------------------------------------------------------------
@@ -700,7 +794,7 @@ def _render_qvalues(results, arm_names, true_rates, tx):
         margin=dict(l=40, r=20, t=20, b=40),
         legend=dict(orientation="h"),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 # ---------------------------------------------------------------------------
@@ -728,7 +822,7 @@ def _render_glass_box(results, arm_names, tx):
             tx["glass_headers"][7]: "🔍 Explore" if s["explored"] else "🎯 Exploit",
         })
 
-    st.dataframe(rows, use_container_width=True, height=280)
+    st.dataframe(rows, width='stretch', height=280)
 
     # Selected step detail
     s = steps[sel]
@@ -772,7 +866,7 @@ def _render_summary(results, arm_names, true_rates, tx):
             tx["total_regret_label"]: f"{res['total_regret']:.2f}",
             tx["best_arm_label"]: f"{arm_names[res['best_arm']]} (arm {res['best_arm']})",
         })
-    st.dataframe(rows, use_container_width=True, hide_index=True)
+    st.dataframe(rows, width='stretch', hide_index=True)
 
     # True rates reveal
     st.markdown(f"**{tx['true_rates_label']}:**")

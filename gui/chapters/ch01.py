@@ -614,12 +614,21 @@ Tasa SLA realista: 77–93%.
 # ---------------------------------------------------------------------------
 # Main render function
 # ---------------------------------------------------------------------------
+
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
+
 def render():
     lang = st.session_state.get("lang", "EN")
     # --- language selector (top of sidebar) ---
     # --- language selector (radio, sidebar — top) ---
 
-    tx = T[lang]
+    tx = _tx(lang)
 
     st.title(tx["title"])
     st.caption(tx["subtitle"])
@@ -808,7 +817,7 @@ def _render_map(steps, sel, tx):
         height=450,
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 # ---------------------------------------------------------------------------
@@ -831,7 +840,7 @@ def _render_glass_box(steps, sel, tx, gamma):
             tx["glass_headers"][9]: tx["explore"] if s["explored"] else tx["exploit"],
         })
 
-    st.dataframe(rows, use_container_width=True, height=300)
+    st.dataframe(rows, width='stretch', height=300)
 
     # selected step detail
     s = steps[sel]
@@ -890,7 +899,7 @@ def _render_curve(curve, tx):
         margin=dict(l=40, r=20, t=20, b=40),
         legend=dict(orientation="h"),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 # ---------------------------------------------------------------------------

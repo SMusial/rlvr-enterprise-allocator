@@ -139,6 +139,63 @@ T = {
             "meanfield": ["Srednia traci informacje", "Beta do strojenia", "Zaklada jednorodnych agentow"],
         },
     },
+        "DE": {
+        "title": "Kapitel 11 — Multi-Agenten-RL",
+        "subtitle": "IQL — JAL — Lenient Q — Mean Field Q — 2 Agenten — ASP Warschau",
+        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "Einstellungen",
+        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
+        "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
+        "leniency_mu": "Mu — Nachsichtigkeit (0=IQL, 1=voll nachsichtig)",
+        "mf_beta": "Beta — Mean-Field-Einfluss",
+        "seed": "Zufallsseed",
+        "run_btn": "▶ Alle vier Algorithmen starten",
+        "guide_title": "Anleitung",
+        "guide": (
+            "Szenario: 2 Disponenten teilen sich das ASP-MDP.\n"
+            "IQL: jeder Agent lernt unabhängig.\n"
+            "JAL: jeder Agent modelliert die Strategie des Partners.\n"
+            "Lenient Q: negative Deltas werden mit Wahrscheinlichkeit mu ignoriert.\n"
+            "Mean Field Q: gemeinsame Aktion durch Mittelwert approximiert."
+        ),
+        "returns_title": "Gemeinsame Episodenrückgaben",
+        "returns_caption": "MA-30. Mittlere Rückgabe beider Agenten.",
+        "cooperation_title": "Kooperationsrate",
+        "cooperation_caption": "Anteil der Schritte, bei denen beide Agenten dieselbe Aktion wählten.",
+        "value_title": "Gemeinsame Wertfunktion V(s)",
+        "value_caption": "Mittleres V(s) beider Agenten. S7 sollte am niedrigsten sein.",
+        "qtable_title": "Q-Tabellen-Heatmap",
+        "qtable_caption": "",
+        "glass_title": "Glass-Box — MARL-Mechanik",
+        "summary_title": "Zusammenfassung",
+        "summary_results": "Algorithmenvergleich",
+        "summary_pros_cons": "Algorithmen — Vor- & Nachteile",
+        "pros": "Vorteile", "cons": "Nachteile",
+        "theory_title": "Theorie — Kapitel 11",
+        "theory_sections": {
+            "iql": "11.1 IQL", "jal": "11.2 JAL",
+            "lq":  "11.3 Lenient Q", "mf": "11.4 Mean Field Q",
+        },
+        "theory_iql":  r"$Q_i(s,a) \mathrel{+}= lpha [r + \gamma \max Q_i(s') - Q_i(s,a)]$",
+        "theory_jal":  "Agent i modelliert π_j(a|s) aus Aktionshäufigkeiten des Partners.",
+        "theory_lq":   "δ < 0: mit Wahrscheinlichkeit (1-μ) anwenden. μ=0 → IQL.",
+        "theory_mf":   r"$ar{a}_j(s)$ = laufender Mittelwert der Partneraktionen in Zustand s.",
+        "algo_labels": {
+            "iql": "IQL", "jal": "JAL", "lenient": "Lenient Q", "meanfield": "Mean Field Q",
+        },
+        "pros_list": {
+            "iql":       ["Einfachstes MARL", "Keine Kommunikation nötig", "Skaliert auf N Agenten"],
+            "jal":       ["Modelliert Partnerstrategie", "Bessere Koordination"],
+            "lenient":   ["Robust gegenüber Partnerfehlern", "Vermeidet Fehlkoordination"],
+            "meanfield": ["Skaliert auf großes N", "Geringe Kommunikation"],
+        },
+        "cons_list": {
+            "iql":       ["Nicht-stationäre Umgebung", "Keine Koordination"],
+            "jal":       ["Benötigt Beobachtung der Partneraktionen", "O(|A|^N) Raum"],
+            "lenient":   ["μ muss eingestellt werden", "Kann gültige Strafen ignorieren"],
+            "meanfield": ["Mittelwert verliert Information", "β muss eingestellt werden"],
+        },
+    },
     "FR": {
         "title": "Chapitre 11 - RL Multi-Agent",
         "subtitle": "IQL - JAL - Lenient Q - Mean Field Q - 2 Agents - ASP Varsovie",
@@ -214,9 +271,18 @@ def _ma(data, w=30):
         r.append(sum(data[s:i+1]) / (i - s + 1))
     return r
 
+
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
+
 def render():
     lang = st.session_state.get("lang", "EN")
-    tx   = T[lang]
+    tx   = _tx(lang)
     st.title(tx["title"])
     st.caption(tx["subtitle"])
     try:
@@ -267,7 +333,7 @@ def render():
     fig.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40),
                       xaxis_title="Episode", yaxis_title="Return (MA-30)",
                       legend=dict(orientation="h"))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
     st.caption(tx["returns_caption"])
 
     # Cooperation + Value
@@ -281,7 +347,7 @@ def render():
         f2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
                          xaxis_title="Episode", yaxis_title="Cooperation rate",
                          legend=dict(orientation="h"))
-        st.plotly_chart(f2, use_container_width=True)
+        st.plotly_chart(f2, width='stretch')
         st.caption(tx["cooperation_caption"])
     with c2:
         st.subheader(tx["value_title"])
@@ -291,7 +357,7 @@ def render():
                 name=tx["algo_labels"][k], marker_color=COLORS[k], opacity=0.8))
         f3.update_layout(height=260, barmode="group",
                          margin=dict(l=40,r=20,t=20,b=40), legend=dict(orientation="h"))
-        st.plotly_chart(f3, use_container_width=True)
+        st.plotly_chart(f3, width='stretch')
         st.caption(tx["value_caption"])
 
     # Q-table heatmap (per agent)
@@ -309,7 +375,7 @@ def render():
                       for s in range(res["n_states"])],
                 texttemplate="%{text}"))
             f4.update_layout(height=260, margin=dict(l=60,r=10,t=20,b=40))
-            st.plotly_chart(f4, use_container_width=True)
+            st.plotly_chart(f4, width='stretch')
 
     st.subheader(tx["glass_title"]); _glass(res, tx)
     st.subheader(tx["summary_title"]); _summary(res, tx)

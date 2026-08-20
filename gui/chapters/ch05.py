@@ -149,6 +149,23 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
             "off_policy":  ["IS ratio can explode", "High variance", "Complex implementation"],
         },
     },
+        "DE": {
+        "title": "Kapitel 05 — Monte-Carlo-Methoden",
+        "subtitle": "MC-Vorhersage — MC-Kontrolle — ASP Warschau",
+        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "Einstellungen",
+        "n_episodes": "Episoden", "gamma": "Gamma", "epsilon": "Epsilon", "seed": "Zufallsseed",
+        "run_btn": "▶ Monte-Carlo starten",
+        "guide_title": "Anleitung",
+        "guide": "MC lernt aus vollständigen Episoden. G_t wird rückwärts berechnet und zum Aktualisieren von V(s) verwendet.",
+        "theory_title": "Theorie — Kapitel 05",
+        "theory_sections": {"mc": "5.1 Monte-Carlo-Vorhersage", "control": "5.2 MC-Kontrolle"},
+        "summary_title": "Zusammenfassung", "summary_results": "Ergebnisse",
+        "summary_pros_cons": "Monte-Carlo — Vor- & Nachteile",
+        "pros": "Vorteile", "cons": "Nachteile",
+    },
+
+
     "FR": {
         "title": "Chapitre 05 — Méthodes de Monte Carlo",
         "subtitle": "Apprentissage ASP par épisodes · Sans modèle · Région de Varsovie",
@@ -315,9 +332,18 @@ def _moving_avg(data, window=20):
         result.append(sum(data[start:i+1]) / (i - start + 1))
     return result
 
+
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
+
 def render():
     lang = st.session_state.get("lang", "EN")
-    tx = T[lang]
+    tx = _tx(lang)
     st.title(tx["title"])
     st.caption(tx["subtitle"])
     try:
@@ -375,7 +401,7 @@ def render():
     fig.update_layout(height=300, margin=dict(l=40,r=20,t=20,b=40),
                       xaxis_title="Episode", yaxis_title="Return (MA-30)",
                       legend=dict(orientation="h"))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
     st.caption(tx["returns_caption"])
 
     # Value function comparison
@@ -391,7 +417,7 @@ def render():
     fig2.update_layout(height=300, barmode="group",
                        margin=dict(l=40,r=20,t=20,b=40),
                        legend=dict(orientation="h"))
-    st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(fig2, width='stretch')
     st.caption(tx["value_caption"])
 
     col1, col2 = st.columns(2)
@@ -402,7 +428,7 @@ def render():
         fig3 = go.Figure(go.Bar(x=short, y=vc, marker_color=colors_vc,
                                 text=[str(v) for v in vc], textposition="outside"))
         fig3.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40))
-        st.plotly_chart(fig3, use_container_width=True)
+        st.plotly_chart(fig3, width='stretch')
         st.caption(tx["visits_caption"])
 
     with col2:
@@ -417,7 +443,7 @@ def render():
             ))
         fig4.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40),
                            yaxis_type="log", legend=dict(orientation="h"))
-        st.plotly_chart(fig4, use_container_width=True)
+        st.plotly_chart(fig4, width='stretch')
         st.caption(tx["conv_caption"])
 
     # Q-table heatmap
@@ -432,7 +458,7 @@ def render():
         texttemplate="%{text}",
     ))
     fig5.update_layout(height=320, margin=dict(l=60,r=20,t=20,b=40))
-    st.plotly_chart(fig5, use_container_width=True)
+    st.plotly_chart(fig5, width='stretch')
     st.caption(tx["qtable_caption"])
 
     # Glass-Box

@@ -153,6 +153,45 @@ T = {
             "uncertainty":  ["Beta do strojenia", "Bonus zanika z wizytami", "Moze nadmiernie eksplorowac"],
         },
     },
+        "DE": {
+        "title": "Kapitel 10 — Modellbasiertes RL",
+        "subtitle": "Weltmodell — Priorisiertes Sweeping — MBPO — ASP Warschau",
+        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "Einstellungen",
+        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
+        "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
+        "planning_steps": "Planungsschritte", "seed": "Zufallsseed",
+        "run_btn": "▶ Alle Algorithmen starten",
+        "guide_title": "Anleitung",
+        "guide": "Modellbasiertes RL lernt ein Weltmodell T(s,a,s') und R(s,a) und plant damit.",
+        "returns_title": "Episodenrückgaben",
+        "returns_caption": "Gleitender Durchschnitt.",
+        "value_title": "Wertfunktion V(s)",
+        "value_caption": "",
+        "glass_title": "Glass-Box",
+        "summary_title": "Zusammenfassung", "summary_results": "Vergleich",
+        "summary_pros_cons": "Vor- & Nachteile",
+        "pros": "Vorteile", "cons": "Nachteile",
+        "theory_title": "Theorie — Kapitel 10",
+        "theory_sections": {"wm": "10.1 Weltmodell", "ps": "10.2 Priorisiertes Sweeping", "mbpo": "10.3 MBPO", "ub": "10.4 Unsicherheitsbonus"},
+        "algo_labels": {"wm_qlearning": "WM Q-Learning", "prioritized_sweeping": "Priorisiertes Sweeping", "mbpo": "MBPO", "uncertainty_bonus": "Unsicherheitsbonus"},
+        "pros_list": {
+            "wm_qlearning": ["Effizient durch Planung", "Schnellere Konvergenz"],
+            "prioritized_sweeping": ["Fokussiert auf wichtige Zustände", "Sehr effizient"],
+            "mbpo": ["Verbindet modellbasiert und modellfrei", "Gute Probeneffizienz"],
+            "uncertainty_bonus": ["Exploration durch Unsicherheit", "UCB-Stil"],
+        },
+        "cons_list": {
+            "wm_qlearning": ["Modellierungsfehler können schaden"],
+            "prioritized_sweeping": ["Komplexität der Prioritätswarteschlange"],
+            "mbpo": ["Zwei Lernraten", "Modell muss genau sein"],
+            "uncertainty_bonus": ["β muss eingestellt werden"],
+        },
+        "theory_wm": "Weltmodell: T̂(s,a,s') und R̂(s,a) aus Erfahrung gelernt.",
+        "theory_ps": "Priorisiertes Sweeping: plane von Zuständen mit höchstem |delta|.",
+        "theory_mbpo": "MBPO: synthetische Rollouts auf gelerntem Modell.",
+        "theory_ub": r"$Q_{bonus}(s,a) = Q(s,a) + eta/\sqrt{N(s,a)+1}$",
+    },
     "FR": {
         "title": "Chapitre 10 - RL base sur modele: Modeles du monde",
         "subtitle": "WM Q-Learning - Balayage prioritaire - MBPO - Bonus incertitude - ASP Varsovie",
@@ -232,9 +271,18 @@ def _ma(data, w=30):
         r.append(sum(data[s:i+1]) / (i - s + 1))
     return r
 
+
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
+
 def render():
     lang = st.session_state.get("lang", "EN")
-    tx   = T[lang]
+    tx   = _tx(lang)
     st.title(tx["title"])
     st.caption(tx["subtitle"])
     try:
@@ -287,7 +335,7 @@ def render():
     fig.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40),
                       xaxis_title="Episode", yaxis_title="Return (MA-30)",
                       legend=dict(orientation="h"))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
     st.caption(tx["returns_caption"])
 
     # Model accuracy + Planning steps
@@ -301,7 +349,7 @@ def render():
         f2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
                          xaxis_title="Episode", yaxis_title="Accuracy",
                          legend=dict(orientation="h"))
-        st.plotly_chart(f2, use_container_width=True)
+        st.plotly_chart(f2, width='stretch')
         st.caption(tx["accuracy_caption"])
     with c2:
         st.subheader(tx["planning_title"])
@@ -312,7 +360,7 @@ def render():
         f3.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
                          xaxis_title="Episode", yaxis_title="Planning steps",
                          legend=dict(orientation="h"))
-        st.plotly_chart(f3, use_container_width=True)
+        st.plotly_chart(f3, width='stretch')
         st.caption(tx["planning_caption"])
 
     # Value function
@@ -323,7 +371,7 @@ def render():
             name=tx["algo_labels"][k], marker_color=COLORS[k], opacity=0.8))
     f4.update_layout(height=260, barmode="group",
                      margin=dict(l=40,r=20,t=20,b=40), legend=dict(orientation="h"))
-    st.plotly_chart(f4, use_container_width=True)
+    st.plotly_chart(f4, width='stretch')
     st.caption(tx["value_caption"])
 
     # Q-table heatmap
@@ -336,7 +384,7 @@ def render():
         text=[[f"{qt[s][a]:.2f}" for a in range(res["n_actions"])] for s in range(res["n_states"])],
         texttemplate="%{text}"))
     f5.update_layout(height=280, margin=dict(l=60,r=20,t=20,b=40))
-    st.plotly_chart(f5, use_container_width=True)
+    st.plotly_chart(f5, width='stretch')
 
     st.subheader(tx["glass_title"]); _glass(res, tx)
     st.subheader(tx["summary_title"]); _summary(res, tx)

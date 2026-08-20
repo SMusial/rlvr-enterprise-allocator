@@ -60,6 +60,42 @@ T = {
         "pros_list": {"sarsa_lambda": ["On-policy","Szybkie przypisanie zasługi","λ reguluje bias-variance"], "q_lambda": ["Off-policy","Cięcie Watkinsa","Agresywna eksploracja"], "sarsa_td0": ["Najprostszy","Niski variance","Punkt odniesienia"], "sarsa_mc": ["Prawie zerowy bias","Pełna propagacja","Górna granica λ"]},
         "cons_list": {"sarsa_lambda": ["Wymaga ε>0","O(|S||A|)/krok","λ do strojenia"], "q_lambda": ["Ślady cięte","Mniej propagacji","Ryzyko niestabilności"], "sarsa_td0": ["Wolne przypisanie","Wiele epizodów","Brak propagacji wstecz"], "sarsa_mc": ["Wysoki variance","Wymaga zakończenia","Niestabilny przy małym α"]},
     },
+        "DE": {
+        "title": "Kapitel 08 — Eligibility Traces",
+        "subtitle": "TD(λ) — SARSA(λ) — Q(λ) Watkins — ASP Warschau",
+        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "Einstellungen",
+        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
+        "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
+        "lambda_val": "λ — Trace-Abklingrate", "seed": "Zufallsseed",
+        "run_btn": "▶ Alle Algorithmen starten",
+        "guide_title": "Anleitung",
+        "guide": "λ=0: reines TD(0). λ=1: reines MC. Eligibility Traces verteilen Kredit auf vergangene Zustände.",
+        "returns_title": "Episodenrückgaben",
+        "returns_caption": "Gleitender Durchschnitt.",
+        "value_title": "Wertfunktion V(s)",
+        "value_caption": "",
+        "glass_title": "Glass-Box",
+        "summary_title": "Zusammenfassung", "summary_results": "Vergleich",
+        "summary_pros_cons": "Vor- & Nachteile",
+        "pros": "Vorteile", "cons": "Nachteile",
+        "theory_title": "Theorie — Kapitel 08",
+        "theory_sections": {"traces": "8.1 Eligibility Traces", "tdlambda": "8.2 TD(λ)", "sarsa": "8.3 SARSA(λ)"},
+        "algo_labels": {"td_lambda": "TD(λ)", "sarsa_lambda": "SARSA(λ)", "q_lambda": "Q(λ) Watkins"},
+        "pros_list": {
+            "td_lambda": ["Brückt TD und MC", "Schnellere Kreditvergabe"],
+            "sarsa_lambda": ["On-Policy mit Traces", "Bessere Konvergenz"],
+            "q_lambda": ["Off-Policy mit Traces", "Watkins-Schnitt bei Exploration"],
+        },
+        "cons_list": {
+            "td_lambda": ["λ muss eingestellt werden"],
+            "sarsa_lambda": ["Speicher für Traces"],
+            "q_lambda": ["Watkins-Schnitt reduziert Effizienz"],
+        },
+        "theory_traces": r"$e_t(s) = \gamma\lambda e_{t-1}(s) + \mathbf{1}[S_t = s]$",
+        "theory_tdlambda": r"$V(s) \leftarrow V(s) + lpha\delta_t e_t(s)$",
+        "theory_sarsa": r"$Q(s,a) \leftarrow Q(s,a) + lpha\delta_t e_t(s,a)$",
+    },
     "FR": {
         "title": "Chapitre 08 — Traces d'éligibilité & TD(λ)", "subtitle": "SARSA(λ) · Q(λ) · ASP Varsovie",
         "engine_missing": "Exécutez: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Paramètres",
@@ -106,8 +142,17 @@ def _ma(data, w=30):
         s = max(0, i-w+1); r.append(sum(data[s:i+1])/(i-s+1))
     return r
 
+
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
+
 def render():
-    lang = st.session_state.get("lang", "EN"); tx = T[lang]
+    lang = st.session_state.get("lang", "EN"); tx = _tx(lang)
     st.title(tx["title"]); st.caption(tx["subtitle"])
     try: import rlvr_py
     except ImportError: st.error(tx["engine_missing"]); return
@@ -138,26 +183,26 @@ def render():
     fig = go.Figure()
     for k in ALGOS: fig.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["returns_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
     fig.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Return (MA-30)", legend=dict(orientation="h"))
-    st.plotly_chart(fig, use_container_width=True); st.caption(tx["returns_caption"])
+    st.plotly_chart(fig, width='stretch'); st.caption(tx["returns_caption"])
     c1, c2 = st.columns(2)
     with c1:
         st.subheader(tx["value_title"])
         f2 = go.Figure()
         for k in ALGOS: f2.add_trace(go.Bar(x=short, y=res[k]["values"], name=tx["algo_labels"][k], marker_color=COLORS[k], opacity=0.8))
         f2.update_layout(height=260, barmode="group", margin=dict(l=40,r=20,t=20,b=40), legend=dict(orientation="h"))
-        st.plotly_chart(f2, use_container_width=True); st.caption(tx["value_caption"])
+        st.plotly_chart(f2, width='stretch'); st.caption(tx["value_caption"])
     with c2:
         st.subheader(tx["trace_title"])
         f3 = go.Figure()
         for k in ["sarsa_lambda","q_lambda"]: f3.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["trace_stats"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
         f3.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Max traces", legend=dict(orientation="h"))
-        st.plotly_chart(f3, use_container_width=True); st.caption(tx["trace_caption"])
+        st.plotly_chart(f3, width='stretch'); st.caption(tx["trace_caption"])
     st.subheader(tx["qtable_title"])
     sel = st.selectbox("Algorithm", [tx["algo_labels"][k] for k in ALGOS])
     ks  = {tx["algo_labels"][k]: k for k in ALGOS}.get(sel, "sarsa_lambda")
     qt  = res[ks]["q_table"]; ash = [f"A{i}" for i in range(res["n_actions"])]
     f4  = go.Figure(go.Heatmap(z=qt, x=ash, y=short, colorscale="Purples", text=[[f"{qt[s][a]:.2f}" for a in range(res["n_actions"])] for s in range(res["n_states"])], texttemplate="%{text}"))
-    f4.update_layout(height=280, margin=dict(l=60,r=20,t=20,b=40)); st.plotly_chart(f4, use_container_width=True)
+    f4.update_layout(height=280, margin=dict(l=60,r=20,t=20,b=40)); st.plotly_chart(f4, width='stretch')
     st.subheader(tx["glass_title"]); _glass(res, tx)
     st.subheader(tx["summary_title"]); _summary(res, tx)
     _theory(tx)

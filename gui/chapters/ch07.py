@@ -221,6 +221,42 @@ Implementacja: `dyna_q_plus()` w `ch07_nstep.rs`
             "dyna_q_plus": ["κ wymaga strojenia", "Bardziej złożony niż Dyna-Q"],
         },
     },
+        "DE": {
+        "title": "Kapitel 07 — n-Schritt TD & Dyna-Q",
+        "subtitle": "n-Schritt SARSA — n-Schritt Q-Learning — Dyna-Q — ASP Warschau",
+        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "Einstellungen",
+        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
+        "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
+        "n_step": "n — Schrittweite", "planning_steps": "Planungsschritte (Dyna-Q)",
+        "seed": "Zufallsseed",
+        "run_btn": "▶ Alle Algorithmen starten",
+        "guide_title": "Anleitung",
+        "guide": "n-Schritt TD brückt MC (n=∞) und TD(0) (n=1). Dyna-Q kombiniert modellfreies Lernen mit Planung.",
+        "returns_title": "Episodenrückgaben",
+        "returns_caption": "Gleitender Durchschnitt.",
+        "value_title": "Wertfunktion V(s)",
+        "value_caption": "Vergleich aller Algorithmen.",
+        "glass_title": "Glass-Box",
+        "summary_title": "Zusammenfassung", "summary_results": "Vergleich",
+        "summary_pros_cons": "Vor- & Nachteile",
+        "pros": "Vorteile", "cons": "Nachteile",
+        "theory_title": "Theorie — Kapitel 07",
+        "theory_sections": {"nstep": "7.1 n-Schritt TD", "dynaq": "7.2 Dyna-Q"},
+        "algo_labels": {"nstep_sarsa": "n-Schritt SARSA", "nstep_qlearning": "n-Schritt Q-Learning", "dynaq": "Dyna-Q"},
+        "pros_list": {
+            "nstep_sarsa": ["Brückt MC und TD", "Flexibel über n"],
+            "nstep_qlearning": ["Off-Policy", "Bessere Kreditvergabe"],
+            "dynaq": ["Effizient durch Planung", "Schnellere Konvergenz"],
+        },
+        "cons_list": {
+            "nstep_sarsa": ["n muss eingestellt werden"],
+            "nstep_qlearning": ["Speicher für n-Schritt-Puffer"],
+            "dynaq": ["Benötigt Modell", "Modellierungsfehler können schaden"],
+        },
+        "theory_nstep": r"$G_t^{(n)} = R_{t+1} + \gamma R_{t+2} + \ldots + \gamma^{n-1} R_{t+n} + \gamma^n V(S_{t+n})$",
+        "theory_dynaq": "Dyna-Q: Q-Learning + Modelllernen + Planung (k simulierte Schritte pro echtem Schritt).",
+    },
     "FR": {
         "title": "Chapitre 07 — TD n-pas & Planification avec Dyna-Q",
         "subtitle": "TD n-pas · SARSA n-pas · Dyna-Q · Dyna-Q+ · ASP Varsovie",
@@ -303,9 +339,18 @@ def _moving_avg(data, window=20):
         result.append(sum(data[start:i+1]) / (i - start + 1))
     return result
 
+
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
+
 def render():
     lang = st.session_state.get("lang", "EN")
-    tx = T[lang]
+    tx = _tx(lang)
     st.title(tx["title"])
     st.caption(tx["subtitle"])
     try:
@@ -366,7 +411,7 @@ def render():
     fig.update_layout(height=300, margin=dict(l=40,r=20,t=20,b=40),
                       xaxis_title="Episode", yaxis_title="Return (MA-30)",
                       legend=dict(orientation="h"))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
     st.caption(tx["returns_caption"])
 
     # TD Error
@@ -380,7 +425,7 @@ def render():
     fig2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
                        xaxis_title="Episode", yaxis_title="Avg TD Error",
                        legend=dict(orientation="h"))
-    st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(fig2, width='stretch')
     st.caption(tx["td_error_caption"])
 
     # Value function
@@ -393,7 +438,7 @@ def render():
     fig3.update_layout(height=280, barmode="group",
                        margin=dict(l=40,r=20,t=20,b=40),
                        legend=dict(orientation="h"))
-    st.plotly_chart(fig3, use_container_width=True)
+    st.plotly_chart(fig3, width='stretch')
     st.caption(tx["value_caption"])
 
     col1, col2 = st.columns(2)
@@ -409,7 +454,7 @@ def render():
                        annotation_text=f"Max={max_model}")
         fig4.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
                            yaxis_title="(s,a) pairs learned")
-        st.plotly_chart(fig4, use_container_width=True)
+        st.plotly_chart(fig4, width='stretch')
         st.caption(tx["model_caption"])
 
     with col2:
@@ -427,7 +472,7 @@ def render():
             texttemplate="%{text}",
         ))
         fig5.update_layout(height=300, margin=dict(l=60,r=20,t=20,b=40))
-        st.plotly_chart(fig5, use_container_width=True)
+        st.plotly_chart(fig5, width='stretch')
         st.caption(tx["qtable_caption"])
 
     # Glass-Box

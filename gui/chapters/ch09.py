@@ -58,6 +58,43 @@ T = {
         "pros_list": {"reinforce": ["Nieobciążony","Prosty","Brak krytyka"], "reinforce_baseline": ["Niższa wariancja","Nadal nieobciążony","Zalecany"], "softmax_td0": ["Online","Niższa wariancja","Podstawa A2C/PPO"], "reinforce_temp": ["Ostrzejsza polityka","Mniej eksploracji","Dobre dla deterministycznych"]},
         "cons_list": {"reinforce": ["Wysoka wariancja","Wolny","Wymaga epizodu"], "reinforce_baseline": ["Wymaga α_v","Nieco złożony","Nadal MC"], "softmax_td0": ["Obciążony","Dwa LR","Może być niestabilny"], "reinforce_temp": ["Mniej eksploracji","Wrażliwy na τ","Może pominąć optimum"]},
     },
+        "DE": {
+        "title": "Kapitel 09 — Policy-Gradient-Methoden",
+        "subtitle": "REINFORCE — REINFORCE+Baseline — Actor-Critic — ASP Warschau",
+        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "Einstellungen",
+        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha (Akteur)",
+        "alpha_critic": "Alpha (Kritiker)", "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
+        "seed": "Zufallsseed",
+        "run_btn": "▶ Alle Algorithmen starten",
+        "guide_title": "Anleitung",
+        "guide": "Policy-Gradient-Methoden optimieren die Strategie direkt. REINFORCE verwendet G_t als Signal.",
+        "returns_title": "Episodenrückgaben",
+        "returns_caption": "Gleitender Durchschnitt.",
+        "value_title": "Wertfunktion V(s)",
+        "value_caption": "",
+        "glass_title": "Glass-Box",
+        "summary_title": "Zusammenfassung", "summary_results": "Vergleich",
+        "summary_pros_cons": "Vor- & Nachteile",
+        "pros": "Vorteile", "cons": "Nachteile",
+        "theory_title": "Theorie — Kapitel 09",
+        "theory_sections": {"pg": "9.1 Policy-Gradient-Theorem", "reinforce": "9.2 REINFORCE", "baseline": "9.3 Baseline", "ac": "9.4 Actor-Critic"},
+        "algo_labels": {"reinforce": "REINFORCE", "reinforce_baseline": "REINFORCE+Baseline", "actor_critic": "Actor-Critic"},
+        "pros_list": {
+            "reinforce": ["Direkte Strategieoptimierung", "Funktioniert mit stochastischen Strategien"],
+            "reinforce_baseline": ["Geringere Varianz", "Stabileres Lernen"],
+            "actor_critic": ["Online-Lernen", "Geringere Varianz als REINFORCE"],
+        },
+        "cons_list": {
+            "reinforce": ["Hohe Varianz", "Langsame Konvergenz"],
+            "reinforce_baseline": ["Baseline muss gelernt werden"],
+            "actor_critic": ["Zwei Lernraten", "Empfindlich gegenüber Hyperparametern"],
+        },
+        "theory_pg": "nabla J(theta) = E_pi[nabla log pi(a|s,theta) G_t]",
+        "theory_reinforce": "theta <- theta + alpha*gamma^t*G_t*nabla log pi(A_t|S_t,theta)",
+        "theory_baseline": "theta <- theta + alpha*gamma^t*(G_t-b(S_t))*nabla log pi",
+        "theory_ac": "delta_t = R+gamma*V(S')-V(S); theta <- theta+alpha*delta_t*nabla log pi",
+    },
     "FR": {
         "title": "Chapitre 09 — Gradient de Politique", "subtitle": "REINFORCE · Actor-Critic · ASP Varsovie",
         "engine_missing": "Exécutez: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Paramètres",
@@ -104,8 +141,17 @@ def _ma(data, w=30):
         s = max(0, i-w+1); r.append(sum(data[s:i+1])/(i-s+1))
     return r
 
+
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
+
 def render():
-    lang = st.session_state.get("lang", "EN"); tx = T[lang]
+    lang = st.session_state.get("lang", "EN"); tx = _tx(lang)
     st.title(tx["title"]); st.caption(tx["subtitle"])
     try: import rlvr_py
     except ImportError: st.error(tx["engine_missing"]); return
@@ -134,31 +180,31 @@ def render():
     fig = go.Figure()
     for k in ALGOS: fig.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["returns_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
     fig.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Return (MA-30)", legend=dict(orientation="h"))
-    st.plotly_chart(fig, use_container_width=True); st.caption(tx["returns_caption"])
+    st.plotly_chart(fig, width='stretch'); st.caption(tx["returns_caption"])
     c1, c2 = st.columns(2)
     with c1:
         st.subheader(tx["pg_loss_title"])
         f2 = go.Figure()
         for k in ALGOS: f2.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["pg_loss_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
         f2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Mean |Δθ|", legend=dict(orientation="h"))
-        st.plotly_chart(f2, use_container_width=True); st.caption(tx["pg_loss_caption"])
+        st.plotly_chart(f2, width='stretch'); st.caption(tx["pg_loss_caption"])
     with c2:
         st.subheader(tx["entropy_title"])
         f3 = go.Figure()
         for k in ALGOS: f3.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["entropy_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
         f3.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="H(π(·|s))", legend=dict(orientation="h"))
-        st.plotly_chart(f3, use_container_width=True); st.caption(tx["entropy_caption"])
+        st.plotly_chart(f3, width='stretch'); st.caption(tx["entropy_caption"])
     st.subheader(tx["value_title"])
     f4 = go.Figure()
     for k in ALGOS: f4.add_trace(go.Bar(x=short, y=res[k]["values"], name=tx["algo_labels"][k], marker_color=COLORS[k], opacity=0.8))
     f4.update_layout(height=260, barmode="group", margin=dict(l=40,r=20,t=20,b=40), legend=dict(orientation="h"))
-    st.plotly_chart(f4, use_container_width=True); st.caption(tx["value_caption"])
+    st.plotly_chart(f4, width='stretch'); st.caption(tx["value_caption"])
     st.subheader(tx["theta_title"])
     sel  = st.selectbox("Algorithm", [tx["algo_labels"][k] for k in ALGOS])
     ks   = {tx["algo_labels"][k]: k for k in ALGOS}.get(sel, "reinforce")
     th   = res[ks]["theta"]; ash = [f"A{i}" for i in range(res["n_actions"])]
     f5   = go.Figure(go.Heatmap(z=th, x=ash, y=short, colorscale="Purples", text=[[f"{th[s][a]:.3f}" for a in range(res["n_actions"])] for s in range(res["n_states"])], texttemplate="%{text}"))
-    f5.update_layout(height=280, margin=dict(l=60,r=20,t=20,b=40)); st.plotly_chart(f5, use_container_width=True)
+    f5.update_layout(height=280, margin=dict(l=60,r=20,t=20,b=40)); st.plotly_chart(f5, width='stretch')
     st.subheader(tx["glass_title"]); _glass(res, tx)
     st.subheader(tx["summary_title"]); _summary(res, tx)
     _theory(tx)

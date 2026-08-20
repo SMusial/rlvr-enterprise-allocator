@@ -137,6 +137,82 @@ the right-hand side of the Bellman equation.
 Implemented in `extract_policy()` in `ch02_bellman.rs`.
 """,
     },
+        "DE": {
+        "title": "Kapitel 02 — Diskretes MDP & Bellman-Optimalität",
+        "subtitle": "Optimierung der ASP-Betriebszustände — Region Warschau",
+        "engine_missing": "⚠ Rust-Engine nicht gefunden. Ausführen: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "⚙️ MDP-Einstellungen",
+        "gamma": "γ — Diskontierungsfaktor",
+        "theta": "θ — Konvergenzschwelle",
+        "seed": "Zufallsseed",
+        "run_btn": "▶ Wertiteration starten",
+        "guide_title": "ℹ️ Anleitung",
+        "guide": """**Schritt 1 — γ einstellen**: γ=0.99 = weitsichtig, γ=0.5 = kurzsichtig.
+**Schritt 2 — θ einstellen**: kleiner = genauer, aber mehr Iterationen.
+**Schritt 3 — Wertiteration starten**: Rust-Engine baut Übergangsmatrix und iteriert.
+**Schritt 4 — Wertfunktion lesen**: jeder Balken = langfristiger Wert des Zustands.
+**Schritt 5 — Optimale Strategie lesen**: beste Dispatch-Strategie für jeden Zustand.
+**Schritt 6 — Konvergenzkurve lesen**: Abfall von V^(k+1) - V^(k).
+**Schritt 7 — Glass-Box lesen**: Bellman-Update für jeden Zustand.""",
+        "value_title": "📊 Optimale Wertfunktion V*(s)",
+        "value_caption": "Langfristig erwartete Belohnung für jeden Betriebszustand",
+        "policy_title": "🎯 Optimale Strategie π*(s)",
+        "policy_caption": "Beste Dispatch-Strategie für jeden Betriebszustand",
+        "conv_title": "📉 Konvergenz — V^(k+1) - V^(k)",
+        "conv_x": "Iteration",
+        "conv_y": "Max. Änderung in V",
+        "conv_caption": "Bellman-Kontraktion: jede Iteration reduziert Fehler um Faktor γ",
+        "heatmap_title": "🧮 Übergangsmatrix P(s'|s, a=A1: Qualifikation)",
+        "heatmap_caption": "Übergangswahrscheinlichkeit von Zustand s zu s' unter qualifikationsbasiertem Dispatch",
+        "glass_title": "🔍 Glass-Box — Bellman-Update-Protokoll (erste 3 Iterationen)",
+        "glass_headers": ["Iter", "Zustand", "Beste Aktion", "Q(s,A0)", "Q(s,A1)", "Q(s,A2)", "Q(s,A3)", "V_alt", "V_neu", "δ"],
+        "summary_title": "📋 Zusammenfassung",
+        "summary_results": "Quantifizierte Ergebnisse",
+        "summary_pros_cons": "Diskretes MDP + Wertiteration — Vor- & Nachteile",
+        "pros": "✅ Vorteile",
+        "cons": "❌ Nachteile",
+        "pros_list": [
+            "Garantierte Konvergenz zur optimalen Strategie (Kontraktionsabbildungssatz)",
+            "Exakte Lösung ohne Approximationsfehler für kleine Zustandsräume",
+            "Interpretierbar: Wertfunktion erklärt WARUM jede Aktion gewählt wird",
+            "Lineare Algebra-Lösung verfügbar (nalgebra LU)",
+            "Grundlage für alle nachfolgenden RL-Algorithmen (Ch03–Ch20)",
+        ],
+        "cons_list": [
+            "Benötigt vollständiges Übergangsmodell P(s'|s,a)",
+            "Zustandsraum muss diskret und endlich sein",
+            "Fluch der Dimensionalität: O(|S| × |A|) pro Iteration",
+            "Übergangswahrscheinlichkeiten müssen geschätzt werden",
+            "Ch06 (TD-Lernen) löst die modellfreie Version",
+        ],
+        "metric_iters": "Iterationen bis zur Konvergenz",
+        "metric_best_state": "Bester Betriebszustand",
+        "metric_worst_state": "Schlechtester Betriebszustand",
+        "metric_value_range": "Wertebereich V*(s)",
+        "metric_contraction": "Kontraktion verifiziert",
+        "theory_title": "📚 Theorie — Kapitel 02",
+        "theory_sections": {
+            "bellman":     "2.3 Bellman-Optimalitätsgleichung",
+            "vi":          "2.3 Wertiterationsalgorithmus",
+            "contraction": "2.3 Kontraktionsabbildungssatz",
+            "linear":      "2.2 Lineare System-Lösung",
+            "policy":      "2.3 Strategieextraktion",
+        },
+        "theory_bellman": r"""**Bellman-Optimalitätsgleichung**:
+$$V^*(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
+Implementiert in `value_iteration()` in `ch02_bellman.rs`.""",
+        "theory_vi": r"""**Wertiteration** wendet den Bellman-Operator iterativ an:
+$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^{(k)}(s') \right]$$
+Stopp wenn: $\|V^{(k+1)} - V^{(k)}\|_\infty < \theta$""",
+        "theory_contraction": r"""**Kontraktionsabbildungssatz** garantiert Konvergenz:
+$$\|V^{(k+1)} - V^{(k)}\|_\infty \leq \gamma \|V^{(k)} - V^{(k-1)}\|_\infty$$
+Verifiziert in `verify_contraction()` in `ch02_bellman.rs`.""",
+        "theory_linear": r"""**Exakte Lösung** für eine feste Strategie π:
+$$V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$$
+Gelöst mit **nalgebra LU-Zerlegung** in `solve_exact()` in `ch02_bellman.rs`.""",
+        "theory_policy": r"""**Strategieextraktion** — gierige Strategie aus V*:
+$$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$""",
+    },
     "FR": {
         "title": "Chapitre 02 — MDP Discret & Optimalité de Bellman",
         "subtitle": "Optimisation des états opérationnels ASP · Région de Varsovie",
@@ -391,9 +467,18 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
 # ---------------------------------------------------------------------------
 # Main render
 # ---------------------------------------------------------------------------
+
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
+
 def render():
     lang = st.session_state.get("lang", "EN")
-    tx = T[lang]
+    tx = _tx(lang)
 
     st.title(tx["title"])
     st.caption(tx["subtitle"])
@@ -516,7 +601,7 @@ def _render_value_chart(values, state_names, tx):
                   for i in range(len(values))],
         tickvals=short_names,
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 # ---------------------------------------------------------------------------
@@ -532,7 +617,7 @@ def _render_policy_table(policy, state_names, action_names, values, tx):
             "Strategy": action_names[a].split(":")[1].strip(),
             "V*(s)": f"{values[s]:.3f}",
         })
-    st.dataframe(rows, use_container_width=True, hide_index=True)
+    st.dataframe(rows, width='stretch', hide_index=True)
 
 
 # ---------------------------------------------------------------------------
@@ -555,7 +640,7 @@ def _render_convergence(curve, tx):
         yaxis_title=tx["conv_y"],
         yaxis_type="log",
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 # ---------------------------------------------------------------------------
@@ -587,7 +672,7 @@ def _render_heatmap(result, state_names):
         labels=dict(x="Next State s'", y="Current State s", color="P"),
     )
     fig.update_layout(height=280, margin=dict(l=40, r=20, t=20, b=40))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 # ---------------------------------------------------------------------------
@@ -613,7 +698,7 @@ def _render_glass_box(trace, state_names, action_names, tx):
             tx["glass_headers"][9]: f"{step['delta']:.4f}",
         })
 
-    st.dataframe(rows, use_container_width=True, height=300)
+    st.dataframe(rows, width='stretch', height=300)
 
     # Bellman equation display
     st.markdown("---")

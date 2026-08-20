@@ -143,6 +143,64 @@ In ASP: SARSA is safer during training, Q-Learning finds the better final policy
             "qlearning": ["Can be risky during learning", "Overestimates Q values (maximisation bias)", "Sensitive to alpha"],
         },
     },
+        "DE": {
+        "title": "Kapitel 06 — Temporale Differenzlernen",
+        "subtitle": "TD(0) — SARSA — Q-Learning — ASP Warschau",
+        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "TD-Einstellungen",
+        "n_episodes": "Episoden", "gamma": "γ — Diskontierungsfaktor",
+        "alpha": "α — Lernrate", "epsilon": "ε — Anfängliche Exploration",
+        "epsilon_decay": "ε-Abklingrate", "seed": "Zufallsseed",
+        "run_btn": "▶ TD(0), SARSA und Q-Learning starten",
+        "guide_title": "Anleitung",
+        "guide": """**Schritt 1** — TD aktualisiert nach JEDEM Schritt (nicht nach Episodenende wie MC).
+**Schritt 2** — SARSA = On-Policy. Q-Learning = Off-Policy.
+**Schritt 3** — α (Lernrate) einstellen. α=0.1 ist ein guter Start.
+**Schritt 4** — Klicken, um alle drei Algorithmen zu starten.
+**Schritt 5** — TD-Fehlerkurve lesen — sollte gegen null gehen.
+**Schritt 6** — Q-Learning vs SARSA-Strategien vergleichen.""",
+        "returns_title": "Episodenrückgaben — TD(0), SARSA, Q-Learning",
+        "returns_caption": "Gleitender Durchschnitt. Q-Learning sollte am schnellsten konvergieren.",
+        "td_error_title": "TD-Fehler — |R + γV(s') - V(s)|",
+        "td_error_caption": "TD-Fehler nimmt ab, wenn der Agent lernt.",
+        "value_title": "Wertfunktion V(s) — TD vs. DP-Referenz",
+        "value_caption": "TD-Schätzungen sollten zur DP-Lösung (Ch04) konvergieren.",
+        "policy_title": "Optimale Strategie — SARSA vs. Q-Learning",
+        "policy_caption": "Q-Learning findet optimale Strategie. SARSA findet sicherste.",
+        "qtable_title": "Q-Tabellen-Heatmap",
+        "qtable_caption": "Q(s,a)-Werte. Algorithmus auswählen.",
+        "glass_title": "Glass-Box — TD-Update-Protokoll",
+        "glass_headers": ["Episode", "Schritt", "Zustand", "Aktion", "Belohnung", "Nächster Zustand", "TD-Fehler"],
+        "summary_title": "Zusammenfassung",
+        "summary_results": "Algorithmenvergleich",
+        "summary_pros_cons": "TD-Algorithmen — Vor- & Nachteile",
+        "pros": "Vorteile", "cons": "Nachteile",
+        "theory_title": "Theorie — Kapitel 06",
+        "theory_sections": {
+            "td_intro":   "6.1 Temporales Differenzlernen",
+            "td0":        "6.1 TD(0)-Vorhersage",
+            "sarsa":      "6.2 SARSA — On-Policy TD-Kontrolle",
+            "qlearning":  "6.3 Q-Learning — Off-Policy TD-Kontrolle",
+            "comparison": "6.4 SARSA vs. Q-Learning",
+        },
+        "theory_td_intro": r"""**Temporales Differenzlernen (TD)** kombiniert MC und DP.
+TD-Fehler: $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$""",
+        "theory_td0": r"$V(S_t) \leftarrow V(S_t) + lpha[R_{t+1} + \gamma V(S_{t+1}) - V(S_t)]$",
+        "theory_sarsa": r"$Q(S_t,A_t) \leftarrow Q(S_t,A_t) + lpha[R_{t+1} + \gamma Q(S_{t+1},A_{t+1}) - Q(S_t,A_t)]$",
+        "theory_qlearning": r"$Q(S_t,A_t) \leftarrow Q(S_t,A_t) + lpha[R_{t+1} + \gamma \max_{a'} Q(S_{t+1},a') - Q(S_t,A_t)]$",
+        "theory_comparison": "SARSA: On-Policy, sicher. Q-Learning: Off-Policy, optimal.",
+        "algo_labels": {"td0": "TD(0)", "sarsa": "SARSA", "qlearning": "Q-Learning"},
+        "pros_list": {
+            "td0":       ["Online-Lernen", "Kein Modell nötig", "Geringere Varianz als MC"],
+            "sarsa":     ["Sicher während des Lernens", "On-Policy", "Konvergiert zur optimalen ε-weichen Strategie"],
+            "qlearning": ["Lernt Q* direkt", "Off-Policy", "Konvergiert zur optimalen gierigen Strategie"],
+        },
+        "cons_list": {
+            "td0":       ["Sagt nur V^π vorher", "Verzerrt (Bootstrapping)", "Empfindlich gegenüber α"],
+            "sarsa":     ["Suboptimal bei hohem ε", "On-Policy erfordert ε > 0"],
+            "qlearning": ["Kann während des Lernens riskant sein", "Maximierungsverzerrung"],
+        },
+    },
     "FR": {
         "title": "Chapitre 06 — Apprentissage par Différences Temporelles",
         "subtitle": "TD(0) · SARSA · Q-Learning · ASP · Région de Varsovie",
@@ -325,9 +383,18 @@ def _moving_avg(data, window=20):
         result.append(sum(data[start:i+1]) / (i - start + 1))
     return result
 
+
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
+
 def render():
     lang = st.session_state.get("lang", "EN")
-    tx = T[lang]
+    tx = _tx(lang)
     st.title(tx["title"])
     st.caption(tx["subtitle"])
     try:
@@ -385,7 +452,7 @@ def render():
     fig.update_layout(height=300, margin=dict(l=40,r=20,t=20,b=40),
                       xaxis_title="Episode", yaxis_title="Return (MA-30)",
                       legend=dict(orientation="h"))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
     st.caption(tx["returns_caption"])
 
     # TD Error
@@ -399,7 +466,7 @@ def render():
     fig2.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40),
                        xaxis_title="Episode", yaxis_title="Avg TD Error",
                        legend=dict(orientation="h"))
-    st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(fig2, width='stretch')
     st.caption(tx["td_error_caption"])
 
     # Value function
@@ -412,7 +479,7 @@ def render():
     fig3.update_layout(height=300, barmode="group",
                        margin=dict(l=40,r=20,t=20,b=40),
                        legend=dict(orientation="h"))
-    st.plotly_chart(fig3, use_container_width=True)
+    st.plotly_chart(fig3, width='stretch')
     st.caption(tx["value_caption"])
 
     # Policy comparison
@@ -446,7 +513,7 @@ def render():
             texttemplate="%{text}",
         ))
         fig4.update_layout(height=320, margin=dict(l=60,r=20,t=20,b=40))
-        st.plotly_chart(fig4, use_container_width=True)
+        st.plotly_chart(fig4, width='stretch')
         st.caption(tx["qtable_caption"])
 
     # Glass-Box

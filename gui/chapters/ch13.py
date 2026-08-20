@@ -62,6 +62,34 @@ TX = {
         "theory_qmix": "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). w_i >= 0.",
         "theory_cg":   "Przewaga kontrfaktyczna: A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)",
     },
+        "DE": {
+        "title": "Kapitel 13 — Kooperatives MARL: VDN und QMIX",
+        "subtitle": "IQL Baseline — VDN — QMIX — QMIX+CG — 2 Agenten — ASP Warschau",
+        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "Einstellungen",
+        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
+        "epsilon": "Epsilon", "edecay": "Epsilon-Abklingrate",
+        "mhidden": "Versteckte Einheiten des Mischnetzwerks", "seed": "Zufallsseed",
+        "run": "▶ Alle vier Algorithmen starten",
+        "ret": "Gemeinsame Episodenrückgaben",
+        "mix": "Mischgewichte (QMIX)",
+        "jq": "Gemeinsames Q_tot",
+        "val": "Gemeinsame Wertfunktion V(s)",
+        "glass": "Glass-Box",
+        "summary": "Zusammenfassung",
+        "labels": {"iql": "IQL Baseline", "vdn": "VDN", "qmix": "QMIX", "qmix_cg": "QMIX+CG"},
+        "guide": (
+            "Kooperatives Szenario: beide Agenten teilen dieselbe gemeinsame Belohnung.\n"
+            "IQL: jeder Agent ignoriert den anderen.\n"
+            "VDN: Q_tot = Q_0 + Q_1. Einfache additive Zerlegung.\n"
+            "QMIX: Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotones Mischen.\n"
+            "QMIX+CG: QMIX + kontrafaktische Basislinie für Kreditvergabe."
+        ),
+        "theory_igm":   "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
+        "theory_vdn":   r"$Q_{tot} = Q_0(s_0,a_0) + Q_1(s_1,a_1)$",
+        "theory_qmix":  r"$Q_{tot} = w_0(s)Q_0 + w_1(s)Q_1 + b(s),\quad w_i \geq 0$",
+        "theory_cg":    r"$A_i = Q_{tot}(s,\mathbf{a}) - Q_{tot}(s, \mathbf{a}_{-i}, rg\max Q_i)$",
+    },
     "FR": {
         "title": "Chapitre 13 - MARL Cooperatif: VDN et QMIX",
         "subtitle": "IQL - VDN - QMIX - QMIX+CG - ASP Varsovie",
@@ -97,6 +125,15 @@ def _ma(data, w=30):
     for i in range(len(data)):
         s = max(0, i-w+1); r.append(sum(data[s:i+1])/(i-s+1))
     return r
+
+
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
 
 def render():
     lang = st.session_state.get("lang","EN")
@@ -143,7 +180,7 @@ def render():
             mode="lines",name=lb[k],line=dict(color=COLORS[k],width=2)))
     fig.update_layout(height=280,margin=dict(l=40,r=20,t=20,b=40),
                       xaxis_title="Episode",yaxis_title="Return (MA-30)",legend=dict(orientation="h"))
-    st.plotly_chart(fig,use_container_width=True)
+    st.plotly_chart(fig,width='stretch')
 
     # Mixing weights + Joint Q
     c1,c2 = st.columns(2)
@@ -155,7 +192,7 @@ def render():
                 mode="lines",name=lb[k],line=dict(color=COLORS[k],width=2)))
         f2.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),
                          xaxis_title="Episode",yaxis_title="Mean |w|",legend=dict(orientation="h"))
-        st.plotly_chart(f2,use_container_width=True)
+        st.plotly_chart(f2,width='stretch')
     with c2:
         st.subheader(tx["jq"])
         f3 = go.Figure()
@@ -164,7 +201,7 @@ def render():
                 mode="lines",name=lb[k],line=dict(color=COLORS[k],width=2)))
         f3.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),
                          xaxis_title="Episode",yaxis_title="Q_tot",legend=dict(orientation="h"))
-        st.plotly_chart(f3,use_container_width=True)
+        st.plotly_chart(f3,width='stretch')
 
     # Value function
     st.subheader(tx["val"])
@@ -172,7 +209,7 @@ def render():
     for k in ALGOS:
         f4.add_trace(go.Bar(x=short,y=res[k]["values"],name=lb[k],marker_color=COLORS[k],opacity=0.8))
     f4.update_layout(height=260,barmode="group",margin=dict(l=40,r=20,t=20,b=40),legend=dict(orientation="h"))
-    st.plotly_chart(f4,use_container_width=True)
+    st.plotly_chart(f4,width='stretch')
 
     # Q-table heatmaps per agent
     st.subheader("Q-Table Heatmap")
@@ -188,7 +225,7 @@ def render():
                 text=[[f"{qt[s][a]:.2f}" for a in range(res["n_actions"])] for s in range(res["n_states"])],
                 texttemplate="%{text}"))
             f5.update_layout(height=260,margin=dict(l=60,r=10,t=20,b=40))
-            st.plotly_chart(f5,use_container_width=True)
+            st.plotly_chart(f5,width='stretch')
 
     st.subheader(tx["glass"]); _glass(res,lb)
     st.subheader(tx["summary"]); _summary(res,lb)
