@@ -73,7 +73,12 @@ fn sample_next(s: usize, a: usize, t: &ndarray::Array3<f64>, rng: &mut StdRng) -
 
 fn eps_greedy(q: &[Vec<f64>], s: usize, eps: f64, rng: &mut StdRng) -> usize {
     if rng.gen::<f64>() < eps { rng.gen_range(0..N_ACTIONS) }
-    else { q[s].iter().enumerate().max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap()).map(|(i,_)| i).unwrap_or(0) }
+    else {
+        q[s].iter().enumerate()
+            .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
+            .map(|(i,_)| i)
+            .unwrap_or(0)
+    }
 }
 
 fn max_q(q: &[Vec<f64>], s: usize) -> f64 {
@@ -89,7 +94,12 @@ fn joint_v(q_tables: &[Vec<Vec<f64>>]) -> Vec<f64> {
 }
 
 fn greedy(q: &[Vec<f64>]) -> Vec<usize> {
-    q.iter().map(|row| row.iter().enumerate().max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap()).map(|(i,_)| i).unwrap_or(0)).collect()
+    q.iter().map(|row|
+        row.iter().enumerate()
+            .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
+            .map(|(i,_)| i)
+            .unwrap_or(0)
+    ).collect()
 }
 
 /// Joint reward: mean of per-agent rewards (cooperative)
@@ -128,7 +138,8 @@ pub fn iql(cfg: &CoopConfig, t: &ndarray::Array3<f64>, r: &ndarray::Array2<f64>)
             s = sp;
         }
         rc.push(er); tc.push(et / steps.max(1) as f64); mw.push(0.0);
-        jq.push(q.iter().map(|qi| max_q(qi, 0)).sum::<f64>() / N_AGENTS as f64);
+        let jqv = q.iter().map(|qi| max_q(qi, 0)).sum::<f64>() / N_AGENTS as f64;
+        jq.push(if jqv.is_finite() { jqv } else { 0.0 });
         let v = joint_v(&q);
         cc.push(v.iter().zip(vp.iter()).map(|(a,b)| (a-b).abs()).fold(0.0_f64, f64::max));
         vp = v;
@@ -187,7 +198,8 @@ pub fn vdn(cfg: &CoopConfig, t: &ndarray::Array3<f64>, r: &ndarray::Array2<f64>)
         }
         rc.push(er); tc.push(et / steps.max(1) as f64);
         mw.push(ep_mw / steps.max(1) as f64);
-        jq.push(q.iter().map(|qi| max_q(qi, 0)).sum::<f64>());
+        let jqv2 = q.iter().map(|qi| max_q(qi, 0)).sum::<f64>();
+        jq.push(if jqv2.is_finite() { jqv2 } else { 0.0 });
         let v = joint_v(&q);
         cc.push(v.iter().zip(vp.iter()).map(|(a,b)| (a-b).abs()).fold(0.0_f64, f64::max));
         vp = v;
@@ -241,15 +253,21 @@ pub fn qmix(cfg: &CoopConfig, t: &ndarray::Array3<f64>, r: &ndarray::Array2<f64>
 
             // Update Q_i: gradient = w_i(s) * delta (chain rule through mixing)
             for i in 0..N_AGENTS {
-                q[i][s[i]][acts[i]] += cfg.alpha * w[i][s[0]] * delta;
+                let dq = cfg.alpha * w[i][s[0]] * delta;
+                if dq.is_finite() { q[i][s[i]][acts[i]] += dq; }
             }
 
             // Update mixing weights (gradient descent, keep w >= 0)
             for i in 0..N_AGENTS {
-                w[i][s[0]] += cfg.alpha * 0.1 * delta * q_i[i];
-                w[i][s[0]] = w[i][s[0]].max(0.0); // monotonicity constraint
+                let dw = cfg.alpha * 0.1 * delta * q_i[i];
+                if dw.is_finite() {
+                    w[i][s[0]] += dw;
+                }
+                w[i][s[0]] = w[i][s[0]].max(0.0).min(10.0); // clamp: monotone + stable
             }
-            b[s[0]] += cfg.alpha * 0.1 * delta;
+            let db = cfg.alpha * 0.1 * delta;
+            if db.is_finite() { b[s[0]] += db; }
+            b[s[0]] = b[s[0]].clamp(-10.0, 10.0);
 
             ep_mw += w.iter().map(|wi| wi[s[0]].abs()).sum::<f64>() / N_AGENTS as f64;
 
@@ -259,7 +277,8 @@ pub fn qmix(cfg: &CoopConfig, t: &ndarray::Array3<f64>, r: &ndarray::Array2<f64>
         }
         rc.push(er); tc.push(et / steps.max(1) as f64);
         mw.push(ep_mw / steps.max(1) as f64);
-        jq.push((0..N_AGENTS).map(|i| w[i][0] * max_q(&q[i], 0)).sum::<f64>() + b[0]);
+        let jqv3 = (0..N_AGENTS).map(|i| w[i][0] * max_q(&q[i], 0)).sum::<f64>() + b[0];
+        jq.push(if jqv3.is_finite() { jqv3 } else { 0.0 });
         let v = joint_v(&q);
         cc.push(v.iter().zip(vp.iter()).map(|(a,b)| (a-b).abs()).fold(0.0_f64, f64::max));
         vp = v;
@@ -309,7 +328,7 @@ pub fn qmix_cg(cfg: &CoopConfig, t: &ndarray::Array3<f64>, r: &ndarray::Array2<f
             // Counterfactual baseline for each agent
             for i in 0..N_AGENTS {
                 // Baseline: Q_tot with agent i playing its best action
-                let best_ai = greedy(&q[i])[s[i]];
+                let best_ai = q[i][s[i]].iter().enumerate().max_by(|(_,a),(_,b)| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal)).map(|(i,_)|i).unwrap_or(0);
                 let q_i_best = q[i][s[i]][best_ai];
                 let q_tot_baseline: f64 = (0..N_AGENTS).map(|j| {
                     let qi_j = if j == i { q_i_best } else { q_i[j] };
@@ -319,15 +338,21 @@ pub fn qmix_cg(cfg: &CoopConfig, t: &ndarray::Array3<f64>, r: &ndarray::Array2<f
                 // Advantage: how much did agent i's actual action contribute?
                 let advantage = q_tot - q_tot_baseline;
                 // Update Q_i using advantage-weighted gradient
-                q[i][s[i]][acts[i]] += cfg.alpha * (delta + 0.1 * advantage);
+                let dq2 = cfg.alpha * (delta + 0.1 * advantage);
+                if dq2.is_finite() { q[i][s[i]][acts[i]] += dq2; }
             }
 
             // Update mixing weights
             for i in 0..N_AGENTS {
-                w[i][s[0]] += cfg.alpha * 0.1 * delta * q_i[i];
-                w[i][s[0]] = w[i][s[0]].max(0.0);
+                let dw2 = cfg.alpha * 0.1 * delta * q_i[i];
+                if dw2.is_finite() {
+                    w[i][s[0]] += dw2;
+                }
+                w[i][s[0]] = w[i][s[0]].max(0.0).min(10.0);
             }
-            b[s[0]] += cfg.alpha * 0.1 * delta;
+            let db = cfg.alpha * 0.1 * delta;
+            if db.is_finite() { b[s[0]] += db; }
+            b[s[0]] = b[s[0]].clamp(-10.0, 10.0);
             ep_mw += w.iter().map(|wi| wi[s[0]].abs()).sum::<f64>() / N_AGENTS as f64;
 
             er += gp * jr; gp *= cfg.gamma; total += 1; steps += 1;
@@ -336,7 +361,8 @@ pub fn qmix_cg(cfg: &CoopConfig, t: &ndarray::Array3<f64>, r: &ndarray::Array2<f
         }
         rc.push(er); tc.push(et / steps.max(1) as f64);
         mw.push(ep_mw / steps.max(1) as f64);
-        jq.push((0..N_AGENTS).map(|i| w[i][0] * max_q(&q[i], 0)).sum::<f64>() + b[0]);
+        let jqv3 = (0..N_AGENTS).map(|i| w[i][0] * max_q(&q[i], 0)).sum::<f64>() + b[0];
+        jq.push(if jqv3.is_finite() { jqv3 } else { 0.0 });
         let v = joint_v(&q);
         cc.push(v.iter().zip(vp.iter()).map(|(a,b)| (a-b).abs()).fold(0.0_f64, f64::max));
         vp = v;
