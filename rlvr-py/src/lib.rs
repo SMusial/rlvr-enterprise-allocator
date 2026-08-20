@@ -12,6 +12,7 @@ use rlvr_core::ch09_policy_gradient::{run_ch09, PgConfig};
 use rlvr_core::ch10_world_model::{run_ch10, WorldModelConfig};
 use rlvr_core::ch11_multiagent::{run_ch11, MarlConfig};
 use rlvr_core::ch12_game_theory::{run_ch12, GameConfig};
+use rlvr_core::ch13_coop_marl::{run_ch13, CoopConfig};
 
 
 
@@ -614,6 +615,56 @@ fn run_ch12_game_theory(
     Ok(out.into())
 }
 
+
+#[pyfunction]
+#[pyo3(signature = (seed, n_episodes, gamma, alpha, epsilon, epsilon_decay, mixing_hidden))]
+fn run_ch13_coop_marl(
+    py: Python, seed: u64, n_episodes: usize, gamma: f64, alpha: f64,
+    epsilon: f64, epsilon_decay: f64, mixing_hidden: usize,
+) -> PyResult<PyObject> {
+    let config = CoopConfig { seed, n_episodes, gamma, alpha, epsilon, epsilon_decay, mixing_hidden };
+    let result = run_ch13(config);
+
+    let serialize = |r: &rlvr_core::ch13_coop_marl::CoopResult| -> PyResult<Py<PyDict>> {
+        let d = PyDict::new_bound(py);
+        let qts = PyList::empty_bound(py);
+        for qt in &r.q_tables {
+            let aq = PyList::empty_bound(py);
+            for row in qt { let rr = PyList::empty_bound(py); for &q in row { rr.append(q)?; } aq.append(rr)?; }
+            qts.append(aq)?;
+        }
+        d.set_item("q_tables", qts)?;
+        let pols = PyList::empty_bound(py);
+        for pol in &r.policies { let pp = PyList::empty_bound(py); for &a in pol { pp.append(a)?; } pols.append(pp)?; }
+        d.set_item("policies", pols)?;
+        let vals = PyList::empty_bound(py); for v in &r.values { vals.append(v)?; } d.set_item("values", vals)?;
+        let rc = PyList::empty_bound(py); for v in &r.returns_curve     { rc.append(v)?; } d.set_item("returns_curve",     rc)?;
+        let tc = PyList::empty_bound(py); for v in &r.td_error_curve    { tc.append(v)?; } d.set_item("td_error_curve",    tc)?;
+        let cc = PyList::empty_bound(py); for v in &r.convergence_curve { cc.append(v)?; } d.set_item("convergence_curve", cc)?;
+        let mw = PyList::empty_bound(py); for v in &r.mixing_weights    { mw.append(v)?; } d.set_item("mixing_weights",    mw)?;
+        let jq = PyList::empty_bound(py); for v in &r.joint_q_curve     { jq.append(v)?; } d.set_item("joint_q_curve",     jq)?;
+        d.set_item("algorithm",   &r.algorithm)?;
+        d.set_item("n_episodes",  r.n_episodes)?;
+        d.set_item("total_steps", r.total_steps)?;
+        Ok(d.into())
+    };
+
+    let snames = PyList::empty_bound(py); for n in rlvr_core::ch02_bellman::STATE_NAMES  { snames.append(n)?; }
+    let anames = PyList::empty_bound(py); for n in rlvr_core::ch02_bellman::ACTION_NAMES { anames.append(n)?; }
+    let out = PyDict::new_bound(py);
+    out.set_item("iql",      serialize(&result.iql)?)?;
+    out.set_item("vdn",      serialize(&result.vdn)?)?;
+    out.set_item("qmix",     serialize(&result.qmix)?)?;
+    out.set_item("qmix_cg",  serialize(&result.qmix_cg)?)?;
+    out.set_item("state_names",  snames)?;
+    out.set_item("action_names", anames)?;
+    out.set_item("n_states",     rlvr_core::ch02_bellman::N_STATES)?;
+    out.set_item("n_actions",    rlvr_core::ch02_bellman::N_ACTIONS)?;
+    out.set_item("n_agents",     rlvr_core::ch13_coop_marl::N_AGENTS)?;
+    Ok(out.into())
+}
+
+
 #[pymodule]
 fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch01_episode,         m)?)?;
@@ -628,5 +679,6 @@ fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch10_world_model, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch11_multiagent, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch12_game_theory, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch13_coop_marl, m)?)?;
     Ok(())
 }

@@ -21,7 +21,7 @@ and demonstrating RL algorithms through a real enterprise field-service optimisa
 | 10 | Model-Based RL | World Model, Prioritised Sweeping, MBPO, Uncertainty | ✅ Complete |
 | 11 | Multi-Agent RL | IQL, JAL, Lenient Q, Mean Field Q | ✅ Complete |
 | 12 | Game Theory | Nash Q, Correlated Q, Minimax Q, Fictitious Play | ✅ Complete |
-| 13 | Cooperative MARL | VDN, QMIX | Planned |
+| 13 | Cooperative MARL | VDN, QMIX, QMIX+CG, IQL Baseline | Complete |
 | 14 | Learning Dynamics | ELO, Fictitious Play | Planned |
 | 15 | Deep RL (DQN) | DQN + burn tensors | Planned |
 | 16 | Actor-Critic | A2C, PPO | Planned |
@@ -36,7 +36,7 @@ and demonstrating RL algorithms through a real enterprise field-service optimisa
 
 ```bash
 cd rlvr-py && maturin develop && cd ..
-cargo test --workspace   # 142 tests passing
+cargo test --workspace   # 157 tests passing
 streamlit run gui/app.py
 ```
 
@@ -106,14 +106,26 @@ streamlit run gui/app.py
 
 ---
 
+
+## Chapter 13 - Cooperative MARL: VDN and QMIX
+
+- VDN (Value Decomposition Networks): Q_tot = sum Q_i
+- QMIX: Q_tot = monotonic mixing of Q_i via hypernetwork
+- QMIX+CG: QMIX with counterfactual baseline
+- IQL Baseline: independent Q-learning for comparison
+- Joint reward, mixing weights, individual Q heatmaps
+- 4 languages: EN / FR / ES / PL | 15 inline tests
+
+---
+
 ## Architecture
 
 ```
 rlvr-core/src/
-  ch01..ch12_game_theory.rs         <- ALL RL logic in Rust
-  rlvr-py/src/lib.rs              <- PyO3 bridge Ch01-Ch12
+  ch01..ch13_coop_marl.rs         <- ALL RL logic in Rust
+  rlvr-py/src/lib.rs              <- PyO3 bridge Ch01-Ch13
 gui/chapters/
-  ch01..ch12.py                   <- Streamlit UI only
+  ch01..ch13.py                   <- Streamlit UI only
 ```
 
 ---
