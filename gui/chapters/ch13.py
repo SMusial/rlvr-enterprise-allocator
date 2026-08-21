@@ -78,27 +78,7 @@ TX = {
         "glass": "Glass-Box",
         "summary": "Zusammenfassung",
         "labels": {"iql": "IQL Baseline", "vdn": "VDN", "qmix": "QMIX", "qmix_cg": "QMIX+CG"},
-        "guide": """
-**Kooperatives Szenario: beide Agenten teilen DIESELBE gemeinsame Belohnung.**
-
-**Schritt 1 — IQL Basislinie**
-Jeder Agent ignoriert den anderen. Was passiert ohne Koordination?
-
-**Schritt 2 — VDN (Value Decomposition Networks)**
-Q_tot = Q_0 + Q_1. Einfache additive Zerlegung.
-IGM: argmax Q_tot = (argmax Q_0, argmax Q_1) — ermöglicht dezentrale Ausführung.
-
-**Schritt 3 — QMIX**
-Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotones Mischen.
-w_i(s) >= 0 erzwingt IGM. Zustandsabhängige Gewichte = ausdrucksstärkere Koordination.
-
-**Schritt 4 — QMIX+CG (Kontrafaktische Basislinie)**
-A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i).
-Isoliert den Beitrag jedes Agenten zum gemeinsamen Wert.
-
-**Schritt 5 — Mischgewichte-Diagramm beobachten**
-Wie lernt QMIX zustandsabhängige Koordinationsgewichte?
-"""(
+        "guide": """ **Kooperatives Szenario: beide Agenten teilen DIESELBE gemeinsame Belohnung.**  **Schritt 1 — IQL Basislinie** Jeder Agent ignoriert den anderen. Was passiert ohne Koordination?  **Schritt 2 — VDN (Value Decomposition Networks)** Q_tot = Q_0 + Q_1. Einfache additive Zerlegung. IGM: argmax Q_tot = (argmax Q_0, argmax Q_1) — ermöglicht dezentrale Ausführung.  **Schritt 3 — QMIX** Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotones Mischen. w_i(s) >= 0 erzwingt IGM. Zustandsabhängige Gewichte = ausdrucksstärkere Koordination.  **Schritt 4 — QMIX+CG (Kontrafaktische Basislinie)** A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i). Isoliert den Beitrag jedes Agenten zum gemeinsamen Wert.  **Schritt 5 — Mischgewichte-Diagramm beobachten** Wie lernt QMIX zustandsabhängige Koordinationsgewichte? """(
             "Kooperatives Szenario: beide Agenten teilen dieselbe gemeinsame Belohnung.\n"
             "IQL: jeder Agent ignoriert den anderen.\n"
             "VDN: Q_tot = Q_0 + Q_1. Einfache additive Zerlegung.\n"
@@ -118,24 +98,7 @@ Wie lernt QMIX zustandsabhängige Koordinationsgewichte?
         "episodes": "Episodes", "gamma": "Gamma", "alpha": "Alpha",
         "epsilon": "Epsilon", "edecay": "Decroissance", "mhidden": "Unites cachees", "seed": "Graine",
         "labels": {"iql":"IQL","vdn":"VDN","qmix":"QMIX","qmix_cg":"QMIX+CG"},
-        "guide": """
-**Scénario coopératif : les deux agents partagent LA MÊME récompense commune.**
-
-**Étape 1 — IQL Baseline**
-Chaque agent ignore l'autre. Que se passe-t-il sans coordination ?
-
-**Étape 2 — VDN**
-Q_tot = Q_0 + Q_1. Décomposition additive. IGM permet l'exécution décentralisée.
-
-**Étape 3 — QMIX**
-Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Mélange monotone. w_i(s) >= 0 applique IGM.
-
-**Étape 4 — QMIX+CG**
-Baseline contrefactuelle isole la contribution de chaque agent.
-
-**Étape 5 — Observer les poids de mélange**
-Comment QMIX apprend-il des poids dépendants de l'état ?
-""",
+        "guide": """ **Scénario coopératif : les deux agents partagent LA MÊME récompense commune.**  **Étape 1 — IQL Baseline** Chaque agent ignore l'autre. Que se passe-t-il sans coordination ?  **Étape 2 — VDN** Q_tot = Q_0 + Q_1. Décomposition additive. IGM permet l'exécution décentralisée.  **Étape 3 — QMIX** Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Mélange monotone. w_i(s) >= 0 applique IGM.  **Étape 4 — QMIX+CG** Baseline contrefactuelle isole la contribution de chaque agent.  **Étape 5 — Observer les poids de mélange** Comment QMIX apprend-il des poids dépendants de l'état ? """,
         "theory_igm": "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
         "theory_vdn": "Q_tot = Q_0 + Q_1",
         "theory_qmix": "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s), w_i >= 0",
@@ -149,24 +112,7 @@ Comment QMIX apprend-il des poids dépendants de l'état ?
         "episodes": "Episodios", "gamma": "Gamma", "alpha": "Alpha",
         "epsilon": "Epsilon", "edecay": "Decaimiento", "mhidden": "Unidades ocultas", "seed": "Semilla",
         "labels": {"iql":"IQL","vdn":"VDN","qmix":"QMIX","qmix_cg":"QMIX+CG"},
-        "guide": """
-**Escenario cooperativo: ambos agentes comparten LA MISMA recompensa conjunta.**
-
-**Paso 1 — IQL Baseline**
-Cada agente ignora al otro. ¿Qué pasa sin coordinación?
-
-**Paso 2 — VDN**
-Q_tot = Q_0 + Q_1. Descomposición aditiva. IGM permite ejecución descentralizada.
-
-**Paso 3 — QMIX**
-Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Mezcla monótona. w_i(s) >= 0 aplica IGM.
-
-**Paso 4 — QMIX+CG**
-Línea base contrafactual aísla la contribución de cada agente.
-
-**Paso 5 — Observar los pesos de mezcla**
-¿Cómo aprende QMIX pesos dependientes del estado?
-""",
+        "guide": """ **Escenario cooperativo: ambos agentes comparten LA MISMA recompensa conjunta.**  **Paso 1 — IQL Baseline** Cada agente ignora al otro. ¿Qué pasa sin coordinación?  **Paso 2 — VDN** Q_tot = Q_0 + Q_1. Descomposición aditiva. IGM permite ejecución descentralizada.  **Paso 3 — QMIX** Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Mezcla monótona. w_i(s) >= 0 aplica IGM.  **Paso 4 — QMIX+CG** Línea base contrafactual aísla la contribución de cada agente.  **Paso 5 — Observar los pesos de mezcla** ¿Cómo aprende QMIX pesos dependientes del estado? """,
         "theory_igm": "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
         "theory_vdn": "Q_tot = Q_0 + Q_1",
         "theory_qmix": "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s), w_i >= 0",
