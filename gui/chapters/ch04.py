@@ -211,13 +211,28 @@ Implemented in `async_value_iteration()` in `ch04_dp.rs`.
         "seed": "Zufallsseed",
         "run_btn": "▶ Alle drei DP-Algorithmen starten",
         "guide_title": "ℹ️ Anleitung",
-        "guide": """**Schritt 1** — Drei DP-Algorithmen gleichzeitig: PI, VI, Async VI.
-**Schritt 2** — γ und θ einstellen. γ=0.95, θ=1e-6 ist ein guter Start.
-**Schritt 3** — Klicken, um alle drei Algorithmen zu starten.
-**Schritt 4** — Konvergenzkurven vergleichen.
-**Schritt 5** — Strategieentwicklungstabelle (PI) lesen.
-**Schritt 6** — Bellman-Residual-Heatmap lesen.
-**Schritt 7** — Verifizieren, dass PI = VI Strategie.""",
+        "guide": """
+**Schritt 1**
+Drei DP-Algorithmen gleichzeitig: PI, VI, Async VI.
+
+**Schritt 2**
+γ und θ einstellen.
+γ=0.95, θ=1e-6 ist ein guter Start.
+
+**Schritt 3**
+Klicken, um alle drei Algorithmen zu starten.
+
+**Schritt 4**
+Konvergenzkurven vergleichen.
+
+**Schritt 5**
+Strategieentwicklungstabelle (PI) lesen.
+
+**Schritt 6**
+Bellman-Residual-Heatmap lesen.
+
+**Schritt 7**
+Verifizieren, dass PI = VI Strategie.""",
         "kpi_pi_iters": "PI-Außeniterationen",
         "kpi_vi_iters": "VI-Iterationen",
         "kpi_async_iters": "Async-VI-Iterationen",
@@ -334,13 +349,27 @@ Zustände mit hohem Residual werden zuerst aktualisiert.
         "run_btn": "▶ Lancer les trois algorithmes DP",
         "guide_title": "🎓 Comment utiliser ce chapitre",
         "guide": """
-**Étape 1** — Trois algorithmes DP simultanément : PI, VI, VI Async.
-**Étape 2** — Réglez γ et θ. γ=0.95, θ=1e-6 est un bon départ.
-**Étape 3** — Cliquez ▶ pour lancer les trois algorithmes.
-**Étape 4** — Comparez les courbes de convergence.
-**Étape 5** — Lisez l'évolution de la politique (tableau PI).
-**Étape 6** — Lisez la carte thermique des résidus de Bellman.
-**Étape 7** — Vérifiez que PI = VI politique.
+**Étape 1**
+Trois algorithmes DP simultanément : PI, VI, VI Async.
+
+**Étape 2**
+Réglez γ et θ.
+γ=0.95, θ=1e-6 est un bon départ.
+
+**Étape 3**
+Cliquez ▶ pour lancer les trois algorithmes.
+
+**Étape 4**
+Comparez les courbes de convergence.
+
+**Étape 5**
+Lisez l'évolution de la politique (tableau PI).
+
+**Étape 6**
+Lisez la carte thermique des résidus de Bellman.
+
+**Étape 7**
+Vérifiez que PI = VI politique.
 """,
         "kpi_pi_iters": "Itérations PI externes",
         "kpi_vi_iters": "Itérations VI",
@@ -420,13 +449,27 @@ Résidu(s) = |V^(k+1)(s) - V^(k)(s)|
         "run_btn": "▶ Ejecutar los tres algoritmos DP",
         "guide_title": "🎓 Cómo usar este capítulo",
         "guide": """
-**Paso 1** — Tres algoritmos DP simultáneamente: PI, VI, VI Async.
-**Paso 2** — Ajuste γ y θ. γ=0.95, θ=1e-6 es un buen inicio.
-**Paso 3** — Haga clic ▶ para ejecutar los tres algoritmos.
-**Paso 4** — Compare las curvas de convergencia.
-**Paso 5** — Lea la evolución de la política (tabla PI).
-**Paso 6** — Lea el mapa de calor de residuos de Bellman.
-**Paso 7** — Verifique que PI = VI política.
+**Paso 1**
+Tres algoritmos DP simultáneamente: PI, VI, VI Async.
+
+**Paso 2**
+Ajuste γ y θ.
+γ=0.95, θ=1e-6 es un buen inicio.
+
+**Paso 3**
+Haga clic ▶ para ejecutar los tres algoritmos.
+
+**Paso 4**
+Compare las curvas de convergencia.
+
+**Paso 5**
+Lea la evolución de la política (tabla PI).
+
+**Paso 6**
+Lea el mapa de calor de residuos de Bellman.
+
+**Paso 7**
+Verifique que PI = VI política.
 """,
         "kpi_pi_iters": "Iteraciones PI externas",
         "kpi_vi_iters": "Iteraciones VI",
@@ -502,13 +545,27 @@ Résidu(s) = |V^(k+1)(s) - V^(k)(s)|
         "run_btn": "▶ Uruchom wszystkie trzy algorytmy DP",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1** — Trzy algorytmy DP jednocześnie: PI, VI, Async VI.
-**Krok 2** — Ustaw γ i θ. γ=0.95, θ=1e-6 to dobry start.
-**Krok 3** — Kliknij ▶ aby uruchomić wszystkie trzy algorytmy.
-**Krok 4** — Porównaj krzywe zbieżności.
-**Krok 5** — Odczytaj ewolucję polityki (tabela PI).
-**Krok 6** — Odczytaj mapę ciepła residuali Bellmana.
-**Krok 7** — Zweryfikuj że PI = VI polityka.
+**Krok 1**
+Trzy algorytmy DP jednocześnie: PI, VI, Async VI.
+
+**Krok 2**
+Ustaw γ i θ.
+γ=0.95, θ=1e-6 to dobry start.
+
+**Krok 3**
+Kliknij ▶ aby uruchomić wszystkie trzy algorytmy.
+
+**Krok 4**
+Porównaj krzywe zbieżności.
+
+**Krok 5**
+Odczytaj ewolucję polityki (tabela PI).
+
+**Krok 6**
+Odczytaj mapę ciepła residuali Bellmana.
+
+**Krok 7**
+Zweryfikuj że PI = VI polityka.
 """,
         "kpi_pi_iters": "Iteracje PI zewnętrzne",
         "kpi_vi_iters": "Iteracje VI",
@@ -586,11 +643,16 @@ COLORS = {"pi": "#0082F0", "vi": "#FF8C0A", "async": "#0FC373"}
 # ---------------------------------------------------------------------------
 
 def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
+    """Deep merge: DE overrides EN, but missing keys/subkeys fall back to EN."""
+    import copy
+    base = copy.deepcopy(T.get("EN", {}))
     over = T.get(lang, {})
     for k, v in over.items():
-        base[k] = v
+        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
+            # Deep merge nested dicts (e.g. theory_sections, algo_labels)
+            base[k] = {**base[k], **v}
+        else:
+            base[k] = v
     return base
 
 def render():

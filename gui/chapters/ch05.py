@@ -271,13 +271,27 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
         "run_btn": "▶ Uruchom wszystkie cztery algorytmy MC",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1** — MC uczy się BEZ modelu P(s\'|s,a) — tylko z epizodów.
-**Krok 2** — Ustaw liczbę epizodów. Zacznij od 200, potem 2000.
-**Krok 3** — Kliknij ▶ aby uruchomić wszystkie cztery algorytmy.
-**Krok 4** — Odczytaj krzywą zwrotów — powinna rosnąć dla on-policy.
-**Krok 5** — Porównaj V(s) MC z rozwiązaniem DP z Ch04.
-**Krok 6** — Odczytaj mapę ciepła wizyt — rzadko odwiedzane stany mają wysoką wariancję.
-**Krok 7** — Odczytaj Glass-Box — dokładne zwroty G_t dla wybranego epizodu.
+**Krok 1**
+MC uczy się BEZ modelu P(s\'|s,a) — tylko z epizodów.
+
+**Krok 2**
+Ustaw liczbę epizodów.
+Zacznij od 200, potem 2000.
+
+**Krok 3**
+Kliknij ▶ aby uruchomić wszystkie cztery algorytmy.
+
+**Krok 4**
+Odczytaj krzywą zwrotów — powinna rosnąć dla on-policy.
+
+**Krok 5**
+Porównaj V(s) MC z rozwiązaniem DP z Ch04.
+
+**Krok 6**
+Odczytaj mapę ciepła wizyt — rzadko odwiedzane stany mają wysoką wariancję.
+
+**Krok 7**
+Odczytaj Glass-Box — dokładne zwroty G_t dla wybranego epizodu.
 """,
         "returns_title": "📈 Zwroty epizodów — Cztery algorytmy",
         "returns_caption": "Średnia krocząca zwrotów. On-policy control powinien się poprawiać.",
@@ -334,11 +348,16 @@ def _moving_avg(data, window=20):
 
 
 def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
+    """Deep merge: DE overrides EN, but missing keys/subkeys fall back to EN."""
+    import copy
+    base = copy.deepcopy(T.get("EN", {}))
     over = T.get(lang, {})
     for k, v in over.items():
-        base[k] = v
+        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
+            # Deep merge nested dicts (e.g. theory_sections, algo_labels)
+            base[k] = {**base[k], **v}
+        else:
+            base[k] = v
     return base
 
 def render():

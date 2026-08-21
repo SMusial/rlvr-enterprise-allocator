@@ -213,14 +213,34 @@ makes a suboptimal choice and how quickly it recovers.
         "seed": "Zufallsseed",
         "run_btn": "▶ Alle drei Algorithmen starten",
         "guide_title": "ℹ️ Anleitung",
-        "guide": """**Schritt 1** — 5 Qualifikationsslots (Arme): HVAC, Elektrik, Sanitär, Netzwerk, Mechanik.
-**Schritt 2** — Anzahl der Schritte einstellen. Versuchen Sie 200, dann 1000.
-**Schritt 3** — ε und Abklingrate einstellen.
-**Schritt 4** — c (UCB-Konstante) einstellen. Vergleichen Sie c=2.0 vs c=0.5.
-**Schritt 5** — Klicken Sie, um alle drei Algorithmen gleichzeitig zu starten.
-**Schritt 6** — Kumulatives Bedauern lesen. Niedriger = besser.
-**Schritt 7** — Armziehungsverteilung lesen. Haben sie den besten Arm gefunden?
-**Schritt 8** — Q-Wert-Konvergenz zu echten SLA-Raten lesen.""",
+        "guide": """
+**Schritt 1**
+5 Qualifikationsslots (Arme): HVAC, Elektrik, Sanitär, Netzwerk, Mechanik.
+
+**Schritt 2**
+Anzahl der Schritte einstellen.
+Versuchen Sie 200, dann 1000.
+
+**Schritt 3**
+ε und Abklingrate einstellen.
+
+**Schritt 4**
+c (UCB-Konstante) einstellen.
+Vergleichen Sie c=2.0 vs c=0.5.
+
+**Schritt 5**
+Klicken Sie, um alle drei Algorithmen gleichzeitig zu starten.
+
+**Schritt 6**
+Kumulatives Bedauern lesen.
+Niedriger = besser.
+
+**Schritt 7**
+Armziehungsverteilung lesen.
+Haben sie den besten Arm gefunden?
+
+**Schritt 8**
+Q-Wert-Konvergenz zu echten SLA-Raten lesen.""",
         "regret_title": "📉 Kumulatives Bedauern — Alle drei Algorithmen",
         "regret_x": "Schritt",
         "regret_y": "Kumulatives Bedauern",
@@ -299,14 +319,33 @@ Bedauernschranke: $O(\sqrt{KT \ln T})$""",
         "run_btn": "▶ Lancer les trois algorithmes",
         "guide_title": "🎓 Comment utiliser ce chapitre",
         "guide": """
-**Étape 1** — 5 créneaux de compétences (bras) : HVAC, Électricité, Plomberie, Réseau, Mécanique.
-**Étape 2** — Réglez le nombre d'étapes. Essayez 200 puis 1000.
-**Étape 3** — Réglez ε et le taux de décroissance α.
-**Étape 4** — Réglez c (constante UCB). Essayez c=2.0 vs c=0.5.
-**Étape 5** — Cliquez ▶ pour lancer les trois algorithmes simultanément.
-**Étape 6** — Lisez le graphique de regret cumulatif. Plus bas = meilleur.
-**Étape 7** — Lisez la distribution des tirages. Ont-ils trouvé le meilleur bras (Plomberie) ?
-**Étape 8** — Lisez la convergence des valeurs Q vers les vrais taux SLA.
+**Étape 1**
+5 créneaux de compétences (bras) : HVAC, Électricité, Plomberie, Réseau, Mécanique.
+
+**Étape 2**
+Réglez le nombre d'étapes.
+Essayez 200 puis 1000.
+
+**Étape 3**
+Réglez ε et le taux de décroissance α.
+
+**Étape 4**
+Réglez c (constante UCB).
+Essayez c=2.0 vs c=0.5.
+
+**Étape 5**
+Cliquez ▶ pour lancer les trois algorithmes simultanément.
+
+**Étape 6**
+Lisez le graphique de regret cumulatif.
+Plus bas = meilleur.
+
+**Étape 7**
+Lisez la distribution des tirages.
+Ont-ils trouvé le meilleur bras (Plomberie) ?
+
+**Étape 8**
+Lisez la convergence des valeurs Q vers les vrais taux SLA.
 """,
         "regret_title": "📈 Regret cumulatif — Trois algorithmes",
         "regret_x": "Étape",
@@ -396,14 +435,33 @@ Borne de regret : $O(\sqrt{KT \ln T})$
         "run_btn": "▶ Ejecutar los tres algoritmos",
         "guide_title": "🎓 Cómo usar este capítulo",
         "guide": """
-**Paso 1** — 5 ranuras de habilidades (brazos): HVAC, Eléctrico, Fontanería, Red, Mecánico.
-**Paso 2** — Ajuste el número de pasos. Pruebe 200 y luego 1000.
-**Paso 3** — Ajuste ε y la tasa de decaimiento α.
-**Paso 4** — Ajuste c (constante UCB). Pruebe c=2.0 vs c=0.5.
-**Paso 5** — Haga clic ▶ para ejecutar los tres algoritmos simultáneamente.
-**Paso 6** — Lea el gráfico de arrepentimiento acumulado. Más bajo = mejor.
-**Paso 7** — Lea la distribución de tiradas. ¿Encontraron el mejor brazo (Fontanería)?
-**Paso 8** — Lea la convergencia de valores Q hacia las tasas SLA reales.
+**Paso 1**
+5 ranuras de habilidades (brazos): HVAC, Eléctrico, Fontanería, Red, Mecánico.
+
+**Paso 2**
+Ajuste el número de pasos.
+Pruebe 200 y luego 1000.
+
+**Paso 3**
+Ajuste ε y la tasa de decaimiento α.
+
+**Paso 4**
+Ajuste c (constante UCB).
+Pruebe c=2.0 vs c=0.5.
+
+**Paso 5**
+Haga clic ▶ para ejecutar los tres algoritmos simultáneamente.
+
+**Paso 6**
+Lea el gráfico de arrepentimiento acumulado.
+Más bajo = mejor.
+
+**Paso 7**
+Lea la distribución de tiradas.
+¿Encontraron el mejor brazo (Fontanería)?
+
+**Paso 8**
+Lea la convergencia de valores Q hacia las tasas SLA reales.
 """,
         "regret_title": "📈 Arrepentimiento acumulado — Tres algoritmos",
         "regret_x": "Paso",
@@ -491,14 +549,33 @@ $$\text{UCB}(a) = Q(a) + c \sqrt{\frac{\ln t}{N(a)}}$$
         "run_btn": "▶ Uruchom wszystkie trzy algorytmy",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1** — 5 slotów umiejętności (ramion): HVAC, Elektryka, Hydraulika, Sieć, Mechanika.
-**Krok 2** — Ustaw liczbę kroków. Zacznij od 200, potem 1000.
-**Krok 3** — Ustaw ε i współczynnik zaniku α.
-**Krok 4** — Ustaw c (stała UCB). Porównaj c=2.0 vs c=0.5.
-**Krok 5** — Kliknij ▶ aby uruchomić wszystkie trzy algorytmy jednocześnie.
-**Krok 6** — Odczytaj wykres skumulowanego żalu. Niżej = lepiej.
-**Krok 7** — Odczytaj rozkład losowań. Czy znalazły najlepsze ramię (Hydraulika)?
-**Krok 8** — Odczytaj zbieżność wartości Q do prawdziwych wskaźników SLA.
+**Krok 1**
+5 slotów umiejętności (ramion): HVAC, Elektryka, Hydraulika, Sieć, Mechanika.
+
+**Krok 2**
+Ustaw liczbę kroków.
+Zacznij od 200, potem 1000.
+
+**Krok 3**
+Ustaw ε i współczynnik zaniku α.
+
+**Krok 4**
+Ustaw c (stała UCB).
+Porównaj c=2.0 vs c=0.5.
+
+**Krok 5**
+Kliknij ▶ aby uruchomić wszystkie trzy algorytmy jednocześnie.
+
+**Krok 6**
+Odczytaj wykres skumulowanego żalu.
+Niżej = lepiej.
+
+**Krok 7**
+Odczytaj rozkład losowań.
+Czy znalazły najlepsze ramię (Hydraulika)?
+
+**Krok 8**
+Odczytaj zbieżność wartości Q do prawdziwych wskaźników SLA.
 """,
         "regret_title": "📈 Skumulowany żal — Trzy algorytmy",
         "regret_x": "Krok",
@@ -588,11 +665,16 @@ COLORS = {
 # ---------------------------------------------------------------------------
 
 def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
+    """Deep merge: DE overrides EN, but missing keys/subkeys fall back to EN."""
+    import copy
+    base = copy.deepcopy(T.get("EN", {}))
     over = T.get(lang, {})
     for k, v in over.items():
-        base[k] = v
+        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
+            # Deep merge nested dicts (e.g. theory_sections, algo_labels)
+            base[k] = {**base[k], **v}
+        else:
+            base[k] = v
     return base
 
 def render():

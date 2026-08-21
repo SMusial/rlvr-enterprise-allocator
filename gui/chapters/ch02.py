@@ -147,13 +147,27 @@ Implemented in `extract_policy()` in `ch02_bellman.rs`.
         "seed": "Zufallsseed",
         "run_btn": "▶ Wertiteration starten",
         "guide_title": "ℹ️ Anleitung",
-        "guide": """**Schritt 1 — γ einstellen**: γ=0.99 = weitsichtig, γ=0.5 = kurzsichtig.
-**Schritt 2 — θ einstellen**: kleiner = genauer, aber mehr Iterationen.
-**Schritt 3 — Wertiteration starten**: Rust-Engine baut Übergangsmatrix und iteriert.
-**Schritt 4 — Wertfunktion lesen**: jeder Balken = langfristiger Wert des Zustands.
-**Schritt 5 — Optimale Strategie lesen**: beste Dispatch-Strategie für jeden Zustand.
-**Schritt 6 — Konvergenzkurve lesen**: Abfall von V^(k+1) - V^(k).
-**Schritt 7 — Glass-Box lesen**: Bellman-Update für jeden Zustand.""",
+        "guide": """
+**Schritt 1 — γ einstellen**
+γ=0.99 = weitsichtig, γ=0.5 = kurzsichtig.
+
+**Schritt 2 — θ einstellen**
+kleiner = genauer, aber mehr Iterationen.
+
+**Schritt 3 — Wertiteration starten**
+Rust-Engine baut Übergangsmatrix und iteriert.
+
+**Schritt 4 — Wertfunktion lesen**
+jeder Balken = langfristiger Wert des Zustands.
+
+**Schritt 5 — Optimale Strategie lesen**
+beste Dispatch-Strategie für jeden Zustand.
+
+**Schritt 6 — Konvergenzkurve lesen**
+Abfall von V^(k+1) - V^(k).
+
+**Schritt 7 — Glass-Box lesen**
+Bellman-Update für jeden Zustand.""",
         "value_title": "📊 Optimale Wertfunktion V*(s)",
         "value_caption": "Langfristig erwartete Belohnung für jeden Betriebszustand",
         "policy_title": "🎯 Optimale Strategie π*(s)",
@@ -224,13 +238,26 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "run_btn": "▶ Lancer l'itération de valeur",
         "guide_title": "🎓 Comment utiliser ce chapitre",
         "guide": """
-**Étape 1 — Réglez γ** : γ=0.99 = prévoyant, γ=0.5 = myope.
-**Étape 2 — Réglez θ** : plus petit = plus précis mais plus d'itérations.
-**Étape 3 — Cliquez ▶** : le moteur Rust construit la matrice de transition et itère.
-**Étape 4 — Lisez la fonction de valeur** : chaque barre = valeur à long terme de l'état.
-**Étape 5 — Lisez la politique optimale** : meilleure stratégie pour chaque état.
-**Étape 6 — Lisez la courbe de convergence** : décroissance de ‖V^(k+1) - V^(k)‖∞.
-**Étape 7 — Lisez le Glass-Box** : mise à jour de Bellman pour chaque état.
+**Étape 1 — Réglez γ**
+γ=0.99 = prévoyant, γ=0.5 = myope.
+
+**Étape 2 — Réglez θ**
+plus petit = plus précis mais plus d'itérations.
+
+**Étape 3 — Cliquez ▶**
+le moteur Rust construit la matrice de transition et itère.
+
+**Étape 4 — Lisez la fonction de valeur**
+chaque barre = valeur à long terme de l'état.
+
+**Étape 5 — Lisez la politique optimale**
+meilleure stratégie pour chaque état.
+
+**Étape 6 — Lisez la courbe de convergence**
+décroissance de ‖V^(k+1) - V^(k)‖∞.
+
+**Étape 7 — Lisez le Glass-Box**
+mise à jour de Bellman pour chaque état.
 """,
         "value_title": "📊 Fonction de valeur optimale V*(s)",
         "value_caption": "Récompense attendue à long terme pour chaque état opérationnel",
@@ -307,13 +334,26 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "run_btn": "▶ Ejecutar iteración de valor",
         "guide_title": "🎓 Cómo usar este capítulo",
         "guide": """
-**Paso 1 — Ajuste γ** : γ=0.99 = previsor, γ=0.5 = miope.
-**Paso 2 — Ajuste θ** : más pequeño = más preciso pero más iteraciones.
-**Paso 3 — Haga clic ▶** : el motor Rust construye la matriz de transición e itera.
-**Paso 4 — Lea la función de valor** : cada barra = valor a largo plazo del estado.
-**Paso 5 — Lea la política óptima** : mejor estrategia para cada estado.
-**Paso 6 — Lea la curva de convergencia** : decaimiento de ‖V^(k+1) - V^(k)‖∞.
-**Paso 7 — Lea el Glass-Box** : actualización de Bellman para cada estado.
+**Paso 1 — Ajuste γ**
+γ=0.99 = previsor, γ=0.5 = miope.
+
+**Paso 2 — Ajuste θ**
+más pequeño = más preciso pero más iteraciones.
+
+**Paso 3 — Haga clic ▶**
+el motor Rust construye la matriz de transición e itera.
+
+**Paso 4 — Lea la función de valor**
+cada barra = valor a largo plazo del estado.
+
+**Paso 5 — Lea la política óptima**
+mejor estrategia para cada estado.
+
+**Paso 6 — Lea la curva de convergencia**
+decaimiento de ‖V^(k+1) - V^(k)‖∞.
+
+**Paso 7 — Lea el Glass-Box**
+actualización de Bellman para cada estado.
 """,
         "value_title": "📊 Función de valor óptima V*(s)",
         "value_caption": "Recompensa esperada a largo plazo para cada estado operacional",
@@ -390,13 +430,26 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "run_btn": "▶ Uruchom iterację wartości",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1 — Ustaw γ** : γ=0.99 = dalekowzroczny, γ=0.5 = krótkowzroczny.
-**Krok 2 — Ustaw θ** : mniejszy = dokładniejszy, ale więcej iteracji.
-**Krok 3 — Kliknij ▶** : silnik Rust buduje macierz przejść i iteruje.
-**Krok 4 — Odczytaj funkcję wartości** : każdy słupek = długoterminowa wartość stanu.
-**Krok 5 — Odczytaj optymalną politykę** : najlepsza strategia dla każdego stanu.
-**Krok 6 — Odczytaj krzywą zbieżności** : zanik ‖V^(k+1) - V^(k)‖∞.
-**Krok 7 — Odczytaj Glass-Box** : aktualizacja Bellmana dla każdego stanu.
+**Krok 1 — Ustaw γ**
+γ=0.99 = dalekowzroczny, γ=0.5 = krótkowzroczny.
+
+**Krok 2 — Ustaw θ**
+mniejszy = dokładniejszy, ale więcej iteracji.
+
+**Krok 3 — Kliknij ▶**
+silnik Rust buduje macierz przejść i iteruje.
+
+**Krok 4 — Odczytaj funkcję wartości**
+każdy słupek = długoterminowa wartość stanu.
+
+**Krok 5 — Odczytaj optymalną politykę**
+najlepsza strategia dla każdego stanu.
+
+**Krok 6 — Odczytaj krzywą zbieżności**
+zanik ‖V^(k+1) - V^(k)‖∞.
+
+**Krok 7 — Odczytaj Glass-Box**
+aktualizacja Bellmana dla każdego stanu.
 """,
         "value_title": "📊 Optymalna funkcja wartości V*(s)",
         "value_caption": "Oczekiwana długoterminowa nagroda dla każdego stanu operacyjnego",
@@ -469,11 +522,16 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
 # ---------------------------------------------------------------------------
 
 def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
+    """Deep merge: DE overrides EN, but missing keys/subkeys fall back to EN."""
+    import copy
+    base = copy.deepcopy(T.get("EN", {}))
     over = T.get(lang, {})
     for k, v in over.items():
-        base[k] = v
+        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
+            # Deep merge nested dicts (e.g. theory_sections, algo_labels)
+            base[k] = {**base[k], **v}
+        else:
+            base[k] = v
     return base
 
 def render():

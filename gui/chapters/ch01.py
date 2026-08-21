@@ -331,13 +331,24 @@ Realistyczne wskaźniki SLA: 77–93% w zależności od jakości dyspozycji.
         "run_btn": "▶ Lancer l'épisode",
         "guide_title": "🎓 Comment utiliser ce chapitre",
         "guide": """
-**Étape 1 — Réglez ε** : ε=1.0 = exploration pure, ε=0.0 = exploitation pure.
-**Étape 2 — Réglez techniciens et ordres** : 5/10 est un bon point de départ.
-**Étape 3 — Cliquez ▶ Lancer l'épisode** : le moteur Rust exécute la boucle MDP complète.
-**Étape 4 — Lisez la carte de Varsovie** : bleu = techniciens, couleur = ordres, vert = SLA respecté.
+**Étape 1 — Réglez ε**
+ε=1.0 = exploration pure, ε=0.0 = exploitation pure.
+
+**Étape 2 — Réglez techniciens et ordres**
+5/10 est un bon point de départ.
+
+**Étape 3 — Cliquez ▶ Lancer l'épisode**
+le moteur Rust exécute la boucle MDP complète.
+
+**Étape 4 — Lisez la carte de Varsovie**
+bleu = techniciens, couleur = ordres, vert = SLA respecté.
 **Étape 5 — Utilisez le curseur d'étape** pour mettre en évidence une décision spécifique.
-**Étape 6 — Lisez le Glass-Box** : chaque ligne montre le tuple MDP complet Sₜ, Aₜ, Rₜ, Gₜ.
-**Étape 7 — Lisez le résumé** : résultats quantifiés + avantages/inconvénients de la méthode.
+
+**Étape 6 — Lisez le Glass-Box**
+chaque ligne montre le tuple MDP complet Sₜ, Aₜ, Rₜ, Gₜ.
+
+**Étape 7 — Lisez le résumé**
+résultats quantifiés + avantages/inconvénients de la méthode.
 """,
         "map_title": "📍 Carte de dispatch Varsovie",
         "map_caption": "Bleu = Techniciens · Ambre/Rouge = Ordres · Vert = SLA respecté · Rouge = Violation SLA",
@@ -429,13 +440,24 @@ Taux SLA réaliste : 77–93%.
         "run_btn": "▶ Episode starten",
         "guide_title": "🎓 Anleitung",
         "guide": """
-**Schritt 1 — ε einstellen**: ε=1.0 = reine Exploration, ε=0.0 = reine Exploitation.
-**Schritt 2 — Techniker und Aufträge einstellen**: 5/10 ist ein guter Ausgangspunkt.
-**Schritt 3 — ▶ Episode starten klicken**: Rust-Engine führt die vollständige MDP-Schleife aus.
-**Schritt 4 — Warschau-Karte lesen**: Blau = Techniker, Farbe = Aufträge, Grün = SLA erfüllt.
+**Schritt 1 — ε einstellen**
+ε=1.0 = reine Exploration, ε=0.0 = reine Exploitation.
+
+**Schritt 2 — Techniker und Aufträge einstellen**
+5/10 ist ein guter Ausgangspunkt.
+
+**Schritt 3 — ▶ Episode starten klicken**
+Rust-Engine führt die vollständige MDP-Schleife aus.
+
+**Schritt 4 — Warschau-Karte lesen**
+Blau = Techniker, Farbe = Aufträge, Grün = SLA erfüllt.
 **Schritt 5 — Schritt-Schieberegler verwenden** um eine bestimmte Entscheidung hervorzuheben.
-**Schritt 6 — Glass-Box lesen**: jede Zeile zeigt das vollständige MDP-Tupel Sₜ, Aₜ, Rₜ, Gₜ.
-**Schritt 7 — Zusammenfassung lesen**: quantifizierte Ergebnisse + Vor-/Nachteile der Methode.
+
+**Schritt 6 — Glass-Box lesen**
+jede Zeile zeigt das vollständige MDP-Tupel Sₜ, Aₜ, Rₜ, Gₜ.
+
+**Schritt 7 — Zusammenfassung lesen**
+quantifizierte Ergebnisse + Vor-/Nachteile der Methode.
 """,
         "map_title": "📍 Warschau Dispositionskarte",
         "map_caption": "Blau = Techniker · Bernstein/Rot = Aufträge · Grün = SLA erfüllt · Rot = SLA-Verletzung",
@@ -527,13 +549,24 @@ Realistische SLA-Rate: 77–93%.
         "run_btn": "▶ Ejecutar episodio",
         "guide_title": "🎓 Cómo usar este capítulo",
         "guide": """
-**Paso 1 — Ajuste ε**: ε=1.0 = exploración pura, ε=0.0 = explotación pura.
-**Paso 2 — Ajuste técnicos y órdenes**: 5/10 es un buen punto de partida.
-**Paso 3 — Haga clic en ▶ Ejecutar episodio**: el motor Rust ejecuta el bucle MDP completo.
-**Paso 4 — Lea el mapa de Varsovia**: azul = técnicos, color = órdenes, verde = SLA cumplido.
+**Paso 1 — Ajuste ε**
+ε=1.0 = exploración pura, ε=0.0 = explotación pura.
+
+**Paso 2 — Ajuste técnicos y órdenes**
+5/10 es un buen punto de partida.
+
+**Paso 3 — Haga clic en ▶ Ejecutar episodio**
+el motor Rust ejecuta el bucle MDP completo.
+
+**Paso 4 — Lea el mapa de Varsovia**
+azul = técnicos, color = órdenes, verde = SLA cumplido.
 **Paso 5 — Use el control deslizante de pasos** para resaltar una decisión específica.
-**Paso 6 — Lea el Glass-Box**: cada fila muestra la tupla MDP completa Sₜ, Aₜ, Rₜ, Gₜ.
-**Paso 7 — Lea el resumen**: resultados cuantificados + pros/contras del método.
+
+**Paso 6 — Lea el Glass-Box**
+cada fila muestra la tupla MDP completa Sₜ, Aₜ, Rₜ, Gₜ.
+
+**Paso 7 — Lea el resumen**
+resultados cuantificados + pros/contras del método.
 """,
         "map_title": "📍 Mapa de despacho Varsovia",
         "map_caption": "Azul = Técnicos · Ámbar/Rojo = Órdenes · Verde = SLA cumplido · Rojo = Violación SLA",
@@ -616,11 +649,16 @@ Tasa SLA realista: 77–93%.
 # ---------------------------------------------------------------------------
 
 def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
+    """Deep merge: DE overrides EN, but missing keys/subkeys fall back to EN."""
+    import copy
+    base = copy.deepcopy(T.get("EN", {}))
     over = T.get(lang, {})
     for k, v in over.items():
-        base[k] = v
+        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
+            # Deep merge nested dicts (e.g. theory_sections, algo_labels)
+            base[k] = {**base[k], **v}
+        else:
+            base[k] = v
     return base
 
 def render():

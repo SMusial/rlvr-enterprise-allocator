@@ -153,12 +153,26 @@ In ASP: SARSA is safer during training, Q-Learning finds the better final policy
         "epsilon_decay": "ε-Abklingrate", "seed": "Zufallsseed",
         "run_btn": "▶ TD(0), SARSA und Q-Learning starten",
         "guide_title": "Anleitung",
-        "guide": """**Schritt 1** — TD aktualisiert nach JEDEM Schritt (nicht nach Episodenende wie MC).
-**Schritt 2** — SARSA = On-Policy. Q-Learning = Off-Policy.
-**Schritt 3** — α (Lernrate) einstellen. α=0.1 ist ein guter Start.
-**Schritt 4** — Klicken, um alle drei Algorithmen zu starten.
-**Schritt 5** — TD-Fehlerkurve lesen — sollte gegen null gehen.
-**Schritt 6** — Q-Learning vs SARSA-Strategien vergleichen.""",
+        "guide": """
+**Schritt 1**
+TD aktualisiert nach JEDEM Schritt (nicht nach Episodenende wie MC).
+
+**Schritt 2**
+SARSA = On-Policy.
+Q-Learning = Off-Policy.
+
+**Schritt 3**
+α (Lernrate) einstellen.
+α=0.1 ist ein guter Start.
+
+**Schritt 4**
+Klicken, um alle drei Algorithmen zu starten.
+
+**Schritt 5**
+TD-Fehlerkurve lesen — sollte gegen null gehen.
+
+**Schritt 6**
+Q-Learning vs SARSA-Strategien vergleichen.""",
         "returns_title": "Episodenrückgaben — TD(0), SARSA, Q-Learning",
         "returns_caption": "Gleitender Durchschnitt. Q-Learning sollte am schnellsten konvergieren.",
         "td_error_title": "TD-Fehler — |R + γV(s') - V(s)|",
@@ -309,13 +323,27 @@ TD-Fehler: $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$""",
         "run_btn": "▶ Uruchom TD(0), SARSA i Q-Learning",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1** — TD aktualizuje po KAŻDYM kroku (nie po epizodzie jak MC).
-**Krok 2** — SARSA = on-policy (używa tej samej polityki do uczenia i zachowania).
-**Krok 3** — Q-Learning = off-policy (uczy się optymalnej polityki niezależnie od zachowania).
-**Krok 4** — Ustaw α (współczynnik uczenia). α=0.1 to dobry start.
-**Krok 5** — Kliknij ▶ aby uruchomić wszystkie trzy algorytmy.
-**Krok 6** — Odczytaj krzywą błędu TD — powinna maleć w czasie.
-**Krok 7** — Porównaj polityki SARSA vs Q-Learning — Q-Learning powinien znaleźć lepszą.
+**Krok 1**
+TD aktualizuje po KAŻDYM kroku (nie po epizodzie jak MC).
+
+**Krok 2**
+SARSA = on-policy (używa tej samej polityki do uczenia i zachowania).
+
+**Krok 3**
+Q-Learning = off-policy (uczy się optymalnej polityki niezależnie od zachowania).
+
+**Krok 4**
+Ustaw α (współczynnik uczenia).
+α=0.1 to dobry start.
+
+**Krok 5**
+Kliknij ▶ aby uruchomić wszystkie trzy algorytmy.
+
+**Krok 6**
+Odczytaj krzywą błędu TD — powinna maleć w czasie.
+
+**Krok 7**
+Porównaj polityki SARSA vs Q-Learning — Q-Learning powinien znaleźć lepszą.
 """,
         "returns_title": "📈 Zwroty epizodów — TD(0), SARSA, Q-Learning",
         "returns_caption": "Średnia krocząca zwrotów. Q-Learning powinien zbiegać najszybciej.",
@@ -385,11 +413,16 @@ def _moving_avg(data, window=20):
 
 
 def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
+    """Deep merge: DE overrides EN, but missing keys/subkeys fall back to EN."""
+    import copy
+    base = copy.deepcopy(T.get("EN", {}))
     over = T.get(lang, {})
     for k, v in over.items():
-        base[k] = v
+        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
+            # Deep merge nested dicts (e.g. theory_sections, algo_labels)
+            base[k] = {**base[k], **v}
+        else:
+            base[k] = v
     return base
 
 def render():

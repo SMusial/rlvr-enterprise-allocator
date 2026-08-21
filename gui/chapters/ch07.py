@@ -147,12 +147,23 @@ Implemented in `dyna_q_plus()` in `ch07_nstep.rs`.
         "run_btn": "▶ Uruchom wszystkie cztery algorytmy",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1** — n-krokowe TD: n=1 to TD(0), n=∞ to MC, n=3-5 to optimum.
-**Krok 2** — Dyna-Q = Q-Learning + model + k kroków planowania per krok.
-**Krok 3** — Dyna-Q+ dodaje bonus κ√τ(s,a) dla rzadko próbowanych przejść.
-**Krok 4** — Porównaj n=1 vs n=5 vs n=10 — obserwuj wpływ na zbieżność.
-**Krok 5** — Porównaj k=0 vs k=5 vs k=20 — Dyna-Q uczy się szybciej.
-**Krok 6** — Odczytaj rozmiar modelu — ile par (s,a) Dyna-Q się nauczyło.
+**Krok 1**
+n-krokowe TD: n=1 to TD(0), n=∞ to MC, n=3-5 to optimum.
+
+**Krok 2**
+Dyna-Q = Q-Learning + model + k kroków planowania per krok.
+
+**Krok 3**
+Dyna-Q+ dodaje bonus κ√τ(s,a) dla rzadko próbowanych przejść.
+
+**Krok 4**
+Porównaj n=1 vs n=5 vs n=10 — obserwuj wpływ na zbieżność.
+
+**Krok 5**
+Porównaj k=0 vs k=5 vs k=20 — Dyna-Q uczy się szybciej.
+
+**Krok 6**
+Odczytaj rozmiar modelu — ile par (s,a) Dyna-Q się nauczyło.
 """,
         "returns_title": "📈 Zwroty epizodów — Cztery algorytmy",
         "returns_caption": "Średnia krocząca. Dyna-Q powinien zbiegać najszybciej dzięki planowaniu.",
@@ -341,11 +352,16 @@ def _moving_avg(data, window=20):
 
 
 def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
+    """Deep merge: DE overrides EN, but missing keys/subkeys fall back to EN."""
+    import copy
+    base = copy.deepcopy(T.get("EN", {}))
     over = T.get(lang, {})
     for k, v in over.items():
-        base[k] = v
+        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
+            # Deep merge nested dicts (e.g. theory_sections, algo_labels)
+            base[k] = {**base[k], **v}
+        else:
+            base[k] = v
     return base
 
 def render():
