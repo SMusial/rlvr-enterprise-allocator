@@ -119,7 +119,7 @@ Wie lernt QMIX zustandsabhängige Koordinationsgewichte?
         "epsilon": "Epsilon", "edecay": "Decroissance", "mhidden": "Unites cachees", "seed": "Graine",
         "labels": {"iql":"IQL","vdn":"VDN","qmix":"QMIX","qmix_cg":"QMIX+CG"},
         "guide": """
-**Scénario coopératif : les deux agents partagent LA MÊMe récompense commune.**
+**Scénario coopératif : les deux agents partagent LA MÊME récompense commune.**
 
 **Étape 1 — IQL Baseline**
 Chaque agent ignore l'autre. Que se passe-t-il sans coordination ?
