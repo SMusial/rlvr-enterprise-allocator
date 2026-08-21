@@ -141,7 +141,7 @@ def _tx(lang):
 
 def render():
     lang = st.session_state.get("lang","EN")
-    tx   = TX.get(lang, TX["EN"])
+    tx   = _tx(lang)
     lb   = tx["labels"]
     st.title(tx["title"]); st.caption(tx["subtitle"])
     try: import rlvr_py
