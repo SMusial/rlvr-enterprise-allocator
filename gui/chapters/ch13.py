@@ -128,12 +128,16 @@ def _ma(data, w=30):
 
 
 def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
-    over = T.get(lang, {})
+    import copy
+    base = copy.deepcopy(TX.get("EN", {}))
+    over = TX.get(lang, {})
     for k, v in over.items():
-        base[k] = v
+        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
+            base[k] = {**base[k], **v}
+        else:
+            base[k] = v
     return base
+
 
 def render():
     lang = st.session_state.get("lang","EN")
