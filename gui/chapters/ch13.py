@@ -34,7 +34,7 @@ Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotone mixing.
 w_i(s) >= 0 enforces IGM. State-dependent weights = more expressive than VDN.
 
 **Step 4 \u2014 QMIX+CG (Counterfactual Baseline)**
-A_i = Q_tot(s,a) - Q_tot(s, a_{{-i}}, argmax Q_i). Isolates each agent's contribution.
+A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i). Isolates each agent's contribution.
 
 **Step 5 \u2014 Watch the Mixing Weights chart**
 How does QMIX learn state-dependent coordination weights?
@@ -42,7 +42,7 @@ How does QMIX learn state-dependent coordination weights?
         "theory_igm":   "IGM: argmax_a Q_tot(s,a) = (argmax Q_0(s_0,.), argmax Q_1(s_1,.))",
         "theory_vdn":   "Q_tot = Q_0(s_0,a_0) + Q_1(s_1,a_1)",
         "theory_qmix":  "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s), w_i(s) >= 0",
-        "theory_cg":    "A_i = Q_tot(s,a) - Q_tot(s, a_{{-i}}, argmax Q_i)",
+        "theory_cg":    "A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)",
     },
     "DE": {
         "title":    "Kapitel 13 \u2014 Kooperatives MARL: VDN und QMIX",
@@ -78,13 +78,13 @@ A_i = Q_tot(s,a) - Q_tot(s, a_{{-i}}, argmax Q_i). Isoliert den Beitrag jedes Ag
 Wie lernt QMIX zustandsabh\u00e4ngige Koordinationsgewichte?
 """,
         "theory_igm":  "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
-        "theory_vdn":  r"$Q_{{tot}} = Q_0 + Q_1$",
-        "theory_qmix": r"$Q_{{tot}} = w_0(s)Q_0 + w_1(s)Q_1 + b(s),\quad w_i \geq 0$",
-        "theory_cg":   r"$A_i = Q_{{tot}}(s,a) - Q_{{tot}}(s, a_{{-i}}, \arg\max Q_i)$",
+        "theory_vdn":  "Q_tot = Q_0 + Q_1",
+        "theory_qmix": "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s), w_i >= 0",
+        "theory_cg":   "A_i = Q_tot(s,a) - Q_tot(s, a_{{-i}}, argmax Q_i)",
     },
     "FR": {
-        "title":    "Chapitre 13 - MARL Coop\u00e9ratif: VDN et QMIX",
-        "subtitle": "IQL - VDN - QMIX - QMIX+CG - ASP Varsovie",
+        "title":    "Chapitre 13 \u2014 MARL Coop\u00e9ratif: VDN et QMIX",
+        "subtitle": "IQL \u2014 VDN \u2014 QMIX \u2014 QMIX+CG \u2014 ASP Varsovie",
         "run":      "\u25b6 Lancer", "ret": "Retours joints",
         "mix":      "Poids de m\u00e9lange", "jq": "Q_tot joint",
         "val":      "V(s)", "glass": "Glass-Box", "summary": "R\u00e9sum\u00e9",
@@ -116,8 +116,8 @@ Comment QMIX apprend-il des poids d\u00e9pendants de l'\u00e9tat ?
         "theory_cg":   "A_i = Q_tot(s,a) - Q_tot(s, a_{{-i}}, argmax Q_i)",
     },
     "ES": {
-        "title":    "Cap\u00edtulo 13 - MARL Cooperativo: VDN y QMIX",
-        "subtitle": "IQL - VDN - QMIX - QMIX+CG - ASP Varsovia",
+        "title":    "Cap\u00edtulo 13 \u2014 MARL Cooperativo: VDN y QMIX",
+        "subtitle": "IQL \u2014 VDN \u2014 QMIX \u2014 QMIX+CG \u2014 ASP Varsovia",
         "run":      "\u25b6 Ejecutar", "ret": "Retornos conjuntos",
         "mix":      "Pesos de mezcla", "jq": "Q_tot conjunto",
         "val":      "V(s)", "glass": "Glass-Box", "summary": "Resumen",
@@ -149,8 +149,8 @@ L\u00ednea base contrafactual a\u00edsl\u00e1 la contribuci\u00f3n de cada agent
         "theory_cg":   "A_i = Q_tot(s,a) - Q_tot(s, a_{{-i}}, argmax Q_i)",
     },
     "PL": {
-        "title":    "Rozdzia\u0142 13 - Kooperacyjny MARL: VDN i QMIX",
-        "subtitle": "IQL Baseline - VDN - QMIX - QMIX+CG - 2 Agenci - ASP Warszawa",
+        "title":    "Rozdzia\u0142 13 \u2014 Kooperacyjny MARL: VDN i QMIX",
+        "subtitle": "IQL Baseline \u2014 VDN \u2014 QMIX \u2014 QMIX+CG \u2014 2 Agenci \u2014 ASP Warszawa",
         "run":      "\u25b6 Uruchom wszystkie cztery algorytmy",
         "ret":      "Wsp\u00f3lne zwroty epizod\u00f3w",
         "mix":      "Wagi mieszania (QMIX)", "jq": "Wsp\u00f3lne Q_tot",
@@ -221,20 +221,18 @@ def render():
     seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
     with st.expander("Guide", expanded=False): st.markdown(tx["guide"])
     if st.button(tx["run"], type="primary"):
-        with st.spinner("Running Rust cooperative MARL engine..."):
+        with st.spinner("Running..."):
             res = rlvr_py.run_ch13_coop_marl(int(seed),int(n_ep),float(gamma),float(alpha),float(eps),float(edec),int(mh))
         st.session_state["ch13_result"] = res
     if "ch13_result" not in st.session_state:
         st.info("Click Run."); _theory(tx); return
     res   = st.session_state["ch13_result"]
     short = [f"S{i}" for i in range(res["n_states"])]
-    # KPI
-    cols = st.columns(4)
+    cols  = st.columns(4)
     for i,k in enumerate(ALGOS):
         avg = sum(res[k]["returns_curve"][-50:])/min(50,len(res[k]["returns_curve"]))
         mw  = sum(res[k]["mixing_weights"][-50:])/max(1,min(50,len(res[k]["mixing_weights"])))
         cols[i].metric(lb[k], f"Avg:{avg:.2f}", f"W:{mw:.2f}")
-    # Returns
     st.subheader(tx["ret"])
     fig = go.Figure()
     for k in ALGOS:
@@ -243,7 +241,6 @@ def render():
     fig.update_layout(height=280,margin=dict(l=40,r=20,t=20,b=40),
         xaxis_title="Episode",yaxis_title="Return (MA-30)",legend=dict(orientation="h"))
     st.plotly_chart(fig,width='stretch')
-    # Mixing weights + Joint Q
     c1,c2 = st.columns(2)
     with c1:
         st.subheader(tx["mix"])
@@ -251,8 +248,7 @@ def render():
         for k in ["qmix","qmix_cg"]:
             f2.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["mixing_weights"]),
                 mode="lines",name=lb[k],line=dict(color=COLORS[k],width=2)))
-        f2.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),
-            xaxis_title="Episode",yaxis_title="Mean |w|",legend=dict(orientation="h"))
+        f2.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),legend=dict(orientation="h"))
         st.plotly_chart(f2,width='stretch')
     with c2:
         st.subheader(tx["jq"])
@@ -260,17 +256,14 @@ def render():
         for k in ALGOS:
             f3.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["joint_q_curve"]),
                 mode="lines",name=lb[k],line=dict(color=COLORS[k],width=2)))
-        f3.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),
-            xaxis_title="Episode",yaxis_title="Q_tot",legend=dict(orientation="h"))
+        f3.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),legend=dict(orientation="h"))
         st.plotly_chart(f3,width='stretch')
-    # Value function
     st.subheader(tx["val"])
     f4 = go.Figure()
     for k in ALGOS:
         f4.add_trace(go.Bar(x=short,y=res[k]["values"],name=lb[k],marker_color=COLORS[k],opacity=0.8))
     f4.update_layout(height=260,barmode="group",margin=dict(l=40,r=20,t=20,b=40),legend=dict(orientation="h"))
     st.plotly_chart(f4,width='stretch')
-    # Q-table heatmaps per agent
     st.subheader("Q-Table Heatmap")
     sel = st.selectbox("Algorithm",[lb[k] for k in ALGOS])
     ks  = {lb[k]:k for k in ALGOS}.get(sel,"vdn")
