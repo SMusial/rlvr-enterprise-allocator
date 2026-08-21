@@ -39,7 +39,25 @@ T = {
         "alpha_baseline": "α_v Uczenie baseline", "temperature": "τ Temperatura", "seed": "Ziarno",
         "run_btn": "▶ Uruchom wszystkie cztery algorytmy",
         "guide_title": "📖 Przewodnik",
-        "guide": "REINFORCE optymalizuje π(a|s)=softmax(θ) bezpośrednio. Baseline redukuje wariancję. Actor-Critic używa krytyka TD(0).",
+        "guide": """
+**Krok 1 — Policy Gradient vs Q-Learning**
+REINFORCE optymalizuje bezpośrednio π(a|s)=softmax(θ[s][a]). Brak tabeli Q. Wspinaczka gradientowa na J(θ).
+
+**Krok 2 — REINFORCE vs Actor-Critic**
+REINFORCE: Monte Carlo — czeka na pełny epizod. Nieobciążone, wysoka wariancja.
+Actor-Critic: krytyk TD(0) — online per krok. Niższa wariancja, obciążone.
+
+**Krok 3 — Baseline**
+Odejmowanie b(s) od G_t redukuje wariancję bez biasu.
+Krzywa REINFORCE+Baseline stabilizuje się szybciej.
+
+**Krok 4 — Ustaw temperaturę τ**
+τ=1.0 standardowe. τ<1 ostrzejsza polityka. τ>1 bardziej jednorodna dystrybucja.
+
+**Krok 5 — Odczytaj wykres entropii**
+Wysoka entropia = eksploracja. Niska entropia = eksploatacja.
+Zdrowe: entropia maleje stopniowo.
+""",
         "returns_title": "📈 Zwroty epizodów", "returns_caption": "MA-30. REINFORCE+Baseline najbardziej stabilny.",
         "pg_loss_title": "📉 Wielkość gradientu", "pg_loss_caption": "",
         "entropy_title": "🌡️ Entropia polityki", "entropy_caption": "",
@@ -121,8 +139,7 @@ Zdrowe: entropia maleje stopniowo.
         "temperature": "τ", "seed": "Graine", "run_btn": "▶ Lancer",
         "guide_title": "📖 Guide", "guide": """
 **Étape 1 — Policy Gradient vs Q-Learning**
-REINFORCE optimise directement π(a|s)=softmax(θ[s][a]).
-Pas de Q-table. Montée de gradient sur J(θ).
+REINFORCE optimise directement π(a|s)=softmax(θ[s][a]). Pas de Q-table. Montée de gradient sur J(θ).
 
 **Étape 2 — REINFORCE vs Actor-Critic**
 REINFORCE : Monte Carlo — attend l'épisode complet. Non biaisé, haute variance.
@@ -158,8 +175,7 @@ Sain : l'entropie diminue progressivement.
         "temperature": "τ", "seed": "Semilla", "run_btn": "▶ Ejecutar",
         "guide_title": "📖 Guía", "guide": """
 **Paso 1 — Policy Gradient vs Q-Learning**
-REINFORCE optimiza directamente π(a|s)=softmax(θ[s][a]).
-Sin Q-table. Ascenso de gradiente en J(θ).
+REINFORCE optimiza directamente π(a|s)=softmax(θ[s][a]). Sin Q-table. Ascenso de gradiente en J(θ).
 
 **Paso 2 — REINFORCE vs Actor-Critic**
 REINFORCE: Monte Carlo — espera el episodio completo. Sin sesgo, alta varianza.

@@ -41,7 +41,31 @@ T = {
         "replacing": "Replacing traces", "seed": "Ziarno",
         "run_btn": "▶ Uruchom wszystkie cztery algorytmy",
         "guide_title": "📖 Przewodnik",
-        "guide": "λ=0→TD(0). λ=1→MC. λ=0.7 optimum. SARSA(λ) on-policy. Q(λ) off-policy z cięciem Watkinsa.",
+        "guide": """
+**Krok 1 — Zrozum Eligibility Traces**
+Ślady rozwiązują problem przypisania kredytu.
+e_t(s,a) = γλ·e_{t-1}(s,a) + 1[s=S_t, a=A_t]
+λ=0 → TD(0). λ=1 → MC. λ=0.7 → optymalny zakres.
+
+**Krok 2 — Zrozum SARSA(λ) vs Q(λ)**
+SARSA(λ): on-policy, cel = R + γQ(s',a').
+Q(λ) Watkins: off-policy, ślady przecinane przy niezachłannych akcjach.
+
+**Krok 3 — Ustaw λ**
+Zacznij od λ=0.7. Porównaj λ=0.0 vs λ=0.99.
+
+**Krok 4 — Kliknij ▶ Uruchom wszystkie cztery algorytmy**
+SARSA(λ), Q(λ), SARSA λ=0 (bazowe TD0), SARSA λ=0.99 (podobne do MC).
+
+**Krok 5 — Odczytaj wykres aktywnych śladów**
+Wyższe λ → więcej aktywnych śladów → szybsza propagacja kredytu.
+
+**Krok 6 — Odczytaj krzywą zwrotów**
+SARSA(λ=0.7) powinno zbiec szybciej niż SARSA λ=0.
+
+**Krok 7 — Porównaj z Ch06 TD(0)**
+Eligibility traces powinny osiągnąć to samo V* co TD(0) w mniejszej liczbie epizodów.
+""",
         "returns_title": "📈 Zwroty epizodów", "returns_caption": "MA-30. SARSA(λ=0.7) zbiega szybciej niż TD0.",
         "td_error_title": "📉 Błąd TD", "td_error_caption": "",
         "value_title": "🏛️ V(s)", "value_caption": "S7 powinno być najniższe.",
@@ -135,8 +159,8 @@ e_t(s,a) = γλ·e_{t-1}(s,a) + 1[s=S_t, a=A_t]
 SARSA(λ) : on-policy, cible = R + γQ(s',a').
 Q(λ) Watkins : off-policy, traces coupées sur actions non-gloutonnes.
 
-**Étape 3 — Régler λ (taux de décroissance des traces)**
-Commencer avec λ=0.7. Essayer λ=0.0 vs λ=0.99 pour voir la différence.
+**Étape 3 — Régler λ**
+Commencer avec λ=0.7. Essayer λ=0.0 vs λ=0.99.
 
 **Étape 4 — Cliquer ▶ Lancer les quatre algorithmes**
 SARSA(λ), Q(λ), SARSA λ=0 (baseline TD0), SARSA λ=0.99 (type MC).
@@ -177,8 +201,8 @@ e_t(s,a) = γλ·e_{t-1}(s,a) + 1[s=S_t, a=A_t]
 SARSA(λ): on-policy, objetivo = R + γQ(s',a').
 Q(λ) Watkins: off-policy, traces cortados en acciones no codiciosas.
 
-**Paso 3 — Ajustar λ (tasa de decaimiento de traces)**
-Comenzar con λ=0.7. Probar λ=0.0 vs λ=0.99 para ver la diferencia.
+**Paso 3 — Ajustar λ**
+Comenzar con λ=0.7. Probar λ=0.0 vs λ=0.99.
 
 **Paso 4 — Hacer clic en ▶ Ejecutar los cuatro algoritmos**
 SARSA(λ), Q(λ), SARSA λ=0 (línea base TD0), SARSA λ=0.99 (tipo MC).

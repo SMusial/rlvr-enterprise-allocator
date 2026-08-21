@@ -93,14 +93,26 @@ T = {
         "seed":           "Ziarno",
         "run_btn":        "Uruchom wszystkie cztery algorytmy",
         "guide_title":    "Jak korzystac z tego rozdzialu",
-        "guide": (
-            "Scenariusz: 2 dyspozytorzy wspoldziela MDP ASP Warszawa.\n"
-            "Kazdy dziala niezaleznie, ale ich nagrody sa powiazane.\n\n"
-            "Krok 1 - IQL: kazdy agent uczy sie Q-Learning niezaleznie.\n"
-            "Krok 2 - JAL: kazdy agent modeluje politike partnera.\n"
-            "Krok 3 - Lenient Q: ujemne delty ignorowane z prawdopodobienstwem mu.\n"
-            "Krok 4 - Mean Field Q: wspolne dzialanie aproksymowane srednia."
-        ),
+        "guide": """
+**Scenariusz: 2 dyspozytorzy współdzieją Warszawski ASP MDP z 8 stanami.**
+
+**Krok 1 — IQL (Niezależne Q-Learning)**
+Każdy agent wykonuje standardowe Q-Learning ignorując drugiego.
+Punkt bazowy: najprostsze podejście MARL.
+
+**Krok 2 — JAL (Uczenie Wspólnych Akcji)**
+Każdy agent modeluje częstość akcji drugiego.
+Aktualizacja Q używa oczekiwanej wartości nad szacowaną polityką partnera.
+
+**Krok 3 — Lenient Q-Learning**
+Ujemne błędy TD są ignorowane z prawdopodobieństwem mu.
+Zapobiega karaniu dobrych akcji z powodu błędów partnera.
+
+**Krok 4 — Mean Field Q-Learning**
+Aproksymuj wspólną akcję przez średną akcję sąsiadów.
+Skaluje do wielu agentów — fundament dla dużego MARL.
+Obserwuj wykres kooperacji: wyżej = bardziej skoordynowane zachowanie.
+""",
         "returns_title":     "Wspolne zwroty epizodow",
         "returns_caption":   "MA-30. Sredni zwrot obu agentow.",
         "cooperation_title": "Wspolczynnik wspolpracy",
@@ -237,7 +249,7 @@ Les erreurs TD négatives sont ignorées avec probabilité mu.
 **Étape 4 — Mean Field Q-Learning**
 Approximer l'action conjointe par l'action moyenne des voisins.
 S'adapte à de nombreux agents — fondation pour le grand MARL.
-Observer le graphique de coopération : fraction des étapes où les deux ont choisi la même action.
+Observer le graphique de coopération : plus élevé = comportement plus coordonné.
 """,
         "returns_title": "Retours joints", "returns_caption": "",
         "cooperation_title": "Taux de cooperation", "cooperation_caption": "",
@@ -285,7 +297,7 @@ Evita penalizar acciones buenas debido a errores del compañero.
 **Paso 4 — Mean Field Q-Learning**
 Aproximar la acción conjunta por la acción media de los vecinos.
 Escala a muchos agentes — fundación para MARL grande.
-Observar el gráfico de cooperación: fracción de pasos donde ambos eligieron la misma acción.
+Observar el gráfico de cooperación: más alto = comportamiento más coordinado.
 """,
         "returns_title": "Retornos conjuntos", "returns_caption": "",
         "cooperation_title": "Tasa de cooperacion", "cooperation_caption": "",
