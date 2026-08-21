@@ -157,7 +157,29 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
         "n_episodes": "Episoden", "gamma": "Gamma", "epsilon": "Epsilon", "seed": "Zufallsseed",
         "run_btn": "▶ Monte-Carlo starten",
         "guide_title": "Anleitung",
-        "guide": "MC lernt aus vollständigen Episoden. G_t wird rückwärts berechnet und zum Aktualisieren von V(s) verwendet.",
+        "guide": """
+**Schritt 1 — Hauptunterschied zu Ch04 verstehen**
+MC-Methoden lernen OHNE Modell — kein P(s'|s,a) erforderlich.
+Der Agent generiert Episoden durch Interaktion mit der Umgebung.
+
+**Schritt 2 — Anzahl der Episoden einstellen**
+Mehr Episoden = bessere Schätzungen. Zuerst 200, dann 2000.
+
+**Schritt 3 — ▶ Alle vier MC-Algorithmen starten klicken**
+First-Visit MC, Every-Visit MC, On-Policy Kontrolle, Off-Policy mit Importance Sampling.
+
+**Schritt 4 — Rückgabekurve lesen**
+Beobachten Sie wie die durchschnittliche Episodenrückgabe mit der Zeit zunimmt.
+
+**Schritt 5 — Wertfunktionsvergleich lesen**
+MC-Schätzungen von V*(s) sollten gegen die DP-Lösung aus Ch04 konvergieren.
+
+**Schritt 6 — Besuchsanzahl-Heatmap lesen**
+Selten besuchte Zustände haben Schätzungen mit hoher Varianz.
+
+**Schritt 7 — Glass-Box lesen**
+Sehen Sie genaue Rückgaben G_t für jeden Zustand in einer ausgewählten Episode.
+""",
         "theory_title": "Theorie — Kapitel 05",
         "theory_sections": {"mc": "5.1 Monte-Carlo-Vorhersage", "control": "5.2 MC-Kontrolle"},
         "summary_title": "Zusammenfassung", "summary_results": "Ergebnisse",
@@ -178,7 +200,29 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
         "seed": "Graine aléatoire",
         "run_btn": "▶ Lancer les quatre algorithmes MC",
         "guide_title": "🎓 Comment utiliser ce chapitre",
-        "guide": "Quatre algorithmes MC sans modèle. Augmentez le nombre d\'épisodes pour voir la convergence.",
+        "guide": """
+**Étape 1 — Comprendre la différence clé avec Ch04**
+Les méthodes MC apprennent SANS modèle — pas besoin de P(s'|s,a).
+L'agent génère des épisodes en interagissant avec l'environnement.
+
+**Étape 2 — Régler le nombre d'épisodes**
+Plus d'épisodes = meilleures estimations. Essayer 200 puis 2000.
+
+**Étape 3 — Cliquer ▶ Lancer les quatre algorithmes MC**
+First-Visit MC, Every-Visit MC, Contrôle On-Policy, Contrôle Off-Policy (IS).
+
+**Étape 4 — Lire la courbe de retours**
+Observer l'amélioration du retour moyen par épisode.
+
+**Étape 5 — Lire la comparaison de la fonction de valeur**
+Les estimations MC de V*(s) devraient converger vers la solution DP de Ch04.
+
+**Étape 6 — Lire la carte thermique du nombre de visites**
+Les états rarement visités ont des estimations à haute variance.
+
+**Étape 7 — Lire le Glass-Box**
+Voir les retours exacts G_t pour chaque état dans un épisode sélectionné.
+""",
         "returns_title": "📈 Retours par épisode — Quatre algorithmes",
         "returns_caption": "Moyenne mobile des retours. Le contrôle on-policy devrait s\'améliorer.",
         "value_title": "📊 Fonction de valeur V(s) — MC vs référence DP",
@@ -271,27 +315,27 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
         "run_btn": "▶ Uruchom wszystkie cztery algorytmy MC",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1**
-MC uczy się BEZ modelu P(s\'|s,a) — tylko z epizodów.
+**Krok 1 — Zrozum kluczową różnicę od Ch04**
+Metody MC uczą się BEZ modelu — nie potrzeba P(s'|s,a).
+Agent generuje epizody przez interakcję ze środowiskiem.
 
-**Krok 2**
-Ustaw liczbę epizodów.
-Zacznij od 200, potem 2000.
+**Krok 2 — Ustaw liczbę epizodów**
+Więcej epizodów = lepsze szacunki. Zacznij od 200, potem 2000.
 
-**Krok 3**
-Kliknij ▶ aby uruchomić wszystkie cztery algorytmy.
+**Krok 3 — Kliknij ▶ Uruchom wszystkie cztery algorytmy MC**
+First-Visit MC, Every-Visit MC, Kontrola On-Policy, Kontrola Off-Policy (IS).
 
-**Krok 4**
-Odczytaj krzywą zwrotów — powinna rosnąć dla on-policy.
+**Krok 4 — Odczytaj krzywą zwrotów**
+Obserwuj poprawę średniego zwrotu per epizod w czasie.
 
-**Krok 5**
-Porównaj V(s) MC z rozwiązaniem DP z Ch04.
+**Krok 5 — Odczytaj porównanie funkcji wartości**
+Szacunki MC V*(s) powinny zbiegą do rozwiązania DP z Ch04.
 
-**Krok 6**
-Odczytaj mapę ciepła wizyt — rzadko odwiedzane stany mają wysoką wariancję.
+**Krok 6 — Odczytaj mapę ciepła liczby wizyt**
+Rzadko odwiedzane stany mają szacunki o wysokiej wariancji.
 
-**Krok 7**
-Odczytaj Glass-Box — dokładne zwroty G_t dla wybranego epizodu.
+**Krok 7 — Odczytaj Glass-Box**
+Zobacz dokładne zwroty G_t dla każdego stanu w wybranym epizodzie.
 """,
         "returns_title": "📈 Zwroty epizodów — Cztery algorytmy",
         "returns_caption": "Średnia krocząca zwrotów. On-policy control powinien się poprawiać.",

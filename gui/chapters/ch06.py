@@ -154,25 +154,29 @@ In ASP: SARSA is safer during training, Q-Learning finds the better final policy
         "run_btn": "▶ TD(0), SARSA und Q-Learning starten",
         "guide_title": "Anleitung",
         "guide": """
-**Schritt 1**
-TD aktualisiert nach JEDEM Schritt (nicht nach Episodenende wie MC).
+**Schritt 1 — Hauptunterschied zu Ch05 (MC) verstehen**
+TD-Methoden aktualisieren nach JEDEM Schritt, nicht nach Episodenende.
+Sie bootstrappen: verwenden aktuelle Schätzungen V(s') um V(s) zu aktualisieren.
 
-**Schritt 2**
-SARSA = On-Policy.
-Q-Learning = Off-Policy.
+**Schritt 2 — SARSA vs Q-Learning verstehen**
+SARSA: verwendet Q(s', a') wobei a' durch ε-greedy gewählt wird (On-Policy).
+Q-Learning: verwendet max_a' Q(s', a') unabhängig von der ausgeführten Aktion (Off-Policy).
 
-**Schritt 3**
-α (Lernrate) einstellen.
-α=0.1 ist ein guter Start.
+**Schritt 3 — α einstellen (Lernrate)**
+α=0.1 ist ein guter Start. Höheres α = schneller aber weniger stabil.
 
-**Schritt 4**
-Klicken, um alle drei Algorithmen zu starten.
+**Schritt 4 — ▶ TD(0), SARSA und Q-Learning starten klicken**
+Alle drei laufen gleichzeitig. Ergebnisse erscheinen nebeneinander.
 
-**Schritt 5**
-TD-Fehlerkurve lesen — sollte gegen null gehen.
+**Schritt 5 — TD-Fehlerkurve lesen**
+TD-Fehler = R + γV(s') - V(s). Beobachten Sie den Abfall gegen null.
 
-**Schritt 6**
-Q-Learning vs SARSA-Strategien vergleichen.""",
+**Schritt 6 — Q-Learning vs SARSA-Strategien vergleichen**
+Q-Learning findet die optimale Strategie. SARSA findet die sicherste.
+
+**Schritt 7 — Mit DP-Referenz vergleichen (Ch04)**
+TD-Methoden sollten zur selben Strategie wie DP konvergieren — ohne P(s'|s,a).
+""",
         "returns_title": "Episodenrückgaben — TD(0), SARSA, Q-Learning",
         "returns_caption": "Gleitender Durchschnitt. Q-Learning sollte am schnellsten konvergieren.",
         "td_error_title": "TD-Fehler — |R + γV(s') - V(s)|",
@@ -228,7 +232,30 @@ TD-Fehler: $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$""",
         "seed": "Graine aléatoire",
         "run_btn": "▶ Lancer TD(0), SARSA et Q-Learning",
         "guide_title": "🎓 Comment utiliser ce chapitre",
-        "guide": "TD met à jour après chaque étape (pas après l'épisode). SARSA = on-policy. Q-Learning = off-policy.",
+        "guide": """
+**Étape 1 — Comprendre la différence clé avec Ch05 (MC)**
+Les méthodes TD mettent à jour après CHAQUE étape, pas après la fin de l'épisode.
+Elles bootstrappent : utilisent les estimations actuelles V(s') pour mettre à jour V(s).
+
+**Étape 2 — Comprendre SARSA vs Q-Learning**
+SARSA : utilise Q(s', a') où a' est choisi par ε-greedy (on-policy).
+Q-Learning : utilise max_a' Q(s', a') quelle que soit l'action prise (off-policy).
+
+**Étape 3 — Régler α (taux d'apprentissage)**
+α=0.1 est un bon départ. α plus élevé = plus rapide mais moins stable.
+
+**Étape 4 — Cliquer ▶ Lancer TD(0), SARSA et Q-Learning**
+Les trois s'exécutent simultanément. Les résultats apparaissent côte à côte.
+
+**Étape 5 — Lire la courbe d'erreur TD**
+Erreur TD = R + γV(s') - V(s). Observer sa décroissance vers zéro.
+
+**Étape 6 — Comparer les politiques Q-Learning vs SARSA**
+Q-Learning trouve la politique optimale. SARSA trouve la plus sûre.
+
+**Étape 7 — Comparer avec la référence DP (Ch04)**
+Les méthodes TD devraient converger vers la même politique que DP — sans P(s'|s,a).
+""",
         "returns_title": "📈 Retours par épisode",
         "returns_caption": "Moyenne mobile. Q-Learning devrait converger le plus vite.",
         "td_error_title": "📉 Erreur TD",
@@ -323,27 +350,28 @@ TD-Fehler: $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$""",
         "run_btn": "▶ Uruchom TD(0), SARSA i Q-Learning",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1**
-TD aktualizuje po KAŻDYM kroku (nie po epizodzie jak MC).
+**Krok 1 — Zrozum kluczową różnicę od Ch05 (MC)**
+Metody TD aktualizują po KAŻDYM kroku, nie po końcu epizodu.
+Bootstrapują: używają aktualnych szacunków V(s') aby aktualizować V(s).
 
-**Krok 2**
-SARSA = on-policy (używa tej samej polityki do uczenia i zachowania).
+**Krok 2 — Zrozum SARSA vs Q-Learning**
+SARSA: używa Q(s', a') gdzie a' jest wybrana przez ε-zachlanność (on-policy).
+Q-Learning: używa max_a' Q(s', a') niezależnie od podjętej akcji (off-policy).
 
-**Krok 3**
-Q-Learning = off-policy (uczy się optymalnej polityki niezależnie od zachowania).
+**Krok 3 — Ustaw α (współczynnik uczenia)**
+α=0.1 to dobry start. Wyższe α = szybsze ale mniej stabilne.
 
-**Krok 4**
-Ustaw α (współczynnik uczenia).
-α=0.1 to dobry start.
+**Krok 4 — Kliknij ▶ Uruchom TD(0), SARSA i Q-Learning**
+Wszystkie trzy działają jednocześnie. Wyniki pojawiają się obok siebie.
 
-**Krok 5**
-Kliknij ▶ aby uruchomić wszystkie trzy algorytmy.
+**Krok 5 — Odczytaj krzywą błędu TD**
+Błąd TD = R + γV(s') - V(s). Obserwuj jego zanik do zera.
 
-**Krok 6**
-Odczytaj krzywą błędu TD — powinna maleć w czasie.
+**Krok 6 — Porównaj polityki Q-Learning vs SARSA**
+Q-Learning znajduje optymalną politykę. SARSA znajduje najbezpieczniejszą.
 
-**Krok 7**
-Porównaj polityki SARSA vs Q-Learning — Q-Learning powinien znaleźć lepszą.
+**Krok 7 — Porównaj z referencją DP (Ch04)**
+Metody TD powinny zbiec do tej samej polityki co DP — bez znajomości P(s'|s,a).
 """,
         "returns_title": "📈 Zwroty epizodów — TD(0), SARSA, Q-Learning",
         "returns_caption": "Średnia krocząca zwrotów. Q-Learning powinien zbiegać najszybciej.",

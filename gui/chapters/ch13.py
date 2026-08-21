@@ -80,17 +80,22 @@ TX = {
         "labels": {"iql": "IQL Baseline", "vdn": "VDN", "qmix": "QMIX", "qmix_cg": "QMIX+CG"},
         "guide": """
 **Kooperatives Szenario: beide Agenten teilen DIESELBE gemeinsame Belohnung.**
+
 **Schritt 1 — IQL Basislinie**
 Jeder Agent ignoriert den anderen. Was passiert ohne Koordination?
+
 **Schritt 2 — VDN (Value Decomposition Networks)**
 Q_tot = Q_0 + Q_1. Einfache additive Zerlegung.
 IGM: argmax Q_tot = (argmax Q_0, argmax Q_1) — ermöglicht dezentrale Ausführung.
+
 **Schritt 3 — QMIX**
 Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotones Mischen.
 w_i(s) >= 0 erzwingt IGM. Zustandsabhängige Gewichte = ausdrucksstärkere Koordination.
+
 **Schritt 4 — QMIX+CG (Kontrafaktische Basislinie)**
 A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i).
 Isoliert den Beitrag jedes Agenten zum gemeinsamen Wert.
+
 **Schritt 5 — Mischgewichte-Diagramm beobachten**
 Wie lernt QMIX zustandsabhängige Koordinationsgewichte?
 """(

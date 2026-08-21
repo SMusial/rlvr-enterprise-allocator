@@ -163,7 +163,26 @@ T = {
         "planning_steps": "Planungsschritte", "seed": "Zufallsseed",
         "run_btn": "▶ Alle Algorithmen starten",
         "guide_title": "Anleitung",
-        "guide": "Modellbasiertes RL lernt ein Weltmodell T(s,a,s') und R(s,a) und plant damit.",
+        "guide": """
+**Krok 1 — Model świata**
+Agent uczy się T(s,a,s') i R(s,a) z prawdziwego doświadczenia.
+Planowanie używa nauczonego modelu zamiast prawdziwego środowiska.
+
+**Krok 2 — WM Q-Learning vs Dyna-Q (Ch07)**
+Ta sama idea co Dyna-Q ale z jawnym tabelarycznym obiektem modelu świata.
+Wykres dokładności modelu pokazuje jak dobrze T(s,a,s') jest nauczony.
+
+**Krok 3 — Priorytyzowane zamiatanie**
+Planuj od stanów z najwyższym |δ| jako pierwsze.
+Propaguje aktualizacje wartości do poprzedników — szybsza zbieżność.
+
+**Krok 4 — MBPO**
+Użyj nauczonego modelu do generowania syntetycznych rolloutów dla REINFORCE.
+
+**Krok 5 — Bonus niepewności**
+Styl UCB: Q_bonus(s,a) = Q(s,a) + beta/sqrt(N(s,a)+1).
+Zachęca do eksploracji rzadko odwiedzanych par stan-akcja.
+""",
         "returns_title": "Episodenrückgaben",
         "returns_caption": "Gleitender Durchschnitt.",
         "value_title": "Wertfunktion V(s)",
@@ -203,7 +222,26 @@ T = {
         "uncertainty_beta": "Beta - Bonus incertitude", "seed": "Graine",
         "run_btn": "Lancer les quatre algorithmes",
         "guide_title": "Guide",
-        "guide": "Modele monde: T(s,a,s') et R(s,a) appris. Planification sur modele appris. Balayage prioritaire: planifier depuis |delta| max.",
+        "guide": """
+**Étape 1 — Modèle monde**
+L'agent apprend T(s,a,s') et R(s,a) à partir de l'expérience réelle.
+La planification utilise le modèle appris au lieu de l'environnement réel.
+
+**Étape 2 — WM Q-Learning vs Dyna-Q (Ch07)**
+Même idée que Dyna-Q mais avec un modèle monde tabulaire explicite.
+Le graphique de précision du modèle montre à quel point T(s,a,s') est appris.
+
+**Étape 3 — Balayage priorisé**
+Planifier depuis les états avec le plus grand |δ| en premier.
+Propage les mises à jour de valeur aux prédécesseurs — convergence plus rapide.
+
+**Étape 4 — MBPO**
+Utiliser le modèle appris pour générer des rollouts synthétiques pour REINFORCE.
+
+**Étape 5 — Bonus d'incertitude**
+Style UCB : Q_bonus(s,a) = Q(s,a) + beta/sqrt(N(s,a)+1).
+Encourage l'exploration des paires rarement visitées.
+""",
         "returns_title": "Retours", "returns_caption": "",
         "accuracy_title": "Precision modele", "accuracy_caption": "",
         "planning_title": "Etapes planification", "planning_caption": "",
@@ -234,7 +272,26 @@ T = {
         "uncertainty_beta": "Beta - Bonus incertidumbre", "seed": "Semilla",
         "run_btn": "Ejecutar los cuatro algoritmos",
         "guide_title": "Guia",
-        "guide": "Modelo mundo: T(s,a,s') y R(s,a) aprendidos. Planificacion sobre modelo aprendido. Barrido priorizado: planificar desde |delta| max.",
+        "guide": """
+**Paso 1 — Modelo mundo**
+El agente aprende T(s,a,s') y R(s,a) de la experiencia real.
+La planificación usa el modelo aprendido en lugar del entorno real.
+
+**Paso 2 — WM Q-Learning vs Dyna-Q (Ch07)**
+Misma idea que Dyna-Q pero con un modelo mundo tabular explícito.
+El gráfico de precisión del modelo muestra qué tan bien se aprende T(s,a,s').
+
+**Paso 3 — Barrido priorizado**
+Planificar desde estados con mayor |δ| primero.
+Propaga actualizaciones de valor a predecesores — convergencia más rápida.
+
+**Paso 4 — MBPO**
+Usar el modelo aprendido para generar rollouts sintéticos para REINFORCE.
+
+**Paso 5 — Bonus de incertidumbre**
+Estilo UCB: Q_bonus(s,a) = Q(s,a) + beta/sqrt(N(s,a)+1).
+Fomenta la exploración de pares raramente visitados.
+""",
         "returns_title": "Retornos", "returns_caption": "",
         "accuracy_title": "Precision modelo", "accuracy_caption": "",
         "planning_title": "Pasos planificacion", "planning_caption": "",

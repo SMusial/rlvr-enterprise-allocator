@@ -148,26 +148,29 @@ Implemented in `extract_policy()` in `ch02_bellman.rs`.
         "run_btn": "▶ Wertiteration starten",
         "guide_title": "ℹ️ Anleitung",
         "guide": """
-**Schritt 1 — γ einstellen**
-γ=0.99 = weitsichtig, γ=0.5 = kurzsichtig.
+**Schritt 1 — γ einstellen (Diskontierungsfaktor)**
+γ steuert, wie sehr der Agent zukünftige Belohnungen schätzt.
+γ=0.99 = weitsichtig. γ=0.5 = kurzsichtig.
 
-**Schritt 2 — θ einstellen**
-kleiner = genauer, aber mehr Iterationen.
+**Schritt 2 — θ einstellen (Konvergenzschwelle)**
+Kleineres θ = präziser aber mehr Iterationen. Mit 1e-6 beginnen.
 
-**Schritt 3 — Wertiteration starten**
-Rust-Engine baut Übergangsmatrix und iteriert.
+**Schritt 3 — ▶ Wertiteration starten klicken**
+Die Rust-Engine erstellt die ASP-Übergangsmatrix, Belohnungsmatrix und führt Bellman-Iterationen durch.
 
-**Schritt 4 — Wertfunktion lesen**
-jeder Balken = langfristiger Wert des Zustands.
+**Schritt 4 — Wertfunktionsdiagramm lesen**
+Jeder Balken = langfristiger Wert in diesem Betriebszustand.
+S0 (alle verfügbar) sollte am höchsten sein. S7 (SLA-Verletzung bevorstehend) am niedrigsten.
 
-**Schritt 5 — Optimale Strategie lesen**
-beste Dispatch-Strategie für jeden Zustand.
+**Schritt 5 — Optimale Strategietabelle lesen**
+Für jeden Betriebszustand: welche Dispatch-Strategie maximiert den langfristigen Wert?
 
 **Schritt 6 — Konvergenzkurve lesen**
-Abfall von V^(k+1) - V^(k).
+Beobachten Sie den Abfall von ‖V^(k+1) - V^(k)‖∞ gegen null.
 
-**Schritt 7 — Glass-Box lesen**
-Bellman-Update für jeden Zustand.""",
+**Schritt 7 — Glass-Box Bellman-Spur lesen**
+Sehen Sie das genaue Bellman-Update für jeden Zustand in den ersten 3 Iterationen.
+""",
         "value_title": "📊 Optimale Wertfunktion V*(s)",
         "value_caption": "Langfristig erwartete Belohnung für jeden Betriebszustand",
         "policy_title": "🎯 Optimale Strategie π*(s)",
@@ -238,26 +241,28 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "run_btn": "▶ Lancer l'itération de valeur",
         "guide_title": "🎓 Comment utiliser ce chapitre",
         "guide": """
-**Étape 1 — Réglez γ**
-γ=0.99 = prévoyant, γ=0.5 = myope.
+**Étape 1 — Régler γ (facteur de remise)**
+γ contrôle l'importance des récompenses futures.
+γ=0.99 = prévoyant. γ=0.5 = myope.
 
-**Étape 2 — Réglez θ**
-plus petit = plus précis mais plus d'itérations.
+**Étape 2 — Régler θ (seuil de convergence)**
+Plus petit θ = plus précis mais plus d'itérations. Commencer avec 1e-6.
 
-**Étape 3 — Cliquez ▶**
-le moteur Rust construit la matrice de transition et itère.
+**Étape 3 — Cliquer ▶ Lancer l'itération de valeur**
+Le moteur Rust construit la matrice de transition ASP et exécute les itérations de Bellman.
 
-**Étape 4 — Lisez la fonction de valeur**
-chaque barre = valeur à long terme de l'état.
+**Étape 4 — Lire le graphique de la fonction de valeur**
+Chaque barre = valeur à long terme dans cet état opérationnel.
+S0 (tous disponibles) le plus haut. S7 (violation SLA imminente) le plus bas.
 
-**Étape 5 — Lisez la politique optimale**
-meilleure stratégie pour chaque état.
+**Étape 5 — Lire le tableau de politique optimale**
+Pour chaque état : quelle stratégie de dispatch maximise la valeur à long terme ?
 
-**Étape 6 — Lisez la courbe de convergence**
-décroissance de ‖V^(k+1) - V^(k)‖∞.
+**Étape 6 — Lire la courbe de convergence**
+Observer la décroissance de ‖V^(k+1) - V^(k)‖∞ vers zéro.
 
-**Étape 7 — Lisez le Glass-Box**
-mise à jour de Bellman pour chaque état.
+**Étape 7 — Lire le Glass-Box**
+Voir la mise à jour exacte de Bellman pour chaque état dans les 3 premières itérations.
 """,
         "value_title": "📊 Fonction de valeur optimale V*(s)",
         "value_caption": "Récompense attendue à long terme pour chaque état opérationnel",
@@ -334,26 +339,28 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "run_btn": "▶ Ejecutar iteración de valor",
         "guide_title": "🎓 Cómo usar este capítulo",
         "guide": """
-**Paso 1 — Ajuste γ**
-γ=0.99 = previsor, γ=0.5 = miope.
+**Paso 1 — Ajustar γ (factor de descuento)**
+γ controla cuánto valora el agente las recompensas futuras.
+γ=0.99 = previsor. γ=0.5 = miope.
 
-**Paso 2 — Ajuste θ**
-más pequeño = más preciso pero más iteraciones.
+**Paso 2 — Ajustar θ (umbral de convergencia)**
+θ más pequeño = más preciso pero más iteraciones. Comenzar con 1e-6.
 
-**Paso 3 — Haga clic ▶**
-el motor Rust construye la matriz de transición e itera.
+**Paso 3 — Hacer clic en ▶ Ejecutar iteración de valor**
+El motor Rust construye la matriz de transición ASP y ejecuta iteraciones de Bellman.
 
-**Paso 4 — Lea la función de valor**
-cada barra = valor a largo plazo del estado.
+**Paso 4 — Leer el gráfico de función de valor**
+Cada barra = valor a largo plazo en ese estado operacional.
+S0 (todos disponibles) el más alto. S7 (violación SLA inminente) el más bajo.
 
-**Paso 5 — Lea la política óptima**
-mejor estrategia para cada estado.
+**Paso 5 — Leer la tabla de política óptima**
+Para cada estado: ¿qué estrategia de despacho maximiza el valor a largo plazo?
 
-**Paso 6 — Lea la curva de convergencia**
-decaimiento de ‖V^(k+1) - V^(k)‖∞.
+**Paso 6 — Leer la curva de convergencia**
+Observar la disminución de ‖V^(k+1) - V^(k)‖∞ hacia cero.
 
-**Paso 7 — Lea el Glass-Box**
-actualización de Bellman para cada estado.
+**Paso 7 — Leer el Glass-Box**
+Ver la actualización exacta de Bellman para cada estado en las primeras 3 iteraciones.
 """,
         "value_title": "📊 Función de valor óptima V*(s)",
         "value_caption": "Recompensa esperada a largo plazo para cada estado operacional",
@@ -430,26 +437,28 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "run_btn": "▶ Uruchom iterację wartości",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1 — Ustaw γ**
-γ=0.99 = dalekowzroczny, γ=0.5 = krótkowzroczny.
+**Krok 1 — Ustaw γ (współczynnik dyskonta)**
+γ kontroluje jak bardzo agent ceni przyszłe nagrody.
+γ=0.99 = dalekowzroczny. γ=0.5 = krótkowzroczny.
 
-**Krok 2 — Ustaw θ**
-mniejszy = dokładniejszy, ale więcej iteracji.
+**Krok 2 — Ustaw θ (próg zbieżności)**
+Mniejsze θ = dokładniejsze ale więcej iteracji. Zacznij od 1e-6.
 
-**Krok 3 — Kliknij ▶**
-silnik Rust buduje macierz przejść i iteruje.
+**Krok 3 — Kliknij ▶ Uruchom iterację wartości**
+Silnik Rust buduje macierz przejść ASP i wykonuje iteracje Bellmana.
 
-**Krok 4 — Odczytaj funkcję wartości**
-każdy słupek = długoterminowa wartość stanu.
+**Krok 4 — Odczytaj wykres funkcji wartości**
+Każdy słupek = długoterminowa wartość bycia w tym stanie.
+S0 (wszyscy dostępni) najwyższy. S7 (naruszenie SLA bliskie) najniższy.
 
-**Krok 5 — Odczytaj optymalną politykę**
-najlepsza strategia dla każdego stanu.
+**Krok 5 — Odczytaj tabelę optymalnej polityki**
+Dla każdego stanu: która strategia dyspozycji maksymalizuje wartość długoterminową?
 
 **Krok 6 — Odczytaj krzywą zbieżności**
-zanik ‖V^(k+1) - V^(k)‖∞.
+Obserwuj zanik ‖V^(k+1) - V^(k)‖∞ do zera.
 
-**Krok 7 — Odczytaj Glass-Box**
-aktualizacja Bellmana dla każdego stanu.
+**Krok 7 — Odczytaj Glass-Box ślad Bellmana**
+Zobacz dokładną aktualizację Bellmana dla każdego stanu w pierwszych 3 iteracjach.
 """,
         "value_title": "📊 Optymalna funkcja wartości V*(s)",
         "value_caption": "Oczekiwana długoterminowa nagroda dla każdego stanu operacyjnego",

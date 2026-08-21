@@ -212,27 +212,29 @@ Implemented in `async_value_iteration()` in `ch04_dp.rs`.
         "run_btn": "▶ Alle drei DP-Algorithmen starten",
         "guide_title": "ℹ️ Anleitung",
         "guide": """
-**Schritt 1**
-Drei DP-Algorithmen gleichzeitig: PI, VI, Async VI.
+**Schritt 1 — Die drei Algorithmen verstehen**
+Policy Iteration (PI): wechselt zwischen Strategiebewertung und -verbesserung.
+Value Iteration (VI): wendet Bellman-Optimalitätsgleichung direkt an.
+Async VI: aktualisiert Zustände nach Bellman-Residual-Reihenfolge.
 
-**Schritt 2**
-γ und θ einstellen.
+**Schritt 2 — γ und θ einstellen**
 γ=0.95, θ=1e-6 ist ein guter Start.
 
-**Schritt 3**
-Klicken, um alle drei Algorithmen zu starten.
+**Schritt 3 — ▶ Alle drei DP-Algorithmen starten klicken**
+Alle drei laufen gleichzeitig. Ergebnisse erscheinen nebeneinander.
 
-**Schritt 4**
-Konvergenzkurven vergleichen.
+**Schritt 4 — Konvergenzkurven vergleichen**
+Async VI konvergiert schneller durch Fokussierung auf Zustände mit hohem Residual.
 
-**Schritt 5**
-Strategieentwicklungstabelle (PI) lesen.
+**Schritt 5 — Strategieentwicklungstabelle lesen**
+Zeigt wie sich die Strategie bei jeder PI-Außeniterierung ändert. Stabilisiert sich in 3-5 Schritten.
 
-**Schritt 6**
-Bellman-Residual-Heatmap lesen.
+**Schritt 6 — Bellman-Residual-Heatmap lesen**
+Welche Zustände haben nach der Konvergenz das höchste Residual?
 
-**Schritt 7**
-Verifizieren, dass PI = VI Strategie.""",
+**Schritt 7 — PI = VI Strategie verifizieren**
+Beide Algorithmen müssen dieselbe optimale Strategie finden.
+""",
         "kpi_pi_iters": "PI-Außeniterationen",
         "kpi_vi_iters": "VI-Iterationen",
         "kpi_async_iters": "Async-VI-Iterationen",
@@ -349,27 +351,28 @@ Zustände mit hohem Residual werden zuerst aktualisiert.
         "run_btn": "▶ Lancer les trois algorithmes DP",
         "guide_title": "🎓 Comment utiliser ce chapitre",
         "guide": """
-**Étape 1**
-Trois algorithmes DP simultanément : PI, VI, VI Async.
+**Étape 1 — Comprendre les trois algorithmes**
+Policy Iteration (PI) : altèrne évaluation et amélioration de la politique.
+Value Iteration (VI) : applique directement l'équation d'optimalité de Bellman.
+VI Async : met à jour les états par ordre de résidu de Bellman.
 
-**Étape 2**
-Réglez γ et θ.
+**Étape 2 — Régler γ et θ**
 γ=0.95, θ=1e-6 est un bon départ.
 
-**Étape 3**
-Cliquez ▶ pour lancer les trois algorithmes.
+**Étape 3 — Cliquer ▶ Lancer les trois algorithmes DP**
+Les trois s'exécutent simultanément. Les résultats apparaissent côte à côte.
 
-**Étape 4**
-Comparez les courbes de convergence.
+**Étape 4 — Comparer les courbes de convergence**
+VI Async converge plus vite en se concentrant d'abord sur les états à résidu élevé.
 
-**Étape 5**
-Lisez l'évolution de la politique (tableau PI).
+**Étape 5 — Lire le tableau d'évolution de la politique**
+Montre comment la politique change à chaque itération externe PI. Se stabilise en 3-5 étapes.
 
-**Étape 6**
-Lisez la carte thermique des résidus de Bellman.
+**Étape 6 — Lire la carte thermique des résidus de Bellman**
+Quels états ont le résidu le plus élevé après convergence ?
 
-**Étape 7**
-Vérifiez que PI = VI politique.
+**Étape 7 — Vérifier que PI = VI politique**
+Les deux algorithmes doivent trouver la même politique optimale.
 """,
         "kpi_pi_iters": "Itérations PI externes",
         "kpi_vi_iters": "Itérations VI",
@@ -449,27 +452,28 @@ Résidu(s) = |V^(k+1)(s) - V^(k)(s)|
         "run_btn": "▶ Ejecutar los tres algoritmos DP",
         "guide_title": "🎓 Cómo usar este capítulo",
         "guide": """
-**Paso 1**
-Tres algoritmos DP simultáneamente: PI, VI, VI Async.
+**Paso 1 — Entender los tres algoritmos**
+Policy Iteration (PI): alterna entre evaluación y mejora de política.
+Value Iteration (VI): aplica directamente la ecuación de optimalidad de Bellman.
+VI Async: actualiza estados en orden de residuo de Bellman.
 
-**Paso 2**
-Ajuste γ y θ.
+**Paso 2 — Ajustar γ y θ**
 γ=0.95, θ=1e-6 es un buen inicio.
 
-**Paso 3**
-Haga clic ▶ para ejecutar los tres algoritmos.
+**Paso 3 — Hacer clic en ▶ Ejecutar los tres algoritmos DP**
+Los tres se ejecutan simultáneamente. Los resultados aparecen uno al lado del otro.
 
-**Paso 4**
-Compare las curvas de convergencia.
+**Paso 4 — Comparar las curvas de convergencia**
+VI Async converge más rápido al enfocarse en estados de alto residuo primero.
 
-**Paso 5**
-Lea la evolución de la política (tabla PI).
+**Paso 5 — Leer la tabla de evolución de la política**
+Muestra cómo cambia la política en cada iteración externa de PI. Se estabiliza en 3-5 pasos.
 
-**Paso 6**
-Lea el mapa de calor de residuos de Bellman.
+**Paso 6 — Leer el mapa de calor de residuos de Bellman**
+¿Qué estados tienen el mayor residuo después de la convergencia?
 
-**Paso 7**
-Verifique que PI = VI política.
+**Paso 7 — Verificar que PI = VI política**
+Ambos algoritmos deben encontrar la misma política óptima.
 """,
         "kpi_pi_iters": "Iteraciones PI externas",
         "kpi_vi_iters": "Iteraciones VI",
@@ -545,27 +549,28 @@ Verifique que PI = VI política.
         "run_btn": "▶ Uruchom wszystkie trzy algorytmy DP",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1**
-Trzy algorytmy DP jednocześnie: PI, VI, Async VI.
+**Krok 1 — Zrozum trzy algorytmy**
+Policy Iteration (PI): naprzemiennie ocena polityki i poprawa polityki.
+Value Iteration (VI): bezpośrednio stosuje równanie optymalnoPolski Bellmana.
+Async VI: aktualizuje stany w kolejności residuałów Bellmana.
 
-**Krok 2**
-Ustaw γ i θ.
+**Krok 2 — Ustaw γ i θ**
 γ=0.95, θ=1e-6 to dobry start.
 
-**Krok 3**
-Kliknij ▶ aby uruchomić wszystkie trzy algorytmy.
+**Krok 3 — Kliknij ▶ Uruchom wszystkie trzy algorytmy DP**
+Wszystkie trzy działają jednocześnie. Wyniki pojawiają się obok siebie.
 
-**Krok 4**
-Porównaj krzywe zbieżności.
+**Krok 4 — Porównaj krzywe zbieżności**
+Async VI zbiega szybciej skupiając się najpierw na stanach o wysokim residualu.
 
-**Krok 5**
-Odczytaj ewolucję polityki (tabela PI).
+**Krok 5 — Odczytaj tabelę ewolucji polityki**
+Pokazuje jak polityka zmienia się przy każdej zewnętrznej iteracji PI. Stabilizuje się w 3-5 krokach.
 
-**Krok 6**
-Odczytaj mapę ciepła residuali Bellmana.
+**Krok 6 — Odczytaj mapę ciepła residuałów Bellmana**
+Które stany mają najwyższy residual po zbieżności?
 
-**Krok 7**
-Zweryfikuj że PI = VI polityka.
+**Krok 7 — Zweryfikuj że PI = VI polityka**
+Oba algorytmy muszą znaleźć tę samą optymalną politykę.
 """,
         "kpi_pi_iters": "Iteracje PI zewnętrzne",
         "kpi_vi_iters": "Iteracje VI",

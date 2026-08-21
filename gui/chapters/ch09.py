@@ -68,7 +68,26 @@ T = {
         "seed": "Zufallsseed",
         "run_btn": "▶ Alle Algorithmen starten",
         "guide_title": "Anleitung",
-        "guide": "Policy-Gradient-Methoden optimieren die Strategie direkt. REINFORCE verwendet G_t als Signal.",
+        "guide": """
+**Krok 1 — Policy Gradient vs Q-Learning**
+REINFORCE optymalizuje bezpośrednio π(a|s)=softmax(θ[s][a]).
+Brak tabeli Q. Wspinaczka gradientowa na J(θ).
+
+**Krok 2 — REINFORCE vs Actor-Critic**
+REINFORCE: Monte Carlo — czeka na pełny epizod. Nieobciążone, wysoka wariancja.
+Actor-Critic: krytyk TD(0) — online per krok. Niższa wariancja, obciążone.
+
+**Krok 3 — Baseline**
+Odejmowanie b(s) od G_t redukuje wariancję bez biasu.
+Krzywa REINFORCE+Baseline stabilizuje się szybciej.
+
+**Krok 4 — Ustaw temperaturę τ**
+τ=1.0 standardowe. τ<1 ostrzejsza polityka. τ>1 bardziej jednorodna dystrybucja.
+
+**Krok 5 — Odczytaj wykres entropii**
+Wysoka entropia = eksploracja. Niska entropia = eksploatacja.
+Zdrowe: entropia maleje stopniowo.
+""",
         "returns_title": "Episodenrückgaben",
         "returns_caption": "Gleitender Durchschnitt.",
         "value_title": "Wertfunktion V(s)",
@@ -100,7 +119,26 @@ T = {
         "engine_missing": "Exécutez: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Paramètres",
         "n_episodes": "Épisodes", "gamma": "γ", "alpha": "α politique", "alpha_baseline": "α_v baseline",
         "temperature": "τ", "seed": "Graine", "run_btn": "▶ Lancer",
-        "guide_title": "📖 Guide", "guide": "REINFORCE optimise π directement. Baseline réduit variance. Actor-Critic utilise TD(0).",
+        "guide_title": "📖 Guide", "guide": """
+**Étape 1 — Policy Gradient vs Q-Learning**
+REINFORCE optimise directement π(a|s)=softmax(θ[s][a]).
+Pas de Q-table. Montée de gradient sur J(θ).
+
+**Étape 2 — REINFORCE vs Actor-Critic**
+REINFORCE : Monte Carlo — attend l'épisode complet. Non biaisé, haute variance.
+Actor-Critic : critique TD(0) — en ligne par étape. Variance plus faible, biaisé.
+
+**Étape 3 — Baseline**
+Soustraire b(s) de G_t réduit la variance sans biais.
+La courbe REINFORCE+Baseline se stabilise plus vite.
+
+**Étape 4 — Régler la température τ**
+τ=1.0 standard. τ<1 politique plus nette. τ>1 distribution plus uniforme.
+
+**Étape 5 — Lire le graphique d'entropie**
+Haute entropie = exploration. Faible entropie = exploitation.
+Sain : l'entropie diminue progressivement.
+""",
         "returns_title": "📈 Retours", "returns_caption": "", "pg_loss_title": "📉 Gradient", "pg_loss_caption": "",
         "entropy_title": "🌡️ Entropie", "entropy_caption": "", "value_title": "🏛️ V(s)", "value_caption": "",
         "theta_title": "🗺️ θ[s][a]", "theta_caption": "", "glass_title": "🔬 Glass-Box",
@@ -118,7 +156,26 @@ T = {
         "engine_missing": "Ejecute: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Configuración",
         "n_episodes": "Episodios", "gamma": "γ", "alpha": "α política", "alpha_baseline": "α_v baseline",
         "temperature": "τ", "seed": "Semilla", "run_btn": "▶ Ejecutar",
-        "guide_title": "📖 Guía", "guide": "REINFORCE optimiza π directamente. Baseline reduce varianza. Actor-Critic usa TD(0).",
+        "guide_title": "📖 Guía", "guide": """
+**Paso 1 — Policy Gradient vs Q-Learning**
+REINFORCE optimiza directamente π(a|s)=softmax(θ[s][a]).
+Sin Q-table. Ascenso de gradiente en J(θ).
+
+**Paso 2 — REINFORCE vs Actor-Critic**
+REINFORCE: Monte Carlo — espera el episodio completo. Sin sesgo, alta varianza.
+Actor-Critic: crítico TD(0) — en línea por paso. Varianza más baja, sesgado.
+
+**Paso 3 — Baseline**
+Restar b(s) de G_t reduce la varianza sin sesgo.
+La curva REINFORCE+Baseline se estabiliza más rápido.
+
+**Paso 4 — Ajustar la temperatura τ**
+τ=1.0 estándar. τ<1 política más nítida. τ>1 distribución más uniforme.
+
+**Paso 5 — Leer el gráfico de entropía**
+Alta entropía = explorando. Baja entropía = explotando.
+Saludable: la entropía disminuye gradualmente.
+""",
         "returns_title": "📈 Retornos", "returns_caption": "", "pg_loss_title": "📉 Gradiente", "pg_loss_caption": "",
         "entropy_title": "🌡️ Entropía", "entropy_caption": "", "value_title": "🏛️ V(s)", "value_caption": "",
         "theta_title": "🗺️ θ[s][a]", "theta_caption": "", "glass_title": "🔬 Glass-Box",

@@ -70,7 +70,31 @@ T = {
         "lambda_val": "λ — Trace-Abklingrate", "seed": "Zufallsseed",
         "run_btn": "▶ Alle Algorithmen starten",
         "guide_title": "Anleitung",
-        "guide": "λ=0: reines TD(0). λ=1: reines MC. Eligibility Traces verteilen Kredit auf vergangene Zustände.",
+        "guide": """
+**Krok 1 — Zrozum Eligibility Traces**
+Ślady rozwiązują problem przypisania kredytu.
+e_t(s,a) = γλ·e_{t-1}(s,a) + 1[s=S_t, a=A_t]
+λ=0 → TD(0). λ=1 → MC. λ=0.7 → optymalny zakres.
+
+**Krok 2 — Zrozum SARSA(λ) vs Q(λ)**
+SARSA(λ): on-policy, cel = R + γQ(s',a').
+Q(λ) Watkins: off-policy, ślady przecinane przy niezachłannych akcjach.
+
+**Krok 3 — Ustaw λ (współczynnik zaniku śladów)**
+Zacznij od λ=0.7. Porównaj λ=0.0 vs λ=0.99 aby zobaczyć różnicę.
+
+**Krok 4 — Kliknij ▶ Uruchom wszystkie cztery algorytmy**
+SARSA(λ), Q(λ), SARSA λ=0 (bazowe TD0), SARSA λ=0.99 (podobne do MC).
+
+**Krok 5 — Odczytaj wykres aktywnych śladów**
+Wyższe λ → więcej aktywnych śladów → szybsza propagacja kredytu.
+
+**Krok 6 — Odczytaj krzywą zwrotów**
+SARSA(λ=0.7) powinno zbiec szybciej niż SARSA λ=0.
+
+**Krok 7 — Porównaj z Ch06 TD(0)**
+Eligibility traces powinny osiągnąć to samo V* co TD(0) ale w mniejszej liczbie epizodów.
+""",
         "returns_title": "Episodenrückgaben",
         "returns_caption": "Gleitender Durchschnitt.",
         "value_title": "Wertfunktion V(s)",
@@ -101,7 +125,31 @@ T = {
         "engine_missing": "Exécutez: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Paramètres",
         "n_episodes": "Épisodes", "gamma": "γ", "alpha": "α", "epsilon": "ε", "epsilon_decay": "Décroissance ε",
         "lambda_": "λ traces", "replacing": "Replacing", "seed": "Graine", "run_btn": "▶ Lancer",
-        "guide_title": "📖 Guide", "guide": "λ=0→TD(0). λ=0.7 optimum. SARSA(λ) on-policy. Q(λ) off-policy.",
+        "guide_title": "📖 Guide", "guide": """
+**Étape 1 — Comprendre les Eligibility Traces**
+Les traces résolvent le problème d'attribution du crédit.
+e_t(s,a) = γλ·e_{t-1}(s,a) + 1[s=S_t, a=A_t]
+λ=0 → TD(0). λ=1 → MC. λ=0.7 → zone optimale.
+
+**Étape 2 — Comprendre SARSA(λ) vs Q(λ)**
+SARSA(λ) : on-policy, cible = R + γQ(s',a').
+Q(λ) Watkins : off-policy, traces coupées sur actions non-gloutonnes.
+
+**Étape 3 — Régler λ (taux de décroissance des traces)**
+Commencer avec λ=0.7. Essayer λ=0.0 vs λ=0.99 pour voir la différence.
+
+**Étape 4 — Cliquer ▶ Lancer les quatre algorithmes**
+SARSA(λ), Q(λ), SARSA λ=0 (baseline TD0), SARSA λ=0.99 (type MC).
+
+**Étape 5 — Lire le graphique des traces actives**
+λ plus élevé → plus d'états actifs → propagation du crédit plus rapide.
+
+**Étape 6 — Lire la courbe de retours**
+SARSA(λ=0.7) devrait converger plus vite que SARSA λ=0.
+
+**Étape 7 — Comparer avec Ch06 TD(0)**
+Les traces devraient atteindre le même V* que TD(0) en moins d'épisodes.
+""",
         "returns_title": "📈 Retours", "returns_caption": "", "td_error_title": "📉 Erreur TD", "td_error_caption": "",
         "value_title": "🏛️ V(s)", "value_caption": "", "trace_title": "🔍 Traces", "trace_caption": "",
         "qtable_title": "🗺️ Table Q", "qtable_caption": "", "glass_title": "🔬 Glass-Box",
@@ -119,7 +167,31 @@ T = {
         "engine_missing": "Ejecute: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Configuración",
         "n_episodes": "Episodios", "gamma": "γ", "alpha": "α", "epsilon": "ε", "epsilon_decay": "Decaimiento ε",
         "lambda_": "λ trazas", "replacing": "Replacing", "seed": "Semilla", "run_btn": "▶ Ejecutar",
-        "guide_title": "📖 Guía", "guide": "λ=0→TD(0). λ=0.7 óptimo. SARSA(λ) on-policy. Q(λ) off-policy.",
+        "guide_title": "📖 Guía", "guide": """
+**Paso 1 — Entender los Eligibility Traces**
+Los traces resuelven el problema de asignación de crédito.
+e_t(s,a) = γλ·e_{t-1}(s,a) + 1[s=S_t, a=A_t]
+λ=0 → TD(0). λ=1 → MC. λ=0.7 → zona óptima.
+
+**Paso 2 — Entender SARSA(λ) vs Q(λ)**
+SARSA(λ): on-policy, objetivo = R + γQ(s',a').
+Q(λ) Watkins: off-policy, traces cortados en acciones no codiciosas.
+
+**Paso 3 — Ajustar λ (tasa de decaimiento de traces)**
+Comenzar con λ=0.7. Probar λ=0.0 vs λ=0.99 para ver la diferencia.
+
+**Paso 4 — Hacer clic en ▶ Ejecutar los cuatro algoritmos**
+SARSA(λ), Q(λ), SARSA λ=0 (línea base TD0), SARSA λ=0.99 (tipo MC).
+
+**Paso 5 — Leer el gráfico de traces activos**
+λ más alto → más estados activos → propagación de crédito más rápida.
+
+**Paso 6 — Leer la curva de retornos**
+SARSA(λ=0.7) debería converger más rápido que SARSA λ=0.
+
+**Paso 7 — Comparar con Ch06 TD(0)**
+Los traces deberían alcanzar el mismo V* que TD(0) en menos episodios.
+""",
         "returns_title": "📈 Retornos", "returns_caption": "", "td_error_title": "📉 Error TD", "td_error_caption": "",
         "value_title": "🏛️ V(s)", "value_caption": "", "trace_title": "🔍 Trazas", "trace_caption": "",
         "qtable_title": "🗺️ Tabla Q", "qtable_caption": "", "glass_title": "🔬 Glass-Box",

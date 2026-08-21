@@ -214,33 +214,32 @@ makes a suboptimal choice and how quickly it recovers.
         "run_btn": "▶ Alle drei Algorithmen starten",
         "guide_title": "ℹ️ Anleitung",
         "guide": """
-**Schritt 1**
+**Schritt 1 — Problem verstehen**
 5 Qualifikationsslots (Arme): HVAC, Elektrik, Sanitär, Netzwerk, Mechanik.
+Jeder hat eine unbekannte wahre SLA-Erfolgsrate.
 
-**Schritt 2**
-Anzahl der Schritte einstellen.
-Versuchen Sie 200, dann 1000.
+**Schritt 2 — Anzahl der Schritte einstellen**
+Mehr Schritte = mehr Lernen. Zuerst 200, dann 1000.
 
-**Schritt 3**
-ε und Abklingrate einstellen.
+**Schritt 3 — ε einstellen**
+Höheres ε = mehr Exploration. Niedrigeres ε = mehr Exploitation.
 
-**Schritt 4**
-c (UCB-Konstante) einstellen.
-Vergleichen Sie c=2.0 vs c=0.5.
+**Schritt 4 — c einstellen (UCB-Konstante)**
+c=2.0 (Standard) vs c=0.5 (konservativ) versuchen.
 
-**Schritt 5**
-Klicken Sie, um alle drei Algorithmen gleichzeitig zu starten.
+**Schritt 5 — ▶ Alle drei Algorithmen starten klicken**
+Alle drei laufen gleichzeitig für fairen Vergleich.
 
-**Schritt 6**
-Kumulatives Bedauern lesen.
-Niedriger = besser.
+**Schritt 6 — Kumulatives Bedauern-Diagramm lesen**
+Niedrigeres Bedauern = besserer Algorithmus.
+Thompson Sampling liegt typischerweise vorne.
 
-**Schritt 7**
-Armziehungsverteilung lesen.
-Haben sie den besten Arm gefunden?
+**Schritt 7 — Armziehungsverteilung lesen**
+Haben die Algorithmen den wahren besten Arm (Sanitär) gefunden?
 
-**Schritt 8**
-Q-Wert-Konvergenz zu echten SLA-Raten lesen.""",
+**Schritt 8 — Q-Wert-Konvergenz lesen**
+Beobachten Sie wie geschätzte Q(a)-Werte gegen die wahren SLA-Raten konvergieren.
+""",
         "regret_title": "📉 Kumulatives Bedauern — Alle drei Algorithmen",
         "regret_x": "Schritt",
         "regret_y": "Kumulatives Bedauern",
@@ -319,33 +318,30 @@ Bedauernschranke: $O(\sqrt{KT \ln T})$""",
         "run_btn": "▶ Lancer les trois algorithmes",
         "guide_title": "🎓 Comment utiliser ce chapitre",
         "guide": """
-**Étape 1**
+**Étape 1 — Comprendre le problème**
 5 créneaux de compétences (bras) : HVAC, Électricité, Plomberie, Réseau, Mécanique.
+Chacun a un taux de réussite SLA réel inconnu.
 
-**Étape 2**
-Réglez le nombre d'étapes.
-Essayez 200 puis 1000.
+**Étape 2 — Régler le nombre d'étapes**
+Plus d'étapes = plus d'apprentissage. Essayer 200 puis 1000.
 
-**Étape 3**
-Réglez ε et le taux de décroissance α.
+**Étape 3 — Régler ε**
+ε plus élevé = plus d'exploration. ε plus bas = plus d'exploitation.
 
-**Étape 4**
-Réglez c (constante UCB).
-Essayez c=2.0 vs c=0.5.
+**Étape 4 — Régler c (constante UCB)**
+Essayer c=2.0 (standard) vs c=0.5 (conservateur).
 
-**Étape 5**
-Cliquez ▶ pour lancer les trois algorithmes simultanément.
+**Étape 5 — Cliquer ▶ Lancer les trois algorithmes**
+Les trois s'exécutent simultanément pour une comparaison équitable.
 
-**Étape 6**
-Lisez le graphique de regret cumulatif.
-Plus bas = meilleur.
+**Étape 6 — Lire le graphique de regret cumulatif**
+Regret plus bas = meilleur algorithme. Thompson Sampling prend généralement la tête.
 
-**Étape 7**
-Lisez la distribution des tirages.
-Ont-ils trouvé le meilleur bras (Plomberie) ?
+**Étape 7 — Lire la distribution des tirages**
+Ont-ils trouvé le vrai meilleur bras (Plomberie) ?
 
-**Étape 8**
-Lisez la convergence des valeurs Q vers les vrais taux SLA.
+**Étape 8 — Lire la convergence des valeurs Q**
+Observer les valeurs Q(a) converger vers les vrais taux SLA.
 """,
         "regret_title": "📈 Regret cumulatif — Trois algorithmes",
         "regret_x": "Étape",
@@ -435,33 +431,30 @@ Borne de regret : $O(\sqrt{KT \ln T})$
         "run_btn": "▶ Ejecutar los tres algoritmos",
         "guide_title": "🎓 Cómo usar este capítulo",
         "guide": """
-**Paso 1**
+**Paso 1 — Entender el problema**
 5 ranuras de habilidades (brazos): HVAC, Eléctrico, Fontanería, Red, Mecánico.
+Cada uno tiene una tasa de éxito SLA real desconocida.
 
-**Paso 2**
-Ajuste el número de pasos.
-Pruebe 200 y luego 1000.
+**Paso 2 — Ajustar el número de pasos**
+Más pasos = más aprendizaje. Probar 200 luego 1000.
 
-**Paso 3**
-Ajuste ε y la tasa de decaimiento α.
+**Paso 3 — Ajustar ε**
+ε más alto = más exploración. ε más bajo = más explotación.
 
-**Paso 4**
-Ajuste c (constante UCB).
-Pruebe c=2.0 vs c=0.5.
+**Paso 4 — Ajustar c (constante UCB)**
+Probar c=2.0 (estándar) vs c=0.5 (conservador).
 
-**Paso 5**
-Haga clic ▶ para ejecutar los tres algoritmos simultáneamente.
+**Paso 5 — Hacer clic en ▶ Ejecutar los tres algoritmos**
+Los tres se ejecutan simultáneamente para comparación justa.
 
-**Paso 6**
-Lea el gráfico de arrepentimiento acumulado.
-Más bajo = mejor.
+**Paso 6 — Leer el gráfico de arrepentimiento acumulado**
+Menor arrepentimiento = mejor algoritmo. Thompson Sampling generalmente toma la delantera.
 
-**Paso 7**
-Lea la distribución de tiradas.
-¿Encontraron el mejor brazo (Fontanería)?
+**Paso 7 — Leer la distribución de tiradas**
+¿Encontraron el verdadero mejor brazo (Fontanería)?
 
-**Paso 8**
-Lea la convergencia de valores Q hacia las tasas SLA reales.
+**Paso 8 — Leer la convergencia de valores Q**
+Observar cómo los valores Q(a) convergen hacia las tasas SLA reales.
 """,
         "regret_title": "📈 Arrepentimiento acumulado — Tres algoritmos",
         "regret_x": "Paso",
@@ -549,33 +542,30 @@ $$\text{UCB}(a) = Q(a) + c \sqrt{\frac{\ln t}{N(a)}}$$
         "run_btn": "▶ Uruchom wszystkie trzy algorytmy",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1**
+**Krok 1 — Zrozum problem**
 5 slotów umiejętności (ramion): HVAC, Elektryka, Hydraulika, Sieć, Mechanika.
+Każde ma nieznany prawdziwy wskaźnik sukcesu SLA.
 
-**Krok 2**
-Ustaw liczbę kroków.
-Zacznij od 200, potem 1000.
+**Krok 2 — Ustaw liczbę kroków**
+Więcej kroków = więcej uczenia. Zacznij od 200, potem 1000.
 
-**Krok 3**
-Ustaw ε i współczynnik zaniku α.
+**Krok 3 — Ustaw ε**
+Wyższe ε = więcej eksploracji. Niższe ε = więcej eksploatacji.
 
-**Krok 4**
-Ustaw c (stała UCB).
-Porównaj c=2.0 vs c=0.5.
+**Krok 4 — Ustaw c (stała UCB)**
+Porównaj c=2.0 (standardowe) vs c=0.5 (konserwatywne).
 
-**Krok 5**
-Kliknij ▶ aby uruchomić wszystkie trzy algorytmy jednocześnie.
+**Krok 5 — Kliknij ▶ Uruchom wszystkie trzy algorytmy**
+Wszystkie trzy działają jednocześnie dla sprawiedliwego porównania.
 
-**Krok 6**
-Odczytaj wykres skumulowanego żalu.
-Niżej = lepiej.
+**Krok 6 — Odczytaj wykres skumulowanego żalu**
+Niższy żal = lepszy algorytm. Thompson Sampling zazwyczaj wyprzedza.
 
-**Krok 7**
-Odczytaj rozkład losowań.
-Czy znalazły najlepsze ramię (Hydraulika)?
+**Krok 7 — Odczytaj rozkład losowań**
+Czy znalazły prawdziwe najlepsze ramię (Hydraulika)?
 
-**Krok 8**
-Odczytaj zbieżność wartości Q do prawdziwych wskaźników SLA.
+**Krok 8 — Odczytaj zbieżność wartości Q**
+Obserwuj jak szacowane wartości Q(a) zbiegają do prawdziwych wskaźników SLA.
 """,
         "regret_title": "📈 Skumulowany żal — Trzy algorytmy",
         "regret_x": "Krok",

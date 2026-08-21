@@ -25,13 +25,25 @@ TX = {
         "title": "Kapitel 12 — Spieltheorie & Nash-Gleichgewicht",
         "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Warschau",
         "engine_missing": "Ausführen: cd rlvr-py && maturin develop",
-        "guide": (
-            "Nash Q: konvergiert zum Nash-Gleichgewicht.\n\n"
-            "Correlated Q: breiter als Nash — Agenten koordinieren über gemeinsame Verteilung.\n\n"
-            "Minimax Q: Nullsummenspiel — Spieler 0 maximiert Worst-Case-Auszahlung.\n\n"
-            "Fictitious Play: beste Antwort auf empirischen Durchschnitt des Gegners.\n\n"
-            "Nash-Lücke beobachten: niedriger = näher am Gleichgewicht."
-        ),
+        "guide": """
+**Nash Q: konvergiert zum Nash-Gleichgewicht.**
+
+**Schritt 1 — Nash-Gleichgewicht verstehen**
+Kein Agent kann sich durch einseitiges Ändern seiner Strategie verbessern.
+
+**Schritt 2 — Correlated Q**
+Breiter als Nash — Agenten koordinieren über gemeinsame Verteilung σ(a0,a1|s).
+
+**Schritt 3 — Minimax Q**
+Nullsummenspiel — Spieler 0 maximiert den Worst-Case-Auszahlungswert.
+Aktivieren Sie die Nullsummen-Checkbox um diesen Modus zu sehen.
+
+**Schritt 4 — Fictitious Play**
+Beste Antwort auf die empirische Durchschnittsstrategie des Gegners.
+
+**Schritt 5 — Nash-Lücke-Diagramm beobachten**
+Niedrigerer Wert = näher am Gleichgewicht. Null = perfektes Nash-Gleichgewicht erreicht.
+""",
         "labels": {"nash_q":"Nash Q","correlated_q":"Correlated Q","minimax_q":"Minimax Q","fictitious":"Fictitious Play"},
         "settings": "Einstellungen", "episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
         "epsilon": "Epsilon", "edecay": "Epsilon-Abklingrate",
@@ -45,7 +57,25 @@ TX = {
         "title": "Chapitre 12 — Théorie des jeux & Équilibre de Nash",
         "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Varsovie",
         "engine_missing": "Exécutez: cd rlvr-py && maturin develop",
-        "guide": "Nash Q: équilibre de Nash. Correlated Q: distribution conjointe. Minimax Q: jeu à somme nulle. Fictitious Play: meilleure réponse.",
+        "guide": """
+**Nash Q : converge vers l'équilibre de Nash.**
+
+**Étape 1 — Comprendre l'équilibre de Nash**
+Aucun agent ne peut améliorer sa valeur en changeant unilatéralement sa stratégie.
+
+**Étape 2 — Correlated Q**
+Plus large que Nash — les agents coordonnent via une distribution conjointe σ(a0,a1|s).
+
+**Étape 3 — Minimax Q**
+Jeu à somme nulle — le joueur 0 maximise le pire cas de gain.
+Activer la case à cocher jeu à somme nulle pour voir ce mode.
+
+**Étape 4 — Fictitious Play**
+Meilleure réponse à la stratégie moyenne empirique de l'adversaire.
+
+**Étape 5 — Observer le graphique de lacune Nash**
+Plus bas = plus proche de l'équilibre. Zéro = équilibre de Nash parfait atteint.
+""",
         "labels": {"nash_q":"Nash Q","correlated_q":"Correlated Q","minimax_q":"Minimax Q","fictitious":"Fictitious Play"},
         "settings": "Paramètres", "episodes": "Épisodes", "gamma": "Gamma", "alpha": "Alpha",
         "epsilon": "Epsilon", "edecay": "Décroissance", "zerosum": "Jeu à somme nulle", "seed": "Graine",
@@ -57,7 +87,25 @@ TX = {
         "title": "Capítulo 12 — Teoría de juegos & Equilibrio de Nash",
         "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Varsovia",
         "engine_missing": "Ejecute: cd rlvr-py && maturin develop",
-        "guide": "Nash Q: equilibrio de Nash. Correlated Q: distribución conjunta. Minimax Q: juego suma cero. Fictitious Play: mejor respuesta.",
+        "guide": """
+**Nash Q: converge al equilibrio de Nash.**
+
+**Paso 1 — Entender el equilibrio de Nash**
+Ningún agente puede mejorar su valor cambiando unilateralmente su estrategia.
+
+**Paso 2 — Correlated Q**
+Más amplio que Nash — los agentes coordinan a través de distribución conjunta σ(a0,a1|s).
+
+**Paso 3 — Minimax Q**
+Juego de suma cero — el jugador 0 maximiza el pago en el peor caso.
+Activar la casilla de verificación de juego de suma cero para ver este modo.
+
+**Paso 4 — Fictitious Play**
+Mejor respuesta a la estrategia promedio empírica del oponente.
+
+**Paso 5 — Observar el gráfico de brecha Nash**
+Más bajo = más cerca del equilibrio. Cero = equilibrio de Nash perfecto alcanzado.
+""",
         "labels": {"nash_q":"Nash Q","correlated_q":"Correlated Q","minimax_q":"Minimax Q","fictitious":"Fictitious Play"},
         "settings": "Configuración", "episodes": "Episodios", "gamma": "Gamma", "alpha": "Alpha",
         "epsilon": "Epsilon", "edecay": "Decaimiento", "zerosum": "Juego suma cero", "seed": "Semilla",
@@ -69,7 +117,25 @@ TX = {
         "title": "Rozdział 12 — Teoria gier & Równowaga Nasha",
         "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Warszawa",
         "engine_missing": "Uruchom: cd rlvr-py && maturin develop",
-        "guide": "Nash Q: równowaga Nasha. Correlated Q: wspólna dystrybucja. Minimax Q: gra zerowa. Fictitious Play: najlepsza odpowiedź.",
+        "guide": """
+**Nash Q: zbiega do równowagi Nasha.**
+
+**Krok 1 — Zrozum równowagę Nasha**
+Żaden agent nie może poprawić swojej wartości przez jednostronna zmianę strategii.
+
+**Krok 2 — Correlated Q**
+Szersze niż Nash — agenci koordynują przez wspólną dystrybucję σ(a0,a1|s).
+
+**Krok 3 — Minimax Q**
+Gra zerowa — gracz 0 maksymalizuje wartość najgorszego przypadku wypłaty.
+Włącz pole wyboru gry zerowej aby zobaczyć ten tryb.
+
+**Krok 4 — Fictitious Play**
+Najlepsza odpowiedź na empiryczną średną strategię przeciwnika.
+
+**Krok 5 — Obserwuj wykres luki Nasha**
+Niżej = bliżej równowagi. Zero = osiągnięto doskonałą równowagę Nasha.
+""",
         "labels": {"nash_q":"Nash Q","correlated_q":"Correlated Q","minimax_q":"Minimax Q","fictitious":"Fictitious Play"},
         "settings": "Ustawienia", "episodes": "Epizody", "gamma": "Gamma", "alpha": "Alpha",
         "epsilon": "Epsilon", "edecay": "Zanik epsilon", "zerosum": "Gra zerowa (tryb Minimax)", "seed": "Ziarno",

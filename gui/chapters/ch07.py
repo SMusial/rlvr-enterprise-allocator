@@ -147,23 +147,25 @@ Implemented in `dyna_q_plus()` in `ch07_nstep.rs`.
         "run_btn": "▶ Uruchom wszystkie cztery algorytmy",
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
-**Krok 1**
-n-krokowe TD: n=1 to TD(0), n=∞ to MC, n=3-5 to optimum.
+**Krok 1 — Zrozum n-krokowe TD**
+n=1 → TD(0). n=∞ → Monte Carlo. n=3-5 → optymalny zakres.
+G^(n)_t = R_{t+1} + γR_{t+2} + ... + γ^(n-1)R_{t+n} + γ^n V(S_{t+n})
 
-**Krok 2**
-Dyna-Q = Q-Learning + model + k kroków planowania per krok.
+**Krok 2 — Zrozum Dyna-Q**
+Dyna-Q = Q-Learning + uczenie modelu + planowanie.
+Po każdym prawdziwym kroku: k symulowanych kroków używając nauczonego modelu.
 
-**Krok 3**
-Dyna-Q+ dodaje bonus κ√τ(s,a) dla rzadko próbowanych przejść.
+**Krok 3 — Zrozum Dyna-Q+**
+Jak Dyna-Q ale z bonusem eksploracji κ√τ(s,a) dla rzadko próbowanych przejść.
 
-**Krok 4**
-Porównaj n=1 vs n=5 vs n=10 — obserwuj wpływ na zbieżność.
+**Krok 4 — Porównaj n=1 vs n=5 vs n=10**
+Obserwuj jak większe n poprawia wczesne uczenie ale zwiększa wariancję.
 
-**Krok 5**
-Porównaj k=0 vs k=5 vs k=20 — Dyna-Q uczy się szybciej.
+**Krok 5 — Porównaj k=0 vs k=5 vs k=20**
+k=0 → czyste Q-Learning. k=20 → Dyna-Q uczy się znacznie szybciej per epizod.
 
-**Krok 6**
-Odczytaj rozmiar modelu — ile par (s,a) Dyna-Q się nauczyło.
+**Krok 6 — Odczytaj metrykmodelu**
+Ile par (s,a) Dyna-Q się nauczyło? Powinno rosnąć do 32.
 """,
         "returns_title": "📈 Zwroty epizodów — Cztery algorytmy",
         "returns_caption": "Średnia krocząca. Dyna-Q powinien zbiegać najszybciej dzięki planowaniu.",
@@ -243,7 +245,27 @@ Implementacja: `dyna_q_plus()` w `ch07_nstep.rs`
         "seed": "Zufallsseed",
         "run_btn": "▶ Alle Algorithmen starten",
         "guide_title": "Anleitung",
-        "guide": "n-Schritt TD brückt MC (n=∞) und TD(0) (n=1). Dyna-Q kombiniert modellfreies Lernen mit Planung.",
+        "guide": """
+**Schritt 1 — n-Schritt TD verstehen**
+n=1 → TD(0). n=∞ → Monte Carlo. n=3-5 → optimaler Bereich.
+G^(n)_t = R_{t+1} + γR_{t+2} + ... + γ^(n-1)R_{t+n} + γ^n V(S_{t+n})
+
+**Schritt 2 — Dyna-Q verstehen**
+Dyna-Q = Q-Learning + Modelllernen + Planung.
+Nach jedem echten Schritt: k simulierte Schritte mit dem gelernten Modell.
+
+**Schritt 3 — Dyna-Q+ verstehen**
+Wie Dyna-Q aber mit Explorations-Bonus κ√τ(s,a) für selten versuchte Übergänge.
+
+**Schritt 4 — n=1 vs n=5 vs n=10 versuchen**
+Beobachten Sie wie größeres n das frühe Lernen verbessert aber die Varianz erhöht.
+
+**Schritt 5 — k=0 vs k=5 vs k=20 versuchen (Planungsschritte)**
+k=0 → reines Q-Learning. k=20 → Dyna-Q lernt viel schneller pro Episode.
+
+**Schritt 6 — Modellgrößen-Metrik lesen**
+Wie viele (s,a)-Paare hat Dyna-Q gelernt? Sollte gegen 32 wachsen.
+""",
         "returns_title": "Episodenrückgaben",
         "returns_caption": "Gleitender Durchschnitt.",
         "value_title": "Wertfunktion V(s)",
@@ -281,7 +303,27 @@ Implementacja: `dyna_q_plus()` w `ch07_nstep.rs`
         "seed": "Graine",
         "run_btn": "▶ Lancer les quatre algorithmes",
         "guide_title": "🎓 Guide",
-        "guide": "n=1→TD, n=∞→MC. Dyna-Q = Q-Learning + modèle + k étapes de planification.",
+        "guide": """
+**Étape 1 — Comprendre n-Step TD**
+n=1 → TD(0). n=∞ → Monte Carlo. n=3-5 → zone optimale.
+G^(n)_t = R_{t+1} + γR_{t+2} + ... + γ^(n-1)R_{t+n} + γ^n V(S_{t+n})
+
+**Étape 2 — Comprendre Dyna-Q**
+Dyna-Q = Q-Learning + apprentissage du modèle + planification.
+Après chaque étape réelle : k étapes simulées avec le modèle appris.
+
+**Étape 3 — Comprendre Dyna-Q+**
+Comme Dyna-Q mais avec un bonus d'exploration κ√τ(s,a) pour les transitions rares.
+
+**Étape 4 — Essayer n=1 vs n=5 vs n=10**
+Observer comment un n plus grand améliore l'apprentissage précoce mais augmente la variance.
+
+**Étape 5 — Essayer k=0 vs k=5 vs k=20**
+k=0 → Q-Learning pur. k=20 → Dyna-Q apprend beaucoup plus vite.
+
+**Étape 6 — Lire la métrique de taille du modèle**
+Combien de paires (s,a) Dyna-Q a-t-il apprises ? Devrait croître vers 32.
+""",
         "returns_title": "📈 Retours", "returns_caption": "Dyna-Q converge le plus vite.",
         "td_error_title": "📉 Erreur TD", "td_error_caption": "",
         "value_title": "📊 V(s)", "value_caption": "",
@@ -313,7 +355,27 @@ Implementacja: `dyna_q_plus()` w `ch07_nstep.rs`
         "kappa": "κ — Bonus de exploración", "seed": "Semilla",
         "run_btn": "▶ Ejecutar los cuatro algoritmos",
         "guide_title": "🎓 Guía",
-        "guide": "n=1→TD, n=∞→MC. Dyna-Q = Q-Learning + modelo + k pasos de planificación.",
+        "guide": """
+**Paso 1 — Entender n-Step TD**
+n=1 → TD(0). n=∞ → Monte Carlo. n=3-5 → zona óptima.
+G^(n)_t = R_{t+1} + γR_{t+2} + ... + γ^(n-1)R_{t+n} + γ^n V(S_{t+n})
+
+**Paso 2 — Entender Dyna-Q**
+Dyna-Q = Q-Learning + aprendizaje del modelo + planificación.
+Después de cada paso real: k pasos simulados usando el modelo aprendido.
+
+**Paso 3 — Entender Dyna-Q+**
+Como Dyna-Q pero con bonus de exploración κ√τ(s,a) para transiciones raras.
+
+**Paso 4 — Probar n=1 vs n=5 vs n=10**
+Observar cómo un n más grande mejora el aprendizaje temprano pero aumenta la varianza.
+
+**Paso 5 — Probar k=0 vs k=5 vs k=20**
+k=0 → Q-Learning puro. k=20 → Dyna-Q aprende mucho más rápido.
+
+**Paso 6 — Leer la métrica de tamaño del modelo**
+¿Cuántos pares (s,a) ha aprendido Dyna-Q? Debería crecer hacia 32.
+""",
         "returns_title": "📈 Retornos", "returns_caption": "Dyna-Q converge más rápido.",
         "td_error_title": "📉 Error TD", "td_error_caption": "",
         "value_title": "📊 V(s)", "value_caption": "",

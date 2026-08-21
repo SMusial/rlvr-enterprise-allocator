@@ -151,13 +151,26 @@ T = {
         "seed": "Zufallsseed",
         "run_btn": "▶ Alle vier Algorithmen starten",
         "guide_title": "Anleitung",
-        "guide": (
-            "Szenario: 2 Disponenten teilen sich das ASP-MDP.\n"
-            "IQL: jeder Agent lernt unabhängig.\n"
-            "JAL: jeder Agent modelliert die Strategie des Partners.\n"
-            "Lenient Q: negative Deltas werden mit Wahrscheinlichkeit mu ignoriert.\n"
-            "Mean Field Q: gemeinsame Aktion durch Mittelwert approximiert."
-        ),
+        "guide": """
+**Scenariusz: 2 dyspozytorzy współdzieją Warszawski ASP MDP z 8 stanami.**
+
+**Krok 1 — IQL (Niezależne Q-Learning)**
+Każdy agent wykonuje standardowe Q-Learning ignorując drugiego.
+Punkt bazowy: najprostsze podejście MARL.
+
+**Krok 2 — JAL (Uczenie Wspólnych Akcji)**
+Każdy agent modeluje częstość akcji drugiego.
+Aktualizacja Q używa oczekiwanej wartości nad szacowaną polityką partnera.
+
+**Krok 3 — Lenient Q-Learning**
+Ujemne błędy TD są ignorowane z prawdopodobieństwem mu.
+Zapobiega karaniu dobrych akcji z powodu błędów partnera.
+
+**Krok 4 — Mean Field Q-Learning**
+Aproksymuj wspólną akcję przez średną akcję sąsiadów.
+Skaluje do wielu agentów — fundament dla dużego MARL.
+Obserwuj wykres kooperacji: frakcja kroków gdzie obaj wybrali tę samą akcję.
+""",
         "returns_title": "Gemeinsame Episodenrückgaben",
         "returns_caption": "MA-30. Mittlere Rückgabe beider Agenten.",
         "cooperation_title": "Kooperationsrate",
@@ -206,7 +219,26 @@ T = {
         "leniency_mu": "Mu - Indulgence", "mf_beta": "Beta - Champ moyen",
         "seed": "Graine", "run_btn": "Lancer les quatre algorithmes",
         "guide_title": "Guide",
-        "guide": "2 agents partagent le MDP ASP. IQL: independant. JAL: modelise partenaire. Lenient: ignore delta<0 avec prob mu. Mean Field: moyenne des actions.",
+        "guide": """
+**Scénario : 2 dispatcheurs partagent le MDP ASP de Varsovie à 8 états.**
+
+**Étape 1 — IQL (Q-Learning Indépendant)**
+Chaque agent exécute le Q-Learning standard en ignorant l'autre.
+Référence : approche MARL la plus simple.
+
+**Étape 2 — JAL (Apprentissage d'Action Conjointe)**
+Chaque agent modélise la fréquence d'action de l'autre.
+La mise à jour Q utilise la valeur attendue sur la politique partenaire estimée.
+
+**Étape 3 — Lenient Q-Learning**
+Les erreurs TD négatives sont ignorées avec probabilité mu.
+Évite de pénaliser les bonnes actions à cause des erreurs du partenaire.
+
+**Étape 4 — Mean Field Q-Learning**
+Approximer l'action conjointe par l'action moyenne des voisins.
+S'adapte à de nombreux agents — fondation pour le grand MARL.
+Observer le graphique de coopération : fraction des étapes où les deux ont choisi la même action.
+""",
         "returns_title": "Retours joints", "returns_caption": "",
         "cooperation_title": "Taux de cooperation", "cooperation_caption": "",
         "value_title": "V(s) joint", "value_caption": "",
@@ -235,7 +267,26 @@ T = {
         "leniency_mu": "Mu - Indulgencia", "mf_beta": "Beta - Campo medio",
         "seed": "Semilla", "run_btn": "Ejecutar los cuatro algoritmos",
         "guide_title": "Guia",
-        "guide": "2 agentes comparten el MDP ASP. IQL: independiente. JAL: modela socio. Lenient: ignora delta<0 con prob mu. Mean Field: media de acciones.",
+        "guide": """
+**Escenario: 2 despachadores comparten el MDP ASP de Varsovia de 8 estados.**
+
+**Paso 1 — IQL (Q-Learning Independiente)**
+Cada agente ejecuta Q-Learning estándar ignorando al otro.
+Línea base: enfoque MARL más simple.
+
+**Paso 2 — JAL (Aprendizaje de Acción Conjunta)**
+Cada agente modela la frecuencia de acción del otro.
+La actualización Q usa el valor esperado sobre la política estimada del compañero.
+
+**Paso 3 — Lenient Q-Learning**
+Los errores TD negativos se ignoran con probabilidad mu.
+Evita penalizar acciones buenas debido a errores del compañero.
+
+**Paso 4 — Mean Field Q-Learning**
+Aproximar la acción conjunta por la acción media de los vecinos.
+Escala a muchos agentes — fundación para MARL grande.
+Observar el gráfico de cooperación: fracción de pasos donde ambos eligieron la misma acción.
+""",
         "returns_title": "Retornos conjuntos", "returns_caption": "",
         "cooperation_title": "Tasa de cooperacion", "cooperation_caption": "",
         "value_title": "V(s) conjunto", "value_caption": "",

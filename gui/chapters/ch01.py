@@ -188,28 +188,33 @@ This produces realistic SLA rates of 77–93% depending on dispatch quality.
         "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
 **Krok 1 — Ustaw ε (współczynnik eksploracji)**
-Przesuń suwak. ε=1.0 oznacza losowy wybór (czysta eksploracja).
-ε=0.0 oznacza zawsze najlepszą znaną akcję (eksploatacja — ale w Ch01 tabela Q jest zerowa,
-więc to też jest losowe). Zacznij od ε=0.5.
+Przesuń suwak.
+ε=1.0: agent zawsze wybiera losowo.
+ε=0.0: agent zawsze wybiera najlepszą znaną akcję (Q=0 w Ch01, również losowe).
+Zacznij od ε=0.5.
 
 **Krok 2 — Ustaw techników i zlecenia**
 5 techników / 10 zleceń to dobry punkt startowy.
+Więcej zleceń = dłuższy epizod.
 
 **Krok 3 — Kliknij ▶ Uruchom epizod**
 Silnik Rust wykonuje pełną pętlę MDP i zwraca każdy krok.
 
 **Krok 4 — Odczytaj mapę Warszawy**
-Niebieskie markery = technicy (T0–T4). Kolorowe markery = zlecenia (Z0–Z9).
-Zielone linie = SLA spełnione. Czerwone linie = naruszenie SLA.
+Niebieskiemarker = technicy (T0–T4).
+Kolorowe markery = zlecenia (W0–W9).
+Zielone linie = SLA spełnione. Czerwone linie = SLA naruszone.
+Kliknij marker aby zobaczyć szczegóły.
 
 **Krok 5 — Użyj suwaka kroków**
-Przesuń, aby podświetlić konkretną decyzję dyspozytury na mapie i w Glass-Box.
+Przesuń aby podświetlić konkretna decyzję dyspozycji na mapie i w Glass-Box.
 
 **Krok 6 — Odczytaj Glass-Box**
-Każdy wiersz pokazuje pełną krotkę MDP: Sₜ, Aₜ, Rₜ, Gₜ.
+Każdy wiersz pokazuje pełną krotkMDP: Sₜ, Aₜ, Rₜ, Gₜ.
+Równanie Bellmana jest wyszarzone — aktywuje się w Rozdziale 02.
 
 **Krok 7 — Odczytaj podsumowanie epizodu**
-Wymierne wyniki biznesowe + zalety i wady metody ε-zachłannej.
+Skwantyfikowane wyniki biznesowe + zalety/wady metody ε-zachlannej.
 """,
         "map_title": "📍 Mapa dyspozytury Warszawa",
         "map_caption": "Niebieski = Technicy · Bursztynowy/Czerwony = Zlecenia · Zielony = SLA OK · Czerwony = Naruszenie SLA",
@@ -331,24 +336,34 @@ Realistyczne wskaźniki SLA: 77–93% w zależności od jakości dyspozycji.
         "run_btn": "▶ Lancer l'épisode",
         "guide_title": "🎓 Comment utiliser ce chapitre",
         "guide": """
-**Étape 1 — Réglez ε**
-ε=1.0 = exploration pure, ε=0.0 = exploitation pure.
+**Étape 1 — Régler ε (taux d'exploration)**
+Déplacer le curseur.
+ε=1.0 : l'agent choisit toujours aléatoirement.
+ε=0.0 : l'agent choisit toujours la meilleure action connue (Q-table nulle en Ch01, aussi aléatoire).
+Commencer avec ε=0.5.
 
-**Étape 2 — Réglez techniciens et ordres**
-5/10 est un bon point de départ.
+**Étape 2 — Régler techniciens et ordres de travail**
+5 techniciens / 10 ordres de travail est un bon point de départ.
+Plus d'ordres = épisode plus long.
 
-**Étape 3 — Cliquez ▶ Lancer l'épisode**
-le moteur Rust exécute la boucle MDP complète.
+**Étape 3 — Cliquer ▶ Lancer l'épisode**
+Le moteur Rust exécute la boucle MDP complète et retourne chaque étape.
 
-**Étape 4 — Lisez la carte de Varsovie**
-bleu = techniciens, couleur = ordres, vert = SLA respecté.
-**Étape 5 — Utilisez le curseur d'étape** pour mettre en évidence une décision spécifique.
+**Étape 4 — Lire la carte de Varsovie**
+Marqueurs bleus = techniciens (T0–T4).
+Marqueurs colorés = ordres de travail (W0–W9).
+Lignes vertes = SLA respecté. Lignes rouges = SLA violé.
+Cliquer sur un marqueur pour les détails.
 
-**Étape 6 — Lisez le Glass-Box**
-chaque ligne montre le tuple MDP complet Sₜ, Aₜ, Rₜ, Gₜ.
+**Étape 5 — Utiliser le curseur d'étape**
+Déplacer pour mettre en évidence une décision de dispatch sur la carte et dans le Glass-Box.
 
-**Étape 7 — Lisez le résumé**
-résultats quantifiés + avantages/inconvénients de la méthode.
+**Étape 6 — Lire le Glass-Box**
+Chaque ligne montre le tuple MDP complet : Sₜ, Aₜ, Rₜ, Gₜ.
+L'équation de Bellman est grisée — elle s'active au Chapitre 02.
+
+**Étape 7 — Lire le résumé de l'épisode**
+Résultats commerciaux quantifiés + avantages/inconvénients de la méthode ε-greedy.
 """,
         "map_title": "📍 Carte de dispatch Varsovie",
         "map_caption": "Bleu = Techniciens · Ambre/Rouge = Ordres · Vert = SLA respecté · Rouge = Violation SLA",
@@ -440,24 +455,34 @@ Taux SLA réaliste : 77–93%.
         "run_btn": "▶ Episode starten",
         "guide_title": "🎓 Anleitung",
         "guide": """
-**Schritt 1 — ε einstellen**
-ε=1.0 = reine Exploration, ε=0.0 = reine Exploitation.
+**Schritt 1 — ε einstellen (Explorationsrate)**
+Schieberegler bewegen.
+ε=1.0: Agent wählt immer zufällig.
+ε=0.0: Agent wählt immer die beste bekannte Aktion (da Q-Tabelle null ist, auch zufällig).
+Mit ε=0.5 beginnen.
 
 **Schritt 2 — Techniker und Aufträge einstellen**
-5/10 ist ein guter Ausgangspunkt.
+5 Techniker / 10 Aufträge ist ein guter Ausgangspunkt.
+Mehr Aufträge = längere Episode.
 
 **Schritt 3 — ▶ Episode starten klicken**
-Rust-Engine führt die vollständige MDP-Schleife aus.
+Die Rust-Engine führt die vollständige MDP-Schleife aus und gibt jeden Schritt zurück.
 
 **Schritt 4 — Warschau-Karte lesen**
-Blau = Techniker, Farbe = Aufträge, Grün = SLA erfüllt.
-**Schritt 5 — Schritt-Schieberegler verwenden** um eine bestimmte Entscheidung hervorzuheben.
+Blaue Marker = Techniker (T0–T4).
+Farbige Marker = Aufträge (W0–W9).
+Grüne Linien = SLA erfüllt. Rote Linien = SLA verletzt.
+Auf einen Marker klicken für Details.
+
+**Schritt 5 — Schritt-Schieberegler verwenden**
+Verschieben, um eine bestimmte Dispatchentscheidung auf der Karte und im Glass-Box hervorzuheben.
 
 **Schritt 6 — Glass-Box lesen**
-jede Zeile zeigt das vollständige MDP-Tupel Sₜ, Aₜ, Rₜ, Gₜ.
+Jede Zeile zeigt das vollständige MDP-Tupel: Sₜ (Zustand), Aₜ (Aktion), Rₜ (Belohnung), Gₜ (Gesamtbelohnung).
+Die Bellman-Gleichung ist ausgegraut — sie aktiviert sich in Kapitel 02.
 
 **Schritt 7 — Zusammenfassung lesen**
-quantifizierte Ergebnisse + Vor-/Nachteile der Methode.
+Quantifizierte Geschäftsergebnisse + Vor- und Nachteile der ε-greedy-Methode.
 """,
         "map_title": "📍 Warschau Dispositionskarte",
         "map_caption": "Blau = Techniker · Bernstein/Rot = Aufträge · Grün = SLA erfüllt · Rot = SLA-Verletzung",
@@ -549,24 +574,34 @@ Realistische SLA-Rate: 77–93%.
         "run_btn": "▶ Ejecutar episodio",
         "guide_title": "🎓 Cómo usar este capítulo",
         "guide": """
-**Paso 1 — Ajuste ε**
-ε=1.0 = exploración pura, ε=0.0 = explotación pura.
+**Paso 1 — Ajustar ε (tasa de exploración)**
+Mover el control deslizante.
+ε=1.0: el agente elige siempre aleatoriamente.
+ε=0.0: el agente elige siempre la mejor acción conocida (Q-table cero en Ch01, también aleatorio).
+Comenzar con ε=0.5.
 
-**Paso 2 — Ajuste técnicos y órdenes**
-5/10 es un buen punto de partida.
+**Paso 2 — Ajustar técnicos y órdenes de trabajo**
+5 técnicos / 10 órdenes de trabajo es un buen punto de partida.
+Más órdenes = episodio más largo.
 
-**Paso 3 — Haga clic en ▶ Ejecutar episodio**
-el motor Rust ejecuta el bucle MDP completo.
+**Paso 3 — Hacer clic en ▶ Ejecutar episodio**
+El motor Rust ejecuta el bucle MDP completo y devuelve cada paso.
 
-**Paso 4 — Lea el mapa de Varsovia**
-azul = técnicos, color = órdenes, verde = SLA cumplido.
-**Paso 5 — Use el control deslizante de pasos** para resaltar una decisión específica.
+**Paso 4 — Leer el mapa de Varsovia**
+Marcadores azules = técnicos (T0–T4).
+Marcadores de colores = órdenes de trabajo (W0–W9).
+Líneas verdes = SLA cumplido. Líneas rojas = SLA incumplido.
+Hacer clic en cualquier marcador para ver detalles.
 
-**Paso 6 — Lea el Glass-Box**
-cada fila muestra la tupla MDP completa Sₜ, Aₜ, Rₜ, Gₜ.
+**Paso 5 — Usar el control deslizante de pasos**
+Mover para resaltar una decisión de despacho específica en el mapa y en el Glass-Box.
 
-**Paso 7 — Lea el resumen**
-resultados cuantificados + pros/contras del método.
+**Paso 6 — Leer el Glass-Box**
+Cada fila muestra la tupla MDP completa: Sₜ, Aₜ, Rₜ, Gₜ.
+La ecuación de Bellman aparece atenuada — se activa en el Capítulo 02.
+
+**Paso 7 — Leer el resumen del episodio**
+Resultados comerciales cuantificados + pros/contras del método ε-greedy.
 """,
         "map_title": "📍 Mapa de despacho Varsovia",
         "map_caption": "Azul = Técnicos · Ámbar/Rojo = Órdenes · Verde = SLA cumplido · Rojo = Violación SLA",
