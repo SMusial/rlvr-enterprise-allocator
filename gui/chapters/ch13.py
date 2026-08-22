@@ -60,22 +60,22 @@ How does QMIX learn state-dependent coordination weights?
         "guide": """
 **Kooperatives Szenario: beide Agenten teilen DIESELBE gemeinsame Belohnung.**
 
-**Schritt 1 \u2014 IQL Basislinie**
+**Schritt 1 — IQL Basislinie**
 Jeder Agent ignoriert den anderen. Was passiert ohne Koordination?
 
-**Schritt 2 \u2014 VDN (Value Decomposition Networks)**
+**Schritt 2 — VDN (Value Decomposition Networks)**
 Q_tot = Q_0 + Q_1. Einfache additive Zerlegung.
-IGM: argmax Q_tot = (argmax Q_0, argmax Q_1) \u2014 erm\u00f6glicht dezentrale Ausf\u00fchrung.
+IGM: argmax Q_tot = (argmax Q_0, argmax Q_1) — ermöglicht dezentrale Ausführung.
 
-**Schritt 3 \u2014 QMIX**
+**Schritt 3 — QMIX**
 Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotones Mischen.
-w_i(s) >= 0 erzwingt IGM. Zustandsabh\u00e4ngige Gewichte = ausdrucksst\u00e4rkere Koordination.
+w_i(s) >= 0 erzwingt IGM. Zustandsabhängige Gewichte = ausdrucksstärkere Koordination.
 
-**Schritt 4 \u2014 QMIX+CG (Kontrafaktische Basislinie)**
+**Schritt 4 — QMIX+CG (Kontrafaktische Basislinie)**
 A_i = Q_tot(s,a) - Q_tot(s, a_{{-i}}, argmax Q_i). Isoliert den Beitrag jedes Agenten.
 
-**Schritt 5 \u2014 Mischgewichte-Diagramm beobachten**
-Wie lernt QMIX zustandsabh\u00e4ngige Koordinationsgewichte?
+**Schritt 5 — Mischgewichte-Diagramm beobachten**
+Wie lernt QMIX zustandsabhängige Koordinationsgewichte?
 """,
         "theory_igm":  "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
         "theory_vdn":  "Q_tot = Q_0 + Q_1",

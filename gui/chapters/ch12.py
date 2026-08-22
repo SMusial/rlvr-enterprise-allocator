@@ -26,10 +26,9 @@ TX = {
         "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Warschau",
         "engine_missing": "Ausführen: cd rlvr-py && maturin develop",
         "guide": """
-**Nash Q: konvergiert zum Nash-Gleichgewicht.**
-
 **Schritt 1 — Nash-Gleichgewicht verstehen**
 Kein Agent kann sich durch einseitiges Ändern seiner Strategie verbessern.
+Nash Q konvergiert zum Nash-Gleichgewicht.
 
 **Schritt 2 — Correlated Q**
 Breiter als Nash — Agenten koordinieren über gemeinsame Verteilung σ(a0,a1|s).

@@ -457,7 +457,7 @@ Taux SLA réaliste : 77–93%.
         "guide": """
 **Schritt 1 — ε einstellen (Explorationsrate)**
 Schieberegler bewegen.
-ε=1.0: Agent wählt immer zufällig.
+ε=1.0: Agent wählt immer zufällig (reine Exploration).
 ε=0.0: Agent wählt immer die beste bekannte Aktion (da Q-Tabelle null ist, auch zufällig).
 Mit ε=0.5 beginnen.
 
