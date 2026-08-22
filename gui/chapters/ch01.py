@@ -696,6 +696,203 @@ def _tx(lang):
             base[k] = v
     return base
 
+
+def _render_handbook():
+    """Ch01 Hands-On Guide — English."""
+    st.markdown("""
+## 📘 Chapter 01 — Hands-On Field Guide
+### ASP Dispatch: Introduction to Reinforcement Learning
+
+---
+
+### 🎯 Learning Objectives
+By the end of this chapter you will be able to:
+- Define the MDP tuple **(S, A, P, R, γ)** and map each element to a real ASP dispatch scenario
+- Explain the **ε-greedy policy** and the exploration–exploitation trade-off
+- Calculate **discounted return G_t** by hand for a 3-step episode
+- Read the **Warsaw map**, **Glass-Box**, and **Learning Curve** produced by the Rust engine
+- Run the interactive lab and interpret the quantified business results
+
+---
+
+### 🏢 Business Problem
+> **Warsaw ASP Region.** 5 field service technicians. 10 work orders per shift.
+> Each order has a required skill, urgency score, and GPS location.
+> The dispatcher must assign technicians to orders to **maximise SLA compliance** while minimising travel distance.
+
+This is a **sequential decision problem** — each dispatch decision affects future technician availability, which affects future SLA outcomes.
+That makes it an ideal candidate for Reinforcement Learning.
+
+---
+
+### 🧮 The MDP Framework
+
+Every RL problem is formalised as a **Markov Decision Process** — a 5-tuple **(S, A, P, R, γ)**:
+
+| Symbol | Name | In ASP context |
+|--------|------|----------------|
+| **S** | State space | Technician positions, skills, availability; order locations, urgency |
+| **A** | Action space | Assign technician *i* to work order *j* |
+| **P(s′\|s,a)** | Transition function | Probability next state is *s′* given current state *s* and action *a* |
+| **R(s,a)** | Reward function | +10 SLA met · −5 breach · −2 skill mismatch · −0.1×km |
+| **γ** | Discount factor | How much future rewards are worth vs immediate ones |
+
+**The Markov Property** — the key assumption that makes MDPs tractable:
+$$P(s_{t+1} \mid s_t, a_t, s_{t-1}, \ldots) = P(s_{t+1} \mid s_t, a_t)$$
+> *The future depends only on now — not on history.*
+
+Implemented in `transition()` in `ch01_asp_dispatch.rs`.
+
+---
+
+### 📐 Discounted Return G_t
+
+A single reward *R_t* is not enough — a good dispatcher thinks about **downstream consequences**.
+The discounted return measures the total value of a decision:
+
+$$G_t = \sum_{k=0}^{\infty} \gamma^k R_{t+k} = R_t + \gamma R_{t+1} + \gamma^2 R_{t+2} + \ldots$$
+
+**Worked example** (γ = 0.95):
+
+| Step | Reward | Contribution to G₀ |
+|------|--------|---------------------|
+| t=0 | +10.0 (SLA met) | 10.0 |
+| t=1 | −5.0 (SLA breach) | 0.95 × (−5.0) = −4.75 |
+| t=2 | +10.0 (SLA met) | 0.95² × 10.0 = +9.025 |
+| | **G₀** | **= 14.275** |
+
+- γ close to **1** → agent is *farsighted* (long-term planning)
+- γ close to **0** → agent is *myopic* (immediate reward only)
+- The Glass-Box shows G_t for every step, computed **backward** from episode end
+
+---
+
+### 🎲 ε-Greedy Policy
+
+Ch01 uses the simplest possible decision policy — **ε-greedy**:
+
+$$a_t = \begin{cases} \text{random action} & \text{with probability } \varepsilon \\ \arg\max_a Q(s,a) & \text{with probability } 1-\varepsilon \end{cases}$$
+
+| ε value | Behaviour | When to use |
+|---------|-----------|-------------|
+| 1.0 | Pure exploration — always random | Cold start, zero prior knowledge |
+| 0.5 | Balanced | Good starting point |
+| 0.1 | Mostly exploitation | When Q-table is well-trained |
+| 0.0 | Pure exploitation | In Ch01 = same as random (Q-table is all zeros) |
+
+> ⚠️ **Ch01 important caveat:** The Q-table is initialised to all zeros.
+> This means exploit = random — there is no real exploitation advantage yet.
+> Ch02 trains the Q-table via the Bellman equation, making exploitation meaningful.
+
+---
+
+### 🗺️ Reading the Warsaw Map
+
+After clicking ▶ Run Episode, the map shows:
+
+| Element | Meaning |
+|---------|---------|
+| 🔵 Blue circle (T0–T4) | Technician starting position |
+| 🟠 Amber circle (W0–W9) | Work order location |
+| 🔴 Red circle | Work order where SLA was breached |
+| 🟢 Green line | Dispatch where SLA was met |
+| 🔴 Red line | Dispatch where SLA was breached |
+| 🟠 Orange line | Currently selected step (from slider) |
+
+**To focus on a specific dispatch decision:** use the **Step slider** below the map.
+The selected step is highlighted in orange on the map and bolded in the Glass-Box.
+
+---
+
+### 🔬 Reading the Glass-Box
+
+Every row in the Glass-Box is one complete MDP transition tuple:
+
+| Column | What it shows |
+|--------|---------------|
+| **Step** | Time step *t* (bold = currently selected) |
+| **Tech** | Which technician was dispatched (T0–T4) |
+| **Order** | Which work order was assigned (W0–W9) |
+| **Skill Match** | ✅ Match = tech's skill matches order requirement |
+| **Distance** | Travel distance in km |
+| **Urgency** | Order urgency score (0–1) |
+| **Reward R_t** | Immediate reward received at this step |
+| **Return G_t** | Discounted cumulative return from this step onward |
+| **SLA** | ✅ Met / ❌ Breach |
+| **Mode** | 🔍 Explore (random) / 🎯 Exploit (best known) |
+
+The **Bellman equation** is shown greyed out at the bottom — it activates in Chapter 02.
+
+---
+
+### 📈 Reading the Learning Curve
+
+The learning curve shows **G_t per episode** over multiple runs (same ε, same environment, different random seeds).
+
+- **Blue line** — raw return per episode (noisy)
+- **Orange dashed line** — rolling mean over 5 episodes (trend)
+- **Red shading** — negative return zone
+
+With a **zero Q-table and ε-greedy**, the curve should be roughly flat (random baseline).
+In Ch02 you will see it start to rise as the Q-table learns.
+
+---
+
+### 📊 Episode Summary — What the Numbers Mean
+
+After running an episode, the summary shows 7 KPIs:
+
+| KPI | What a good dispatcher achieves |
+|-----|---------------------------------|
+| **Total Return G** | Higher = better long-term decisions |
+| **SLA Rate** | Target > 85% for ASP field ops |
+| **Skill Match Rate** | Target > 90% — mismatches waste resources |
+| **Exploration Rate** | Reflects ε setting |
+| **Avg Dispatch Distance** | Lower = less fuel, faster response |
+| **Avg Step Reward** | Positive = net positive dispatch decisions |
+| **SLA Penalties Avoided** | Each avoided breach = €500 (illustrative) |
+
+---
+
+### 🏋️ Hands-On Exercises
+
+**Exercise 1 — Explore vs Exploit**
+Run the episode three times: ε=1.0, ε=0.5, ε=0.0.
+Compare the SLA Rate and Total Return G.
+*Expected result:* All three should be similar — because the Q-table is zero, ε makes no difference yet.
+
+**Exercise 2 — γ sensitivity**
+Keep ε=0.5. Run with γ=0.99, γ=0.75, γ=0.5.
+Watch how G_t changes in the Glass-Box for the same episode.
+*Expected result:* Higher γ = higher G_t for steps early in the episode.
+
+**Exercise 3 — SLA anatomy**
+Run an episode. Find a step where SLA was breached (❌ in Glass-Box).
+Check: Was there a skill mismatch? High distance? High urgency?
+*Goal:* Build intuition for which factors drive SLA failures.
+
+**Exercise 4 — Learning curve baseline**
+Set Episodes=50, ε=0.5. Run. Observe the learning curve.
+*Expected result:* Flat or noisy — no learning in Ch01.
+Remember this baseline — in Ch02 you will see a rising trend.
+
+---
+
+### 🔑 Key Takeaways
+
+1. **MDP = (S, A, P, R, γ)** — the mathematical foundation of every RL system
+2. **Markov property** — only current state matters, not history
+3. **G_t = Σ γᵏ R_{t+k}** — discounted sum of future rewards
+4. **ε-greedy** — simplest exploration strategy, one parameter controls everything
+5. **Ch01 baseline** — Q-table = zeros → exploit = random → no real learning yet
+6. **Ch02 preview** — Bellman equation trains the Q-table, making exploitation meaningful
+
+---
+> 📎 **Rust source:** `rlvr-py/src/ch01_asp_dispatch.rs`
+> Key functions: `run_ch01_episode()`, `epsilon_greedy()`, `discounted_return()`, `transition()`
+""")
+
+
 def render():
     lang = st.session_state.get("lang", "EN")
     # --- language selector (top of sidebar) ---
