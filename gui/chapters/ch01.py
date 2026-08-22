@@ -732,7 +732,7 @@ Every RL problem is formalised as a **Markov Decision Process** — a 5-tuple **
 |--------|------|----------------|
 | **S** | State space | Technician positions, skills, availability; order locations, urgency |
 | **A** | Action space | Assign technician *i* to work order *j* |
-| **P(s′\|s,a)** | Transition function | Probability next state is *s′* given current state *s* and action *a* |
+| **P(s′|s,a)** | Transition function | Probability next state is *s′* given current state *s* and action *a* |
 | **R(s,a)** | Reward function | +10 SLA met · −5 breach · −2 skill mismatch · −0.1×km |
 | **γ** | Discount factor | How much future rewards are worth vs immediate ones |
 
