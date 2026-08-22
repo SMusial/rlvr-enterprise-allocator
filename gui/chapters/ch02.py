@@ -531,6 +531,1047 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
 # Main render
 # ---------------------------------------------------------------------------
 
+
+def _render_handbook():
+    """Render the Hands-On Guide PL as embedded HTML."""
+    import streamlit.components.v1 as components
+    html_content = """
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podręcznik — Rozdział 02: Równanie Bellmana</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<style>
+:root{--bg:#0f1117;--bg2:#1a1d2e;--bg3:#252840;--accent:#8B5CF6;--accent2:#0082F0;--accent3:#0FC373;--accent4:#FF8C0A;--text:#e8eaf6;--text2:#9ca3af;--border:#2d3154;--card:#1e2235;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+header{background:linear-gradient(135deg,#1a0533 0%,#0a1628 50%,#0d1f0d 100%);padding:2.5rem 2rem;border-bottom:2px solid var(--accent);}
+header h1{font-size:2rem;font-weight:800;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+header p{color:var(--text2);margin-top:.5rem;}
+nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;gap:.5rem;flex-wrap:wrap;position:sticky;top:0;z-index:100;}
+nav button{background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:.4rem 1rem;border-radius:20px;cursor:pointer;font-size:.85rem;transition:all .2s;}
+nav button:hover,nav button.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+main{max-width:1100px;margin:0 auto;padding:2rem;}
+section{display:none;}
+section.active{display:block;}
+h2{font-size:1.6rem;color:var(--accent);margin-bottom:1.5rem;padding-bottom:.5rem;border-bottom:2px solid var(--border);}
+h3{font-size:1.15rem;color:var(--accent2);margin:1.5rem 0 .75rem;}
+h4{font-size:1rem;color:var(--accent3);margin:1rem 0 .5rem;}
+p{margin-bottom:1rem;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
+.card-accent{border-left:4px solid var(--accent);}
+.card-blue{border-left:4px solid var(--accent2);}
+.card-green{border-left:4px solid var(--accent3);}
+.card-orange{border-left:4px solid var(--accent4);}
+.card-red{border-left:4px solid #ef4444;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:700px){.grid2{grid-template-columns:1fr;}}
+.math-block{background:#0d0f1a;border:1px solid var(--accent);border-radius:8px;padding:1.25rem 1.5rem;margin:1rem 0;overflow-x:auto;}
+.math-block .katex-display{margin:.5rem 0;}
+.math-label{font-size:.78rem;color:var(--text2);margin-bottom:.5rem;font-style:italic;}
+.math-note{font-size:.82rem;color:var(--text2);margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--border);}
+.mdp-def{display:grid;grid-template-columns:auto 1fr;gap:.5rem 1.25rem;margin:.75rem 0;}
+.mdp-sym{font-family:'Courier New',monospace;color:#c4b5fd;font-weight:700;white-space:nowrap;padding-top:.1rem;}
+.mdp-desc{color:var(--text2);}
+.mdp-desc strong{color:var(--text);}
+.formula{background:#0a0c14;border:1px solid var(--border);border-radius:8px;padding:1rem 1.5rem;font-family:'Courier New',monospace;font-size:.88rem;color:#a5f3fc;line-height:1.8;margin:.75rem 0;overflow-x:auto;white-space:pre;}
+.badge{display:inline-block;padding:.2rem .7rem;border-radius:12px;font-size:.78rem;font-weight:700;margin:.2rem;}
+.badge-purple{background:#3b1f6e;color:#c4b5fd;}
+.badge-blue{background:#1a3a6e;color:#93c5fd;}
+.badge-green{background:#0a3d2a;color:#6ee7b7;}
+.badge-orange{background:#4a2a00;color:#fcd34d;}
+.badge-red{background:#3d0a0a;color:#fca5a5;}
+table{width:100%;border-collapse:collapse;margin:1rem 0;}
+th{background:var(--bg3);color:var(--accent);padding:.75rem 1rem;text-align:left;font-size:.9rem;}
+td{padding:.65rem 1rem;border-bottom:1px solid var(--border);font-size:.9rem;color:var(--text2);vertical-align:top;}
+tr:hover td{background:var(--bg3);color:var(--text);}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+@media(max-width:700px){.kpi-row{grid-template-columns:1fr 1fr;}}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;}
+.kpi .val{font-size:1.6rem;font-weight:800;}
+.kpi .lbl{font-size:.78rem;color:var(--text2);margin-top:.25rem;}
+.quiz-q{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem;}
+.quiz-q p{font-weight:600;margin-bottom:.75rem;}
+.quiz-opt{display:block;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.6rem 1rem;margin:.4rem 0;cursor:pointer;transition:all .2s;font-size:.9rem;color:var(--text2);width:100%;text-align:left;}
+.quiz-opt:hover{border-color:var(--accent);color:var(--text);}
+.quiz-opt.correct{background:#0a3d2a;border-color:#0FC373;color:#6ee7b7;}
+.quiz-opt.wrong{background:#3d0a0a;border-color:#ef4444;color:#fca5a5;}
+.feedback{margin-top:.5rem;font-size:.85rem;padding:.5rem;border-radius:6px;display:none;}
+.feedback.show{display:block;}
+.feedback.ok{background:#0a3d2a;color:#6ee7b7;}
+.feedback.err{background:#3d0a0a;color:#fca5a5;}
+.progress-bar{background:var(--bg3);border-radius:10px;height:8px;margin:.5rem 0 1.5rem;}
+.progress-fill{height:8px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;}
+ul{padding-left:1.5rem;margin-bottom:1rem;}
+ul li{margin-bottom:.4rem;color:var(--text2);}
+ul li strong{color:var(--text);}
+.warn-box{background:#1a0f00;border:2px solid var(--accent4);border-radius:10px;padding:1.25rem;margin:1rem 0;}
+.warn-box h4{color:var(--accent4);margin-bottom:.5rem;}
+.info-box{background:#0a1628;border:2px solid var(--accent2);border-radius:10px;padding:1.25rem;margin:1rem 0;}
+.info-box h4{color:var(--accent2);margin-bottom:.5rem;}
+.sidebar-item{display:flex;gap:1rem;margin-bottom:1rem;align-items:flex-start;}
+.sidebar-icon{font-size:1.4rem;flex-shrink:0;width:2rem;text-align:center;}
+.sidebar-body{flex:1;}
+.sidebar-body strong{color:var(--text);display:block;margin-bottom:.2rem;}
+.sidebar-body span{color:var(--text2);font-size:.9rem;}
+.step-item{display:flex;gap:1rem;margin-bottom:1.25rem;align-items:flex-start;}
+.step-num{background:var(--accent);color:#fff;border-radius:50%;width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;font-size:.9rem;}
+.step-body{flex:1;}
+.step-body strong{color:var(--text);display:block;}
+.step-body span{color:var(--text2);font-size:.9rem;}
+.kpi-explain{display:grid;grid-template-columns:auto 1fr;gap:.5rem 1.25rem;margin:.75rem 0;}
+.kpi-name{color:var(--accent);font-weight:700;white-space:nowrap;}
+.kpi-def{color:var(--text2);font-size:.9rem;}
+.exp-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem;}
+.exp-title{color:var(--accent4);font-weight:700;font-size:1rem;margin-bottom:.75rem;}
+.exp-row{display:grid;grid-template-columns:auto 1fr;gap:.4rem 1rem;margin-bottom:.4rem;align-items:baseline;}
+.exp-val{font-family:'Courier New',monospace;color:#c4b5fd;font-size:.9rem;white-space:nowrap;}
+.exp-desc{color:var(--text2);font-size:.88rem;}
+.obs-box{background:linear-gradient(135deg,#1a0f2e,#0a1628);border:2px solid var(--accent);border-radius:12px;padding:1.5rem;margin-top:1.5rem;text-align:center;}
+.obs-box .obs-icon{font-size:2rem;margin-bottom:.5rem;}
+.obs-box h4{color:var(--accent);font-size:1.1rem;margin-bottom:.75rem;}
+.obs-box p{color:var(--text2);font-size:.95rem;max-width:700px;margin:0 auto;}
+.chapter-map{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1rem 0;}
+@media(max-width:700px){.chapter-map{grid-template-columns:1fr;}}
+.ch-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-size:.85rem;}
+.ch-card.active-ch{border-color:var(--accent);background:#1a0f2e;}
+.ch-card.prev-ch{border-color:var(--accent3);background:#0a1f0a;}
+.ch-card .ch-num{color:var(--accent);font-weight:800;}
+.ch-card .ch-name{color:var(--text2);font-size:.8rem;margin-top:.2rem;}
+/* Value iteration animation */
+.vi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin:1rem 0;}
+.vi-cell{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.75rem;text-align:center;transition:all .4s;}
+.vi-cell .state{font-size:.75rem;color:var(--text2);}
+.vi-cell .value{font-size:1.1rem;font-weight:800;color:var(--accent);margin:.25rem 0;}
+.vi-cell .desc{font-size:.7rem;color:var(--text2);}
+.vi-cell.updated{border-color:var(--accent3);background:#0a1f0a;}
+.vi-cell.optimal{border-color:var(--accent4);background:#1a0f00;}
+</style>
+</head>
+<body>
+<header>
+  <h1>📘 Rozdział 02 — Równanie Bellmana i Programowanie Dynamiczne</h1>
+  <p>Równanie Bellmana · Value Iteration · Policy Iteration · V*(s) · Q*(s,a) · ASP Warszawa · 8 stanów · Pierwsze prawdziwe uczenie!</p>
+</header>
+<nav>
+  <button class="active" onclick="show('intro',this)">🏠 Wprowadzenie</button>
+  <button onclick="show('czym',this)">🎯 Czym jest Ch02?</button>
+  <button onclick="show('teoria',this)">📐 Teoria RL</button>
+  <button onclick="show('bellman',this)">🔢 Równanie Bellmana</button>
+  <button onclick="show('algorytmy',this)">⚙️ Algorytmy</button>
+  <button onclick="show('interfejs',this)">🖥️ Interfejs</button>
+  <button onclick="show('glasbox',this)">🔍 Glass-Box</button>
+  <button onclick="show('eksperymenty',this)">🔬 Eksperymenty</button>
+  <button onclick="show('testy',this)">🧪 Testy Rust</button>
+  <button onclick="show('droga',this)">🗺️ Kontekst</button>
+  <button onclick="show('cwiczenia',this)">✏️ Ćwiczenia</button>
+  <button onclick="show('quiz',this)">🧠 Quiz</button>
+</nav>
+<main>
+
+<!-- ═══════════════════════════════════════════════════════ INTRO -->
+<section id="intro" class="active">
+  <h2>🏠 Wprowadzenie</h2>
+  <div class="kpi-row">
+    <div class="kpi"><div class="val" style="color:var(--accent)">V*(s)</div><div class="lbl">Optymalna wartość stanu</div></div>
+    <div class="kpi"><div class="val" style="color:var(--accent2)">Q*(s,a)</div><div class="lbl">Optymalna wartość akcji</div></div>
+    <div class="kpi"><div class="val" style="color:var(--accent3)">π*</div><div class="lbl">Optymalna polityka</div></div>
+    <div class="kpi"><div class="val" style="color:var(--accent4)">8</div><div class="lbl">Stanów ASP Warszawa</div></div>
+  </div>
+  <div class="info-box">
+    <h4>✅ Rozdział 02 — Pierwsze prawdziwe uczenie!</h4>
+    <p>W Ch01 tabela Q była zerowa i nic się nie uczyło. W Ch02 po raz pierwszy obliczamy <strong>V*(s)</strong> — optymalną wartość każdego stanu — używając równania Bellmana i znanych przejść T(s,a,s'). To fundament całego RL.</p>
+  </div>
+  <div class="grid2">
+    <div class="card card-accent">
+      <h3>Co robi Rozdział 02?</h3>
+      <ul>
+        <li><strong>Oblicza V*(s)</strong> — optymalna wartość każdego ze stanów 0–7</li>
+        <li><strong>Oblicza Q*(s,a)</strong> — optymalna wartość każdej pary (stan, akcja)</li>
+        <li><strong>Wyznacza π*(s)</strong> — optymalną politykę (greedy na V*)</li>
+        <li><strong>Value Iteration</strong> — iteracyjne stosowanie operatora Bellmana</li>
+        <li><strong>Policy Iteration</strong> — naprzemienne ocenianie i poprawianie polityki</li>
+        <li><strong>Weryfikuje macierz przejść</strong> — T(s,a,s') musi sumować się do 1</li>
+      </ul>
+    </div>
+    <div class="card card-blue">
+      <h3>Kluczowa różnica vs Ch01</h3>
+      <table>
+        <tr><th>Element</th><th>Ch01</th><th>Ch02</th></tr>
+        <tr><td>V(s)</td><td>= 0 zawsze</td><td>✅ Obliczane iteracyjnie</td></tr>
+        <tr><td>Q(s,a)</td><td>= 0 zawsze</td><td>✅ Obliczane z V*</td></tr>
+        <tr><td>Polityka π</td><td>Losowa</td><td>✅ Optymalna greedy</td></tr>
+        <tr><td>Model T(s,a,s')</td><td>Nieużywany</td><td>✅ Wymagany (znany)</td></tr>
+        <tr><td>Uczenie</td><td>❌</td><td>✅ Programowanie dynamiczne</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="warn-box">
+    <h4>⚠️ Ograniczenie Ch02: znany model</h4>
+    <p>Value Iteration i Policy Iteration wymagają <strong>pełnej znajomości T(s,a,s') i R(s,a)</strong>. W prawdziwym świecie model jest nieznany — dlatego od Ch05 przechodzimy do uczenia bez modelu (model-free RL). Ch02 to "idealne" rozwiązanie dla małych, znanych MDP.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ CZYM JEST -->
+<section id="czym">
+  <h2>🎯 Czym jest Rozdział 02?</h2>
+  <div class="card card-accent">
+    <h3>Programowanie Dynamiczne na MDP</h3>
+    <p>Ch02 implementuje <strong>klasyczne algorytmy programowania dynamicznego</strong> (Bellman, 1957) dla MDP z pełną wiedzą o modelu. Agent nie eksploruje — oblicza optymalną politykę analitycznie przez iteracyjne rozwiązywanie układu równań Bellmana.</p>
+    <p>Analogia: zamiast uczyć się grać w szachy przez granie (Ch06+), Ch02 <em>oblicza</em> optymalną strategię przez analizę całego drzewa gry — możliwe tylko gdy znamy wszystkie reguły i prawdopodobieństwa.</p>
+  </div>
+  <div class="card card-blue">
+    <h3>Dwa algorytmy w Ch02</h3>
+    <div class="grid2">
+      <div>
+        <h4>Value Iteration (VI)</h4>
+        <ul>
+          <li>Iteracyjnie stosuje operator Bellmana do V(s)</li>
+          <li>Zbiega do V*(s) gdy $\\delta \\to 0$</li>
+          <li>Prostszy, szybszy dla małych MDP</li>
+          <li>Polityka wyznaczana na końcu (greedy na V*)</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Policy Iteration (PI)</h4>
+        <ul>
+          <li>Naprzemiennie: ocena polityki + poprawa polityki</li>
+          <li>Zbiega w skończonej liczbie kroków</li>
+          <li>Wolniejszy per iteracja, ale mniej iteracji</li>
+          <li>Polityka poprawiana w każdym kroku</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card card-green">
+    <h3>8 stanów ASP Warszawa — dokładne nazwy z <code>STATE_NAMES</code></h3>
+    <table>
+      <tr><th>Indeks</th><th>Dokładna nazwa (z kodu Rust)</th><th>V*(s) typowe</th></tr>
+      <tr><td><span class="badge badge-green">S0</span></td><td>All available, no urgent</td><td>Najwyższe</td></tr>
+      <tr><td><span class="badge badge-blue">S1</span></td><td>All available, urgent pending</td><td>Wysokie</td></tr>
+      <tr><td><span class="badge badge-blue">S2</span></td><td>Some busy, no urgent</td><td>Wysokie</td></tr>
+      <tr><td><span class="badge badge-purple">S3</span></td><td>Some busy, urgent pending</td><td>Średnie</td></tr>
+      <tr><td><span class="badge badge-purple">S4</span></td><td>Most busy, no urgent</td><td>Średnie</td></tr>
+      <tr><td><span class="badge badge-purple">S5</span></td><td>Most busy, urgent pending</td><td>Niskie</td></tr>
+      <tr><td><span class="badge badge-orange">S6</span></td><td>All busy, backlog building</td><td>Niskie</td></tr>
+      <tr><td><span class="badge badge-red">S7</span></td><td>All busy, SLA breach imminent</td><td>Najniższe (ujemne)</td></tr>
+    </table>
+    <h3 style="margin-top:1.25rem">4 akcje — dokładne nazwy z <code>ACTION_NAMES</code></h3>
+    <table>
+      <tr><th>Akcja</th><th>Dokładna nazwa (z kodu Rust)</th><th>Kiedy optymalna</th></tr>
+      <tr><td><span class="badge badge-blue">A0</span></td><td>Dispatch nearest tech</td><td>S6, S7 — szybka reakcja awaryjna</td></tr>
+      <tr><td><span class="badge badge-green">A1</span></td><td>Dispatch skill-matched tech</td><td>S1, S3 — pilne + dopasowanie umiejętności</td></tr>
+      <tr><td><span class="badge badge-purple">A2</span></td><td>Dispatch most experienced tech</td><td>S5, S7 — krytyczne stany SLA</td></tr>
+      <tr><td><span class="badge badge-red">A3</span></td><td>Hold — wait for better tech</td><td>Nigdy przy pilnych — kara do −10</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ TEORIA RL -->
+<section id="teoria">
+  <h2>📐 Teoria RL — Ramy Teoretyczne Ch02</h2>
+
+  <div class="card card-accent">
+    <h3>Twierdzenie o optymalności Bellmana</h3>
+    <p>Optymalna polityka $\\pi^*$ spełnia zasadę optymalności Bellmana: każda podpolityka optymalnej polityki jest również optymalna.</p>
+    <div class="math-block">
+      <div class="math-label">Zasada optymalności Bellmana (1957)</div>
+      $$V^*(s) = \\max_a \\sum_{s'} T(s,a,s') \\left[ R(s,a) + \\gamma V^*(s') \\right]$$
+      <div class="math-note">Implementacja: <code>bellman_optimality_operator()</code> w <code>ch02_bellman.rs</code></div>
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Funkcja wartości stanu V(s) i akcji Q(s,a)</h3>
+    <div class="math-block">
+      <div class="math-label">Optymalna funkcja wartości stanu</div>
+      $$V^*(s) = \\max_a Q^*(s,a)$$
+    </div>
+    <div class="math-block">
+      <div class="math-label">Optymalna funkcja wartości akcji (Q-funkcja)</div>
+      $$Q^*(s,a) = \\sum_{s'} T(s,a,s') \\left[ R(s,a) + \\gamma V^*(s') \\right]$$
+      <div class="math-note">Związek: $V^*(s) = \\max_a Q^*(s,a)$ i $Q^*(s,a) = R(s,a) + \\gamma \\sum_{s'} T(s,a,s') V^*(s')$</div>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3>Optymalna polityka π*(s)</h3>
+    <div class="math-block">
+      <div class="math-label">Polityka greedy na V* (deterministyczna)</div>
+      $$\\pi^*(s) = \\arg\\max_a \\sum_{s'} T(s,a,s') \\left[ R(s,a) + \\gamma V^*(s') \\right] = \\arg\\max_a Q^*(s,a)$$
+      <div class="math-note">W Ch02: polityka jest deterministyczna — dla każdego stanu istnieje jedna optymalna akcja.</div>
+    </div>
+  </div>
+
+  <div class="card card-orange">
+    <h3>Operator Bellmana i zbieżność</h3>
+    <div class="math-block">
+      <div class="math-label">Operator Bellmana $\\mathcal{T}$</div>
+      $$(\\mathcal{T} V)(s) = \\max_a \\sum_{s'} T(s,a,s') \\left[ R(s,a) + \\gamma V(s') \\right]$$
+    </div>
+    <div class="math-block">
+      <div class="math-label">Zbieżność Value Iteration</div>
+      $$\\| \\mathcal{T} V - \\mathcal{T} V' \\|_\\infty \\leq \\gamma \\| V - V' \\|_\\infty$$
+      <div class="math-note">Operator Bellmana jest kontrakcją z współczynnikiem $\\gamma < 1$. Gwarantuje zbieżność do jedynego punktu stałego $V^*$.</div>
+    </div>
+    <p>Kryterium stopu: $\\delta = \\max_s |V_{k+1}(s) - V_k(s)| < \\theta$ gdzie $\\theta$ to próg zbieżności (domyślnie $10^{-6}$).</p>
+  </div>
+
+  <div class="card">
+    <h3>Co jest aktywne w Ch02 vs inne rozdziały</h3>
+    <table>
+      <tr><th>Element</th><th>Wzór</th><th>Ch01</th><th>Ch02</th><th>Aktywne od</th></tr>
+      <tr><td>$R_t$, $G_t$</td><td>$\\sum \\gamma^k R_{t+k}$</td><td>✅</td><td>✅</td><td>Ch01</td></tr>
+      <tr><td>$V^*(s)$</td><td>Bellman optimality</td><td>❌</td><td>✅</td><td><strong>Ch02</strong></td></tr>
+      <tr><td>$Q^*(s,a)$</td><td>$R + \\gamma \\sum T V^*$</td><td>❌</td><td>✅</td><td><strong>Ch02</strong></td></tr>
+      <tr><td>$\\pi^*(s)$</td><td>$\\arg\\max_a Q^*$</td><td>❌</td><td>✅</td><td><strong>Ch02</strong></td></tr>
+      <tr><td>$\\delta$ (TD error)</td><td>$r + \\gamma V(s') - V(s)$</td><td>❌</td><td>❌</td><td>Ch06</td></tr>
+      <tr><td>Online learning</td><td>aktualizacja co krok</td><td>❌</td><td>❌</td><td>Ch06</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ BELLMAN -->
+<section id="bellman">
+  <h2>🔢 Równanie Bellmana — Szczegóły</h2>
+
+  <div class="card card-accent">
+    <h3>Intuicja — dlaczego równanie Bellmana działa?</h3>
+    <p>Równanie Bellmana mówi: <strong>wartość stanu = najlepsza natychmiastowa nagroda + zdyskontowana wartość najlepszego następnego stanu</strong>. To rekurencja — wartość każdego stanu zależy od wartości sąsiednich stanów.</p>
+    <div class="math-block">
+      $$V^*(s) = \\underbrace{\\max_a}_{\\text{wybierz najlepszą akcję}} \\sum_{s'} T(s,a,s') \\underbrace{\\left[ R(s,a) + \\gamma V^*(s') \\right]}_{\\text{nagroda teraz + wartość przyszłości}}$$
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Konkretny przykład — Stan S3 w ASP</h3>
+    <p>Stan S3: częściowa dostępność techników. Akcje: A0=przydziel_natychmiast, A1=czekaj, A2=eskaluj, A3=odrocz. $\\gamma=0.95$</p>
+    <div class="math-block">
+      <div class="math-label">Obliczenie Q*(S3, a) dla każdej akcji</div>
+      $$Q^*(S3, A0) = \\sum_{s'} T(S3,A0,s') [R(S3,A0) + 0.95 \\cdot V^*(s')]$$
+      $$Q^*(S3, A1) = \\sum_{s'} T(S3,A1,s') [R(S3,A1) + 0.95 \\cdot V^*(s')]$$
+      $$V^*(S3) = \\max(Q^*(S3,A0),\\; Q^*(S3,A1),\\; Q^*(S3,A2),\\; Q^*(S3,A3))$$
+      $$\\pi^*(S3) = \\arg\\max_a Q^*(S3, a)$$
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3>Macierz przejść T(s,a,s') — co to jest?</h3>
+    <p>$T(s,a,s') = P(s'|s,a)$ — prawdopodobieństwo przejścia do stanu $s'$ po wykonaniu akcji $a$ w stanie $s$.</p>
+    <div class="math-block">
+      <div class="math-label">Warunek poprawności macierzy przejść</div>
+      $$\\forall s, a: \\sum_{s'=0}^{7} T(s,a,s') = 1 \\quad \\text{i} \\quad T(s,a,s') \\geq 0$$
+      <div class="math-note">Weryfikacja: <code>verify_transition_matrix()</code> w <code>ch02_bellman.rs</code> — sprawdza sumę do 1 z tolerancją $10^{-6}$.</div>
+    </div>
+    <p>W Ch02 macierz T jest <strong>generowana deterministycznie z ziarna (seed)</strong> przez <code>build_asp_transitions()</code> — stochastyczna ale reprodukowalna.</p>
+  </div>
+
+  <div class="card card-orange">
+    <h3>Dokładna macierz nagród R(s,a) z <code>build_asp_rewards()</code></h3>
+    <table>
+      <tr><th>Stan</th><th>A0: nearest</th><th>A1: skill-matched</th><th>A2: experienced</th><th>A3: hold</th></tr>
+      <tr><td><span class="badge badge-green">S0</span> All available, no urgent</td><td>6.0</td><td><strong>8.0</strong></td><td>7.0</td><td>4.0</td></tr>
+      <tr><td><span class="badge badge-blue">S1</span> All available, urgent pending</td><td>7.0</td><td><strong>10.0</strong></td><td>9.0</td><td style="color:#ef4444">−3.0</td></tr>
+      <tr><td><span class="badge badge-blue">S2</span> Some busy, no urgent</td><td>5.0</td><td><strong>7.0</strong></td><td>6.0</td><td>3.0</td></tr>
+      <tr><td><span class="badge badge-purple">S3</span> Some busy, urgent pending</td><td>6.0</td><td><strong>9.0</strong></td><td>8.0</td><td style="color:#ef4444">−2.0</td></tr>
+      <tr><td><span class="badge badge-purple">S4</span> Most busy, no urgent</td><td>4.0</td><td><strong>6.0</strong></td><td>5.0</td><td>2.0</td></tr>
+      <tr><td><span class="badge badge-purple">S5</span> Most busy, urgent pending</td><td>5.0</td><td>7.0</td><td><strong>8.0</strong></td><td style="color:#ef4444">−8.0</td></tr>
+      <tr><td><span class="badge badge-orange">S6</span> All busy, backlog building</td><td>3.0</td><td>5.0</td><td><strong>6.0</strong></td><td style="color:#ef4444">−1.0</td></tr>
+      <tr><td><span class="badge badge-red">S7</span> All busy, SLA breach imminent</td><td>4.0</td><td>6.0</td><td><strong>8.0</strong></td><td style="color:#ef4444">−10.0</td></tr>
+    </table>
+    <p style="margin-top:.75rem;color:var(--text2);font-size:.88rem">Pogrubione = najwyższa nagroda w danym stanie. A3 (Hold) jest katastrofalne przy pilnych stanach (S1, S3, S5, S7).</p>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Bellman Expectation vs Bellman Optimality</h3>
+    <div class="grid2">
+      <div>
+        <h4>Bellman Expectation (dla danej polityki π)</h4>
+        <div class="math-block">
+          $$V^\\pi(s) = \\sum_a \\pi(a|s) \\sum_{s'} T(s,a,s') [R + \\gamma V^\\pi(s')]$$
+          <div class="math-note">Używane w Policy Evaluation (krok 1 Policy Iteration)</div>
+        </div>
+      </div>
+      <div>
+        <h4>Bellman Optimality (dla π*)</h4>
+        <div class="math-block">
+          $$V^*(s) = \\max_a \\sum_{s'} T(s,a,s') [R + \\gamma V^*(s')]$$
+          <div class="math-note">Używane w Value Iteration</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ ALGORYTMY -->
+<section id="algorytmy">
+  <h2>⚙️ Algorytmy — Value Iteration i Policy Iteration</h2>
+
+  <div class="card card-accent">
+    <h3>Value Iteration — pseudokod</h3>
+    <div class="formula">Wejście: T(s,a,s'), R(s,a), gamma, theta (próg zbieżności)
+Wyjście: V*(s), pi*(s)
+
+Inicjalizacja: V(s) = 0 dla wszystkich s
+
+Powtarzaj:
+  delta = 0
+  Dla każdego stanu s:
+    v = V(s)                                    ← zapamiętaj starą wartość
+    V(s) = max_a Σ_s' T(s,a,s') [R(s,a) + γ·V(s')]  ← operator Bellmana
+    delta = max(delta, |v - V(s)|)              ← śledź zmianę
+  Dopóki delta >= theta                         ← kryterium stopu
+
+Wyznacz politykę:
+  pi*(s) = argmax_a Σ_s' T(s,a,s') [R(s,a) + γ·V(s')]</div>
+    <div class="math-block">
+      <div class="math-label">Kryterium stopu</div>
+      $$\\delta_k = \\max_s |V_{k+1}(s) - V_k(s)| < \\theta \\implies \\|V_k - V^*\\|_\\infty < \\frac{2\\theta\\gamma}{1-\\gamma}$$
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Policy Iteration — pseudokod</h3>
+    <div class="formula">Wejście: T(s,a,s'), R(s,a), gamma
+Wyjście: V*(s), pi*(s)
+
+Inicjalizacja: pi(s) = losowa akcja dla wszystkich s
+
+Powtarzaj:
+  ── Krok 1: Policy Evaluation ──
+  Powtarzaj:
+    delta = 0
+    Dla każdego stanu s:
+      v = V(s)
+      V(s) = Σ_s' T(s,pi(s),s') [R(s,pi(s)) + γ·V(s')]  ← dla DANEJ polityki
+      delta = max(delta, |v - V(s)|)
+    Dopóki delta >= theta
+
+  ── Krok 2: Policy Improvement ──
+  policy_stable = True
+  Dla każdego stanu s:
+    old_action = pi(s)
+    pi(s) = argmax_a Σ_s' T(s,a,s') [R(s,a) + γ·V(s')]  ← greedy
+    Jeśli old_action != pi(s): policy_stable = False
+
+Dopóki NIE policy_stable</div>
+  </div>
+
+  <div class="card card-green">
+    <h3>Porównanie algorytmów</h3>
+    <table>
+      <tr><th>Cecha</th><th>Value Iteration</th><th>Policy Iteration</th></tr>
+      <tr><td>Iteracje do zbieżności</td><td>Więcej (setki)</td><td>Mniej (dziesiątki)</td></tr>
+      <tr><td>Koszt per iteracja</td><td>$O(|S|^2 \\cdot |A|)$</td><td>$O(|S|^2 \\cdot |A|) + O(|S|^3)$</td></tr>
+      <tr><td>Polityka w trakcie</td><td>Tylko na końcu</td><td>Aktualizowana co krok</td></tr>
+      <tr><td>Gwarancja zbieżności</td><td>✅ Asymptotyczna</td><td>✅ Skończona liczba kroków</td></tr>
+      <tr><td>Implementacja</td><td>Prostsza</td><td>Bardziej złożona</td></tr>
+      <tr><td>Preferowane gdy</td><td>Duże |S|, małe |A|</td><td>Małe |S|, duże |A|</td></tr>
+    </table>
+  </div>
+
+  <div class="card card-accent">
+    <h3>Trzecia metoda: <code>solve_exact()</code> — rozwiązanie dokładne przez LU</h3>
+    <p>Oprócz VI i PI, Ch02 zawiera <strong>dokładne rozwiązanie algebraiczne</strong> dla ustalonej polityki π:</p>
+    <div class="math-block">
+      <div class="math-label">Układ równań liniowych dla V^π</div>
+      $$V^\\pi = (I - \\gamma P^\\pi)^{-1} r^\\pi$$
+      <div class="math-note">Implementacja: <code>solve_exact()</code> w <code>ch02_bellman.rs</code> — rozkład LU przez bibliotekę <strong>nalgebra</strong>.<br>
+      Test: <code>test_exact_solution_close_to_vi()</code> weryfikuje że |V_VI − V_exact| &lt; 0.5 dla każdego stanu.</div>
+    </div>
+    <div class="grid2">
+      <div>
+        <h4>Kiedy używać solve_exact()?</h4>
+        <ul>
+          <li>Gdy potrzebujemy <strong>dokładnej</strong> wartości V^π dla danej polityki</li>
+          <li>Weryfikacja poprawności Value Iteration</li>
+          <li>Małe MDP (|S| ≤ kilkaset) — LU jest O(|S|³)</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Kiedy NIE używać?</h4>
+        <ul>
+          <li>Duże MDP — O(|S|³) jest prohibitywne</li>
+          <li>Gdy polityka się zmienia (trzeba rozwiązywać od nowa)</li>
+          <li>Online learning — brak modelu P^π</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-orange">
+    <h3>Złożoność obliczeniowa</h3>
+    <div class="math-block">
+      <div class="math-label">Złożoność jednej iteracji Value Iteration</div>
+      $$O(|S|^2 \\cdot |A|) = O(8^2 \\cdot 4) = O(256) \\quad \\text{(ASP Warszawa)}$$
+      <div class="math-note">W produkcji: $|S| = 10^6$, $|A| = 100$ → $O(10^{14})$ — niemożliwe bez aproksymacji (Deep RL).</div>
+    </div>
+    <p>To właśnie dlatego Ch02 działa tylko dla małych MDP z 8 stanami. Dla rzeczywistych problemów potrzebujemy sieci neuronowych (Ch15+).</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ INTERFEJS -->
+<section id="interfejs">
+  <h2>🖥️ Obsługa Interfejsu — Krok po Kroku</h2>
+
+  <div class="card card-accent">
+    <h3>Ustawienia w pasku bocznym</h3>
+    <div class="sidebar-item">
+      <div class="sidebar-icon">🎲</div>
+      <div class="sidebar-body">
+        <strong>Seed (Ziarno)</strong>
+        <span>Inicjalizuje macierz przejść T(s,a,s') i nagrody R(s,a). To samo ziarno = identyczne wyniki. Zmień aby zobaczyć inny MDP.</span>
+      </div>
+    </div>
+    <div class="sidebar-item">
+      <div class="sidebar-icon">⏳</div>
+      <div class="sidebar-body">
+        <strong>Gamma γ</strong>
+        <span>Współczynnik dyskonta. Wpływa na V*(s) — jak bardzo przyszłe nagrody są warte. Wyższe γ = agent bardziej dalekowzroczny.</span>
+      </div>
+    </div>
+    <div class="sidebar-item">
+      <div class="sidebar-icon">🎯</div>
+      <div class="sidebar-body">
+        <strong>Theta θ (próg zbieżności)</strong>
+        <span>Kryterium stopu Value Iteration. Mniejsze θ = dokładniejsze V* ale więcej iteracji. Domyślnie 1e-6.</span>
+      </div>
+    </div>
+    <div class="sidebar-item">
+      <div class="sidebar-icon">⚙️</div>
+      <div class="sidebar-body">
+        <strong>Algorytm</strong>
+        <span>Value Iteration lub Policy Iteration. Oba dają identyczne V* i π* — różnią się ścieżką zbieżności.</span>
+      </div>
+    </div>
+    <div class="sidebar-item">
+      <div class="sidebar-icon">🔢</div>
+      <div class="sidebar-body">
+        <strong>Max iteracji</strong>
+        <span>Limit iteracji. Przy małym θ algorytm zazwyczaj zbiega przed limitem. Zwiększ jeśli widzisz "nie zbiegł".</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Przewodnik krok po kroku</h3>
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Ustaw parametry i kliknij "Solve MDP"</strong>
+        <span>Silnik Rust uruchamia Value Iteration lub Policy Iteration na 8-stanowym MDP ASP Warszawa</span>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Obserwuj metryki KPI</strong>
+        <span>Liczba iteracji do zbieżności, czas wykonania, max δ (błąd końcowy), V*(S0) vs V*(S7)</span>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Przejrzyj wykres V*(s)</strong>
+        <span>Słupkowy wykres wartości wszystkich 8 stanów. S0 powinien być najwyższy, S7 najniższy</span>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>Sprawdź tabelę Q*(s,a)</strong>
+        <span>Heatmapa 8×4 — wartość każdej pary (stan, akcja). Najjaśniejsza komórka w wierszu = optymalna akcja π*(s)</span>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <strong>Przejrzyj krzywą zbieżności</strong>
+        <span>Jak δ maleje z każdą iteracją. Powinno być wykładnicze — to efekt kontrakcji operatora Bellmana</span>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <strong>Porównaj VI vs PI</strong>
+        <span>Zmień algorytm i uruchom ponownie. V* i π* identyczne — ale liczba iteracji i kształt krzywej zbieżności różne</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3>Co oznaczają metryki KPI?</h3>
+    <div class="kpi-explain">
+      <span class="kpi-name">Iterations</span>
+      <div class="kpi-def">Liczba iteracji do zbieżności ($\\delta < \\theta$). VI: typowo 100–500. PI: typowo 5–20 (ale każda iteracja droższa).</div>
+
+      <span class="kpi-name">Max δ (final)</span>
+      <div class="kpi-def">Maksymalna zmiana V(s) w ostatniej iteracji. Powinno być $< \\theta$. Jeśli nie — zwiększ max iteracji.</div>
+
+      <span class="kpi-name">V*(S0)</span>
+      <div class="kpi-def">Wartość najlepszego stanu (wszyscy dostępni). Wyższe = lepszy MDP (wyższe nagrody lub wyższe γ).</div>
+
+      <span class="kpi-name">V*(S7)</span>
+      <div class="kpi-def">Wartość najgorszego stanu (naruszenie SLA). Zawsze ujemne lub najniższe — kara za SLA breach.</div>
+
+      <span class="kpi-name">Policy changes (PI)</span>
+      <div class="kpi-def">Tylko Policy Iteration: ile stanów zmieniło optymalną akcję w ostatnim kroku poprawy polityki. 0 = zbieżność.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ GLASS-BOX -->
+<section id="glasbox">
+  <h2>🔍 Glass-Box Inspector — Przewodnik</h2>
+
+  <div class="card card-accent">
+    <h3>Tabela iteracji Value Iteration</h3>
+    <table>
+      <tr><th>Kolumna</th><th>Co to jest</th><th>Uwagi</th></tr>
+      <tr><td><strong>Iteration</strong></td><td>Numer iteracji algorytmu</td><td>Każda iteracja = jeden przebieg przez wszystkie stany</td></tr>
+      <tr><td><strong>S0–S7</strong></td><td>Wartość V(s) w tej iteracji</td><td>Obserwuj jak wartości rosną/maleją do V*</td></tr>
+      <tr><td><strong>δ (delta)</strong></td><td>Max zmiana V(s) w tej iteracji</td><td>Maleje wykładniczo — kryterium stopu gdy δ &lt; θ</td></tr>
+      <tr><td><strong>Policy</strong></td><td>Aktualna polityka greedy na V</td><td>Może się zmieniać w trakcie VI, stabilna na końcu</td></tr>
+    </table>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Heatmapa Q*(s,a)</h3>
+    <p>Tabela 8 stanów × 4 akcji. Każda komórka = $Q^*(s,a)$. Interpretacja:</p>
+    <ul>
+      <li><strong>Najjaśniejsza komórka w wierszu</strong> = optymalna akcja $\\pi^*(s)$ dla tego stanu</li>
+      <li><strong>Różnica między komórkami</strong> = jak bardzo jedna akcja jest lepsza od innej</li>
+      <li><strong>Wiersz S7</strong> = wszystkie wartości niskie/ujemne (stan kary)</li>
+      <li><strong>Wiersz S0</strong> = wszystkie wartości wysokie (stan nagrody)</li>
+    </ul>
+  </div>
+
+  <div class="card card-green">
+    <h3>Krzywa zbieżności δ</h3>
+    <p>Wykres $\\delta_k$ vs numer iteracji $k$. Kształt powinien być <strong>wykładniczo malejący</strong>:</p>
+    <div class="math-block">
+      $$\\delta_k \\leq \\gamma^k \\cdot \\delta_0$$
+      <div class="math-note">Przy γ=0.95: po 100 iteracjach δ spada do $0.95^{100} \\approx 0.006$ wartości początkowej. Przy γ=0.99: wolniejsza zbieżność.</div>
+    </div>
+    <p>Jeśli krzywa nie jest wykładnicza — sprawdź czy macierz T jest poprawna (sumuje się do 1).</p>
+  </div>
+
+  <div class="info-box">
+    <h4>💡 Różnica Glass-Box Ch01 vs Ch02</h4>
+    <p>W Ch01 Glass-Box pokazywał kroki epizodu (trajektorię). W Ch02 Glass-Box pokazuje <strong>iteracje algorytmu</strong> — jak V(s) ewoluuje od zera do V*. Nie ma epizodów — algorytm działa na modelu, nie na symulacji.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ EKSPERYMENTY -->
+<section id="eksperymenty">
+  <h2>🔬 Eksperymenty</h2>
+  <p>Poniższe eksperymenty pomogą Ci zrozumieć kluczowe właściwości równania Bellmana przez obserwację:</p>
+
+  <div class="exp-card">
+    <div class="exp-title">🔬 Eksperyment A — Wpływ γ na V*(s)</div>
+    <div class="exp-row"><span class="exp-val">γ = 0.99</span><span class="exp-desc">Wysokie V*(s) — agent bardzo ceni przyszłość. Więcej iteracji do zbieżności. Duże różnice między stanami.</span></div>
+    <div class="exp-row"><span class="exp-val">γ = 0.50</span><span class="exp-desc">Niskie V*(s) — agent krótkowzroczny. Szybka zbieżność. Małe różnice między stanami.</span></div>
+    <div class="exp-row"><span class="exp-val">γ = 0.95</span><span class="exp-desc">Domyślne — dobry balans. Obserwuj V*(S0) vs V*(S7).</span></div>
+    <p style="margin-top:.75rem;color:var(--text2);font-size:.88rem">Wniosek: γ skaluje V*(s) ale nie zmienia optymalnej polityki π*(s) (przy tym samym MDP).</p>
+  </div>
+
+  <div class="exp-card">
+    <div class="exp-title">🔬 Eksperyment B — Value Iteration vs Policy Iteration</div>
+    <div class="exp-row"><span class="exp-val">VI, θ=1e-6</span><span class="exp-desc">Obserwuj liczbę iteracji i kształt krzywej δ — wykładnicze opadanie</span></div>
+    <div class="exp-row"><span class="exp-val">PI, θ=1e-6</span><span class="exp-desc">Mniej iteracji zewnętrznych, ale każda iteracja droższa. V* i π* identyczne!</span></div>
+    <div class="exp-row"><span class="exp-val">Porównaj V*(s)</span><span class="exp-desc">Oba algorytmy dają identyczne V*(s) i π*(s) — różna ścieżka, ten sam wynik</span></div>
+    <p style="margin-top:.75rem;color:var(--text2);font-size:.88rem">Wniosek: VI i PI są równoważne — wybór zależy od rozmiaru problemu.</p>
+  </div>
+
+  <div class="exp-card">
+    <div class="exp-title">🔬 Eksperyment C — Wpływ θ na dokładność</div>
+    <div class="exp-row"><span class="exp-val">θ = 1e-2</span><span class="exp-desc">Szybka zbieżność, mało iteracji, ale V* niedokładne — polityka może być suboptymalna</span></div>
+    <div class="exp-row"><span class="exp-val">θ = 1e-6</span><span class="exp-desc">Domyślne — dobra dokładność, rozsądna liczba iteracji</span></div>
+    <div class="exp-row"><span class="exp-val">θ = 1e-10</span><span class="exp-desc">Bardzo dokładne V*, dużo iteracji — diminishing returns po pewnym progu</span></div>
+    <p style="margin-top:.75rem;color:var(--text2);font-size:.88rem">Wniosek: θ kontroluje trade-off dokładność vs czas. W praktyce 1e-6 jest wystarczające.</p>
+  </div>
+
+  <div class="exp-card">
+    <div class="exp-title">🔬 Eksperyment D — Różne ziarna (różne MDP)</div>
+    <div class="exp-row"><span class="exp-val">seed=42</span><span class="exp-desc">Bazowy MDP — zapamiętaj V*(S0) i π*(s) dla każdego stanu</span></div>
+    <div class="exp-row"><span class="exp-val">seed=43</span><span class="exp-desc">Inne T(s,a,s') — inne V*(s) i potencjalnie inna π*(s)</span></div>
+    <div class="exp-row"><span class="exp-val">seed=42, run 2×</span><span class="exp-desc">Identyczne wyniki — deterministyczny silnik Rust</span></div>
+    <p style="margin-top:.75rem;color:var(--text2);font-size:.88rem">Wniosek: optymalna polityka zależy od struktury MDP (T i R), nie tylko od γ.</p>
+  </div>
+
+  <div class="obs-box">
+    <div class="obs-icon">🎯</div>
+    <h4>Kluczowa obserwacja z Rozdziału 02</h4>
+    <p>W Ch02 po raz pierwszy widzisz <strong>rosnącą krzywą V*(s)</strong> — wartości stanów zbiegają do optymalnych wartości. To fundamentalna różnica od Ch01 gdzie krzywa była płaska. Jednak Ch02 wymaga <strong>pełnej znajomości modelu T(s,a,s')</strong> — w prawdziwym świecie model jest nieznany. Dlatego od Ch05 przechodzimy do uczenia bez modelu: Monte Carlo (G_t z próbek) i TD Learning (δ online).</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ TESTY RUST -->
+<section id="testy">
+  <h2>🧪 Testy Rust — 8 testów w <code>ch02_bellman.rs</code></h2>
+
+  <div class="info-box">
+    <h4>💡 Dlaczego testy są ważne w Ch02?</h4>
+    <p>Ch02 jest fundamentem całego projektu — błąd w Value Iteration propaguje się do wszystkich kolejnych rozdziałów. Dlatego <code>ch02_bellman.rs</code> ma <strong>8 testów jednostkowych</strong> pokrywających każdą kluczową właściwość matematyczną. Uruchom: <code>cargo test --package rlvr-core</code></p>
+  </div>
+
+  <div class="card card-accent">
+    <h3>Wszystkie 8 testów — dokładne nazwy z kodu</h3>
+    <table>
+      <tr><th>#</th><th>Nazwa testu</th><th>Co weryfikuje</th><th>Asercja</th></tr>
+      <tr>
+        <td><span class="badge badge-green">1</span></td>
+        <td><code>test_probability_conservation</code></td>
+        <td>Każdy wiersz macierzy T sumuje się do 1.0</td>
+        <td><code>verify_transition_matrix(&p).is_ok()</code> — tolerancja 1e-6</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-green">2</span></td>
+        <td><code>test_value_iteration_converges</code></td>
+        <td>VI zbiega przed 500 iteracjami, δ_final &lt; 1e-5</td>
+        <td><code>iterations &lt; 500</code> i <code>final_delta &lt; 1e-5</code></td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-blue">3</span></td>
+        <td><code>test_contraction_mapping</code></td>
+        <td>Bellman operator jest kontrakcją: δ_{k+1} ≤ γ·δ_k</td>
+        <td><code>verify_contraction(&curve, 0.95)</code></td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-blue">4</span></td>
+        <td><code>test_policy_valid</code></td>
+        <td>Każda akcja w polityce jest w zakresie [0, N_ACTIONS)</td>
+        <td><code>a &lt; N_ACTIONS</code> dla każdego stanu, <code>policy.len() == N_STATES</code></td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-purple">5</span></td>
+        <td><code>test_values_finite</code></td>
+        <td>Wszystkie V*(s) są skończone (nie NaN, nie Inf)</td>
+        <td><code>v.is_finite()</code> dla każdego stanu</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-purple">6</span></td>
+        <td><code>test_deterministic</code></td>
+        <td>To samo ziarno daje identyczne wyniki (bit-perfect)</td>
+        <td><code>v1.to_bits() == v2.to_bits()</code> dla każdego V*(s)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-orange">7</span></td>
+        <td><code>test_exact_solution_close_to_vi</code></td>
+        <td>solve_exact() (LU) i value_iteration() dają zbliżone V^π</td>
+        <td><code>|v_vi - v_exact| &lt; 0.5</code> dla każdego stanu</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-red">8</span></td>
+        <td><code>test_worst_state_lowest_value</code></td>
+        <td>S7 (SLA breach) ma niższą wartość niż S0 (all available)</td>
+        <td><code>values[7] &lt; values[0]</code></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Szczegóły kluczowych testów</h3>
+    <div class="grid2">
+      <div>
+        <h4>Test 3 — Contraction Mapping</h4>
+        <div class="math-block">
+          <div class="math-label">Weryfikacja w verify_contraction()</div>
+          $$\\forall k: \\delta_{k+1} \\leq \\gamma \\cdot \\delta_k + 10^{-9}$$
+          <div class="math-note">Tolerancja 1e-9 na błędy numeryczne. Przy γ=0.95 każda iteracja redukuje błąd o 5%.</div>
+        </div>
+      </div>
+      <div>
+        <h4>Test 7 — VI vs solve_exact()</h4>
+        <div class="math-block">
+          <div class="math-label">Porównanie dwóch metod</div>
+          $$|V^{VI}(s) - V^{exact}(s)| < 0.5 \\quad \\forall s$$
+          <div class="math-note">VI używa θ=1e-9 dla maksymalnej dokładności. solve_exact() używa LU nalgebra — dokładne do precyzji maszynowej.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3>Jak uruchomić testy</h3>
+    <div class="formula">cd /mnt/c/Users/EPOSYMU/rust/rlvr-enterprise-allocator
+
+# Wszystkie testy Ch02
+cargo test --package rlvr-core ch02
+
+# Konkretny test
+cargo test --package rlvr-core test_contraction_mapping
+
+# Z outputem (verbose)
+cargo test --package rlvr-core ch02 -- --nocapture
+
+# Oczekiwany wynik:
+# test tests::test_probability_conservation ... ok
+# test tests::test_value_iteration_converges ... ok
+# test tests::test_contraction_mapping ... ok
+# test tests::test_policy_valid ... ok
+# test tests::test_values_finite ... ok
+# test tests::test_deterministic ... ok
+# test tests::test_exact_solution_close_to_vi ... ok
+# test tests::test_worst_state_lowest_value ... ok
+# test result: ok. 8 passed; 0 failed</div>
+  </div>
+
+  <div class="card card-orange">
+    <h3>5 języków w Ch01 — nota historyczna</h3>
+    <div class="info-box">
+      <h4>🌐 Ch01 obsługuje 5 języków: EN, DE, FR, ES, PL</h4>
+      <p>Rozdział 01 jako jedyny miał od początku pełny blok DE w słowniku T. Język DE był pierwotnie zaimplementowany, następnie wycofany z selektora języka, a potem przywrócony. Pozostałe rozdziały (Ch02–Ch13) mają DE dodane przez skrypt <code>add_german.py</code> z fallbackiem do EN dla brakujących kluczy przez funkcję <code>_tx(lang)</code>.</p>
+    </div>
+    <table>
+      <tr><th>Język</th><th>Ch01</th><th>Ch02–Ch13</th><th>Status DE</th></tr>
+      <tr><td>🇬🇧 EN</td><td>✅ Pełny</td><td>✅ Pełny</td><td>Bazowy</td></tr>
+      <tr><td>🇩🇪 DE</td><td>✅ Pełny (oryginalny)</td><td>⚠️ Częściowy + fallback EN</td><td>Przywrócony</td></tr>
+      <tr><td>🇫🇷 FR</td><td>✅ Pełny</td><td>✅ Pełny</td><td>Aktywny</td></tr>
+      <tr><td>🇪🇸 ES</td><td>✅ Pełny</td><td>✅ Pełny</td><td>Aktywny</td></tr>
+      <tr><td>🇵🇱 PL</td><td>✅ Pełny</td><td>✅ Pełny</td><td>Aktywny</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ DROGA -->
+<section id="droga">
+  <h2>🗺️ Kontekst w Serii Rozdziałów</h2>
+  <div class="card card-accent">
+    <h3>Mapa rozdziałów</h3>
+    <div class="chapter-map">
+      <div class="ch-card prev-ch"><div class="ch-num">Ch01</div><div class="ch-name">MDP + R_t + G_t (poprzedni)</div></div>
+      <div class="ch-card active-ch"><div class="ch-num">Ch02</div><div class="ch-name">Bellman + V* + Q* (tu jesteś)</div></div>
+      <div class="ch-card"><div class="ch-num">Ch03</div><div class="ch-name">Bandyci — uczenie bez stanów</div></div>
+      <div class="ch-card"><div class="ch-num">Ch04</div><div class="ch-name">DP — V(s) z modelem (rozszerzenie Ch02)</div></div>
+      <div class="ch-card"><div class="ch-num">Ch05</div><div class="ch-name">Monte Carlo — bez modelu, G_t</div></div>
+      <div class="ch-card"><div class="ch-num">Ch06</div><div class="ch-name">TD(0) — online RL + δ</div></div>
+      <div class="ch-card"><div class="ch-num">Ch07</div><div class="ch-name">n-Step TD + Dyna-Q</div></div>
+      <div class="ch-card"><div class="ch-num">Ch08</div><div class="ch-name">Eligibility Traces TD(λ)</div></div>
+      <div class="ch-card"><div class="ch-num">Ch09</div><div class="ch-name">Policy Gradient REINFORCE</div></div>
+      <div class="ch-card"><div class="ch-num">Ch10</div><div class="ch-name">Model-Based RL World Models</div></div>
+      <div class="ch-card"><div class="ch-num">Ch11–13</div><div class="ch-name">Multi-Agent RL</div></div>
+      <div class="ch-card"><div class="ch-num">Ch15+</div><div class="ch-name">Deep RL — sieć neuronowa</div></div>
+    </div>
+  </div>
+  <div class="card card-blue">
+    <h3>Dlaczego Ch02 jest fundamentem całego RL?</h3>
+    <p>Każdy algorytm RL od Ch03 do Ch13 jest próbą <strong>aproksymacji rozwiązania Bellmana bez znajomości modelu</strong>:</p>
+    <table>
+      <tr><th>Rozdział</th><th>Metoda</th><th>Jak aproksymuje Bellmana?</th></tr>
+      <tr><td>Ch05 MC</td><td>Monte Carlo</td><td>$G_t$ jako próbka $V^*(s)$</td></tr>
+      <tr><td>Ch06 TD</td><td>TD(0)</td><td>$r + \\gamma V(s')$ jako bootstrap</td></tr>
+      <tr><td>Ch06 Q-Learning</td><td>Off-policy TD</td><td>$r + \\gamma \\max_a Q(s',a)$ ≈ Bellman optimality</td></tr>
+      <tr><td>Ch09 PG</td><td>Policy Gradient</td><td>Gradient $\\nabla J(\\theta)$ ≈ poprawa polityki</td></tr>
+      <tr><td>Ch15+ DQN</td><td>Deep Q-Network</td><td>Sieć neuronowa aproksymuje $Q^*(s,a)$</td></tr>
+    </table>
+    <p style="margin-top:.75rem">Wszystkie drogi prowadzą do Bellmana — Ch02 pokazuje dokładne rozwiązanie, reszta to aproksymacje dla dużych/nieznanych MDP.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ CWICZENIA -->
+<section id="cwiczenia">
+  <h2>✏️ Ćwiczenia</h2>
+
+  <div class="card card-accent">
+    <h3>Ćwiczenie 1 — Jeden krok Value Iteration</h3>
+    <p>Stan S3. Akcje A0 i A1. $\\gamma=0.95$. Dane:</p>
+    <ul>
+      <li>$T(S3,A0,S0)=0.6$, $T(S3,A0,S7)=0.4$, $R(S3,A0)=+2$</li>
+      <li>$T(S3,A1,S1)=0.8$, $T(S3,A1,S3)=0.2$, $R(S3,A1)=+1$</li>
+      <li>$V(S0)=5.0$, $V(S1)=3.0$, $V(S3)=1.0$, $V(S7)=-5.0$</li>
+    </ul>
+    <p><strong>Oblicz Q(S3,A0), Q(S3,A1) i nowe V(S3).</strong></p>
+    <details>
+      <summary style="cursor:pointer;color:var(--accent);margin-top:.5rem">▶ Pokaż rozwiązanie</summary>
+      <div class="math-block" style="margin-top:.75rem">
+        $$Q(S3,A0) = 0.6 \\cdot [2 + 0.95 \\cdot 5.0] + 0.4 \\cdot [2 + 0.95 \\cdot (-5.0)]$$
+        $$= 0.6 \\cdot 6.75 + 0.4 \\cdot (-2.75) = 4.05 - 1.10 = +2.95$$
+        $$Q(S3,A1) = 0.8 \\cdot [1 + 0.95 \\cdot 3.0] + 0.2 \\cdot [1 + 0.95 \\cdot 1.0]$$
+        $$= 0.8 \\cdot 3.85 + 0.2 \\cdot 1.95 = 3.08 + 0.39 = +3.47$$
+        $$V_{new}(S3) = \\max(2.95, 3.47) = +3.47 \\quad \\pi^*(S3) = A1$$
+      </div>
+    </details>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Ćwiczenie 2 — Zbieżność Value Iteration</h3>
+    <p>$\\gamma=0.9$, $\\theta=0.01$. Po iteracji $k$: $\\delta_k = 1.0$. Ile iteracji potrzeba do zbieżności?</p>
+    <details>
+      <summary style="cursor:pointer;color:var(--accent2);margin-top:.5rem">▶ Pokaż rozwiązanie</summary>
+      <div class="math-block" style="margin-top:.75rem">
+        $$\\delta_k \\leq \\gamma^k \\cdot \\delta_0 \\implies 0.9^k \\cdot 1.0 < 0.01$$
+        $$k > \\frac{\\ln(0.01)}{\\ln(0.9)} = \\frac{-4.605}{-0.105} \\approx 43.8 \\implies k \\geq 44 \\text{ iteracji}$$
+        <div class="math-note">Przy γ=0.99: $k \\geq 458$ iteracji. Wyższe γ = wolniejsza zbieżność.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card card-green">
+    <h3>Ćwiczenie 3 — Q* z V*</h3>
+    <p>Dane: $V^*(S0)=8.2$, $V^*(S3)=3.1$, $V^*(S7)=-4.5$. Akcja A2 w stanie S1: $T(S1,A2,S0)=0.5$, $T(S1,A2,S3)=0.3$, $T(S1,A2,S7)=0.2$, $R(S1,A2)=+3$, $\\gamma=0.95$.</p>
+    <p><strong>Oblicz $Q^*(S1,A2)$.</strong></p>
+    <details>
+      <summary style="cursor:pointer;color:var(--accent3);margin-top:.5rem">▶ Pokaż rozwiązanie</summary>
+      <div class="math-block" style="margin-top:.75rem">
+        $$Q^*(S1,A2) = \\sum_{s'} T(S1,A2,s') [R(S1,A2) + \\gamma V^*(s')]$$
+        $$= 0.5[3 + 0.95 \\cdot 8.2] + 0.3[3 + 0.95 \\cdot 3.1] + 0.2[3 + 0.95 \\cdot (-4.5)]$$
+        $$= 0.5 \\cdot 10.79 + 0.3 \\cdot 5.945 + 0.2 \\cdot (-1.275)$$
+        $$= 5.395 + 1.784 - 0.255 = +6.924$$
+      </div>
+    </details>
+  </div>
+
+  <div class="card card-orange">
+    <h3>Ćwiczenie 4 — Policy Iteration krok po kroku</h3>
+    <p>MDP z 2 stanami (S0, S1) i 2 akcjami (A0, A1). $\\gamma=0.9$. Polityka startowa: $\\pi(S0)=A0$, $\\pi(S1)=A0$.</p>
+    <div class="formula">T(S0,A0,S0)=0.7, T(S0,A0,S1)=0.3, R(S0,A0)=+5
+T(S0,A1,S0)=0.2, T(S0,A1,S1)=0.8, R(S0,A1)=+8
+T(S1,A0,S0)=0.4, T(S1,A0,S1)=0.6, R(S1,A0)=-2
+T(S1,A1,S0)=0.9, T(S1,A1,S1)=0.1, R(S1,A1)=+1</div>
+    <p><strong>Wykonaj jeden krok Policy Evaluation (do zbieżności) i jeden krok Policy Improvement.</strong></p>
+    <details>
+      <summary style="cursor:pointer;color:var(--accent4);margin-top:.5rem">▶ Pokaż rozwiązanie</summary>
+      <div class="math-block" style="margin-top:.75rem">
+        <div class="math-label">Policy Evaluation dla π=(A0,A0)</div>
+        $$V(S0) = 0.7[5 + 0.9V(S0)] + 0.3[5 + 0.9V(S1)]$$
+        $$V(S1) = 0.4[-2 + 0.9V(S0)] + 0.6[-2 + 0.9V(S1)]$$
+        <div class="math-label">Rozwiązanie układu równań:</div>
+        $$V(S0) = 5 + 0.9[0.7V(S0) + 0.3V(S1)] \\implies V(S0) - 0.63V(S0) - 0.27V(S1) = 5$$
+        $$V(S1) = -2 + 0.9[0.4V(S0) + 0.6V(S1)] \\implies -0.36V(S0) + 0.46V(S1) = -2$$
+        $$\\implies V(S0) \\approx +14.2, \\quad V(S1) \\approx +6.8$$
+        <div class="math-label">Policy Improvement:</div>
+        $$Q(S0,A1) = 0.2[8+0.9\\cdot14.2] + 0.8[8+0.9\\cdot6.8] = 0.2\\cdot20.78 + 0.8\\cdot14.12 = 15.45 > V(S0)$$
+        $$\\pi_{new}(S0) = A1 \\quad \\text{(zmiana polityki!)}$$
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ QUIZ -->
+<section id="quiz">
+  <h2>🧠 Quiz — Rozdział 02</h2>
+  <div id="quiz-score" style="margin-bottom:1rem;color:var(--text2)">Wynik: <span id="score">0</span> / <span id="total">0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+
+  <div class="quiz-q" id="q1">
+    <p>1. Co gwarantuje zbieżność Value Iteration do V*?</p>
+    <button class="quiz-opt" onclick="ans(this,'q1',false)">A. Losowa inicjalizacja V(s)=0</button>
+    <button class="quiz-opt" onclick="ans(this,'q1',true)">B. Operator Bellmana jest kontrakcją z współczynnikiem γ &lt; 1</button>
+    <button class="quiz-opt" onclick="ans(this,'q1',false)">C. Macierz przejść T sumuje się do 1</button>
+    <button class="quiz-opt" onclick="ans(this,'q1',false)">D. Nagrody R(s,a) są ograniczone</button>
+    <div class="feedback" id="fb-q1"></div>
+  </div>
+
+  <div class="quiz-q" id="q2">
+    <p>2. Jaka jest relacja między V*(s) a Q*(s,a)?</p>
+    <button class="quiz-opt" onclick="ans(this,'q2',false)">A. $V^*(s) = \\sum_a Q^*(s,a)$</button>
+    <button class="quiz-opt" onclick="ans(this,'q2',true)">B. $V^*(s) = \\max_a Q^*(s,a)$</button>
+    <button class="quiz-opt" onclick="ans(this,'q2',false)">C. $V^*(s) = \\frac{1}{|A|}\\sum_a Q^*(s,a)$</button>
+    <button class="quiz-opt" onclick="ans(this,'q2',false)">D. $V^*(s) = Q^*(s, \\pi^*(s)) + \\gamma$</button>
+    <div class="feedback" id="fb-q2"></div>
+  </div>
+
+  <div class="quiz-q" id="q3">
+    <p>3. Dlaczego Ch02 nie działa dla rzeczywistych problemów produkcyjnych?</p>
+    <button class="quiz-opt" onclick="ans(this,'q3',false)">A. Bo jest za wolny</button>
+    <button class="quiz-opt" onclick="ans(this,'q3',false)">B. Bo nie oblicza Q*(s,a)</button>
+    <button class="quiz-opt" onclick="ans(this,'q3',true)">C. Bo wymaga pełnej znajomości T(s,a,s') i R(s,a), a przestrzeń stanów jest zbyt duża</button>
+    <button class="quiz-opt" onclick="ans(this,'q3',false)">D. Bo działa tylko dla γ=0.95</button>
+    <div class="feedback" id="fb-q3"></div>
+  </div>
+
+  <div class="quiz-q" id="q4">
+    <p>4. Jaka jest kluczowa różnica między Value Iteration a Policy Iteration?</p>
+    <button class="quiz-opt" onclick="ans(this,'q4',false)">A. VI daje lepsze V* niż PI</button>
+    <button class="quiz-opt" onclick="ans(this,'q4',true)">B. VI aktualizuje V(s) bezpośrednio, PI naprzemiennie ocenia i poprawia politykę — oba dają identyczne V* i π*</button>
+    <button class="quiz-opt" onclick="ans(this,'q4',false)">C. PI nie wymaga znajomości modelu T</button>
+    <button class="quiz-opt" onclick="ans(this,'q4',false)">D. VI działa tylko dla małych γ</button>
+    <div class="feedback" id="fb-q4"></div>
+  </div>
+
+  <div class="quiz-q" id="q5">
+    <p>5. Co oznacza $\\delta_k < \\theta$ w Value Iteration?</p>
+    <button class="quiz-opt" onclick="ans(this,'q5',false)">A. Polityka jest optymalna</button>
+    <button class="quiz-opt" onclick="ans(this,'q5',false)">B. V(s) = V*(s) dokładnie</button>
+    <button class="quiz-opt" onclick="ans(this,'q5',true)">C. Maksymalna zmiana V(s) w tej iteracji jest mniejsza niż próg θ — algorytm uznaje zbieżność</button>
+    <button class="quiz-opt" onclick="ans(this,'q5',false)">D. Wszystkie Q*(s,a) zostały obliczone</button>
+    <div class="feedback" id="fb-q5"></div>
+  </div>
+
+  <div class="quiz-q" id="q6">
+    <p>6. Jak Q-Learning (Ch06) jest powiązany z równaniem Bellmana z Ch02?</p>
+    <button class="quiz-opt" onclick="ans(this,'q6',false)">A. Q-Learning nie używa równania Bellmana</button>
+    <button class="quiz-opt" onclick="ans(this,'q6',false)">B. Q-Learning rozwiązuje dokładnie to samo równanie co VI</button>
+    <button class="quiz-opt" onclick="ans(this,'q6',true)">C. Q-Learning aproksymuje Bellman optimality przez próbkowanie: $r + \\gamma \\max_a Q(s',a)$ zamiast pełnej sumy po T</button>
+    <button class="quiz-opt" onclick="ans(this,'q6',false)">D. Q-Learning używa Policy Iteration zamiast Value Iteration</button>
+    <div class="feedback" id="fb-q6"></div>
+  </div>
+
+  <div id="quiz-result" style="display:none" class="card card-accent">
+    <h3>🎉 Wynik końcowy</h3>
+    <p id="result-text"></p>
+  </div>
+</section>
+
+</main>
+<script>
+function show(id,btn){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+let answered={},correct=0,total=0;
+const feedback={
+  'q1':'Operator Bellmana T jest kontrakcja z wspolczynnikiem gamma < 1: ||TV - TV||_inf <= gamma * ||V - V||_inf. Gwarantuje to zbieznosc do jedynego punktu stalego V* niezaleznie od inicjalizacji.',
+  'q2':'V*(s) = max_a Q*(s,a). Wartosc stanu to wartosc najlepszej akcji w tym stanie. Stad polityka optymalna: pi*(s) = argmax_a Q*(s,a).',
+  'q3':'Value Iteration wymaga pelnej macierzy T(s,a,s\\') i R(s,a). W produkcji model jest nieznany, a przestrzen stanow ma miliony wymiarow — niemozliwe do przechowania w tabeli. Dlatego od Ch05 uzywamy uczenia bez modelu.',
+  'q4':'Oba algorytmy sa rownowazne — daja identyczne V* i pi*. VI jest prostszy (bezposrednia aktualizacja V), PI jest szybszy w liczbie iteracji zewnetrznych ale kazda iteracja drozsza (wymaga rozwiazania ukladu rownan).',
+  'q5':'delta_k < theta oznacza ze V(s) prawie sie nie zmienia — algorytm jest blisko V*. Dokladnie: ||V_k - V*||_inf < 2*theta*gamma/(1-gamma). To kryterium stopu, nie dokladna zbieznosc.',
+  'q6':'Q-Learning aproksymuje Bellman optimality: zamiast pelnej sumy Sigma_s\\' T(s,a,s\\')[R+gamma*V*(s\\')] uzywa jednej probki r + gamma*max_a Q(s\\',a). Po wielu probkach Q(s,a) zbiega do Q*(s,a).'
+};
+function ans(btn,qid,isCorrect){
+  if(answered[qid])return;
+  answered[qid]=true; total++;
+  const fb=document.getElementById('fb-'+qid);
+  if(isCorrect){
+    btn.classList.add('correct'); correct++;
+    fb.textContent='✅ Poprawnie! '+feedback[qid];
+    fb.className='feedback show ok';
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent='❌ Niepoprawnie. '+feedback[qid];
+    fb.className='feedback show err';
+    btn.parentElement.querySelectorAll('.quiz-opt').forEach(o=>{
+      if(o.onclick.toString().includes('true'))o.classList.add('correct');
+    });
+  }
+  document.getElementById('score').textContent=correct;
+  document.getElementById('total').textContent=total;
+  document.getElementById('prog').style.width=(total/6*100)+'%';
+  if(total===6){
+    const res=document.getElementById('quiz-result');
+    res.style.display='block';
+    const pct=Math.round(correct/6*100);
+    document.getElementById('result-text').textContent=
+      correct+'/6 ('+pct+'%) — '+
+      (pct>=83?'🏆 Doskonale! Gotowy na Rozdział 03 — Bandyci.':
+       pct>=50?'👍 Dobry wynik. Przejrzyj sekcje Teoria RL i Algorytmy.':
+       '📚 Wróć do sekcji Równanie Bellmana i Algorytmy.');
+  }
+}
+</script>
+</body>
+</html>
+"""
+    components.html(html_content, height=900, scrolling=True)
+
 def _tx(lang):
     """Deep merge: DE overrides EN, but missing keys/subkeys fall back to EN."""
     import copy
