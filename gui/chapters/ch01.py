@@ -624,184 +624,457 @@ def _tx(lang):
     return base
 
 def _render_handbook():
-    st.markdown(
+    st.iframe(
         """<!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hands-On Guide &#x2014; Chapter 01</title>
+<title>Podr&#x0119;cznik &#x2014; Rozdzia&#x0142; 01: MDP i Dyspozycja ASP</title>
 <style>
-body{font-family:system-ui,sans-serif;max-width:900px;margin:0 auto;padding:2rem;background:#0f1117;color:#e8eaf6;line-height:1.7}
-h1{color:#8B5CF6;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem}
-h2{color:#0082F0;margin-top:2rem}
-h3{color:#0FC373}
-.card{background:#1e2235;border-radius:8px;padding:1.5rem;margin:1rem 0;border-left:4px solid #8B5CF6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+p{margin:.5rem 0}
+ul,ol{margin:.5rem 0 .5rem 1.5rem}
+li{margin:.25rem 0}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
 .card.green{border-left-color:#0FC373}
 .card.blue{border-left-color:#0082F0}
 .card.orange{border-left-color:#FF8C0A}
 .card.red{border-left-color:#FF4B4B}
-table{width:100%;border-collapse:collapse;margin:1rem 0}
-th{background:#252840;color:#8B5CF6;padding:.75rem;text-align:left}
-td{padding:.6rem;border-bottom:1px solid #2d3154}
+.card.purple{border-left-color:#8B5CF6}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left;font-weight:600}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
 tr:hover td{background:#252840}
-code{background:#252840;padding:.2rem .4rem;border-radius:4px;color:#0FC373;font-size:.9em}
-.formula{background:#252840;border-radius:8px;padding:1rem;margin:1rem 0;text-align:center;font-size:1.1em;color:#FFD700}
-.step{display:flex;gap:1rem;margin:.75rem 0;align-items:flex-start}
-.step-num{background:#8B5CF6;color:white;border-radius:50%;width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold}
-.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:1rem 0}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
+pre{background:#252840;padding:1rem;border-radius:8px;overflow-x:auto;margin:.75rem 0}
+pre code{background:none;padding:0;font-size:.85rem}
+.formula{background:#252840;border-radius:8px;padding:1rem;margin:.75rem 0;text-align:center;font-size:1.05em;color:#FFD700;font-family:monospace}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
 .kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
-.kpi-val{font-size:1.8em;font-weight:bold;color:#0FC373}
-.kpi-label{color:#9ca3af;font-size:.85em}
-.tag{display:inline-block;padding:.2rem .6rem;border-radius:4px;font-size:.8em;margin:.2rem}
-.tag.green{background:#0FC37322;color:#0FC373}
-.tag.red{background:#FF4B4B22;color:#FF4B4B}
-.tag.blue{background:#0082F022;color:#0082F0}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.tag{display:inline-block;padding:.15rem .5rem;border-radius:4px;font-size:.8em;margin:.15rem}
+.tag.green{background:#0FC37322;color:#0FC373;border:1px solid #0FC37344}
+.tag.red{background:#FF4B4B22;color:#FF4B4B;border:1px solid #FF4B4B44}
+.tag.blue{background:#0082F022;color:#0082F0;border:1px solid #0082F044}
+.tag.purple{background:#8B5CF622;color:#8B5CF6;border:1px solid #8B5CF644}
+.tag.orange{background:#FF8C0A22;color:#FF8C0A;border:1px solid #FF8C0A44}
+.badge{display:inline-flex;align-items:center;gap:.4rem;background:#1e2235;border:1px solid #2d3154;border-radius:6px;padding:.3rem .7rem;font-size:.85rem;margin:.2rem}
+.highlight{background:#8B5CF622;border:1px solid #8B5CF644;border-radius:6px;padding:.75rem 1rem;margin:.5rem 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<div class="container">
+<h1>&#x1F4D8; Podr&#x0119;cznik &#x2014; Rozdzia&#x0142; 01</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>MDP i Dyspozycja ASP &middot; Warszawa &middot; Silnik Rust &middot; Interaktywne Laboratorium</em></p>
 
-<h1>&#x1F4D8; Hands-On Guide &#x2014; Chapter 01</h1>
-<h2>MDP Fundamentals &amp; &#x3B5;-Greedy Dispatch</h2>
-<p><em>Warsaw ASP Dispatch Simulation &middot; Rust Engine &middot; Interactive Lab</em></p>
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Wprowadzenie</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; Czym jest Ch01?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; Teoria RL</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA;&#xFE0F; &#x15A;rodowisko</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; Jak u&#x17C;ywa&#x107; UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretacja</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; &#x106;wiczenia</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Podsumowanie</button>
+</div>
 
-<h2>&#x1F3AF; Learning Objectives</h2>
-<div class="card">
-After completing this chapter you will be able to:
+<!-- TAB: Wprowadzenie -->
+<div id="intro" class="tab-content active">
+<h2>&#x1F3AF; Cele nauki</h2>
+<div class="card green">
+Po uko&#x0144;czeniu tego rozdzia&#x0142;u b&#x0119;dziesz potrafi&#x0142;:
 <ul>
-<li>Define the 5 components of an MDP: S, A, P, R, &#x3B3;</li>
-<li>Explain what a state, action, reward and return are in the ASP context</li>
-<li>Implement &#x3B5;-greedy exploration and explain the exploration-exploitation trade-off</li>
-<li>Read the Warsaw map and interpret dispatch decisions as MDP transitions</li>
-<li>Read the Glass-Box and trace a full MDP tuple (S&#x209C;, A&#x209C;, R&#x209C;, G&#x209C;)</li>
-<li>Explain why the Bellman equation is greyed out in Ch01 (activates in Ch02)</li>
+<li>Zdefiniowa&#x107; 5 sk&#x0142;adnik&#xF3;w MDP: S, A, P, R, &#x3B3;</li>
+<li>Wyja&#x15B;ni&#x107; czym jest stan, akcja, nagroda i zwrot w kontek&#x15B;cie ASP</li>
+<li>Zaimplementowa&#x107; polityk&#x0119; &#x3B5;-zachlann&#x0105; i wyja&#x15B;ni&#x107; kompromis eksploracja-eksploatacja</li>
+<li>Odczyta&#x107; map&#x0119; Warszawy i zinterpretowa&#x107; decyzje dyspozycji jako przej&#x15B;cia MDP</li>
+<li>Odczyta&#x107; Glass-Box i prze&#x15B;ledzi&#x107; pe&#x0142;n&#x0105; krotkMDP: (S&#x209C;, A&#x209C;, R&#x209C;, G&#x209C;)</li>
+<li>Wyja&#x15B;ni&#x107; dlaczego r&#xF3;wnanie Bellmana jest wyszarzone w Ch01 (aktywuje si&#x0119; w Ch02)</li>
 </ul>
 </div>
 
-<h2>&#x1F3E2; Business Problem</h2>
+<h2>&#x1F3E2; Problem biznesowy</h2>
 <div class="card blue">
-<strong>Warsaw ASP Dispatch Centre</strong> &#x2014; 5 technicians, up to 20 work orders per shift.<br><br>
-Every dispatch decision is an <strong>MDP action</strong>. The outcome (SLA met or breached) is the <strong>reward</strong>.
-The sequence of all decisions in one shift is an <strong>episode</strong>.<br><br>
-In Ch01 the Q-table is all zeros &#x2014; the agent has no learned knowledge yet.
-All decisions are driven purely by &#x3B5;-greedy random exploration.
-This is the <em>baseline</em> against which all future chapters are measured.
+<strong>Centrum Dyspozycji ASP Warszawa</strong> &#x2014; 5 technik&#xF3;w, do 20 zlece&#x0144; na zmian&#x0119;.<br><br>
+Ka&#x017C;da decyzja dyspozycji to <strong>akcja MDP</strong>. Wynik (SLA spe&#x0142;nione lub naruszone) to <strong>nagroda</strong>.
+Sekwencja wszystkich decyzji w jednej zmianie to <strong>epizod</strong>.<br><br>
+W Ch01 tabela Q ma same zera &#x2014; agent nie ma jeszcze &#x17C;adnej wiedzy.
+Wszystkie decyzje s&#x0105; podejmowane wy&#x0142;&#x0105;cznie przez losow&#x0105; eksploracj&#x0119; &#x3B5;-zachlann&#x0105;.
+To jest <em>punkt bazowy</em> wzgl&#x0119;dem kt&#xF3;rego mierzone s&#x0105; wszystkie przysz&#x0142;e rozdzia&#x0142;y.
 </div>
 
-<h2>&#x1F9E9; The MDP Framework</h2>
+<h2>&#x1F5FA;&#xFE0F; Mapa my&#x15B;li: od MDP do optymalnej polityki</h2>
+<div class="card">
+<div style="text-align:center;font-family:monospace;color:#8B5CF6;font-size:.9rem">
+Ch01: MDP + &#x3B5;-greedy (Q=0)<br>
+&#x2193;<br>
+Ch02: Bellman + Value Iteration (model znany)<br>
+&#x2193;<br>
+Ch03&#x2013;05: Bandit / MC / TD (model nieznany)<br>
+&#x2193;<br>
+Ch06&#x2013;09: Q-Learning / SARSA / Policy Gradient<br>
+&#x2193;<br>
+Ch10&#x2013;13: Model-Based / MARL / QMIX
+</div>
+</div>
+
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">Sk&#x0142;adnik&#xF3;w MDP</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x3B5;</div><div class="kpi-label">Wsp&#xF3;&#x0142;czynnik eksploracji</div></div>
+<div class="kpi-card"><div class="kpi-val">G&#x209C;</div><div class="kpi-label">Zdyskontowany zwrot</div></div>
+<div class="kpi-card"><div class="kpi-val">Q=0</div><div class="kpi-label">Tabela Q w Ch01</div></div>
+</div>
+</div>
+
+<!-- TAB: Czym jest Ch01 -->
+<div id="what" class="tab-content">
+<h2>&#x2753; Czym jest Rozdzia&#x0142; 01?</h2>
+<div class="card purple">
+Ch01 to <strong>punkt startowy ca&#x0142;ego kursu RL</strong>. Nie ma tu uczenia &#x2014; agent dzia&#x0142;a losowo.
+Celem jest zrozumienie formalizmu MDP i narz&#x0119;dzi wizualizacji zanim wprowadzone zostanie uczenie.
+</div>
+
+<h2>Co si&#x0119; dzieje w silniku Rust?</h2>
+<div class="card">
+Funkcja <code>run_ch01_episode()</code> w <code>ch01_mdp.rs</code>:
+<ol>
+<li>Generuje losowych 5 technik&#xF3;w i N zlece&#x0144; na mapie Warszawy</li>
+<li>Dla ka&#x017C;dego zlecenia wybiera technika przez polityk&#x0119; &#x3B5;-zachlann&#x0105; (Q=0 &#x2192; zawsze losowo)</li>
+<li>Oblicza nagrod&#x0119; R&#x209C; na podstawie: dopasowania umiej&#x0119;tno&#x15B;ci, odleg&#x0142;o&#x15B;ci, pilno&#x15B;ci</li>
+<li>Oblicza zdyskontowany zwrot G&#x209C; wstecz przez ca&#x0142;y epizod</li>
+<li>Zwraca pe&#x0142;ny &#x15B;lad MDP: ka&#x017C;dy krok (S&#x209C;, A&#x209C;, R&#x209C;, G&#x209C;, explored)</li>
+</ol>
+</div>
+
+<h2>Czego Ch01 NIE robi</h2>
+<div class="card red">
+<ul>
+<li>&#x274C; Nie aktualizuje tabeli Q &#x2014; Q pozostaje zerowe przez ca&#x0142;y epizod</li>
+<li>&#x274C; Nie u&#x017C;ywa r&#xF3;wnania Bellmana &#x2014; aktywuje si&#x0119; w Ch02</li>
+<li>&#x274C; Nie uczy si&#x0119; mi&#x0119;dzy epizodami &#x2014; ka&#x017C;dy epizod zaczyna od zera</li>
+<li>&#x274C; Nie optymalizuje polityki &#x2014; to zadanie Ch06 (Q-Learning)</li>
+</ul>
+</div>
+
+<h2>Dlaczego to wa&#x017C;ne?</h2>
+<div class="card green">
+Ch01 ustanawia <strong>losowy punkt bazowy</strong>. &#x15A;redni G&#x209C; z Ch01 to minimum kt&#xF3;re ka&#x017C;dy algorytm RL musi pokona&#x107;.
+Je&#x15B;li algorytm z Ch06 nie bije Ch01 &#x2014; co&#x15B; jest nie tak z hiperparametrami.
+</div>
+</div>
+
+<!-- TAB: Teoria RL -->
+<div id="theory" class="tab-content">
+<h2>&#x1F9EE; Formalizm MDP</h2>
 <table>
-<tr><th>Component</th><th>Symbol</th><th>ASP meaning</th><th>Example</th></tr>
-<tr><td>State space</td><td><strong>S</strong></td><td>Operational situation of the dispatch centre</td><td>S3: partial availability, high load</td></tr>
-<tr><td>Action space</td><td><strong>A</strong></td><td>Which technician to dispatch to which order</td><td>Send T2 to W5</td></tr>
-<tr><td>Transition model</td><td><strong>P(s'|s,a)</strong></td><td>Probability of next state given current state and action</td><td>After dispatch, T2 becomes unavailable</td></tr>
-<tr><td>Reward function</td><td><strong>R(s,a)</strong></td><td>Immediate feedback for the dispatch decision</td><td>+10 SLA met, &#x2212;50 SLA breached</td></tr>
-<tr><td>Discount factor</td><td><strong>&#x3B3;</strong></td><td>How much future rewards are valued vs immediate</td><td>&#x3B3;=0.95: future rewards worth 95% of immediate</td></tr>
+<tr><th>Sk&#x0142;adnik</th><th>Symbol</th><th>Znaczenie w ASP</th><th>Przyk&#x0142;ad</th></tr>
+<tr><td>Przestrze&#x0144; stan&#xF3;w</td><td><strong>S</strong></td><td>Sytuacja operacyjna centrum dyspozycji</td><td>S3: cz&#x0119;&#x15B;ciowa dost&#x0119;pno&#x15B;&#x107;, wysokie obci&#x0105;&#x017C;enie</td></tr>
+<tr><td>Przestrze&#x0144; akcji</td><td><strong>A</strong></td><td>Kt&#xF3;rego technika wys&#x0142;a&#x107; do kt&#xF3;rego zlecenia</td><td>Wy&#x15B;lij T2 do W5</td></tr>
+<tr><td>Model przej&#x15B;&#x107;</td><td><strong>P(s'|s,a)</strong></td><td>Prawdopodobie&#x0144;stwo nast&#x0119;pnego stanu</td><td>Po dyspozycji T2 staje si&#x0119; niedost&#x0119;pny</td></tr>
+<tr><td>Funkcja nagrody</td><td><strong>R(s,a)</strong></td><td>Natychmiastowa informacja zwrotna</td><td>+10 SLA spe&#x0142;nione, &#x2212;50 SLA naruszone</td></tr>
+<tr><td>Wsp&#xF3;&#x0142;czynnik dyskonta</td><td><strong>&#x3B3;</strong></td><td>Jak bardzo cenimy przysz&#x0142;e nagrody</td><td>&#x3B3;=0.95: przysz&#x0142;e nagrody warte 95% bie&#x017C;&#x0105;cych</td></tr>
 </table>
 
-<h2>&#x1F4C8; Discounted Return G&#x209C;</h2>
+<h2>Zdyskontowany zwrot G&#x209C;</h2>
 <div class="formula">G&#x209C; = R&#x209C;&#x208A;&#x2081; + &#x3B3; R&#x209C;&#x208A;&#x2082; + &#x3B3;&#xB2; R&#x209C;&#x208A;&#x2083; + &hellip; = &sum;<sub>k=0</sub><sup>&infin;</sup> &#x3B3;<sup>k</sup> R&#x209C;&#x208A;&#x2081;&#x208A;<sub>k</sub></div>
 <div class="card">
-<strong>Worked example</strong> (&#x3B3;=0.95, 3-step episode):
+<strong>Przyk&#x0142;ad liczbowy</strong> (&#x3B3;=0.95, epizod 3-krokowy):
 <ul>
-<li>Step 1: dispatch T0 &#x2192; R = +10 (SLA met)</li>
-<li>Step 2: dispatch T2 &#x2192; R = &#x2212;5 (wrong skill)</li>
-<li>Step 3: dispatch T1 &#x2192; R = +10 (SLA met)</li>
+<li>Krok 1: wy&#x15B;lij T0 &#x2192; R = +10 (SLA spe&#x0142;nione)</li>
+<li>Krok 2: wy&#x15B;lij T2 &#x2192; R = &#x2212;5 (z&#x0142;e umiej&#x0119;tno&#x15B;ci)</li>
+<li>Krok 3: wy&#x15B;lij T1 &#x2192; R = +10 (SLA spe&#x0142;nione)</li>
 </ul>
 G&#x2080; = 10 + 0.95&times;(&#x2212;5) + 0.95&#xB2;&times;10 = 10 &#x2212; 4.75 + 9.025 = <strong>14.275</strong>
 </div>
 
-<h2>&#x1F3B2; &#x3B5;-Greedy Policy</h2>
+<h2>Polityka &#x3B5;-zachlanna</h2>
 <div class="card orange">
-<strong>With probability &#x3B5;:</strong> choose a random action (explore)<br>
-<strong>With probability 1&#x2212;&#x3B5;:</strong> choose the best known action (exploit)<br><br>
-In Ch01 the Q-table is all zeros &#x2014; so exploit = random too.<br>
-&#x3B5; only matters from Ch06 onwards when Q-values are non-zero.
+<strong>Z prawdopodobie&#x0144;stwem &#x3B5;:</strong> wybierz losow&#x0105; akcj&#x0119; (eksploracja)<br>
+<strong>Z prawdopodobie&#x0144;stwem 1&#x2212;&#x3B5;:</strong> wybierz najlepsz&#x0105; znan&#x0105; akcj&#x0119; (eksploatacja)<br><br>
+W Ch01 tabela Q ma same zera &#x2014; eksploatacja = losowo.<br>
+&#x3B5; ma znaczenie dopiero od Ch06 gdy warto&#x15B;ci Q s&#x0105; niezerowe.
 </div>
 <table>
-<tr><th>&#x3B5; value</th><th>Behaviour</th><th>When to use</th></tr>
-<tr><td>1.0</td><td>Always random</td><td>Start of training &#x2014; know nothing</td></tr>
-<tr><td>0.5</td><td>50/50 explore/exploit</td><td>Mid-training</td></tr>
-<tr><td>0.1</td><td>Mostly exploit</td><td>Late training &#x2014; policy nearly optimal</td></tr>
-<tr><td>0.0</td><td>Always greedy</td><td>Evaluation only (no learning)</td></tr>
+<tr><th>Warto&#x15B;&#x107; &#x3B5;</th><th>Zachowanie</th><th>Kiedy u&#x017C;ywa&#x107;</th></tr>
+<tr><td>1.0</td><td>Zawsze losowo</td><td>Pocz&#x0105;tek treningu &#x2014; nic nie wiemy</td></tr>
+<tr><td>0.5</td><td>50/50 eksploracja/eksploatacja</td><td>&#x15A;rodek treningu</td></tr>
+<tr><td>0.1</td><td>G&#x0142;&#xF3;wnie eksploatacja</td><td>P&#xF3;&#x017A;ny trening &#x2014; polityka prawie optymalna</td></tr>
+<tr><td>0.0</td><td>Zawsze zachlanna</td><td>Tylko ewaluacja (bez uczenia)</td></tr>
 </table>
 
-<h2>&#x1F5FA;&#xFE0F; Reading the Warsaw Map</h2>
-<div class="card green">
-<strong>Blue markers</strong> = Technicians T0&#x2013;T4 (current position)<br>
-<strong>Coloured markers</strong> = Work orders W0&#x2013;W9 (job location)<br>
-<strong>Green lines</strong> = SLA met &#x2014; dispatch was on time<br>
-<strong>Red lines</strong> = SLA breached &#x2014; dispatch was too slow or wrong skill<br><br>
-Click any marker to see full details: technician skills, order requirements, distance, urgency.
+<h2>Funkcja warto&#x15B;ci V(s) i Q(s,a)</h2>
+<div class="card">
+<strong>V(s)</strong> &#x2014; oczekiwany zdyskontowany zwrot startuj&#x0105;c ze stanu s pod polityk&#x0105; &#x3C0;:<br>
+<div class="formula">V&#x3C0;(s) = E&#x3C0;[G&#x209C; | S&#x209C;=s]</div>
+<strong>Q(s,a)</strong> &#x2014; oczekiwany zdyskontowany zwrot podejmuj&#x0105;c akcj&#x0119; a w stanie s:<br>
+<div class="formula">Q&#x3C0;(s,a) = E&#x3C0;[G&#x209C; | S&#x209C;=s, A&#x209C;=a]</div>
+W Ch01: Q(s,a) = 0 dla wszystkich (s,a). Aktualizacja Q zaczyna si&#x0119; w Ch06.
 </div>
-<div class="step"><div class="step-num">1</div><div>Use the <strong>Step slider</strong> to replay each dispatch decision one by one</div></div>
-<div class="step"><div class="step-num">2</div><div>The highlighted line on the map corresponds to the selected row in the Glass-Box</div></div>
-<div class="step"><div class="step-num">3</div><div>Red lines = learning opportunities &#x2014; Ch06 will teach the agent to avoid these</div></div>
 
-<h2>&#x1F52C; Reading the Glass-Box</h2>
+<h2>R&#xF3;wnanie Bellmana (wyszarzone w Ch01)</h2>
+<div class="card red">
+R&#xF3;wnanie Bellmana wymaga znajomo&#x15B;ci modelu P(s'|s,a):<br>
+<div class="formula">V*(s) = max<sub>a</sub> &sum;<sub>s'</sub> P(s'|s,a) [ R(s,a) + &#x3B3; V*(s') ]</div>
+W Ch01 nie znamy P(s'|s,a) &#x2014; dlatego r&#xF3;wnanie jest wyszarzone.<br>
+Ch02 buduje macierz przej&#x15B;&#x107; ASP i rozwi&#x0105;zuje to r&#xF3;wnanie przez iteracj&#x0119; warto&#x15B;ci.
+</div>
+</div>
+
+<!-- TAB: Środowisko -->
+<div id="env" class="tab-content">
+<h2>&#x1F5FA;&#xFE0F; Mapa Warszawy &#x2014; &#x15A;rodowisko ASP</h2>
+<div class="card blue">
+Symulacja obejmuje rzeczywiste wsp&#xF3;&#x0142;rz&#x0119;dne geograficzne Warszawy.<br>
+Technicy i zlecenia s&#x0105; losowo rozmieszczeni w obszarze miejskim.<br>
+Odleg&#x0142;o&#x15B;&#x107; jest obliczana jako odleg&#x0142;o&#x15B;&#x107; euklidesowa w stopniach geograficznych.
+</div>
+
+<h2>Technicy (T0&#x2013;T4)</h2>
 <table>
-<tr><th>Column</th><th>Meaning</th><th>Example</th></tr>
-<tr><td><code>S&#x209C;</code></td><td>State at time t</td><td>S3: partial availability, high load</td></tr>
-<tr><td><code>A&#x209C;</code></td><td>Action taken</td><td>Dispatch T2 &#x2192; W5</td></tr>
-<tr><td><code>R&#x209C;</code></td><td>Immediate reward</td><td>+10.0 (SLA met)</td></tr>
-<tr><td><code>G&#x209C;</code></td><td>Discounted return from this step</td><td>14.275</td></tr>
-<tr><td>Explored</td><td>Was this a random (&#x3B5;) or greedy action?</td><td>&#x1F3B2; Random</td></tr>
+<tr><th>Atrybut</th><th>Opis</th><th>Wp&#x0142;yw na nagrod&#x0119;</th></tr>
+<tr><td>Pozycja (lat, lon)</td><td>Aktualna lokalizacja na mapie Warszawy</td><td>Odleg&#x0142;o&#x15B;&#x107; do zlecenia &#x2192; czas dojazdu</td></tr>
+<tr><td>Umiej&#x0119;tno&#x15B;&#x107; (skill)</td><td>HVAC / Elektryka / Hydraulika / Sie&#x107; / Mechanika</td><td>Dopasowanie do zlecenia &#x2192; +bonus lub -kara</td></tr>
+<tr><td>Dost&#x0119;pno&#x15B;&#x107;</td><td>Czy technik jest wolny</td><td>Niedost&#x0119;pny technik nie mo&#x017C;e by&#x107; wys&#x0142;any</td></tr>
 </table>
+
+<h2>Zlecenia (W0&#x2013;W9)</h2>
+<table>
+<tr><th>Atrybut</th><th>Opis</th><th>Wp&#x0142;yw na nagrod&#x0119;</th></tr>
+<tr><td>Pozycja (lat, lon)</td><td>Lokalizacja zlecenia na mapie</td><td>Odleg&#x0142;o&#x15B;&#x107; od technika</td></tr>
+<tr><td>Wymagana umiej&#x0119;tno&#x15B;&#x107;</td><td>Jaki skill jest potrzebny</td><td>Niedopasowanie &#x2192; kara</td></tr>
+<tr><td>Pilno&#x15B;&#x107; (urgency)</td><td>0.0&#x2013;1.0 (1.0 = krytyczne)</td><td>Wysoka pilno&#x15B;&#x107; + op&#xF3;&#x017A;nienie &#x2192; du&#x017C;a kara</td></tr>
+</table>
+
+<h2>Funkcja nagrody R(s,a)</h2>
 <div class="card">
-The <strong>Bellman equation column is greyed out</strong> in Ch01 &#x2014; it activates in Ch02 when we have a transition model P(s'|s,a) and can compute V*(s).
+Nagroda za dyspozycj&#x0119; technika T do zlecenia W:
+<pre><code>R = base_reward
+  + skill_bonus    (je&#x15B;li skill T == skill W: +5.0)
+  - distance_penalty (odleg&#x0142;o&#x15B;&#x107; * 2.0)
+  - urgency_penalty  (urgency * op&#xF3;&#x017A;nienie * 10.0)
+  + sla_bonus      (je&#x15B;li SLA spe&#x0142;nione: +10.0)
+  - sla_penalty    (je&#x15B;li SLA naruszone: -50.0)</code></pre>
 </div>
 
-<h2>&#x1F4CA; Reading the Learning Curve</h2>
+<h2>Stany operacyjne (S0&#x2013;S7)</h2>
+<p>Ch01 u&#x017C;ywa uproszczonego kodowania stanu opartego na dost&#x0119;pno&#x15B;ci technik&#xF3;w i obci&#x0105;&#x017C;eniu zleceniami. Pe&#x0142;ne 8 stan&#xF3;w z nazwami jest zdefiniowanych w Ch02.</p>
+<table>
+<tr><th>Stan</th><th>Opis</th></tr>
+<tr><td><code>S0</code></td><td>Wszyscy dost&#x0119;pni, brak pilnych zlece&#x0144;</td></tr>
+<tr><td><code>S1</code></td><td>Wszyscy dost&#x0119;pni, pilne zlecenie oczekuje</td></tr>
+<tr><td><code>S2</code></td><td>Cz&#x0119;&#x15B;ciowa dost&#x0119;pno&#x15B;&#x107;, niskie obci&#x0105;&#x017C;enie</td></tr>
+<tr><td><code>S3</code></td><td>Cz&#x0119;&#x15B;ciowa dost&#x0119;pno&#x15B;&#x107;, wysokie obci&#x0105;&#x017C;enie</td></tr>
+<tr><td><code>S4</code></td><td>Niska dost&#x0119;pno&#x15B;&#x107;, znos&#x0105;ce obci&#x0105;&#x017C;enie</td></tr>
+<tr><td><code>S5</code></td><td>Niska dost&#x0119;pno&#x15B;&#x107;, wysokie obci&#x0105;&#x017C;enie</td></tr>
+<tr><td><code>S6</code></td><td>Krytyczna &#x2014; wi&#x0119;kszo&#x15B;&#x107; technik&#xF3;w zaj&#x0119;ta</td></tr>
+<tr><td><code>S7</code></td><td>Wszyscy zaj&#x0119;ci, naruszenie SLA bliskie</td></tr>
+</table>
+</div>
+
+<!-- TAB: Jak używać UI -->
+<div id="ui" class="tab-content">
+<h2>&#x1F3AE; Jak u&#x017C;ywa&#x107; interfejsu Ch01</h2>
+
+<div class="step"><div class="step-num">1</div><div><strong>Ustaw &#x3B5; (wsp&#xF3;&#x0142;czynnik eksploracji)</strong><br>Przesu&#x0144; suwak. &#x3B5;=1.0: agent zawsze losowy. &#x3B5;=0.0: agent zawsze zachlanny (w Ch01 = te&#x017C; losowy bo Q=0). Zacznij od &#x3B5;=0.5.</div></div>
+
+<div class="step"><div class="step-num">2</div><div><strong>Ustaw liczb&#x0119; technik&#xF3;w i zlece&#x0144;</strong><br>5 technik&#xF3;w / 10 zlece&#x0144; to dobry punkt startowy. Wi&#x0119;cej zlece&#x0144; = d&#x0142;u&#x017C;szy epizod.</div></div>
+
+<div class="step"><div class="step-num">3</div><div><strong>Kliknij &#x25B6; Uruchom epizod</strong><br>Silnik Rust wykonuje pe&#x0142;n&#x0105; p&#x0119;tl&#x0119; MDP i zwraca ka&#x017C;dy krok.</div></div>
+
+<div class="step"><div class="step-num">4</div><div><strong>Odczytaj map&#x0119; Warszawy</strong><br>Niebieskie markery = technicy (T0&#x2013;T4). Kolorowe markery = zlecenia (W0&#x2013;W9). Zielone linie = SLA spe&#x0142;nione. Czerwone linie = SLA naruszone. Kliknij marker aby zobaczy&#x107; szczeg&#xF3;&#x0142;y.</div></div>
+
+<div class="step"><div class="step-num">5</div><div><strong>U&#x017C;yj suwaka krok&#xF3;w</strong><br>Przesu&#x0144; aby pod&#x15B;wietli&#x107; konkretn&#x0105; decyzj&#x0119; dyspozycji na mapie i w Glass-Box.</div></div>
+
+<div class="step"><div class="step-num">6</div><div><strong>Odczytaj Glass-Box</strong><br>Ka&#x017C;dy wiersz pokazuje pe&#x0142;n&#x0105; krotkMDP: S&#x209C; (stan), A&#x209C; (akcja), R&#x209C; (nagroda), G&#x209C; (zwrot). R&#xF3;wnanie Bellmana jest wyszarzone &#x2014; aktywuje si&#x0119; w Rozdziale 02.</div></div>
+
+<div class="step"><div class="step-num">7</div><div><strong>Odczytaj podsumowanie epizodu</strong><br>Skwantyfikowane wyniki biznesowe + zalety/wady metody &#x3B5;-zachlannej.</div></div>
+
+<h2>&#x1F4A1; Wskaz&#xF3;wki</h2>
+<div class="card green">
+<ul>
+<li>Uruchom kilka epizod&#xF3;w z tym samym &#x3B5; &#x2014; wyniki b&#x0119;d&#x0105; si&#x0119; r&#xF3;&#x017C;ni&#x107; (losowo&#x15B;&#x107;)</li>
+<li>Zmie&#x0144; seed aby zobaczy&#x107; inn&#x0105; konfiguracj&#x0119; mapy</li>
+<li>Por&#xF3;wnaj G&#x209C; dla &#x3B5;=1.0 vs &#x3B5;=0.0 &#x2014; powinny by&#x107; podobne (Q=0)</li>
+</ul>
+</div>
+</div>
+
+<!-- TAB: Interpretacja -->
+<div id="interp" class="tab-content">
+<h2>&#x1F4CA; Jak interpretowa&#x107; wyniki</h2>
+
+<h3>Mapa Warszawy</h3>
+<div class="card">
+<span class="tag blue">Niebieskie markery</span> = Technicy T0&#x2013;T4 (aktualna pozycja)<br>
+<span class="tag green">Zielone linie</span> = SLA spe&#x0142;nione &#x2014; dyspozycja by&#x0142;a na czas i z w&#x0142;a&#x15B;ciwymi umiej&#x0119;tno&#x15B;ciami<br>
+<span class="tag red">Czerwone linie</span> = SLA naruszone &#x2014; za daleko, z&#x0142;e umiej&#x0119;tno&#x15B;ci lub za p&#xF3;&#x017A;no<br><br>
+Im wi&#x0119;cej zielonych linii tym lepszy epizod. W Ch01 proporcja jest losowa.
+</div>
+
+<h3>Glass-Box &#x2014; tabela MDP</h3>
+<table>
+<tr><th>Kolumna</th><th>Znaczenie</th><th>Przyk&#x0142;ad</th></tr>
+<tr><td><code>S&#x209C;</code></td><td>Stan w chwili t</td><td>S3: cz&#x0119;&#x15B;ciowa dost&#x0119;pno&#x15B;&#x107;</td></tr>
+<tr><td><code>A&#x209C;</code></td><td>Podj&#x0119;ta akcja</td><td>Wy&#x15B;lij T2 &#x2192; W5</td></tr>
+<tr><td><code>R&#x209C;</code></td><td>Natychmiastowa nagroda</td><td>+10.0 (SLA spe&#x0142;nione)</td></tr>
+<tr><td><code>G&#x209C;</code></td><td>Zdyskontowany zwrot od tego kroku</td><td>14.275</td></tr>
+<tr><td>Eksploracja</td><td>Czy akcja by&#x0142;a losowa (&#x3B5;) czy zachlanna</td><td>&#x1F3B2; Losowa</td></tr>
+</table>
+
+<h3>Krzywa uczenia</h3>
 <div class="card blue">
-In Ch01 the learning curve is <strong>flat</strong> &#x2014; the agent does not learn between episodes because the Q-table stays at zero.<br><br>
-This is intentional. Ch01 establishes the <em>random baseline</em>.<br>
-From Ch06 onwards you will see the curve rise as the agent learns.
+W Ch01 krzywa uczenia jest <strong>p&#x0142;aska</strong> &#x2014; agent nie uczy si&#x0119; mi&#x0119;dzy epizodami bo Q=0.<br><br>
+To jest zamierzone. Ch01 ustanawia <em>losowy punkt bazowy</em>.<br>
+Od Ch06 zobaczysz krzyw&#x0105; rosn&#x0105;c&#x0105; w miar&#x0119; jak agent si&#x0119; uczy.
 </div>
 
-<h2>&#x1F4CB; Episode Summary KPIs</h2>
+<h3>KPI podsumowania epizodu</h3>
 <div class="kpi">
-<div class="kpi-card"><div class="kpi-val">G&#x209C;</div><div class="kpi-label">Total episode return</div></div>
-<div class="kpi-card"><div class="kpi-val">SLA%</div><div class="kpi-label">% orders meeting SLA</div></div>
-<div class="kpi-card"><div class="kpi-val">&#x3B5;</div><div class="kpi-label">Exploration rate used</div></div>
-<div class="kpi-card"><div class="kpi-val">T</div><div class="kpi-label">Episode length (steps)</div></div>
+<div class="kpi-card"><div class="kpi-val">G&#x209C;</div><div class="kpi-label">Ca&#x0142;kowity zwrot epizodu</div></div>
+<div class="kpi-card"><div class="kpi-val">SLA%</div><div class="kpi-label">% zlece&#x0144; spe&#x0142;niaj&#x0105;cych SLA</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x3B5;</div><div class="kpi-label">U&#x017C;yty wsp&#xF3;&#x0142;czynnik eksploracji</div></div>
+<div class="kpi-card"><div class="kpi-val">T</div><div class="kpi-label">D&#x0142;ugo&#x15B;&#x107; epizodu (kroki)</div></div>
 </div>
 
-<h2>&#x1F9EA; Hands-On Exercises</h2>
+<h3>Bellman wyszarzony &#x2014; dlaczego?</h3>
+<div class="card red">
+R&#xF3;wnanie Bellmana wymaga <strong>modelu przej&#x15B;&#x107; P(s'|s,a)</strong> kt&#xF3;rego w Ch01 nie mamy.<br>
+Ch02 buduje t&#x0119; macierz i aktywuje kolumn&#x0119; Bellmana w Glass-Box.
+</div>
+</div>
+
+<!-- TAB: Ćwiczenia -->
+<div id="exercises" class="tab-content">
+<h2>&#x1F9EA; &#x106;wiczenia Hands-On</h2>
+
 <div class="card">
-<strong>Exercise 1 &#x2014; Baseline measurement:</strong>
-Run 5 episodes with &#x3B5;=1.0 (pure random). Record the average G&#x209C;.
-This is your Ch01 baseline. Every future chapter should beat this number.
+<h3>&#x106;wiczenie 1 &#x2014; Pomiar punktu bazowego</h3>
+Uruchom 5 epizod&#xF3;w z &#x3B5;=1.0 (czysto losowe). Zapisz &#x15B;redni G&#x209C;.<br>
+To jest Tw&#xF3;j punkt bazowy Ch01. Ka&#x017C;dy przysz&#x0142;y rozdzia&#x0142; powinien pobija&#x107; t&#x0119; liczb&#x0119;.<br><br>
+<strong>Oczekiwany wynik:</strong> G&#x209C; &#x2248; 20&#x2013;40 (zale&#x017C;y od konfiguracji mapy)
 </div>
+
 <div class="card blue">
-<strong>Exercise 2 &#x2014; &#x3B5; sensitivity:</strong>
-Run with &#x3B5;=0.0 (pure greedy). Is the result better or worse than &#x3B5;=1.0?
-Why? (Hint: Q-table is all zeros &#x2014; greedy = random in Ch01)
+<h3>&#x106;wiczenie 2 &#x2014; Wra&#x017C;liwo&#x15B;&#x107; na &#x3B5;</h3>
+Uruchom z &#x3B5;=0.0 (czysto zachlanne). Czy wynik jest lepszy czy gorszy ni&#x017C; &#x3B5;=1.0?<br>
+Dlaczego? (Wskaz&#xF3;wka: Q=0 &#x2014; zachlanne = losowe w Ch01)<br><br>
+<strong>Oczekiwany wynik:</strong> Podobny G&#x209C; &#x2014; bo Q=0 czyni eksploatacj&#x0119; r&#xF3;wnowa&#x017C;n&#x0105; eksploracji
 </div>
+
 <div class="card orange">
-<strong>Exercise 3 &#x2014; Map reading:</strong>
-Find the step with the largest negative reward in the Glass-Box.
-Click that step on the map. What went wrong? Wrong skill? Too far? Too slow?
-</div>
-<div class="card green">
-<strong>Exercise 4 &#x2014; Return calculation:</strong>
-Take the first 3 rewards from the Glass-Box and manually compute G&#x2080; using &#x3B3;=0.95.
-Verify your answer matches the G&#x209C; column.
+<h3>&#x106;wiczenie 3 &#x2014; Czytanie mapy</h3>
+Znajd&#x017A; krok z najwi&#x0119;ksz&#x0105; ujemn&#x0105; nagrod&#x0105; w Glass-Box.<br>
+Kliknij ten krok na mapie. Co posz&#x0142;o nie tak?<br>
+Z&#x0142;e umiej&#x0119;tno&#x15B;ci? Za daleko? Za p&#xF3;&#x017A;no?<br><br>
+<strong>Cel:</strong> Zrozumie&#x107; sk&#x0142;adniki funkcji nagrody R(s,a)
 </div>
 
-<h2>&#x2705; Key Takeaways</h2>
+<div class="card green">
+<h3>&#x106;wiczenie 4 &#x2014; R&#x0119;czne obliczenie zwrotu</h3>
+We&#x017A; pierwsze 3 nagrody z Glass-Box i r&#x0119;cznie oblicz G&#x2080; u&#x017C;ywaj&#x0105;c &#x3B3;=0.95.<br>
+Zweryfikuj czy Tw&#xF3;j wynik zgadza si&#x0119; z kolumn&#x0105; G&#x209C;.<br><br>
+<strong>Wz&#xF3;r:</strong> G&#x2080; = R&#x2081; + 0.95&times;R&#x2082; + 0.95&#xB2;&times;R&#x2083;
+</div>
+
+<div class="card purple">
+<h3>&#x106;wiczenie 5 &#x2014; Wp&#x0142;yw &#x3B3; na zwrot</h3>
+Uruchom ten sam epizod (ten sam seed) z &#x3B3;=0.99 i &#x3B3;=0.5.<br>
+Jak zmienia si&#x0119; G&#x2080;? Kt&#xF3;ry agent jest bardziej "dalekowzroczny"?<br><br>
+<strong>Oczekiwany wynik:</strong> &#x3B3;=0.99 daje wy&#x017C;szy G&#x2080; gdy nagrody s&#x0105; pozytywne
+</div>
+</div>
+
+<!-- TAB: Podsumowanie -->
+<div id="summary" class="tab-content">
+<h2>&#x1F4CB; Podsumowanie Rozdzia&#x0142;u 01</h2>
+
 <div class="kpi">
-<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">MDP components</div></div>
-<div class="kpi-card"><div class="kpi-val">&#x3B5;</div><div class="kpi-label">Exploration rate</div></div>
-<div class="kpi-card"><div class="kpi-val">G&#x209C;</div><div class="kpi-label">Discounted return</div></div>
-<div class="kpi-card"><div class="kpi-val">Ch02</div><div class="kpi-label">Next: Bellman equation</div></div>
-</div>
-<div class="card green">
-Ch01 establishes the <strong>random baseline</strong>. The Q-table is all zeros.
-Every algorithm from Ch02 onwards will learn to beat this baseline by updating Q(s,a) after each step.
+<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">Sk&#x0142;adnik&#xF3;w MDP</div></div>
+<div class="kpi-card"><div class="kpi-val">Q=0</div><div class="kpi-label">Tabela Q (brak uczenia)</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x3B5;</div><div class="kpi-label">Jedyny hiperparametr</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch02</div><div class="kpi-label">Nast&#x0119;pny: Bellman + VI</div></div>
 </div>
 
+<h2>Kluczowe wnioski</h2>
+<div class="card green">
+<ul>
+<li>&#x2705; MDP to formalny j&#x0119;zyk opisu problem&#xF3;w decyzyjnych w czasie</li>
+<li>&#x2705; G&#x209C; = zdyskontowana suma nagród &#x2014; to co agent maksymalizuje</li>
+<li>&#x2705; &#x3B5;-zachlanna balansuje eksploracj&#x0119; i eksploatacj&#x0119;</li>
+<li>&#x2705; Ch01 ustanawia losowy punkt bazowy &#x2014; Q=0, brak uczenia</li>
+<li>&#x2705; Bellman aktywuje si&#x0119; w Ch02 gdy znamy P(s'|s,a)</li>
+</ul>
+</div>
+
+<h2>Zalety i wady podej&#x15B;cia Ch01</h2>
+<div class="grid2">
+<div class="card green">
+<strong>&#x2705; Zalety</strong>
+<ul>
+<li>Prosta implementacja</li>
+<li>Ustanawia punkt bazowy</li>
+<li>Wizualizuje formalizm MDP</li>
+<li>Dzia&#x0142;a bez modelu P(s'|s,a)</li>
+</ul>
+</div>
+<div class="card red">
+<strong>&#x274C; Wady</strong>
+<ul>
+<li>Brak uczenia &#x2014; Q=0 zawsze</li>
+<li>Nie optymalizuje polityki</li>
+<li>Wyniki s&#x0105; czysto losowe</li>
+<li>Nie u&#x017C;ywa Bellmana</li>
+</ul>
+</div>
+</div>
+
+<h2>Co dalej &#x2014; Rozdzia&#x0142; 02</h2>
+<div class="card blue">
+Ch02 wprowadza <strong>Iteracj&#x0119; Warto&#x15B;ci</strong>:
+<ul>
+<li>Buduje macierz przej&#x15B;&#x107; P(s'|s,a) dla ASP Warszawa</li>
+<li>Rozwi&#x0105;zuje r&#xF3;wnanie Bellmana iteracyjnie</li>
+<li>Oblicza V*(s) dla wszystkich 8 stan&#xF3;w operacyjnych</li>
+<li>Wyznacza optymaln&#x0105; polityk&#x0119; &#x3C0;*(s) bez symulacji</li>
+<li>Aktywuje kolumn&#x0119; Bellmana w Glass-Box</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
 </body>
 </html>""",
-        unsafe_allow_html=True,
+        height=4000,
     )
 
 def render():
