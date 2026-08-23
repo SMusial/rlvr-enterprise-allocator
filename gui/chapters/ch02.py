@@ -476,6 +476,172 @@ def _tx(lang):
         base[k] = v
     return base
 
+def _render_handbook():
+    st.markdown(
+        """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide &#x2014; Chapter 02</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:900px;margin:0 auto;padding:2rem;background:#0f1117;color:#e8eaf6;line-height:1.7}
+h1{color:#8B5CF6;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem}
+h2{color:#0082F0;margin-top:2rem}
+.card{background:#1e2235;border-radius:8px;padding:1.5rem;margin:1rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+table{width:100%;border-collapse:collapse;margin:1rem 0}
+th{background:#252840;color:#8B5CF6;padding:.75rem;text-align:left}
+td{padding:.6rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.2rem .4rem;border-radius:4px;color:#0FC373;font-size:.9em}
+.formula{background:#252840;border-radius:8px;padding:1rem;margin:1rem 0;text-align:center;font-size:1.1em;color:#FFD700}
+.step{display:flex;gap:1rem;margin:.75rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:1rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.8em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.85em}
+.tag{display:inline-block;padding:.2rem .6rem;border-radius:4px;font-size:.8em;margin:.2rem}
+.tag.green{background:#0FC37322;color:#0FC373}
+.tag.red{background:#FF4B4B22;color:#FF4B4B}
+</style>
+</head>
+<body>
+<h1>&#x1F4D8; Hands-On Guide &#x2014; Chapter 02</h1>
+<h2>Bellman Equation &amp; Value Iteration</h2>
+<p><em>ASP Operational State Optimisation &middot; Warsaw Region &middot; Rust Engine</em></p>
+
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card">
+After completing this chapter you will be able to:
+<ul>
+<li>Write the Bellman Optimality Equation from memory and explain each term</li>
+<li>Implement Value Iteration and know when it has converged</li>
+<li>Read a Value Function chart and explain why V*(S0) &gt; V*(S7)</li>
+<li>Extract an optimal policy &#x3C0;* from V* using the greedy operator</li>
+<li>Explain the Contraction Mapping Theorem in plain language</li>
+<li>Know when to use exact LU decomposition vs iterative VI</li>
+</ul>
+</div>
+
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue">
+<strong>Warsaw ASP Dispatch Centre</strong> &#x2014; 8 operational states, 4 dispatch actions.<br><br>
+The question: <em>what is the long-term value of being in each operational state?</em><br><br>
+Value Iteration answers this by solving the Bellman equation iteratively &#x2014;
+no simulation needed, just P(s'|s,a) and R(s,a).
+</div>
+
+<h2>&#x1F5FA;&#xFE0F; The 8 Operational States</h2>
+<table>
+<tr><th>State</th><th>Name</th><th>Description</th><th>V*(s)</th></tr>
+<tr><td><code>S0</code></td><td>All available, no urgent</td><td>Best possible situation</td><td><span class="tag green">Highest</span></td></tr>
+<tr><td><code>S1</code></td><td>All available, urgent pending</td><td>Good but urgent order waiting</td><td></td></tr>
+<tr><td><code>S2</code></td><td>Partial availability, low load</td><td>Some techs busy, manageable</td><td></td></tr>
+<tr><td><code>S3</code></td><td>Partial availability, high load</td><td>Pressure building</td><td></td></tr>
+<tr><td><code>S4</code></td><td>Low availability, manageable</td><td>Most techs busy</td><td></td></tr>
+<tr><td><code>S5</code></td><td>Low availability, high load</td><td>Critical load level</td><td></td></tr>
+<tr><td><code>S6</code></td><td>Critical &#x2014; most techs busy</td><td>SLA risk high</td><td></td></tr>
+<tr><td><code>S7</code></td><td>All busy, SLA breach imminent</td><td>Worst possible situation</td><td><span class="tag red">Lowest</span></td></tr>
+</table>
+
+<h2>&#x26A1; The 4 Dispatch Actions</h2>
+<table>
+<tr><th>Action</th><th>Description</th><th>Best for</th></tr>
+<tr><td><code>A0</code></td><td>Dispatch nearest technician</td><td>Speed-critical orders</td></tr>
+<tr><td><code>A1</code></td><td>Dispatch skill-matched technician</td><td>Complex technical jobs</td></tr>
+<tr><td><code>A2</code></td><td>Dispatch most experienced technician</td><td>High-urgency SLA risk</td></tr>
+<tr><td><code>A3</code></td><td>Hold &#x2014; wait for better technician</td><td>Never in S6/S7 (&#x2212;3 to &#x2212;10 penalty)</td></tr>
+</table>
+
+<h2>&#x1F4B0; Reward Matrix R(s,a) &#x2014; from <code>build_asp_rewards()</code></h2>
+<table>
+<tr><th>State</th><th>A0: Nearest</th><th>A1: Skill</th><th>A2: Senior</th><th>A3: Hold</th></tr>
+<tr><td>S0</td><td>5.0</td><td><strong>8.0</strong></td><td>6.0</td><td>1.0</td></tr>
+<tr><td>S1</td><td>6.0</td><td><strong>9.0</strong></td><td>7.0</td><td>&#x2212;3.0</td></tr>
+<tr><td>S2</td><td>4.0</td><td><strong>7.0</strong></td><td>5.0</td><td>0.5</td></tr>
+<tr><td>S3</td><td>5.0</td><td><strong>8.0</strong></td><td>6.0</td><td>&#x2212;2.0</td></tr>
+<tr><td>S4</td><td>3.0</td><td><strong>6.0</strong></td><td>4.0</td><td>&#x2212;1.0</td></tr>
+<tr><td>S5</td><td>4.0</td><td><strong>7.0</strong></td><td>5.0</td><td>&#x2212;3.0</td></tr>
+<tr><td>S6</td><td>2.0</td><td><strong>5.0</strong></td><td>3.0</td><td>&#x2212;8.0</td></tr>
+<tr><td>S7</td><td>1.0</td><td><strong>4.0</strong></td><td>2.0</td><td>&#x2212;10.0</td></tr>
+</table>
+<p><em>Bold = optimal action per state. A3 always penalised in urgent states.</em></p>
+
+<h2>&#x1F4D0; The Bellman Optimality Equation</h2>
+<div class="formula">V*(s) = max_a &sum; P(s'|s,a) [ R(s,a) + &gamma; &middot; V*(s') ]</div>
+<div class="card">
+<strong>What each term means:</strong>
+<ul>
+<li><strong>V*(s)</strong> &#x2014; optimal long-term value of being in state s</li>
+<li><strong>max_a</strong> &#x2014; choose the action that maximises value</li>
+<li><strong>P(s'|s,a)</strong> &#x2014; probability of transitioning to s' given (s,a)</li>
+<li><strong>R(s,a)</strong> &#x2014; immediate reward for taking action a in state s</li>
+<li><strong>&gamma; &middot; V*(s')</strong> &#x2014; discounted future value of the next state</li>
+</ul>
+</div>
+
+<h2>&#x1F504; Value Iteration Algorithm</h2>
+<div class="step"><div class="step-num">1</div><div>Initialise V(s) = 0 for all states</div></div>
+<div class="step"><div class="step-num">2</div><div>For each state s: V_new(s) = max_a &sum; P(s'|s,a)[R(s,a) + &gamma;&middot;V(s')]</div></div>
+<div class="step"><div class="step-num">3</div><div>Compute &delta; = max_s |V_new(s) &minus; V(s)|</div></div>
+<div class="step"><div class="step-num">4</div><div>Update V &larr; V_new</div></div>
+<div class="step"><div class="step-num">5</div><div>If &delta; &lt; &theta; &rarr; STOP. Otherwise go to step 2.</div></div>
+<div class="step"><div class="step-num">6</div><div>Extract policy: &pi;*(s) = argmax_a &sum; P(s'|s,a)[R(s,a) + &gamma;&middot;V*(s')]</div></div>
+
+<h2>&#x1F52C; solve_exact() &#x2014; LU Decomposition</h2>
+<div class="card green">
+For a fixed policy &pi;:<br><br>
+<div class="formula">V<sup>&pi;</sup> = (I &minus; &gamma; P<sup>&pi;</sup>)<sup>&#x2212;1</sup> r<sup>&pi;</sup></div>
+Implemented in <code>solve_exact()</code> in <code>ch02_bellman.rs</code> using <strong>nalgebra LU</strong>.<br><br>
+<strong>Use when:</strong> |S| &le; 1000 &nbsp;&nbsp; <strong>Avoid when:</strong> |S| &gt; 10,000
+</div>
+
+<h2>&#x1F4CA; Reading the UI</h2>
+<div class="card"><strong>Value Function chart:</strong> S0 bar tallest, S7 shortest.</div>
+<div class="card blue"><strong>Convergence curve:</strong> Exponential decay. Flat = converged.</div>
+<div class="card orange"><strong>Reward Heatmap:</strong> A1 column brightest. A3 darkest in S6/S7.</div>
+<div class="card green"><strong>Glass-Box:</strong> &Delta;V shrinks each iteration &#x2014; contraction in action.</div>
+
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card"><strong>Exercise 1 &#x2014; &gamma; sensitivity:</strong> Run &gamma;=0.99 then &gamma;=0.5. How does value range change?</div>
+<div class="card blue"><strong>Exercise 2 &#x2014; &theta; precision:</strong> Compare &theta;=1e-3 vs &theta;=1e-7. More iterations? Same policy?</div>
+<div class="card orange"><strong>Exercise 3 &#x2014; Policy check:</strong> Does optimal policy always choose A1? Find exceptions.</div>
+<div class="card green"><strong>Exercise 4 &#x2014; Contraction:</strong> Verify &Delta;V_{k+1} &asymp; &gamma; &times; &Delta;V_k in the Glass-Box.</div>
+
+<h2>&#x1F9EA; 8 Rust Tests</h2>
+<table>
+<tr><th>#</th><th>Test</th><th>Verifies</th></tr>
+<tr><td>1</td><td><code>test_build_rewards</code></td><td>R(S1,A1)=9.0, R(S7,A3)=&#x2212;10.0</td></tr>
+<tr><td>2</td><td><code>test_build_transitions</code></td><td>Each row of P sums to 1.0</td></tr>
+<tr><td>3</td><td><code>test_bellman_update</code></td><td>V(s) increases monotonically</td></tr>
+<tr><td>4</td><td><code>test_value_iteration_converges</code></td><td>&#x2016;&Delta;V&#x2016; &lt; &theta;=1e-6 in &lt;1000 iterations</td></tr>
+<tr><td>5</td><td><code>test_optimal_policy</code></td><td>&pi;*(S0)=A1, &pi;*(S7)&#x2260;A3</td></tr>
+<tr><td>6</td><td><code>test_value_ordering</code></td><td>V*(S0) &gt; V*(S7)</td></tr>
+<tr><td>7</td><td><code>test_solve_exact</code></td><td>&#x2016;V_VI &#x2212; V_LU&#x2016; &lt; 1e-4</td></tr>
+<tr><td>8</td><td><code>test_contraction</code></td><td>&delta;_{k+1} &le; &gamma; &middot; &delta;_k for all k</td></tr>
+</table>
+<p>Run: <code>cargo test -p rlvr-core ch02 -- --nocapture</code></p>
+
+<h2>&#x2705; Key Takeaways</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">8</div><div class="kpi-label">Operational States</div></div>
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Dispatch Actions</div></div>
+<div class="kpi-card"><div class="kpi-val">&gamma;</div><div class="kpi-label">Controls farsightedness</div></div>
+<div class="kpi-card"><div class="kpi-val">&theta;</div><div class="kpi-label">Controls precision</div></div>
+</div>
+<div class="card green">
+Value Iteration is the <strong>foundation of all model-based RL</strong>.
+Every algorithm from Ch03 onwards either uses VI directly or approximates it.
+</div>
+</body>
+</html>""",
+        unsafe_allow_html=True,
+    )
+
 def render():
     lang = st.session_state.get("lang", "EN")
     tx = _tx(lang)
@@ -483,90 +649,95 @@ def render():
     st.title(tx["title"])
     st.caption(tx["subtitle"])
 
-    try:
-        import rlvr_py
-    except ImportError:
-        st.error(tx["engine_missing"])
-        return
+    tab1, tab2 = st.tabs(["🧪 Interactive Lab", "📘 Hands-On Guide EN"])
+    with tab2:
+        _render_handbook()
+    with tab1:
 
-    st.sidebar.header(tx["sidebar_title"])
-    gamma = st.sidebar.slider(tx["gamma"], 0.50, 0.999, 0.95, 0.005)
-    theta = st.sidebar.select_slider(
-        tx["theta"],
-        options=[1e-3, 1e-4, 1e-5, 1e-6, 1e-7],
-        value=1e-6,
-        format_func=lambda x: f"{x:.0e}",
-    )
-    seed = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
+        try:
+            import rlvr_py
+        except ImportError:
+            st.error(tx["engine_missing"])
+            return
 
-    with st.expander(tx["guide_title"], expanded=False):
-        st.markdown(tx["guide"])
+        st.sidebar.header(tx["sidebar_title"])
+        gamma = st.sidebar.slider(tx["gamma"], 0.50, 0.999, 0.95, 0.005)
+        theta = st.sidebar.select_slider(
+            tx["theta"],
+            options=[1e-3, 1e-4, 1e-5, 1e-6, 1e-7],
+            value=1e-6,
+            format_func=lambda x: f"{x:.0e}",
+        )
+        seed = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
-    run = st.button(tx["run_btn"], type="primary")
+        with st.expander(tx["guide_title"], expanded=False):
+            st.markdown(tx["guide"])
 
-    if run:
-        with st.spinner("Running Rust value iteration engine..."):
-            result = rlvr_py.run_ch02_value_iteration(
-                int(seed), float(gamma), float(theta)
-            )
-        st.session_state["ch02_result"] = result
+        run = st.button(tx["run_btn"], type="primary")
 
-    if "ch02_result" not in st.session_state:
-        st.info("Configure settings and click **▶ Run Value Iteration**.")
+        if run:
+            with st.spinner("Running Rust value iteration engine..."):
+                result = rlvr_py.run_ch02_value_iteration(
+                    int(seed), float(gamma), float(theta)
+                )
+            st.session_state["ch02_result"] = result
+
+        if "ch02_result" not in st.session_state:
+            st.info("Configure settings and click **▶ Run Value Iteration**.")
+            _render_theory(tx)
+            return
+
+        result = st.session_state["ch02_result"]
+        values       = result["values"]
+        policy       = result["policy"]
+        curve        = result["convergence_curve"]
+        trace        = result["bellman_trace"]
+        state_names  = result["state_names"]
+        action_names = result["action_names"]
+        iterations   = result["iterations"]
+
+        best_s  = int(max(range(len(values)), key=lambda i: values[i]))
+        worst_s = int(min(range(len(values)), key=lambda i: values[i]))
+
+        # KPI row
+        c1, c2, c3, c4, c5 = st.columns(5)
+        c1.metric(tx["metric_iters"],       str(iterations))
+        c2.metric(tx["metric_best_state"],  f"S{best_s}")
+        c3.metric(tx["metric_worst_state"], f"S{worst_s}")
+        c4.metric(tx["metric_value_range"], f"{min(values):.1f} – {max(values):.1f}")
+        c5.metric(tx["metric_contraction"], "✅")
+
+        # Value function
+        st.subheader(tx["value_title"])
+        _render_value_chart(values, state_names, tx)
+        st.caption(tx["value_caption"])
+
+        # Optimal policy
+        st.subheader(tx["policy_title"])
+        _render_policy_table(policy, state_names, action_names, values, tx)
+        st.caption(tx["policy_caption"])
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader(tx["conv_title"])
+            _render_convergence(curve, tx)
+            st.caption(tx["conv_caption"])
+        with col2:
+            st.subheader(tx["heatmap_title"])
+            _render_heatmap(result, state_names)
+            st.caption(tx["heatmap_caption"])
+
+        # Glass-Box
+        st.subheader(tx["glass_title"])
+        _render_glass_box(trace, state_names, action_names, tx)
+
+        # Summary
+        st.subheader(tx["summary_title"])
+        _render_summary(values, policy, iterations, curve, state_names,
+                        action_names, tx)
+
+        # Theory
         _render_theory(tx)
-        return
-
-    result = st.session_state["ch02_result"]
-    values       = result["values"]
-    policy       = result["policy"]
-    curve        = result["convergence_curve"]
-    trace        = result["bellman_trace"]
-    state_names  = result["state_names"]
-    action_names = result["action_names"]
-    iterations   = result["iterations"]
-
-    best_s  = int(max(range(len(values)), key=lambda i: values[i]))
-    worst_s = int(min(range(len(values)), key=lambda i: values[i]))
-
-    # KPI row
-    c1, c2, c3, c4, c5 = st.columns(5)
-    c1.metric(tx["metric_iters"],       str(iterations))
-    c2.metric(tx["metric_best_state"],  f"S{best_s}")
-    c3.metric(tx["metric_worst_state"], f"S{worst_s}")
-    c4.metric(tx["metric_value_range"], f"{min(values):.1f} – {max(values):.1f}")
-    c5.metric(tx["metric_contraction"], "✅")
-
-    # Value function
-    st.subheader(tx["value_title"])
-    _render_value_chart(values, state_names, tx)
-    st.caption(tx["value_caption"])
-
-    # Optimal policy
-    st.subheader(tx["policy_title"])
-    _render_policy_table(policy, state_names, action_names, values, tx)
-    st.caption(tx["policy_caption"])
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader(tx["conv_title"])
-        _render_convergence(curve, tx)
-        st.caption(tx["conv_caption"])
-    with col2:
-        st.subheader(tx["heatmap_title"])
-        _render_heatmap(result, state_names)
-        st.caption(tx["heatmap_caption"])
-
-    # Glass-Box
-    st.subheader(tx["glass_title"])
-    _render_glass_box(trace, state_names, action_names, tx)
-
-    # Summary
-    st.subheader(tx["summary_title"])
-    _render_summary(values, policy, iterations, curve, state_names,
-                    action_names, tx)
-
-    # Theory
-    _render_theory(tx)
 
 
 # ---------------------------------------------------------------------------
