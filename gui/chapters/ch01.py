@@ -623,6 +623,187 @@ def _tx(lang):
         base[k] = v
     return base
 
+def _render_handbook():
+    st.markdown(
+        """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide &#x2014; Chapter 01</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:900px;margin:0 auto;padding:2rem;background:#0f1117;color:#e8eaf6;line-height:1.7}
+h1{color:#8B5CF6;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem}
+h2{color:#0082F0;margin-top:2rem}
+h3{color:#0FC373}
+.card{background:#1e2235;border-radius:8px;padding:1.5rem;margin:1rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+.card.red{border-left-color:#FF4B4B}
+table{width:100%;border-collapse:collapse;margin:1rem 0}
+th{background:#252840;color:#8B5CF6;padding:.75rem;text-align:left}
+td{padding:.6rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.2rem .4rem;border-radius:4px;color:#0FC373;font-size:.9em}
+.formula{background:#252840;border-radius:8px;padding:1rem;margin:1rem 0;text-align:center;font-size:1.1em;color:#FFD700}
+.step{display:flex;gap:1rem;margin:.75rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:1rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.8em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.85em}
+.tag{display:inline-block;padding:.2rem .6rem;border-radius:4px;font-size:.8em;margin:.2rem}
+.tag.green{background:#0FC37322;color:#0FC373}
+.tag.red{background:#FF4B4B22;color:#FF4B4B}
+.tag.blue{background:#0082F022;color:#0082F0}
+</style>
+</head>
+<body>
+
+<h1>&#x1F4D8; Hands-On Guide &#x2014; Chapter 01</h1>
+<h2>MDP Fundamentals &amp; &#x3B5;-Greedy Dispatch</h2>
+<p><em>Warsaw ASP Dispatch Simulation &middot; Rust Engine &middot; Interactive Lab</em></p>
+
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card">
+After completing this chapter you will be able to:
+<ul>
+<li>Define the 5 components of an MDP: S, A, P, R, &#x3B3;</li>
+<li>Explain what a state, action, reward and return are in the ASP context</li>
+<li>Implement &#x3B5;-greedy exploration and explain the exploration-exploitation trade-off</li>
+<li>Read the Warsaw map and interpret dispatch decisions as MDP transitions</li>
+<li>Read the Glass-Box and trace a full MDP tuple (S&#x209C;, A&#x209C;, R&#x209C;, G&#x209C;)</li>
+<li>Explain why the Bellman equation is greyed out in Ch01 (activates in Ch02)</li>
+</ul>
+</div>
+
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue">
+<strong>Warsaw ASP Dispatch Centre</strong> &#x2014; 5 technicians, up to 20 work orders per shift.<br><br>
+Every dispatch decision is an <strong>MDP action</strong>. The outcome (SLA met or breached) is the <strong>reward</strong>.
+The sequence of all decisions in one shift is an <strong>episode</strong>.<br><br>
+In Ch01 the Q-table is all zeros &#x2014; the agent has no learned knowledge yet.
+All decisions are driven purely by &#x3B5;-greedy random exploration.
+This is the <em>baseline</em> against which all future chapters are measured.
+</div>
+
+<h2>&#x1F9E9; The MDP Framework</h2>
+<table>
+<tr><th>Component</th><th>Symbol</th><th>ASP meaning</th><th>Example</th></tr>
+<tr><td>State space</td><td><strong>S</strong></td><td>Operational situation of the dispatch centre</td><td>S3: partial availability, high load</td></tr>
+<tr><td>Action space</td><td><strong>A</strong></td><td>Which technician to dispatch to which order</td><td>Send T2 to W5</td></tr>
+<tr><td>Transition model</td><td><strong>P(s'|s,a)</strong></td><td>Probability of next state given current state and action</td><td>After dispatch, T2 becomes unavailable</td></tr>
+<tr><td>Reward function</td><td><strong>R(s,a)</strong></td><td>Immediate feedback for the dispatch decision</td><td>+10 SLA met, &#x2212;50 SLA breached</td></tr>
+<tr><td>Discount factor</td><td><strong>&#x3B3;</strong></td><td>How much future rewards are valued vs immediate</td><td>&#x3B3;=0.95: future rewards worth 95% of immediate</td></tr>
+</table>
+
+<h2>&#x1F4C8; Discounted Return G&#x209C;</h2>
+<div class="formula">G&#x209C; = R&#x209C;&#x208A;&#x2081; + &#x3B3; R&#x209C;&#x208A;&#x2082; + &#x3B3;&#xB2; R&#x209C;&#x208A;&#x2083; + &hellip; = &sum;<sub>k=0</sub><sup>&infin;</sup> &#x3B3;<sup>k</sup> R&#x209C;&#x208A;&#x2081;&#x208A;<sub>k</sub></div>
+<div class="card">
+<strong>Worked example</strong> (&#x3B3;=0.95, 3-step episode):
+<ul>
+<li>Step 1: dispatch T0 &#x2192; R = +10 (SLA met)</li>
+<li>Step 2: dispatch T2 &#x2192; R = &#x2212;5 (wrong skill)</li>
+<li>Step 3: dispatch T1 &#x2192; R = +10 (SLA met)</li>
+</ul>
+G&#x2080; = 10 + 0.95&times;(&#x2212;5) + 0.95&#xB2;&times;10 = 10 &#x2212; 4.75 + 9.025 = <strong>14.275</strong>
+</div>
+
+<h2>&#x1F3B2; &#x3B5;-Greedy Policy</h2>
+<div class="card orange">
+<strong>With probability &#x3B5;:</strong> choose a random action (explore)<br>
+<strong>With probability 1&#x2212;&#x3B5;:</strong> choose the best known action (exploit)<br><br>
+In Ch01 the Q-table is all zeros &#x2014; so exploit = random too.<br>
+&#x3B5; only matters from Ch06 onwards when Q-values are non-zero.
+</div>
+<table>
+<tr><th>&#x3B5; value</th><th>Behaviour</th><th>When to use</th></tr>
+<tr><td>1.0</td><td>Always random</td><td>Start of training &#x2014; know nothing</td></tr>
+<tr><td>0.5</td><td>50/50 explore/exploit</td><td>Mid-training</td></tr>
+<tr><td>0.1</td><td>Mostly exploit</td><td>Late training &#x2014; policy nearly optimal</td></tr>
+<tr><td>0.0</td><td>Always greedy</td><td>Evaluation only (no learning)</td></tr>
+</table>
+
+<h2>&#x1F5FA;&#xFE0F; Reading the Warsaw Map</h2>
+<div class="card green">
+<strong>Blue markers</strong> = Technicians T0&#x2013;T4 (current position)<br>
+<strong>Coloured markers</strong> = Work orders W0&#x2013;W9 (job location)<br>
+<strong>Green lines</strong> = SLA met &#x2014; dispatch was on time<br>
+<strong>Red lines</strong> = SLA breached &#x2014; dispatch was too slow or wrong skill<br><br>
+Click any marker to see full details: technician skills, order requirements, distance, urgency.
+</div>
+<div class="step"><div class="step-num">1</div><div>Use the <strong>Step slider</strong> to replay each dispatch decision one by one</div></div>
+<div class="step"><div class="step-num">2</div><div>The highlighted line on the map corresponds to the selected row in the Glass-Box</div></div>
+<div class="step"><div class="step-num">3</div><div>Red lines = learning opportunities &#x2014; Ch06 will teach the agent to avoid these</div></div>
+
+<h2>&#x1F52C; Reading the Glass-Box</h2>
+<table>
+<tr><th>Column</th><th>Meaning</th><th>Example</th></tr>
+<tr><td><code>S&#x209C;</code></td><td>State at time t</td><td>S3: partial availability, high load</td></tr>
+<tr><td><code>A&#x209C;</code></td><td>Action taken</td><td>Dispatch T2 &#x2192; W5</td></tr>
+<tr><td><code>R&#x209C;</code></td><td>Immediate reward</td><td>+10.0 (SLA met)</td></tr>
+<tr><td><code>G&#x209C;</code></td><td>Discounted return from this step</td><td>14.275</td></tr>
+<tr><td>Explored</td><td>Was this a random (&#x3B5;) or greedy action?</td><td>&#x1F3B2; Random</td></tr>
+</table>
+<div class="card">
+The <strong>Bellman equation column is greyed out</strong> in Ch01 &#x2014; it activates in Ch02 when we have a transition model P(s'|s,a) and can compute V*(s).
+</div>
+
+<h2>&#x1F4CA; Reading the Learning Curve</h2>
+<div class="card blue">
+In Ch01 the learning curve is <strong>flat</strong> &#x2014; the agent does not learn between episodes because the Q-table stays at zero.<br><br>
+This is intentional. Ch01 establishes the <em>random baseline</em>.<br>
+From Ch06 onwards you will see the curve rise as the agent learns.
+</div>
+
+<h2>&#x1F4CB; Episode Summary KPIs</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">G&#x209C;</div><div class="kpi-label">Total episode return</div></div>
+<div class="kpi-card"><div class="kpi-val">SLA%</div><div class="kpi-label">% orders meeting SLA</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x3B5;</div><div class="kpi-label">Exploration rate used</div></div>
+<div class="kpi-card"><div class="kpi-val">T</div><div class="kpi-label">Episode length (steps)</div></div>
+</div>
+
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card">
+<strong>Exercise 1 &#x2014; Baseline measurement:</strong>
+Run 5 episodes with &#x3B5;=1.0 (pure random). Record the average G&#x209C;.
+This is your Ch01 baseline. Every future chapter should beat this number.
+</div>
+<div class="card blue">
+<strong>Exercise 2 &#x2014; &#x3B5; sensitivity:</strong>
+Run with &#x3B5;=0.0 (pure greedy). Is the result better or worse than &#x3B5;=1.0?
+Why? (Hint: Q-table is all zeros &#x2014; greedy = random in Ch01)
+</div>
+<div class="card orange">
+<strong>Exercise 3 &#x2014; Map reading:</strong>
+Find the step with the largest negative reward in the Glass-Box.
+Click that step on the map. What went wrong? Wrong skill? Too far? Too slow?
+</div>
+<div class="card green">
+<strong>Exercise 4 &#x2014; Return calculation:</strong>
+Take the first 3 rewards from the Glass-Box and manually compute G&#x2080; using &#x3B3;=0.95.
+Verify your answer matches the G&#x209C; column.
+</div>
+
+<h2>&#x2705; Key Takeaways</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">MDP components</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x3B5;</div><div class="kpi-label">Exploration rate</div></div>
+<div class="kpi-card"><div class="kpi-val">G&#x209C;</div><div class="kpi-label">Discounted return</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch02</div><div class="kpi-label">Next: Bellman equation</div></div>
+</div>
+<div class="card green">
+Ch01 establishes the <strong>random baseline</strong>. The Q-table is all zeros.
+Every algorithm from Ch02 onwards will learn to beat this baseline by updating Q(s,a) after each step.
+</div>
+
+</body>
+</html>""",
+        unsafe_allow_html=True,
+    )
+
 def render():
     lang = st.session_state.get("lang", "EN")
     # --- language selector (top of sidebar) ---
