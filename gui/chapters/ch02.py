@@ -477,6 +477,15 @@ def _tx(lang):
     return base
 
 def _render_handbook():
+    _hcol1, _hcol2 = st.columns([8, 1])
+    with _hcol1:
+        st.subheader("Hands-On Guide — Chapter 02")
+    with _hcol2:
+        import re as _re
+        _src = open(__file__, encoding="utf-8").read()
+        _m = _re.search(r'st\.iframe\(\s*"""(.*?)"""', _src, _re.DOTALL)
+        if _m:
+            st.download_button("💾 Save", data=_m.group(1), file_name="handson_ch02_en.html", mime="text/html")
     st.iframe(
         """<!DOCTYPE html>
 <html lang="en">
