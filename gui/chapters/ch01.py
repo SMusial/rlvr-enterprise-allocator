@@ -814,107 +814,112 @@ def render():
     st.title(tx["title"])
     st.caption(tx["subtitle"])
 
-    # --- engine check ---
-    try:
-        import rlvr_py
-        st.sidebar.success(tx["engine_ok"])
-    except ImportError:
-        st.error(tx["engine_missing"])
-        return
+    tab1, tab2 = st.tabs(["🧪 Interactive Lab", "📘 Hands-On Guide EN"])
+    with tab2:
+        _render_handbook()
+    with tab1:
 
-    # --- sidebar controls ---
-    st.sidebar.header(tx["sidebar_title"])
-    n_tech    = st.sidebar.slider(tx["n_tech"],    2, 10, 5)
-    n_orders  = st.sidebar.slider(tx["n_orders"],  4, 20, 10)
-    epsilon   = st.sidebar.slider(tx["epsilon"],   0.0, 1.0, 0.5, 0.05)
-    gamma     = st.sidebar.slider(tx["gamma"],     0.5, 1.0, 0.95, 0.01)
-    seed      = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-    n_ep      = st.sidebar.slider(tx["n_episodes"], 5, 100, 30)
+        # --- engine check ---
+        try:
+            import rlvr_py
+            st.sidebar.success(tx["engine_ok"])
+        except ImportError:
+            st.error(tx["engine_missing"])
+            return
 
-    # --- guide ---
-    with st.expander(tx["guide_title"], expanded=False):
-        st.markdown(tx["guide"])
+        # --- sidebar controls ---
+        st.sidebar.header(tx["sidebar_title"])
+        n_tech    = st.sidebar.slider(tx["n_tech"],    2, 10, 5)
+        n_orders  = st.sidebar.slider(tx["n_orders"],  4, 20, 10)
+        epsilon   = st.sidebar.slider(tx["epsilon"],   0.0, 1.0, 0.5, 0.05)
+        gamma     = st.sidebar.slider(tx["gamma"],     0.5, 1.0, 0.95, 0.01)
+        seed      = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
+        n_ep      = st.sidebar.slider(tx["n_episodes"], 5, 100, 30)
 
-    # --- run button ---
-    run = st.button(tx["run_btn"], type="primary")
+        # --- guide ---
+        with st.expander(tx["guide_title"], expanded=False):
+            st.markdown(tx["guide"])
 
-    if run:
-        with st.spinner("Running Rust engine..."):
-            raw = rlvr_py.run_ch01_episode(
-                int(seed), int(n_tech), int(n_orders),
-                float(epsilon), float(gamma)
-            )
-        result = json.loads(raw) if isinstance(raw, str) else raw
-        steps  = result["steps"]
-        st.session_state["ch01_steps"]  = steps
-        st.session_state["ch01_result"] = result
-        st.session_state["ch01_lang"]   = lang
+        # --- run button ---
+        run = st.button(tx["run_btn"], type="primary")
 
-        # learning curve
-        curve_data = []
-        for ep in range(n_ep):
-            ep_raw = rlvr_py.run_ch01_episode(
-                int(seed) + ep, int(n_tech), int(n_orders),
-                float(epsilon), float(gamma)
-            )
-            ep_res = json.loads(ep_raw) if isinstance(ep_raw, str) else ep_raw
-            curve_data.append(ep_res["total_gt"])
-        st.session_state["ch01_curve"] = curve_data
+        if run:
+            with st.spinner("Running Rust engine..."):
+                raw = rlvr_py.run_ch01_episode(
+                    int(seed), int(n_tech), int(n_orders),
+                    float(epsilon), float(gamma)
+                )
+            result = json.loads(raw) if isinstance(raw, str) else raw
+            steps  = result["steps"]
+            st.session_state["ch01_steps"]  = steps
+            st.session_state["ch01_result"] = result
+            st.session_state["ch01_lang"]   = lang
 
-    # --- render if data available ---
-    if "ch01_steps" not in st.session_state:
-        st.info("Configure settings in the sidebar and click **▶ Run Episode**.")
+            # learning curve
+            curve_data = []
+            for ep in range(n_ep):
+                ep_raw = rlvr_py.run_ch01_episode(
+                    int(seed) + ep, int(n_tech), int(n_orders),
+                    float(epsilon), float(gamma)
+                )
+                ep_res = json.loads(ep_raw) if isinstance(ep_raw, str) else ep_raw
+                curve_data.append(ep_res["total_gt"])
+            st.session_state["ch01_curve"] = curve_data
+
+        # --- render if data available ---
+        if "ch01_steps" not in st.session_state:
+            st.info("Configure settings in the sidebar and click **▶ Run Episode**.")
+            _render_theory(tx, lang)
+            return
+
+        steps  = st.session_state["ch01_steps"]
+        result = st.session_state["ch01_result"]
+        curve  = st.session_state.get("ch01_curve", [])
+
+        n_steps = len(steps)
+        sla_count   = sum(1 for s in steps if s["sla_met"])
+        skill_count = sum(1 for s in steps if s["skill_match"])
+        exp_count   = sum(1 for s in steps if s["explored"])
+        avg_dist    = sum(s["distance_km"] for s in steps) / max(n_steps, 1)
+        avg_reward  = sum(s["reward"] for s in steps) / max(n_steps, 1)
+        sla_rate    = sla_count / max(n_steps, 1)
+        skill_rate  = skill_count / max(n_steps, 1)
+        exp_rate    = exp_count / max(n_steps, 1)
+        total_gt    = result["total_gt"]
+        sla_saved   = sla_count  # each SLA met = 1 penalty avoided
+
+        # --- KPI row ---
+        c1, c2, c3, c4, c5 = st.columns(5)
+        c1.metric(tx["metric_gt"],      f"{total_gt:.1f}")
+        c2.metric(tx["metric_sla"],     f"{sla_rate*100:.1f}%")
+        c3.metric(tx["metric_skill"],   f"{skill_rate*100:.1f}%")
+        c4.metric(tx["metric_explore"], f"{exp_rate*100:.1f}%")
+        c5.metric(tx["metric_dist"],    f"{avg_dist:.1f} km")
+
+        # --- step slider ---
+        sel = st.slider(tx["step_slider"], 0, max(n_steps - 1, 0), 0)
+
+        # --- map ---
+        st.subheader(tx["map_title"])
+        _render_map(steps, sel, tx)
+        st.caption(tx["map_caption"])
+
+        # --- glass-box ---
+        st.subheader(tx["glass_title"])
+        _render_glass_box(steps, sel, tx, gamma)
+
+        # --- learning curve ---
+        if curve:
+            st.subheader(tx["curve_title"])
+            _render_curve(curve, tx)
+
+        # --- episode summary ---
+        st.subheader(tx["summary_title"])
+        _render_summary(steps, result, sla_rate, skill_rate, exp_rate,
+                        avg_dist, avg_reward, sla_saved, total_gt, tx)
+
+        # --- theory ---
         _render_theory(tx, lang)
-        return
-
-    steps  = st.session_state["ch01_steps"]
-    result = st.session_state["ch01_result"]
-    curve  = st.session_state.get("ch01_curve", [])
-
-    n_steps = len(steps)
-    sla_count   = sum(1 for s in steps if s["sla_met"])
-    skill_count = sum(1 for s in steps if s["skill_match"])
-    exp_count   = sum(1 for s in steps if s["explored"])
-    avg_dist    = sum(s["distance_km"] for s in steps) / max(n_steps, 1)
-    avg_reward  = sum(s["reward"] for s in steps) / max(n_steps, 1)
-    sla_rate    = sla_count / max(n_steps, 1)
-    skill_rate  = skill_count / max(n_steps, 1)
-    exp_rate    = exp_count / max(n_steps, 1)
-    total_gt    = result["total_gt"]
-    sla_saved   = sla_count  # each SLA met = 1 penalty avoided
-
-    # --- KPI row ---
-    c1, c2, c3, c4, c5 = st.columns(5)
-    c1.metric(tx["metric_gt"],      f"{total_gt:.1f}")
-    c2.metric(tx["metric_sla"],     f"{sla_rate*100:.1f}%")
-    c3.metric(tx["metric_skill"],   f"{skill_rate*100:.1f}%")
-    c4.metric(tx["metric_explore"], f"{exp_rate*100:.1f}%")
-    c5.metric(tx["metric_dist"],    f"{avg_dist:.1f} km")
-
-    # --- step slider ---
-    sel = st.slider(tx["step_slider"], 0, max(n_steps - 1, 0), 0)
-
-    # --- map ---
-    st.subheader(tx["map_title"])
-    _render_map(steps, sel, tx)
-    st.caption(tx["map_caption"])
-
-    # --- glass-box ---
-    st.subheader(tx["glass_title"])
-    _render_glass_box(steps, sel, tx, gamma)
-
-    # --- learning curve ---
-    if curve:
-        st.subheader(tx["curve_title"])
-        _render_curve(curve, tx)
-
-    # --- episode summary ---
-    st.subheader(tx["summary_title"])
-    _render_summary(steps, result, sla_rate, skill_rate, exp_rate,
-                    avg_dist, avg_reward, sla_saved, total_gt, tx)
-
-    # --- theory ---
-    _render_theory(tx, lang)
 
 
 # ---------------------------------------------------------------------------
