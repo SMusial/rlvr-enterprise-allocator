@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podr&#x119;cznik &#x2014; Rozdzia&#x142; 01: MDP i Dyspozycja ASP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+.card.red{border-left-color:#FF4B4B}
+.card.purple{border-left-color:#8B5CF6}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em}
+.formula{background:#252840;border-radius:8px;padding:1rem;margin:.75rem 0;text-align:center;font-size:1.05em;color:#FFD700;font-family:monospace}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Podr&#x119;cznik &#x2014; Rozdzia&#x142; 01</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>MDP i Dyspozycja ASP &middot; Warszawa &middot; Silnik Rust</em></p>
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Wprowadzenie</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; Czym jest Ch01?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; Teoria RL</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; &#x15A;rodowisko</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; Jak u&#x17C;ywa&#x107; UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretacja</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; &#x106;wiczenia</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Podsumowanie</button>
+</div>
+<div id="intro" class="tab-content active">
+<h2>&#x1F3AF; Cele nauki</h2>
+<div class="card green">Po uko&#x144;czeniu tego rozdzia&#x142;u b&#x119;dziesz potrafi&#x142;:
+<ul>
+<li>Zdefiniowa&#x107; 5 sk&#x142;adnik&#xF3;w MDP: S, A, P, R, &#x3B3;</li>
+<li>Wyja&#x15B;ni&#x107; czym jest stan, akcja, nagroda i zwrot w kontek&#x15B;cie ASP</li>
+<li>Zaimplementowa&#x107; polityk&#x119; &#x3B5;-zachlann&#x105; i wyja&#x15B;ni&#x107; kompromis eksploracja-eksploatacja</li>
+<li>Odczyta&#x107; map&#x119; Warszawy i zinterpretowa&#x107; decyzje dyspozycji jako przej&#x15B;cia MDP</li>
+<li>Odczyta&#x107; Glass-Box i prze&#x15B;ledzi&#x107; pe&#x142;n&#x105; krotkMDP: (S&#x209C;, A&#x209C;, R&#x209C;, G&#x209C;)</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Problem biznesowy</h2>
+<div class="card blue"><strong>Centrum Dyspozycji ASP Warszawa</strong> &#x2014; 5 technik&#xF3;w, do 20 zlece&#x144; na zmian&#x119;.<br><br>
+Ka&#x17C;da decyzja dyspozycji to <strong>akcja MDP</strong>. Wynik to <strong>nagroda</strong>. Sekwencja decyzji to <strong>epizod</strong>.<br><br>
+W Ch01 tabela Q ma same zera &#x2014; to <em>punkt bazowy</em> wzgl&#x119;dem kt&#xF3;rego mierzone s&#x105; wszystkie przysz&#x142;e rozdzia&#x142;y.</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">Sk&#x142;adnik&#xF3;w MDP</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x3B5;</div><div class="kpi-label">Wsp&#xF3;&#x142;czynnik eksploracji</div></div>
+<div class="kpi-card"><div class="kpi-val">G&#x209C;</div><div class="kpi-label">Zdyskontowany zwrot</div></div>
+<div class="kpi-card"><div class="kpi-val">Q=0</div><div class="kpi-label">Tabela Q w Ch01</div></div>
+</div>
+</div>
+<div id="what" class="tab-content">
+<h2>&#x2753; Czym jest Rozdzia&#x142; 01?</h2>
+<div class="card purple">Ch01 to <strong>punkt startowy ca&#x142;ego kursu RL</strong>. Nie ma tu uczenia &#x2014; agent dzia&#x142;a losowo. Celem jest zrozumienie formalizmu MDP.</div>
+<h2>Co si&#x119; dzieje w silniku Rust?</h2>
+<div class="card">Funkcja <code>run_ch01_episode()</code> w <code>ch01_mdp.rs</code>:
+<ol><li>Generuje losowych 5 technik&#xF3;w i N zlece&#x144; na mapie Warszawy</li>
+<li>Dla ka&#x17C;dego zlecenia wybiera technika przez polityk&#x119; &#x3B5;-zachlann&#x105; (Q=0)</li>
+<li>Oblicza nagrod&#x119; R&#x209C; na podstawie dopasowania umiej&#x119;tno&#x15B;ci, odleg&#x142;o&#x15B;ci, pilno&#x15B;ci</li>
+<li>Oblicza zdyskontowany zwrot G&#x209C; dla ca&#x142;ego epizodu</li>
+<li>Zwraca pe&#x142;ny &#x15B;lad MDP: (S&#x209C;, A&#x209C;, R&#x209C;, G&#x209C;, explored)</li></ol></div>
+<div class="card red"><strong>Ch01 NIE robi:</strong>
+<ul><li>&#x274C; Nie aktualizuje Q &#x2014; Q=0 przez ca&#x142;y epizod</li>
+<li>&#x274C; Nie u&#x17C;ywa Bellmana &#x2014; aktywuje si&#x119; w Ch02</li>
+<li>&#x274C; Nie uczy si&#x119; mi&#x119;dzy epizodami</li></ul></div>
+</div>
+<div id="theory" class="tab-content">
+<h2>&#x1F9EE; Formalizm MDP</h2>
+<table><tr><th>Sk&#x142;adnik</th><th>Symbol</th><th>Znaczenie w ASP</th></tr>
+<tr><td>Przestrze&#x144; stan&#xF3;w</td><td><strong>S</strong></td><td>Sytuacja operacyjna centrum dyspozycji</td></tr>
+<tr><td>Przestrze&#x144; akcji</td><td><strong>A</strong></td><td>Kt&#xF3;rego technika wys&#x142;a&#x107; do kt&#xF3;rego zlecenia</td></tr>
+<tr><td>Model przej&#x15B;&#x107;</td><td><strong>P(s'|s,a)</strong></td><td>Prawdopodobie&#x144;stwo nast&#x119;pnego stanu</td></tr>
+<tr><td>Funkcja nagrody</td><td><strong>R(s,a)</strong></td><td>Natychmiastowa informacja zwrotna</td></tr>
+<tr><td>Wsp&#xF3;&#x142;czynnik dyskonta</td><td><strong>&#x3B3;</strong></td><td>Jak bardzo cenimy przysz&#x142;e nagrody</td></tr></table>
+<h2>Zdyskontowany zwrot G&#x209C;</h2>
+<div class="formula">G&#x209C; = R&#x209C;&#x208A;&#x2081; + &#x3B3; R&#x209C;&#x208A;&#x2082; + &#x3B3;&#xB2; R&#x209C;&#x208A;&#x2083; + &hellip;</div>
+<div class="card"><strong>Przyk&#x142;ad</strong> (&#x3B3;=0.95): G&#x2080; = 10 + 0.95&times;(&#x2212;5) + 0.95&#xB2;&times;10 = <strong>14.275</strong></div>
+<h2>Polityka &#x3B5;-zachlanna</h2>
+<div class="card orange"><strong>Z prawdopodobie&#x144;stwem &#x3B5;:</strong> losowa akcja (eksploracja)<br>
+<strong>Z prawdopodobie&#x144;stwem 1&#x2212;&#x3B5;:</strong> najlepsza znana akcja (eksploatacja)</div>
+</div>
+<div id="env" class="tab-content">
+<h2>&#x1F5FA; &#x15A;rodowisko ASP Warszawa</h2>
+<h3>Technicy (T0&#x2013;T4)</h3>
+<table><tr><th>Atrybut</th><th>Wp&#x142;yw na nagrod&#x119;</th></tr>
+<tr><td>Pozycja (lat, lon)</td><td>Odleg&#x142;o&#x15B;&#x107; do zlecenia</td></tr>
+<tr><td>Umiej&#x119;tno&#x15B;&#x107;</td><td>Dopasowanie do zlecenia = bonus</td></tr>
+<tr><td>Dost&#x119;pno&#x15B;&#x107;</td><td>Niedost&#x119;pny nie mo&#x17C;e by&#x107; wys&#x142;any</td></tr></table>
+<h3>Funkcja nagrody</h3>
+<div class="card"><code>R = base + skill_bonus - distance_penalty - urgency_penalty + sla_bonus/penalty</code></div>
+</div>
+<div id="ui" class="tab-content">
+<h2>&#x1F3AE; Jak u&#x17C;ywa&#x107; interfejsu</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Ustaw &#x3B5;</strong> &#x2014; zacznij od 0.5</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Ustaw liczb&#x119; technik&#xF3;w i zlece&#x144;</strong> &#x2014; 5/10 to dobry start</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Kliknij &#x25B6; Uruchom epizod</strong></div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Odczytaj map&#x119;</strong> &#x2014; zielone linie = SLA spe&#x142;nione, czerwone = naruszone</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>U&#x17C;yj suwaka krok&#xF3;w</strong> aby prze&#x15B;ledzi&#x107; ka&#x17C;d&#x105; decyzj&#x119;</div></div>
+<div class="step"><div class="step-num">6</div><div><strong>Odczytaj Glass-Box</strong> &#x2014; pe&#x142;na krotka MDP per krok</div></div>
+<div class="step"><div class="step-num">7</div><div><strong>Odczytaj podsumowanie</strong> &#x2014; KPI biznesowe epizodu</div></div>
+</div>
+<div id="interp" class="tab-content">
+<h2>&#x1F4CA; Interpretacja wynik&#xF3;w</h2>
+<h3>Glass-Box</h3>
+<table><tr><th>Kolumna</th><th>Znaczenie</th></tr>
+<tr><td><code>S&#x209C;</code></td><td>Stan w chwili t</td></tr>
+<tr><td><code>A&#x209C;</code></td><td>Podj&#x119;ta akcja</td></tr>
+<tr><td><code>R&#x209C;</code></td><td>Natychmiastowa nagroda</td></tr>
+<tr><td><code>G&#x209C;</code></td><td>Zdyskontowany zwrot od tego kroku</td></tr></table>
+<div class="card red"><strong>Bellman wyszarzony</strong> &#x2014; wymaga P(s'|s,a) kt&#xF3;rego w Ch01 nie ma. Aktywuje si&#x119; w Ch02.</div>
+</div>
+<div id="exercises" class="tab-content">
+<h2>&#x1F9EA; &#x106;wiczenia</h2>
+<div class="card"><h3>&#x106;wiczenie 1 &#x2014; Punkt bazowy</h3>Uruchom 5 epizod&#xF3;w z &#x3B5;=1.0. Zapisz &#x15B;redni G&#x209C;. To Tw&#xF3;j baseline Ch01.</div>
+<div class="card blue"><h3>&#x106;wiczenie 2 &#x2014; Wra&#x17C;liwo&#x15B;&#x107; na &#x3B5;</h3>Por&#xF3;wnaj &#x3B5;=1.0 vs &#x3B5;=0.0. Dlaczego wyniki s&#x105; podobne? (Q=0)</div>
+<div class="card orange"><h3>&#x106;wiczenie 3 &#x2014; Czytanie mapy</h3>Znajd&#x17A; krok z najwi&#x119;ksz&#x105; ujemn&#x105; nagrod&#x105;. Co posz&#x142;o nie tak?</div>
+<div class="card green"><h3>&#x106;wiczenie 4 &#x2014; R&#x119;czne obliczenie G</h3>We&#x17A; pierwsze 3 nagrody i oblicz G&#x2080; r&#x119;cznie. Zweryfikuj z Glass-Box.</div>
+</div>
+<div id="summary" class="tab-content">
+<h2>&#x1F4CB; Podsumowanie</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">Sk&#x142;adnik&#xF3;w MDP</div></div>
+<div class="kpi-card"><div class="kpi-val">Q=0</div><div class="kpi-label">Brak uczenia</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x3B5;</div><div class="kpi-label">Jedyny hiperparametr</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch02</div><div class="kpi-label">Nast&#x119;pny: Bellman</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; Zalety</strong><ul><li>Prosta implementacja</li><li>Ustanawia baseline</li><li>Wizualizuje MDP</li></ul></div>
+<div class="card red"><strong>&#x274C; Wady</strong><ul><li>Brak uczenia</li><li>Czysto losowe</li><li>Nie u&#x17C;ywa Bellmana</li></ul></div>
+</div>
+</div>
+</div>
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
