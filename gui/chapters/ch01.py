@@ -853,9 +853,13 @@ def render():
     st.title(tx["title"])
     st.caption(tx["subtitle"])
 
-    tab1, tab2 = st.tabs(["🧪 Interactive Lab", "📘 Hands-On Guide EN"])
+    tab1, tab2, tab3 = st.tabs(["🧪 Interactive Lab", "📘 Hands-On Guide EN", "🇵🇱 Hands-On Guide PL"])
     with tab2:
         _render_handbook()
+    with tab3:
+        st.markdown("### 🇵🇱 Podręcznik Rozdział 01 — wersja polska")
+        st.markdown("Kliknij link poniżej aby otworzyć pełną wersję polską w przeglądarce:")
+        st.markdown("[&#x1F4D8; Podręcznik Rozdział 01 (PL)](https://smusial.github.io/rlvr-enterprise-allocator/docs/handson_ch01_pl.html)")
     with tab1:
 
         # --- engine check ---
