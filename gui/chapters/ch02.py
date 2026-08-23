@@ -477,7 +477,8 @@ def _tx(lang):
     return base
 
 def _render_handbook():
-    st.markdown(
+    import streamlit.components.v1 as _components
+    _components.html(
         """
 <!DOCTYPE html>
 <html lang="pl">
@@ -1462,57 +1463,12 @@ T(S1,A1,S0)=0.9, T(S1,A1,S1)=0.1, R(S1,A1)=+1</div>
 </section>
 
 </main>
-<script>
-function show(id,btn){
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
-}
-let answered={},correct=0,total=0;
-const feedback={
-  'q1':'Operator Bellmana T jest kontrakcja z wspolczynnikiem gamma < 1: ||TV - TV||_inf <= gamma * ||V - V||_inf. Gwarantuje to zbieznosc do jedynego punktu stalego V* niezaleznie od inicjalizacji.',
-  'q2':'V*(s) = max_a Q*(s,a). Wartosc stanu to wartosc najlepszej akcji w tym stanie. Stad polityka optymalna: pi*(s) = argmax_a Q*(s,a).',
-  'q3':'Value Iteration wymaga pelnej macierzy T(s,a,s\\') i R(s,a). W produkcji model jest nieznany, a przestrzen stanow ma miliony wymiarow — niemozliwe do przechowania w tabeli. Dlatego od Ch05 uzywamy uczenia bez modelu.',
-  'q4':'Oba algorytmy sa rownowazne — daja identyczne V* i pi*. VI jest prostszy (bezposrednia aktualizacja V), PI jest szybszy w liczbie iteracji zewnetrznych ale kazda iteracja drozsza (wymaga rozwiazania ukladu rownan).',
-  'q5':'delta_k < theta oznacza ze V(s) prawie sie nie zmienia — algorytm jest blisko V*. Dokladnie: ||V_k - V*||_inf < 2*theta*gamma/(1-gamma). To kryterium stopu, nie dokladna zbieznosc.',
-  'q6':'Q-Learning aproksymuje Bellman optimality: zamiast pelnej sumy Sigma_s\\' T(s,a,s\\')[R+gamma*V*(s\\')] uzywa jednej probki r + gamma*max_a Q(s\\',a). Po wielu probkach Q(s,a) zbiega do Q*(s,a).'
-};
-function ans(btn,qid,isCorrect){
-  if(answered[qid])return;
-  answered[qid]=true; total++;
-  const fb=document.getElementById('fb-'+qid);
-  if(isCorrect){
-    btn.classList.add('correct'); correct++;
-    fb.textContent='✅ Poprawnie! '+feedback[qid];
-    fb.className='feedback show ok';
-  } else {
-    btn.classList.add('wrong');
-    fb.textContent='❌ Niepoprawnie. '+feedback[qid];
-    fb.className='feedback show err';
-    btn.parentElement.querySelectorAll('.quiz-opt').forEach(o=>{
-      if(o.onclick.toString().includes('true'))o.classList.add('correct');
-    });
-  }
-  document.getElementById('score').textContent=correct;
-  document.getElementById('total').textContent=total;
-  document.getElementById('prog').style.width=(total/6*100)+'%';
-  if(total===6){
-    const res=document.getElementById('quiz-result');
-    res.style.display='block';
-    const pct=Math.round(correct/6*100);
-    document.getElementById('result-text').textContent=
-      correct+'/6 ('+pct+'%) — '+
-      (pct>=83?'🏆 Doskonale! Gotowy na Rozdział 03 — Bandyci.':
-       pct>=50?'👍 Dobry wynik. Przejrzyj sekcje Teoria RL i Algorytmy.':
-       '📚 Wróć do sekcji Równanie Bellmana i Algorytmy.');
-  }
-}
-</script>
+
 </body>
 </html>
 """,
-        unsafe_allow_html=True,
+        height=4000,
+        scrolling=True,
     )
 
 def render():
