@@ -703,6 +703,197 @@ function showTab(id){
         unsafe_allow_html=False,
     )
 
+def _render_handbook_pl():
+    _plcol1, _plcol2 = st.columns([8, 1])
+    with _plcol1:
+        st.subheader("Hands-On Guide — Rozdział 02 (PL)")
+    with _plcol2:
+        import re as _re2
+        _src2 = open(__file__, encoding="utf-8").read()
+        _m2 = _re2.search(r'def _render_handbook_pl.*?st\.iframe\(\s*"""(.*?)"""', _src2, _re2.DOTALL)
+        if _m2:
+            st.download_button("💾 Save", data=_m2.group(1), file_name="handson_ch02_pl.html", mime="text/html")
+    st.iframe(
+        """<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podrecznik - Rozdzial 02</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+.card.red{border-left-color:#FF4B4B}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em}
+.formula{background:#252840;border-radius:8px;padding:1rem;margin:.75rem 0;text-align:center;font-size:1.05em;color:#FFD700;font-family:monospace}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Podr&#x119;cznik &#x2014; Rozdzia&#x142; 02</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>R&#xF3;wnanie Bellmana i Iteracja Warto&#x15B;ci &middot; ASP Warszawa &middot; Silnik Rust</em></p>
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Wprowadzenie</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; Czym jest Ch02?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; Teoria RL</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; &#x15A;rodowisko</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; Jak u&#x17C;ywa&#x107; UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretacja</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; &#x106;wiczenia</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Podsumowanie</button>
+</div>
+<div id="intro" class="tab-content active">
+<h2>&#x1F3AF; Cele nauki</h2>
+<div class="card green">Po uko&#x144;czeniu tego rozdzia&#x142;u b&#x119;dziesz potrafi&#x142;:
+<ul>
+<li>Zapisa&#x107; r&#xF3;wnanie optymalnosci Bellmana i wyja&#x15B;ni&#x107; ka&#x17C;dy sk&#x142;adnik</li>
+<li>Zaimplementowa&#x107; Iteracj&#x119; Warto&#x15B;ci i wiedzie&#x107; kiedy zbie&#x17C;y</li>
+<li>Odczyta&#x107; wykres V*(s) i wyja&#x15B;ni&#x107; dlaczego V*(S0) &gt; V*(S7)</li>
+<li>Wyodr&#x119;bni&#x107; optymaln&#x105; polityk&#x119; &#x3C0;* z V*</li>
+<li>Wyja&#x15B;ni&#x107; twierdzenie o odwzorowaniu zwi&#x119;&#x17C;aj&#x105;cym</li>
+<li>Wiedzie&#x107; kiedy u&#x17C;ywa&#x107; dok&#x142;adnego LU vs iteracyjnego VI</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Problem biznesowy</h2>
+<div class="card blue"><strong>Centrum Dyspozycji ASP Warszawa</strong> &#x2014; 8 stan&#xF3;w operacyjnych, 4 akcje dyspozycji.<br><br>
+Pytanie: <em>jaka jest d&#x142;ugoterminowa warto&#x15B;&#x107; przebywania w ka&#x17C;dym stanie?</em><br><br>
+Iteracja Warto&#x15B;ci odpowiada przez iteracyjne rozwi&#x105;zanie r&#xF3;wnania Bellmana.</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">8</div><div class="kpi-label">Stan&#xF3;w operacyjnych</div></div>
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Akcji dyspozycji</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x3B3;</div><div class="kpi-label">Wsp&#xF3;&#x142;. dyskonta</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x3B8;</div><div class="kpi-label">Pr&#xF3;g zbie&#x17C;no&#x15B;ci</div></div>
+</div>
+</div>
+<div id="what" class="tab-content">
+<h2>&#x2753; Czym jest Rozdzia&#x142; 02?</h2>
+<div class="card blue">Ch02 wprowadza <strong>planowanie oparte na modelu</strong>. Znamy P(s'|s,a) i R(s,a) &#x2014; budujemy je analitycznie dla ASP.</div>
+<h2>Stany operacyjne z <code>STATE_NAMES</code></h2>
+<table><tr><th>Stan</th><th>Nazwa</th></tr>
+<tr><td><code>S0</code></td><td>Wszyscy dost&#x119;pni, brak pilnych</td></tr>
+<tr><td><code>S1</code></td><td>Wszyscy dost&#x119;pni, pilne oczekuje</td></tr>
+<tr><td><code>S2</code></td><td>Cz&#x119;&#x15B;ciowa dost&#x119;pno&#x15B;&#x107;, niskie obci&#x105;&#x17C;enie</td></tr>
+<tr><td><code>S3</code></td><td>Cz&#x119;&#x15B;ciowa dost&#x119;pno&#x15B;&#x107;, wysokie obci&#x105;&#x17C;enie</td></tr>
+<tr><td><code>S4</code></td><td>Niska dost&#x119;pno&#x15B;&#x107;, znos&#x105;ce obci&#x105;&#x17C;enie</td></tr>
+<tr><td><code>S5</code></td><td>Niska dost&#x119;pno&#x15B;&#x107;, wysokie obci&#x105;&#x17C;enie</td></tr>
+<tr><td><code>S6</code></td><td>Krytyczna, wi&#x119;kszo&#x15B;&#x107; technik&#xF3;w zaj&#x119;ta</td></tr>
+<tr><td><code>S7</code></td><td>Wszyscy zaj&#x119;ci, naruszenie SLA bliskie</td></tr></table>
+</div>
+<div id="theory" class="tab-content">
+<h2>&#x1F9EE; R&#xF3;wnanie Bellmana</h2>
+<div class="formula">V*(s) = max_a SUM P(s'|s,a) [ R(s,a) + gamma * V*(s') ]</div>
+<h2>Algorytm Iteracji Warto&#x15B;ci</h2>
+<div class="step"><div class="step-num">1</div><div>Inicjalizuj V(s) = 0 dla wszystkich stan&#xF3;w</div></div>
+<div class="step"><div class="step-num">2</div><div>Dla ka&#x17C;dego s: V_new(s) = max_a SUM P(s'|s,a)[R(s,a) + gamma*V(s')]</div></div>
+<div class="step"><div class="step-num">3</div><div>Oblicz delta = max_s |V_new(s) - V(s)|</div></div>
+<div class="step"><div class="step-num">4</div><div>Aktualizuj V &lt;- V_new</div></div>
+<div class="step"><div class="step-num">5</div><div>Je&#x15B;li delta &lt; theta &#x2192; STOP</div></div>
+<div class="step"><div class="step-num">6</div><div>Wyod&#x119;bnij polityk&#x119;: pi*(s) = argmax_a ...</div></div>
+<h2>solve_exact() &#x2014; Rozk&#x142;ad LU</h2>
+<div class="card green">V^pi = (I - gamma * P^pi)^-1 * r^pi<br>
+Zaimplementowane w <code>solve_exact()</code> przez <strong>nalgebra LU</strong>.<br>
+U&#x17C;yj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10000.</div>
+</div>
+<div id="env" class="tab-content">
+<h2>&#x1F5FA; Macierz nagr&#xF3;d R(s,a) z <code>build_asp_rewards()</code></h2>
+<table><tr><th>Stan</th><th>A0: Najbli&#x17C;szy</th><th>A1: Skill</th><th>A2: Senior</th><th>A3: Czekaj</th></tr>
+<tr><td>S0</td><td>5.0</td><td><strong>8.0</strong></td><td>6.0</td><td>1.0</td></tr>
+<tr><td>S1</td><td>6.0</td><td><strong>9.0</strong></td><td>7.0</td><td>-3.0</td></tr>
+<tr><td>S2</td><td>4.0</td><td><strong>7.0</strong></td><td>5.0</td><td>0.5</td></tr>
+<tr><td>S3</td><td>5.0</td><td><strong>8.0</strong></td><td>6.0</td><td>-2.0</td></tr>
+<tr><td>S4</td><td>3.0</td><td><strong>6.0</strong></td><td>4.0</td><td>-1.0</td></tr>
+<tr><td>S5</td><td>4.0</td><td><strong>7.0</strong></td><td>5.0</td><td>-3.0</td></tr>
+<tr><td>S6</td><td>2.0</td><td><strong>5.0</strong></td><td>3.0</td><td>-8.0</td></tr>
+<tr><td>S7</td><td>1.0</td><td><strong>4.0</strong></td><td>2.0</td><td>-10.0</td></tr></table>
+</div>
+<div id="ui" class="tab-content">
+<h2>&#x1F3AE; Jak u&#x17C;ywa&#x107; interfejsu Ch02</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Ustaw &#x3B3;</strong> &#x2014; zacznij od 0.95</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Ustaw &#x3B8;</strong> &#x2014; zacznij od 1e-6</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Kliknij &#x25B6; Uruchom Iteracj&#x119; Warto&#x15B;ci</strong></div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Odczytaj wykres V*(s)</strong> &#x2014; S0 najwy&#x17C;szy, S7 najni&#x17C;szy</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Odczytaj tabel&#x119; polityki</strong> &#x2014; optymalna akcja per stan</div></div>
+<div class="step"><div class="step-num">6</div><div><strong>Odczytaj krzyw&#x105; zbie&#x17C;no&#x15B;ci</strong> &#x2014; eksponencjalny zanik</div></div>
+<div class="step"><div class="step-num">7</div><div><strong>Odczytaj Glass-Box</strong> &#x2014; dok&#x142;adna aktualizacja Bellmana</div></div>
+</div>
+<div id="interp" class="tab-content">
+<h2>&#x1F4CA; Interpretacja wynik&#xF3;w</h2>
+<div class="card"><strong>Wykres V*(s):</strong> S0 najwy&#x17C;szy, S7 najni&#x17C;szy.</div>
+<div class="card blue"><strong>Krzywa zbie&#x17C;no&#x15B;ci:</strong> Eksponencjalny zanik. P&#x142;aska = zbie&#x17C;na.</div>
+<div class="card orange"><strong>Mapa ciep&#x142;a:</strong> Kolumna A1 najja&#x15B;niejsza. A3 najciemniejsza w S6/S7.</div>
+<div class="card green"><strong>Glass-Box:</strong> DeltaV maleje &#x2014; twierdzenie o kontrakcji w dzia&#x142;aniu.</div>
+<h2>8 Test&#xF3;w Rust</h2>
+<table><tr><th>#</th><th>Test</th><th>Weryfikuje</th></tr>
+<tr><td>1</td><td><code>test_build_rewards</code></td><td>R(S1,A1)=9.0, R(S7,A3)=-10.0</td></tr>
+<tr><td>2</td><td><code>test_build_transitions</code></td><td>Ka&#x17C;dy wiersz P sumuje si&#x119; do 1.0</td></tr>
+<tr><td>3</td><td><code>test_bellman_update</code></td><td>V(s) ro&#x15B;nie monotonicznie</td></tr>
+<tr><td>4</td><td><code>test_value_iteration_converges</code></td><td>||DeltaV|| &lt; theta=1e-6</td></tr>
+<tr><td>5</td><td><code>test_optimal_policy</code></td><td>pi*(S0)=A1, pi*(S7)!=A3</td></tr>
+<tr><td>6</td><td><code>test_value_ordering</code></td><td>V*(S0) &gt; V*(S7)</td></tr>
+<tr><td>7</td><td><code>test_solve_exact</code></td><td>||V_VI - V_LU|| &lt; 1e-4</td></tr>
+<tr><td>8</td><td><code>test_contraction</code></td><td>delta_{k+1} &le; gamma * delta_k</td></tr></table>
+</div>
+<div id="exercises" class="tab-content">
+<h2>&#x1F9EA; &#x106;wiczenia</h2>
+<div class="card"><h3>&#x106;wiczenie 1 &#x2014; Wra&#x17C;liwo&#x15B;&#x107; na &#x3B3;</h3>Uruchom &#x3B3;=0.99 i &#x3B3;=0.5. Jak zmienia si&#x119; zakres warto&#x15B;ci?</div>
+<div class="card blue"><h3>&#x106;wiczenie 2 &#x2014; Precyzja &#x3B8;</h3>Por&#xF3;wnaj &#x3B8;=1e-3 vs &#x3B8;=1e-7. Wi&#x119;cej iteracji? Ta sama polityka?</div>
+<div class="card orange"><h3>&#x106;wiczenie 3 &#x2014; Weryfikacja polityki</h3>Czy optymalna polityka zawsze wybiera A1?</div>
+<div class="card green"><h3>&#x106;wiczenie 4 &#x2014; Kontrakcja</h3>Zweryfikuj DeltaV_{k+1} ~= gamma x DeltaV_k w Glass-Box.</div>
+</div>
+<div id="summary" class="tab-content">
+<h2>&#x1F4CB; Podsumowanie</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">8</div><div class="kpi-label">Stan&#xF3;w</div></div>
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Akcji</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x3B3;</div><div class="kpi-label">Dalekowzroczno&#x15B;&#x107;</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x3B8;</div><div class="kpi-label">Precyzja</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; Zalety</strong><ul><li>Gwarantowana zbie&#x17C;no&#x15B;&#x107;</li><li>Dok&#x142;adne rozwi&#x105;zanie</li><li>Interpretowalny</li></ul></div>
+<div class="card red"><strong>&#x274C; Wady</strong><ul><li>Wymaga P(s'|s,a)</li><li>Dyskretna przestrze&#x144;</li><li>Przekle&#x144;stwo wymiarowo&#x15B;ci</li></ul></div>
+</div>
+<div class="card green">Iteracja Warto&#x15B;ci to <strong>fundament ca&#x142;ego RL opartego na modelu</strong>.</div>
+</div>
+</div>
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>""",
+        height=4000,
+    )
+
 def render():
     lang = st.session_state.get("lang", "EN")
     tx = _tx(lang)
@@ -714,9 +905,7 @@ def render():
     with tab2:
         _render_handbook()
     with tab3:
-        st.markdown("### 🇵🇱 Podręcznik Rozdział 02 — wersja polska")
-        st.markdown("Kliknij link poniżej aby otworzyć pełną wersję polską w przeglądarce:")
-        st.markdown("[&#x1F4D8; Podręcznik Rozdział 02 (PL)](https://smusial.github.io/rlvr-enterprise-allocator/docs/handson_ch02_pl.html)")
+        _render_handbook_pl()
     with tab1:
 
         try:
