@@ -618,8 +618,6 @@ def _render_map(steps, sel, tx):
         text=o_text, textposition="top left",
         name="Work Orders",
         hovertemplate="<b>%{text}</b><br>lat: %{lat:.4f}<br>lon: %{lon:.4f}<extra></extra>",
-    ))
-
     # highlight selected step
     s = steps[sel]
     fig.add_trace(go.Scattermapbox(
