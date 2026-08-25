@@ -34,10 +34,6 @@ def _ma(data,w=30):
 
 
 
-def _tx(lang=None):
-    import copy
-    return copy.deepcopy(TX.get("EN", {}))
-
 def render():
     
     
