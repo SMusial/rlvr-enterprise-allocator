@@ -1,8 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-T = {
-    "EN": {
+T = {"EN": {
         "title": "Chapter 09 — Policy Gradient: REINFORCE & Softmax",
         "subtitle": "REINFORCE · REINFORCE+Baseline · Actor-Critic TD(0) · Temperature · Warsaw ASP",
         "engine_missing": "Run: `cd rlvr-py && maturin develop`",
@@ -29,8 +28,7 @@ T = {
         "algo_labels": {"reinforce": "REINFORCE", "reinforce_baseline": "REINFORCE+Baseline", "softmax_td0": "Actor-Critic (TD0)", "reinforce_temp": "REINFORCE τ=0.5"},
         "pros_list": {"reinforce": ["Unbiased","Simple","No critic"], "reinforce_baseline": ["Lower variance","Still unbiased","Recommended"], "softmax_td0": ["Online updates","Lower variance than MC","Foundation A2C/PPO"], "reinforce_temp": ["Sharper policy","Less exploration needed","Good deterministic envs"]},
         "cons_list": {"reinforce": ["High variance","Slow","Full episode needed"], "reinforce_baseline": ["Needs α_v","Slightly complex","Still MC"], "softmax_td0": ["Biased (TD)","Two LRs to tune","Can be unstable"], "reinforce_temp": ["Less exploration","Sensitive to τ","May miss global opt"]}
-    }
-}
+    }}
 COLORS = {"reinforce": "#8B5CF6", "reinforce_baseline": "#0082F0", "softmax_td0": "#0FC373", "reinforce_temp": "#FF8C0A"}
 ALGOS  = ["reinforce", "reinforce_baseline", "softmax_td0", "reinforce_temp"]
 
@@ -41,16 +39,12 @@ def _ma(data, w=30):
     return r
 
 
-def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
-    over = T.get(lang, {})
-    for k, v in over.items():
-        base[k] = v
-    return base
+def _tx(lang=None):
+    import copy
+    return copy.deepcopy(T.get("EN", {}))
 
 def render():
-    lang = "EN"; tx = _tx(lang)
+    lang = "EN"; tx = _tx()
     st.title(tx["title"]); st.caption(tx["subtitle"])
     try: import rlvr_py
     except ImportError: st.error(tx["engine_missing"]); return

@@ -5,8 +5,7 @@ import plotly.graph_objects as go
 COLORS = {"iql":"#8B5CF6","vdn":"#0082F0","qmix":"#0FC373","qmix_cg":"#FF8C0A"}
 ALGOS  = ["iql","vdn","qmix","qmix_cg"]
 
-TX = {
-    "EN": {
+TX = {"EN": {
         "title":    "Chapter 13 - Cooperative MARL: VDN and QMIX",
         "subtitle": "IQL Baseline - VDN - QMIX - QMIX+CG - 2 Agents - Warsaw ASP",
         "run":      "Run All Four Algorithms",
@@ -35,8 +34,7 @@ TX = {
         "theory_vdn":   "Q_tot = Q_0(s_0,a_0) + Q_1(s_1,a_1)\ndQ_tot/dQ_i = 1 (equal gradient)",
         "theory_qmix":  "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s)\nw_i(s) >= 0 (monotonicity)\ndQ_tot/dQ_i = w_i(s) (state-dependent gradient)",
         "theory_cg":    "Counterfactual advantage:\nA_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)\nIsolates agent i contribution to joint value."
-    }
-}
+    }}
 
 def _ma(data, w=30):
     r = []
@@ -45,21 +43,13 @@ def _ma(data, w=30):
     return r
 
 
-def _tx(lang):
+def _tx(lang=None):
     import copy
-    base = copy.deepcopy(TX.get("EN", {}))
-    over = TX.get(lang, {})
-    for k, v in over.items():
-        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
-            base[k] = {**base[k], **v}
-        else:
-            base[k] = v
-    return base
-
+    return copy.deepcopy(TX.get("EN", {}))
 
 def render():
     lang = "EN"
-    tx   = _tx(lang)
+    tx   = _tx()
     lb   = tx["labels"]
     st.title(tx["title"]); st.caption(tx["subtitle"])
     try: import rlvr_py

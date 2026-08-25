@@ -1,8 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-TX = {
-    "EN": {
+TX = {"EN": {
         "title": "Chapter 12 - Game Theory and Nash Equilibrium",
         "subtitle": "Nash Q - Correlated Q - Minimax Q - Fictitious Play - Warsaw ASP",
         "engine_missing": "Run: cd rlvr-py && maturin develop",
@@ -20,8 +19,7 @@ TX = {
         "ret": "Joint Episode Returns", "gap": "Nash Gap (Exploitability)",
         "strat": "Mixed Strategy Profile", "val": "Joint Value Function V(s)",
         "glass": "Glass-Box", "summary": "Summary"
-    }
-}
+    }}
 
 
 COLORS = {"nash_q":"#8B5CF6","correlated_q":"#0082F0","minimax_q":"#0FC373","fictitious":"#FF8C0A"}
@@ -34,6 +32,11 @@ def _ma(data,w=30):
         s=max(0,i-w+1); r.append(sum(data[s:i+1])/(i-s+1))
     return r
 
+
+
+def _tx(lang=None):
+    import copy
+    return copy.deepcopy(TX.get("EN", {}))
 
 def render():
     

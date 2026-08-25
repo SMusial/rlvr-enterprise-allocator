@@ -1,8 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-T = {
-    "EN": {
+T = {"EN": {
         "title": "Chapter 08 — Eligibility Traces & TD(λ)",
         "subtitle": "SARSA(λ) · Q(λ) Watkins · λ=0 (TD0) · λ=0.99 (≈MC) · Warsaw ASP",
         "engine_missing": "Run: `cd rlvr-py && maturin develop`",
@@ -30,8 +29,7 @@ T = {
         "algo_labels": {"sarsa_lambda": "SARSA(λ)", "q_lambda": "Q(λ) Watkins", "sarsa_td0": "SARSA λ=0 (TD0)", "sarsa_mc": "SARSA λ=0.99 (≈MC)"},
         "pros_list": {"sarsa_lambda": ["On-policy, safe","Fast backward credit","λ tunes bias-variance"], "q_lambda": ["Off-policy","Watkins cut prevents divergence","Aggressive exploration"], "sarsa_td0": ["Simplest","Low variance","Baseline ref"], "sarsa_mc": ["Near-zero bias","Full propagation","Upper bound λ"]},
         "cons_list": {"sarsa_lambda": ["Needs ε>0","O(|S||A|)/step","λ to tune"], "q_lambda": ["Traces cut on explore","Less propagation","Instability risk"], "sarsa_td0": ["Slow credit","Many episodes","No backward prop"], "sarsa_mc": ["High variance","Needs episode end","Unstable small α"]}
-    }
-}
+    }}
 COLORS = {"sarsa_lambda": "#8B5CF6", "q_lambda": "#0082F0", "sarsa_td0": "#FF8C0A", "sarsa_mc": "#0FC373"}
 ALGOS  = ["sarsa_lambda", "q_lambda", "sarsa_td0", "sarsa_mc"]
 
@@ -42,16 +40,12 @@ def _ma(data, w=30):
     return r
 
 
-def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
-    over = T.get(lang, {})
-    for k, v in over.items():
-        base[k] = v
-    return base
+def _tx(lang=None):
+    import copy
+    return copy.deepcopy(T.get("EN", {}))
 
 def render():
-    lang = "EN"; tx = _tx(lang)
+    lang = "EN"; tx = _tx()
     st.title(tx["title"]); st.caption(tx["subtitle"])
     try: import rlvr_py
     except ImportError: st.error(tx["engine_missing"]); return
