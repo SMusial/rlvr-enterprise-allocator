@@ -6,184 +6,9 @@ import json
 # ---------------------------------------------------------------------------
 # Language strings — EN, PL, FR, DE, ES
 # ---------------------------------------------------------------------------
-T = {
-    "EN": {
-        "title": "Chapter 01 — ASP Dispatch: Introduction to RL",
-        "subtitle": "Field Service Optimisation via Reinforcement Learning · Warsaw Region",
-        "engine_ok": "⚙️ Rust engine active",
-        "engine_missing": "⚙️ Rust engine not found. Run: `cd rlvr-py && maturin develop`",
-        "lang_label": "🌐 Language",
-        "sidebar_title": "⚙️ Episode Settings",
-        "n_tech": "Technicians",
-        "n_orders": "Work Orders",
-        "epsilon": "ε — Exploration rate",
-        "gamma": "γ — Discount factor",
-        "seed": "Random seed",
-        "n_episodes": "Episodes (learning curve)",
-        "run_btn": "▶ Run Episode",
-        "guide_title": "🎓 How to use this chapter",
-        "guide": """
-**Step 1 — Set ε (exploration rate)**
-Move the slider. ε=1.0 means the agent picks randomly every time (pure exploration).
-ε=0.0 means it always picks the best known action (pure exploitation — but since the
-Q-table is all zeros in Ch01, this is also random). Try ε=0.5 to start.
-
-**Step 2 — Set technicians and work orders**
-5 technicians / 10 work orders is a good starting point. More orders = longer episode.
-
-**Step 3 — Click ▶ Run Episode**
-The Rust engine runs the full MDP loop and returns every step.
-
-**Step 4 — Read the Warsaw map**
-Blue markers = technicians (T0–T4). Coloured markers = work orders (W0–W9).
-Green lines = SLA met. Red lines = SLA breached. Click any marker for details.
-
-**Step 5 — Use the Step slider**
-Move it to highlight a specific dispatch decision on the map and in the Glass-Box.
-
-**Step 6 — Read the Glass-Box**
-Every row shows the full MDP tuple: Sₜ (state), Aₜ (action), Rₜ (reward), Gₜ (return).
-The Bellman equation is shown greyed out — it activates in Chapter 02.
-
-**Step 7 — Read the Episode Summary**
-Quantified business results + pros/cons of the ε-greedy method used in this chapter.
-""",
-        "map_title": "📍 Warsaw Dispatch Map",
-        "map_caption": "Blue = Technicians · Amber/Red = Work Orders · Green = SLA met · Red = SLA breach",
-        "step_slider": "🔍 Highlight step",
-        "glass_title": "🔬 Glass-Box Inspector — MDP Step Trace",
-        "glass_headers": ["Step", "Tech", "Order", "Skill Match", "Distance", "Urgency", "Reward Rₜ", "Return Gₜ", "SLA", "Mode"],
-        "sla_met": "✅ Met",
-        "sla_breach": "❌ Breach",
-        "skill_ok": "✅ Match",
-        "skill_no": "⚠️ Mismatch",
-        "explore": "🔍 Explore",
-        "exploit": "🎯 Exploit",
-        "bellman_caption": "Bellman equation — activates in Chapter 02 when Q-table updates are introduced",
-        "curve_title": "📈 Learning Curve — Gₜ over Episodes",
-        "curve_x": "Episode",
-        "curve_y": "Total Discounted Return Gₜ",
-        "curve_mean": "Rolling mean (5 ep)",
-        "theory_title": "📖 Theory — Chapter 01",
-        "theory_sections": {
-            "mdp": "§1.1 The MDP Framework",
-            "egreedy": "§1.1 ε-Greedy Policy",
-            "gt": "§1.1 Discounted Return Gₜ",
-            "ndarray": "§1.2.1 ndarray Q-Table",
-            "reward": "§1.1 Reward Design"
-        },
-        "theory_mdp": r"""
-**The MDP tuple (S, A, P, R, γ)** is the mathematical foundation of every RL system.
-
-- **S** — State space: technician positions, skills, availability; work order locations, urgency
-- **A** — Action space: assign technician i to work order j
-- **P(s'|s,a)** — Transition: next state depends *only* on current state + action (Markov property)
-- **R(s,a)** — Reward: +10 SLA met, −5 breach, −2 skill mismatch, −0.1×km distance
-- **γ** — Discount factor: how much future rewards are worth vs immediate ones
-
-**Markov property** (implemented in `transition()` in `ch01_asp_dispatch.rs`):
-$$P(s_{t+1} | s_t, a_t, s_{t-1}, \ldots) = P(s_{t+1} | s_t, a_t)$$
-
-The future depends only on *now* — not on history. This makes the problem tractable.
-""",
-        "theory_egreedy": r"""
-**ε-greedy** is the simplest exploration strategy — the one used in this chapter.
-
-$$a_t = \begin{cases} \text{random action} & \text{with probability } \varepsilon \\ \arg\max_a Q(s,a) & \text{with probability } 1-\varepsilon \end{cases}$$
-
-- High ε → agent explores (tries new dispatches, gathers information)
-- Low ε → agent exploits (uses best known dispatch from Q-table)
-- In Ch01 the Q-table is all zeros, so exploit = random too
-- In Ch02 the Q-table gets trained — then exploitation becomes meaningful
-
-Implemented in `epsilon_greedy()` in `ch01_asp_dispatch.rs`.
-""",
-        "theory_gt": r"""
-**Discounted return Gₜ** measures the total value of a decision, accounting for future consequences.
-
-$$G_t = \sum_{k=0}^{\infty} \gamma^k R_{t+k} = R_t + \gamma R_{t+1} + \gamma^2 R_{t+2} + \ldots$$
-
-- γ close to 1 → agent is *farsighted* (values future rewards almost as much as immediate)
-- γ close to 0 → agent is *myopic* (only cares about immediate reward)
-- The Glass-Box shows Gₜ for every step — computed backward from episode end
-
-Implemented in `discounted_return()` in `ch01_asp_dispatch.rs`.
-""",
-        "theory_ndarray": r"""
-**ndarray Q-table** — the data structure that stores learned action values.
-
-```rust
-let mut q_table = Array2::<f64>::zeros((n_tech, n_orders));
-```
-
-- Rows = technicians (states), Columns = work orders (actions)
-- Value Q(s,a) = expected cumulative reward for assigning tech s to order a
-- In Ch01: all zeros (untrained) — the agent has no prior knowledge
-- In Ch02: Q-values update via the Bellman equation after every step
-
-The `ndarray` crate (`Array2<f64>`) is the Rust equivalent of a NumPy 2D array.
-""",
-        "theory_reward": r"""
-**Reward design** directly shapes agent behaviour — poorly designed rewards lead to unintended strategies.
-
-Our reward function in `ch01_asp_dispatch.rs`:
-
-| Condition | Reward |
-|---|---|
-| SLA met | +10.0 |
-| SLA breach | −5.0 |
-| Skill mismatch | −2.0 |
-| Distance penalty | −0.1 × km |
-
-**SLA failure probability** is realistic (not always 100%):
-- Base failure rate: 8%
-- Skill mismatch adds: +35%
-- High urgency (>0.7) adds: +20%
-- Distance >15km adds: +18%
-- Distance >25km adds: +12%
-
-This produces realistic SLA rates of 77–93% depending on dispatch quality.
-""",
-        "summary_title": "📊 Episode Summary",
-        "summary_results": "Quantified Results",
-        "summary_pros_cons": "ε-Greedy Method — Pros & Cons",
-        "pros": "✅ Pros",
-        "cons": "❌ Cons",
-        "pros_list": [
-            "Simple to implement — one parameter ε controls everything",
-            "Guaranteed exploration — never gets permanently stuck",
-            "Works with zero prior knowledge (all-zero Q-table)",
-            "Computationally trivial — O(1) per decision",
-            "Good baseline to compare against smarter algorithms (Ch02–Ch09)",
-        ],
-        "cons_list": [
-            "Explores uniformly — wastes time on obviously bad actions",
-            "No memory — ignores what it learned in previous steps",
-            "Q-table is untrained in Ch01 — exploit = random (no real advantage yet)",
-            "Does not scale to large state spaces (Ch15 solves this with neural networks)",
-            "ε decay must be tuned manually — wrong decay = premature exploitation",
-        ],
-        "metric_gt": "Total Return Gₜ",
-        "metric_sla": "SLA Rate",
-        "metric_skill": "Skill Match Rate",
-        "metric_explore": "Exploration Rate",
-        "metric_sla_saved": "SLA Penalties Avoided",
-        "metric_dist": "Avg Dispatch Distance",
-        "metric_reward": "Avg Step Reward"
-    }
-}
-
 # ---------------------------------------------------------------------------
 # Main render function
 # ---------------------------------------------------------------------------
-
-def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
-    over = T.get(lang, {})
-    for k, v in over.items():
-        base[k] = v
-    return base
 
 def _render_handbook():
     _hcol1, _hcol2 = st.columns([8, 1])
@@ -616,11 +441,11 @@ function showTab(id){
     )
 
 def render():
-    lang = "EN"
+    
     # --- language selector (top of sidebar) ---
     # --- language selector (radio, sidebar — top) ---
 
-    tx = _tx(lang)
+    
 
     st.title(tx["title"])
     st.caption(tx["subtitle"])

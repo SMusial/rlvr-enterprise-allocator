@@ -5,151 +5,9 @@ import plotly.express as px
 # ---------------------------------------------------------------------------
 # Translations
 # ---------------------------------------------------------------------------
-T = {
-    "EN": {
-        "title": "Chapter 02 — Discrete MDP & Bellman Optimality",
-        "subtitle": "ASP Operational State Optimisation · Warsaw Region",
-        "engine_missing": "⚙️ Rust engine not found. Run: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ MDP Settings",
-        "gamma": "γ — Discount factor",
-        "theta": "θ — Convergence threshold",
-        "seed": "Random seed",
-        "run_btn": "▶ Run Value Iteration",
-        "guide_title": "🎓 How to use this chapter",
-        "guide": """
-**Step 1 — Set γ (discount factor)**
-γ controls how much the agent values future rewards. γ=0.99 = farsighted (plans ahead).
-γ=0.5 = myopic (only cares about immediate reward). Watch how γ affects convergence speed.
-
-**Step 2 — Set θ (convergence threshold)**
-θ is how small the change in V must be before we stop iterating.
-Smaller θ = more precise but more iterations. Try 1e-6 to start.
-
-**Step 3 — Click ▶ Run Value Iteration**
-The Rust engine builds the ASP transition matrix, reward matrix, and runs Bellman iterations.
-
-**Step 4 — Read the Value Function chart**
-Each bar = long-term value of being in that operational state.
-S0 (all available) should be highest. S7 (SLA breach imminent) should be lowest.
-
-**Step 5 — Read the Optimal Policy table**
-For each operational state, the table shows which dispatch strategy maximises long-term value.
-
-**Step 6 — Read the Convergence curve**
-Watch ‖V^(k+1) - V^(k)‖∞ decay to zero — this is the contraction mapping theorem in action.
-
-**Step 7 — Read the Glass-Box Bellman trace**
-See the exact Bellman update for each state in the first 3 iterations.
-""",
-        "value_title": "📊 Optimal Value Function V*(s)",
-        "value_caption": "Long-term expected reward of being in each operational state under optimal policy",
-        "policy_title": "🎯 Optimal Policy π*(s)",
-        "policy_caption": "Best dispatch strategy for each operational state",
-        "conv_title": "📈 Convergence — ‖V^(k+1) - V^(k)‖∞",
-        "conv_x": "Iteration",
-        "conv_y": "Max change in V",
-        "conv_caption": "Bellman contraction: each iteration reduces error by factor γ",
-        "heatmap_title": "🗺️ Transition Matrix P(s'|s, a=A1: Skill-matched)",
-        "heatmap_caption": "Probability of transitioning from state s (row) to state s' (column) under skill-matched dispatch",
-        "glass_title": "🔬 Glass-Box — Bellman Update Trace (first 3 iterations)",
-        "glass_headers": ["Iter", "State", "Best Action", "Q(s,A0)", "Q(s,A1)", "Q(s,A2)", "Q(s,A3)", "V_old", "V_new", "Δ"],
-        "summary_title": "📊 Episode Summary",
-        "summary_results": "Quantified Results",
-        "summary_pros_cons": "Discrete MDP + Value Iteration — Pros & Cons",
-        "pros": "✅ Pros",
-        "cons": "❌ Cons",
-        "pros_list": [
-            "Guaranteed convergence to optimal policy (contraction mapping theorem)",
-            "Exact solution — no approximation error for small state spaces",
-            "Interpretable: value function explains WHY each action is chosen",
-            "Linear algebra solution available for policy evaluation (nalgebra LU)",
-            "Foundation for all subsequent RL algorithms (Ch03–Ch20)",
-        ],
-        "cons_list": [
-            "Requires full transition model P(s'|s,a) — not always available",
-            "State space must be discrete and finite — doesn't scale to continuous spaces",
-            "Curse of dimensionality: O(|S|² × |A|) per iteration",
-            "Transition probabilities must be estimated or hand-crafted",
-            "Ch06 (TD Learning) solves the model-free version of this problem",
-        ],
-        "metric_iters": "Iterations to converge",
-        "metric_best_state": "Best operational state",
-        "metric_worst_state": "Worst operational state",
-        "metric_value_range": "Value range V*(s)",
-        "metric_contraction": "Contraction verified",
-        "theory_title": "📖 Theory — Chapter 02",
-        "theory_sections": {
-            "bellman": "§2.3 Bellman Optimality Equation",
-            "vi": "§2.3 Value Iteration Algorithm",
-            "contraction": "§2.3 Contraction Mapping Theorem",
-            "linear": "§2.2 Linear System Solution",
-            "policy": "§2.3 Policy Extraction"
-        },
-        "theory_bellman": r"""
-**Bellman Optimality Equation** defines the value of a state under the optimal policy:
-
-$$V^*(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-
-- The value of state s = best action × (immediate reward + discounted future value)
-- This is recursive — V*(s) depends on V*(s')
-- Value Iteration solves this by iterating until convergence
-
-Implemented in `value_iteration()` in `ch02_bellman.rs`.
-""",
-        "theory_vi": r"""
-**Value Iteration** repeatedly applies the Bellman operator until convergence:
-
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^{(k)}(s') \right]$$
-
-Starting from V⁽⁰⁾ = 0, each iteration brings V closer to V*.
-Stop when: $\|V^{(k+1)} - V^{(k)}\|_\infty < \theta$
-
-The Glass-Box shows the exact update for each state in the first 3 iterations.
-""",
-        "theory_contraction": r"""
-**Contraction Mapping Theorem** guarantees convergence:
-
-$$\|V^{(k+1)} - V^{(k)}\|_\infty \leq \gamma \|V^{(k)} - V^{(k-1)}\|_\infty$$
-
-The Bellman operator is a γ-contraction — each iteration reduces the error by factor γ.
-Since γ < 1, the sequence converges to a unique fixed point V*.
-
-Verified in `verify_contraction()` in `ch02_bellman.rs`.
-""",
-        "theory_linear": r"""
-**Exact solution via linear system** — for a fixed policy π:
-
-$$V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$$
-
-Where $P^\pi$ is the transition matrix under policy π and $r^\pi$ is the reward vector.
-Solved using **nalgebra LU decomposition** in `solve_exact()` in `ch02_bellman.rs`.
-
-This gives the exact value function without iteration — but only works for small state spaces.
-""",
-        "theory_policy": r"""
-**Policy Extraction** — greedy policy from V*:
-
-$$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-
-Once V* is known, the optimal action in each state is simply the one that maximises
-the right-hand side of the Bellman equation.
-
-Implemented in `extract_policy()` in `ch02_bellman.rs`.
-"""
-    }
-}
-
 # ---------------------------------------------------------------------------
 # Main render
 # ---------------------------------------------------------------------------
-
-def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
-    over = T.get(lang, {})
-    for k, v in over.items():
-        base[k] = v
-    return base
 
 def _render_handbook():
     _hcol1, _hcol2 = st.columns([8, 1])
@@ -570,8 +428,8 @@ function showTab(id){
     )
 
 def render():
-    lang = "EN"
-    tx = _tx(lang)
+    
+    
 
     st.title(tx["title"])
     st.caption(tx["subtitle"])

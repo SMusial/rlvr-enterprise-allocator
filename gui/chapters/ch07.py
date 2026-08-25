@@ -1,137 +1,6 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-T = {
-    "EN": {
-        "title": "Chapter 07 — n-Step TD & Planning with Dyna-Q",
-        "subtitle": "n-Step TD · n-Step SARSA · Dyna-Q · Dyna-Q+ · Warsaw ASP",
-        "engine_missing": "Run: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Settings",
-        "n_episodes": "Number of episodes",
-        "gamma": "γ — Discount factor",
-        "alpha": "α — Learning rate",
-        "epsilon": "ε — Initial exploration",
-        "epsilon_decay": "ε decay rate",
-        "n_step": "n — Step size (1=TD, large=MC)",
-        "planning_steps": "k — Planning steps (Dyna-Q)",
-        "kappa": "κ — Exploration bonus (Dyna-Q+)",
-        "seed": "Random seed",
-        "run_btn": "▶ Run All Four Algorithms",
-        "guide_title": "🎓 How to use this chapter",
-        "guide": """
-**Step 1 — Understand n-Step TD**
-n=1 → TD(0). n=∞ → Monte Carlo. n=3-5 → sweet spot.
-The n-step return: G^(n)_t = R_{t+1} + γR_{t+2} + ... + γ^(n-1)R_{t+n} + γ^n V(S_{t+n})
-
-**Step 2 — Understand Dyna-Q**
-Dyna-Q = Q-Learning + model learning + planning.
-After each real step: do k simulated steps using the learned model.
-More planning steps k → faster convergence, more computation per step.
-
-**Step 3 — Understand Dyna-Q+**
-Same as Dyna-Q but adds exploration bonus κ√τ(s,a) to rarely-tried transitions.
-τ(s,a) = steps since (s,a) was last tried. Prevents stagnation in changing environments.
-
-**Step 4 — Try n=1 vs n=5 vs n=10**
-Watch how larger n improves early learning but increases variance.
-
-**Step 5 — Try k=0 vs k=5 vs k=20 (planning steps)**
-k=0 → pure Q-Learning. k=20 → Dyna-Q learns much faster per episode.
-
-**Step 6 — Read the Model Size metric**
-How many (s,a) pairs has Dyna-Q learned? Should grow toward N_STATES × N_ACTIONS = 32.
-""",
-        "returns_title": "📈 Episode Returns — All Four Algorithms",
-        "returns_caption": "Moving average. Dyna-Q should converge fastest due to planning.",
-        "td_error_title": "📉 TD Error Curve",
-        "td_error_caption": "TD error decays as agent learns. Dyna-Q error drops fastest.",
-        "value_title": "📊 Value Function V(s)",
-        "value_caption": "All algorithms should converge to similar V*(s).",
-        "nstep_title": "📊 n-Step Return Comparison (n=1 vs n=3 vs n=10)",
-        "nstep_caption": "Larger n = more MC-like. Sweet spot typically n=3-5.",
-        "model_title": "🗺️ Dyna-Q Model Coverage",
-        "model_caption": "How many (s,a) pairs the model has learned. Max = 32.",
-        "qtable_title": "📊 Q-Table Heatmap",
-        "qtable_caption": "Q(s,a) values learned. Select algorithm.",
-        "glass_title": "🔬 Glass-Box — Planning Steps Trace",
-        "summary_title": "📊 Summary",
-        "summary_results": "Algorithm Comparison",
-        "summary_pros_cons": "Algorithms — Pros & Cons",
-        "pros": "✅ Pros", "cons": "❌ Cons",
-        "theory_title": "📖 Theory — Chapter 07",
-        "theory_sections": {
-            "nstep":    "§7.1 n-Step TD Returns",
-            "nsarsa":   "§7.2 n-Step SARSA",
-            "dynaq":    "§7.4 Dyna-Q",
-            "dynaqplus":"§7.5 Dyna-Q+"
-        },
-        "theory_nstep": r"""
-**n-Step TD** generalises TD(0) and MC:
-
-G^(n)_t = R_{t+1} + γR_{t+2} + ... + γ^(n-1)R_{t+n} + γ^n V(S_{t+n})
-
-V(S_t) <- V(S_t) + α [G^(n)_t - V(S_t)]
-
-- n=1: TD(0) — maximum bootstrapping, minimum variance
-- n=∞: Monte Carlo — no bootstrapping, maximum variance
-- n=3-5: sweet spot — low bias, manageable variance
-
-Implemented in `nstep_td_prediction()` in `ch07_nstep.rs`.
-""",
-        "theory_nsarsa": r"""
-**n-Step SARSA** extends SARSA to n steps:
-
-G^(n)_t = R_{t+1} + ... + γ^(n-1)R_{t+n} + γ^n Q(S_{t+n}, A_{t+n})
-
-Q(S_t,A_t) <- Q(S_t,A_t) + α [G^(n)_t - Q(S_t,A_t)]
-
-On-policy: A_{t+n} is chosen by the same epsilon-greedy policy.
-Implemented in `nstep_sarsa()` in `ch07_nstep.rs`.
-""",
-        "theory_dynaq": r"""
-**Dyna-Q** integrates learning and planning:
-
-For each real step:
-1. Q-Learning update: Q(s,a) += α[R + γ max_a' Q(s',a') - Q(s,a)]
-2. Model update: Model(s,a) = (R, s')
-3. Planning (k times): sample random (s,a) from model, do Q-Learning update
-
-With k=5 planning steps, Dyna-Q is ~5x more sample-efficient than Q-Learning.
-Implemented in `dyna_q()` in `ch07_nstep.rs`.
-""",
-        "theory_dynaqplus": r"""
-**Dyna-Q+** adds an exploration bonus to rarely-tried transitions:
-
-r' = r + κ√τ(s,a)
-
-where τ(s,a) = steps since (s,a) was last tried.
-
-This prevents the agent from ignoring transitions it hasn't tried recently.
-Critical in non-stationary environments where the model may become stale.
-κ controls the exploration bonus strength (default: 0.001).
-Implemented in `dyna_q_plus()` in `ch07_nstep.rs`.
-""",
-        "algo_labels": {
-            "nstep_td":    "n-Step TD",
-            "nstep_sarsa": "n-Step SARSA",
-            "dyna_q":      "Dyna-Q",
-            "dyna_q_plus": "Dyna-Q+"
-        },
-        "pros_list": {
-            "nstep_td":    ["Bridges TD and MC", "Tunable bias-variance via n", "No model needed"],
-            "nstep_sarsa": ["On-policy, safe", "n-step reduces variance vs TD(0)", "No model needed"],
-            "dyna_q":      ["Sample efficient — k planning steps", "Learns model of environment", "Converges faster than Q-Learning"],
-            "dyna_q_plus": ["Handles non-stationary environments", "Exploration bonus prevents stagnation", "Best of Dyna-Q + exploration"]
-        },
-        "cons_list": {
-            "nstep_td":    ["Must wait n steps before update", "Higher memory (stores n transitions)", "n must be tuned"],
-            "nstep_sarsa": ["On-policy — needs epsilon > 0", "n must be tuned", "Slower than Dyna-Q"],
-            "dyna_q":      ["Model may be wrong (stale)", "k planning steps add computation", "Assumes stationary environment"],
-            "dyna_q_plus": ["κ must be tuned", "More complex than Dyna-Q", "Bonus can cause over-exploration"]
-        }
-    }
-}
-
 COLORS = {
     "nstep_td":    "#0082F0",
     "nstep_sarsa": "#FF8C0A",
@@ -147,17 +16,9 @@ def _moving_avg(data, window=20):
     return result
 
 
-def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
-    over = T.get(lang, {})
-    for k, v in over.items():
-        base[k] = v
-    return base
-
 def render():
-    lang = "EN"
-    tx = _tx(lang)
+    
+    
     st.title(tx["title"])
     st.caption(tx["subtitle"])
     try:

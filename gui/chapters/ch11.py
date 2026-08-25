@@ -1,85 +1,6 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-T = {
-    "EN": {
-        "title":    "Chapter 11 - Multi-Agent RL",
-        "subtitle": "IQL - JAL - Lenient Q - Mean Field Q - 2 Dispatchers - Warsaw ASP",
-        "engine_missing": "Run: `cd rlvr-py && maturin develop`",
-        "sidebar_title":  "Settings",
-        "n_episodes":     "Episodes",
-        "gamma":          "Gamma - Discount",
-        "alpha":          "Alpha - Learning rate",
-        "epsilon":        "Epsilon - Exploration",
-        "epsilon_decay":  "Epsilon decay",
-        "leniency_mu":    "Mu - Leniency (0=IQL, 1=full lenient)",
-        "mf_beta":        "Beta - Mean Field influence",
-        "seed":           "Seed",
-        "run_btn":        "Run All Four Algorithms",
-        "guide_title":    "How to use this chapter",
-        "guide": (
-            "Scenario: 2 dispatchers share the Warsaw ASP 8-state MDP.\n"
-            "Each dispatcher acts independently but their rewards interact.\n\n"
-            "Step 1 - IQL (Independent Q-Learning)\n"
-            "Each agent runs standard Q-Learning, ignoring the other.\n"
-            "Baseline: simplest MARL approach.\n\n"
-            "Step 2 - JAL (Joint Action Learning)\n"
-            "Each agent models the other's action frequency.\n"
-            "Q update uses expected value over estimated partner policy.\n\n"
-            "Step 3 - Lenient Q-Learning\n"
-            "Negative TD errors ignored with probability mu.\n"
-            "Prevents penalising good actions due to partner's mistakes.\n\n"
-            "Step 4 - Mean Field Q-Learning\n"
-            "Approximate joint action by mean action of neighbours.\n"
-            "Scales to many agents - foundation for large MARL.\n\n"
-            "Watch the Cooperation chart: fraction of steps both agents\n"
-            "chose the same action. Higher = more coordinated behaviour."
-        ),
-        "returns_title":     "Joint Episode Returns",
-        "returns_caption":   "MA-30. Mean return across both agents.",
-        "cooperation_title": "Cooperation Rate",
-        "cooperation_caption": "Fraction of steps both agents chose same action. Higher = more coordinated.",
-        "value_title":       "Joint Value Function V(s)",
-        "value_caption":     "Mean V(s) across both agents. S7 (SLA breach) should be lowest.",
-        "qtable_title":      "Q-Table Heatmap",
-        "qtable_caption":    "Q(s,a) for selected algorithm and agent.",
-        "glass_title":       "Glass-Box - MARL Mechanics",
-        "summary_title":     "Summary",
-        "summary_results":   "Algorithm Comparison",
-        "summary_pros_cons": "Algorithms - Pros and Cons",
-        "pros": "Pros", "cons": "Cons",
-        "theory_title":      "Theory - Chapter 11",
-        "theory_sections": {
-            "iql":  "11.1 Independent Q-Learning",
-            "jal":  "11.2 Joint Action Learning",
-            "lq":   "11.3 Lenient Q-Learning",
-            "mf":   "11.4 Mean Field Q-Learning"
-        },
-        "theory_iql":  "Each agent i runs Q-Learning independently:\nQ_i(s,a) += alpha * [r + gamma * max Q_i(s') - Q_i(s,a)]\nOther agents treated as part of environment.",
-        "theory_jal":  "Agent i models partner j's policy pi_j(a|s) from action frequencies.\nQ update uses expected value: E_{a_j ~ pi_j}[max Q_i(s')].",
-        "theory_lq":   "delta < 0: apply with probability (1 - mu)\ndelta >= 0: always apply\nmu=0 -> IQL. mu=1 -> never penalise.",
-        "theory_mf":   "mean_a_j(s) = running mean of partner's actions in state s\nQ_i(s,a) += alpha * [r + beta*mean_a_j/N_A + gamma*max Q_i(s') - Q_i(s,a)]",
-        "algo_labels": {
-            "iql":       "IQL",
-            "jal":       "JAL",
-            "lenient":   "Lenient Q",
-            "meanfield": "Mean Field Q"
-        },
-        "pros_list": {
-            "iql":       ["Simplest MARL", "No communication needed", "Scales to N agents"],
-            "jal":       ["Models partner policy", "Better coordination", "Principled joint value"],
-            "lenient":   ["Robust to partner mistakes", "Avoids miscoordination", "Tunable via mu"],
-            "meanfield": ["Scales to large N", "Principled mean-field theory", "Low communication"]
-        },
-        "cons_list": {
-            "iql":       ["Non-stationary environment", "No coordination", "May not converge"],
-            "jal":       ["Requires observing partner actions", "O(|A|^N) joint space", "Slow model update"],
-            "lenient":   ["mu must be tuned", "May ignore valid penalties", "Slower convergence"],
-            "meanfield": ["Mean approximation loses info", "Beta must be tuned", "Assumes homogeneous agents"]
-        }
-    }
-}
-
 COLORS = {
     "iql":       "#8B5CF6",
     "jal":       "#0082F0",
@@ -96,17 +17,9 @@ def _ma(data, w=30):
     return r
 
 
-def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
-    over = T.get(lang, {})
-    for k, v in over.items():
-        base[k] = v
-    return base
-
 def render():
-    lang = "EN"
-    tx   = _tx(lang)
+    
+    
     st.title(tx["title"])
     st.caption(tx["subtitle"])
     try:

@@ -1,87 +1,6 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-T = {
-    "EN": {
-        "title":    "Chapter 10 - Model-Based RL: World Models",
-        "subtitle": "WM Q-Learning - Prioritised Sweeping - MBPO - Uncertainty Bonus - Warsaw ASP",
-        "engine_missing": "Run: `cd rlvr-py && maturin develop`",
-        "sidebar_title":  "Settings",
-        "n_episodes":     "Episodes",
-        "gamma":          "Gamma - Discount",
-        "alpha":          "Alpha - Learning rate",
-        "epsilon":        "Epsilon - Exploration",
-        "epsilon_decay":  "Epsilon decay",
-        "planning_steps": "k - Planning steps per real step",
-        "priority_threshold": "Priority threshold (Prioritised Sweeping)",
-        "uncertainty_beta":   "Beta - Uncertainty bonus weight",
-        "seed":           "Seed",
-        "run_btn":        "Run All Four Algorithms",
-        "guide_title":    "How to use this chapter",
-        "guide": (
-            "Step 1 - World Model\n"
-            "The agent learns T(s,a,s') and R(s,a) from real experience.\n"
-            "Planning uses the learned model instead of the real environment.\n\n"
-            "Step 2 - WM Q-Learning vs Dyna-Q (Ch07)\n"
-            "Same idea as Dyna-Q but with an explicit tabular world model object.\n"
-            "Model accuracy chart shows how well T(s,a,s') is learned.\n\n"
-            "Step 3 - Prioritised Sweeping\n"
-            "Plan from states with highest |delta| first.\n"
-            "Propagates value updates to predecessors - faster convergence.\n\n"
-            "Step 4 - MBPO (Model-Based Policy Gradient)\n"
-            "Use learned model to generate synthetic rollouts for REINFORCE.\n"
-            "Combines model-based efficiency with policy gradient flexibility.\n\n"
-            "Step 5 - Uncertainty Bonus\n"
-            "UCB-style: Q_bonus(s,a) = Q(s,a) + beta/sqrt(N(s,a)+1).\n"
-            "Encourages exploration of rarely-visited state-action pairs."
-        ),
-        "returns_title":    "Episode Returns - All Four Algorithms",
-        "returns_caption":  "MA-30. Prioritised Sweeping should converge fastest.",
-        "accuracy_title":   "Model Accuracy",
-        "accuracy_caption": "Fraction of (s,a) where learned T matches true T. Increases with experience.",
-        "planning_title":   "Planning Steps Used per Episode",
-        "planning_caption": "Actual planning steps executed. Prioritised Sweeping may use fewer.",
-        "value_title":      "Value Function V(s)",
-        "value_caption":    "S7 (SLA breach) should be lowest across all algorithms.",
-        "qtable_title":     "Q-Table Heatmap",
-        "qtable_caption":   "Q(s,a) values. Select algorithm.",
-        "glass_title":      "Glass-Box - World Model Mechanics",
-        "summary_title":    "Summary",
-        "summary_results":  "Algorithm Comparison",
-        "summary_pros_cons":"Algorithms - Pros and Cons",
-        "pros": "Pros", "cons": "Cons",
-        "theory_title":     "Theory - Chapter 10",
-        "theory_sections": {
-            "wm":   "10.1 World Models",
-            "ps":   "10.2 Prioritised Sweeping",
-            "mbpo": "10.3 Model-Based Policy Gradient",
-            "ub":   "10.4 Uncertainty Bonus"
-        },
-        "theory_wm":   "T(s,a,s') = P(s'|s,a) learned from counts.\nR(s,a) = mean observed reward.\nPlanning: k Q-Learning steps on model samples.",
-        "theory_ps":   "Priority(s,a) = |R(s,a) + gamma*max Q(s') - Q(s,a)|\nPlan from highest priority first.\nPropagate to predecessors after each update.",
-        "theory_mbpo": "Real step: collect (s,a,r,s'), update model.\nSynthetic rollout: generate trajectory from model.\nREINFORCE update on synthetic trajectory.",
-        "theory_ub":   "Q_bonus(s,a) = Q(s,a) + beta / sqrt(N(s,a) + 1)\nAction selection uses Q_bonus.\nQ update uses standard Q-Learning (no bonus).",
-        "algo_labels": {
-            "wm_qlearning": "WM Q-Learning",
-            "pri_sweeping": "Prioritised Sweeping",
-            "mbpo":         "MBPO (PG)",
-            "uncertainty":  "Uncertainty Bonus"
-        },
-        "pros_list": {
-            "wm_qlearning": ["Simple extension of Dyna-Q", "Explicit model reuse", "k planning steps tunable"],
-            "pri_sweeping": ["Fastest convergence", "Efficient planning budget", "Propagates value to predecessors"],
-            "mbpo":         ["Policy gradient flexibility", "No Q-table needed", "Combines model + PG"],
-            "uncertainty":  ["Principled exploration", "No epsilon needed", "Adapts to visit counts"]
-        },
-        "cons_list": {
-            "wm_qlearning": ["Random planning - inefficient", "Model errors compound", "Same as Dyna-Q"],
-            "pri_sweeping": ["Priority queue overhead", "Predecessor search O(|S||A|)", "Sensitive to threshold"],
-            "mbpo":         ["Model errors in rollouts", "Two learning rates", "High variance PG"],
-            "uncertainty":  ["Beta must be tuned", "Bonus fades with visits", "May over-explore"]
-        }
-    }
-}
-
 COLORS = {
     "wm_qlearning": "#8B5CF6",
     "pri_sweeping": "#0082F0",
@@ -98,17 +17,9 @@ def _ma(data, w=30):
     return r
 
 
-def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
-    over = T.get(lang, {})
-    for k, v in over.items():
-        base[k] = v
-    return base
-
 def render():
-    lang = "EN"
-    tx   = _tx(lang)
+    
+    
     st.title(tx["title"])
     st.caption(tx["subtitle"])
     try:
