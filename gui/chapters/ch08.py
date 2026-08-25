@@ -149,7 +149,6 @@ def render():
     lam   = st.sidebar.slider(tx["lambda_"],       0.0, 1.0, 0.7, 0.05)
     repl  = st.sidebar.checkbox(tx["replacing"], value=True)
     seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-    with st.expander(tx["guide_title"], expanded=False): st.markdown(tx["guide"])
     if st.button(tx["run_btn"], type="primary"):
         with st.spinner("Running..."):
             res = rlvr_py.run_ch08_eligibility(int(seed), int(n_ep), float(gamma), float(alpha), float(eps), float(edec), float(lam), bool(repl))

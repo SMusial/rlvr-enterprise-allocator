@@ -138,7 +138,6 @@ def render():
     ab    = st.sidebar.slider(tx["alpha_baseline"],0.01, 0.5, 0.1, 0.01)
     tau   = st.sidebar.slider(tx["temperature"],   0.1, 3.0, 1.0, 0.1)
     seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-    with st.expander(tx["guide_title"], expanded=False): st.markdown(tx["guide"])
     if st.button(tx["run_btn"], type="primary"):
         with st.spinner("Running..."):
             res = rlvr_py.run_ch09_policy_gradient(int(seed), int(n_ep), float(gamma), float(alpha), float(ab), float(tau))

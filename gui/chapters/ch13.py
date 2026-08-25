@@ -134,7 +134,6 @@ def render():
     mh    = st.sidebar.slider(tx["mhidden"],   4, 32, 8, 4)
     seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
-    with st.expander("Guide", expanded=False): st.markdown(tx["guide"])
 
     if st.button(tx["run"], type="primary"):
         with st.spinner("Running Rust cooperative MARL engine..."):
