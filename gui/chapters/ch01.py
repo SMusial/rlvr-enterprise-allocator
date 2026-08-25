@@ -855,7 +855,7 @@ function showTab(id){
 def _render_handbook_pl():
     _plcol1, _plcol2 = st.columns([8, 1])
     with _plcol1:
-        st.subheader("Hands-On Guide — Rozdział 01 (PL)")
+        st.subheader("Hands-On Guide — Chapter 01 (PL)")
     with _plcol2:
         import re as _re2
         _src2 = open(__file__, encoding="utf-8").read()
