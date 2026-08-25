@@ -1,6 +1,14 @@
 import streamlit as st
 import plotly.graph_objects as go
 
+T = {
+    "EN": {
+        "title": "",
+        "subtitle": "",
+    }
+}
+
+
 TX = {
     "EN": {
         "title": "Chapter 12 - Game Theory and Nash Equilibrium",

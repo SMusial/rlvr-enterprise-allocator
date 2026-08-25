@@ -2,6 +2,14 @@
 import streamlit as st
 import plotly.graph_objects as go
 
+T = {
+    "EN": {
+        "title": "",
+        "subtitle": "",
+    }
+}
+
+
 COLORS = {"iql":"#8B5CF6","vdn":"#0082F0","qmix":"#0FC373","qmix_cg":"#FF8C0A"}
 ALGOS  = ["iql","vdn","qmix","qmix_cg"]
 
