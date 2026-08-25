@@ -144,7 +144,7 @@ def render():
             res = rlvr_py.run_ch09_policy_gradient(int(seed), int(n_ep), float(gamma), float(alpha), float(ab), float(tau))
         st.session_state["ch09_result"] = res
     if "ch09_result" not in st.session_state:
-        st.info("Click ▶ to run."); _theory(tx); return
+        st.info("Click ▶ to run."); return
     res = st.session_state["ch09_result"]
     short = [f"S{i}" for i in range(res["n_states"])]
     cols = st.columns(4)

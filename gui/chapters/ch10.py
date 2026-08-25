@@ -290,7 +290,7 @@ def render():
         st.session_state["ch10_result"] = res
 
     if "ch10_result" not in st.session_state:
-        st.info("Configure settings and click Run."); _theory(tx); return
+        st.info("Configure settings and click Run."); return
 
     res   = st.session_state["ch10_result"]
     short = [f"S{i}" for i in range(res["n_states"])]

@@ -155,7 +155,7 @@ def render():
             res = rlvr_py.run_ch08_eligibility(int(seed), int(n_ep), float(gamma), float(alpha), float(eps), float(edec), float(lam), bool(repl))
         st.session_state["ch08_result"] = res
     if "ch08_result" not in st.session_state:
-        st.info("Click ▶ to run."); _theory(tx); return
+        st.info("Click ▶ to run."); return
     res = st.session_state["ch08_result"]
     short = [f"S{i}" for i in range(res["n_states"])]
     cols = st.columns(4)
