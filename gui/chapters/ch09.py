@@ -10,8 +10,6 @@ T = {
         "n_episodes": "Episodes", "gamma": "γ Discount", "alpha": "α Policy LR",
         "alpha_baseline": "α_v Baseline LR", "temperature": "τ Temperature", "seed": "Seed",
         "run_btn": "▶ Run All Four Algorithms",
-        "guide_title": "📖 Guide",
-        "guide": ("**Step 1 - Policy Gradient vs Q-learning**\n""REINFORCE directly optimises pi(a|s)=softmax(theta[s][a]). No Q-table.\n""Gradient ascent on expected return J(theta).\n\n""**Step 2 - REINFORCE vs Actor-Critic**\n""REINFORCE: Monte Carlo - waits for full episode. Unbiased, high variance.\n""Actor-Critic: TD(0) critic - online per step. Lower variance, biased.\n\n""**Step 3 - Baseline**\n""Subtracting b(s) from G_t reduces variance without bias.\n""Watch REINFORCE+Baseline curve stabilise faster.\n\n""**Step 4 - Temperature tau**\n""tau=1.0 standard. tau<1 sharper policy. tau>1 more uniform.\n\n""**Step 5 - Entropy chart**\n""High entropy = exploring. Low entropy = exploiting.\n""Healthy: entropy decreases gradually."),
         "returns_title": "📈 Episode Returns", "returns_caption": "MA-30. REINFORCE+Baseline most stable.",
         "pg_loss_title": "📉 PG Magnitude", "pg_loss_caption": "Mean |Δθ| per episode.",
         "entropy_title": "🌡️ Policy Entropy", "entropy_caption": "H(π(·|s)). Decreases as policy sharpens.",
@@ -20,12 +18,8 @@ T = {
         "glass_title": "🔬 Glass-Box",
         "summary_title": "📊 Summary", "summary_results": "Comparison",
         "summary_pros_cons": "Pros & Cons", "pros": "✅ Pros", "cons": "❌ Cons",
-        "theory_title": "📚 Theory",
-        "theory_sections": {"pg": "9.1 Policy Gradient Theorem", "reinf": "9.2 REINFORCE", "baseline": "9.3 Baseline", "ac": "9.4 Actor-Critic"},
-        "theory_pg": "∇J(θ) ∝ Σ_s μ(s) Σ_a Q^π(s,a) ∇π(a|s,θ)\n∇log π(a|s) = (𝟙[a=A_t]−π(a|s))/τ",
         "theory_reinf": "G_t = Σ γ^{k-t} R_{k+1}\nθ ← θ + α γ^t G_t ∇log π(A_t|S_t,θ)",
         "theory_baseline": "θ ← θ + α γ^t (G_t−b(S_t)) ∇log π\nb(s) does not introduce bias.",
-        "theory_ac": "δ_t = R+γV(S')−V(S)\nV(S) ← V(S)+α_v δ_t\nθ ← θ+α γ^t δ_t ∇log π",
         "algo_labels": {"reinforce": "REINFORCE", "reinforce_baseline": "REINFORCE+Baseline", "softmax_td0": "Actor-Critic (TD0)", "reinforce_temp": "REINFORCE τ=0.5"},
         "pros_list": {"reinforce": ["Unbiased","Simple","No critic"], "reinforce_baseline": ["Lower variance","Still unbiased","Recommended"], "softmax_td0": ["Online updates","Lower variance than MC","Foundation A2C/PPO"], "reinforce_temp": ["Sharper policy","Less exploration needed","Good deterministic envs"]},
         "cons_list": {"reinforce": ["High variance","Slow","Full episode needed"], "reinforce_baseline": ["Needs α_v","Slightly complex","Still MC"], "softmax_td0": ["Biased (TD)","Two LRs to tune","Can be unstable"], "reinforce_temp": ["Less exploration","Sensitive to τ","May miss global opt"]},
@@ -38,8 +32,6 @@ T = {
         "n_episodes": "Epizody", "gamma": "γ Dyskonto", "alpha": "α Uczenie polityki",
         "alpha_baseline": "α_v Uczenie baseline", "temperature": "τ Temperatura", "seed": "Ziarno",
         "run_btn": "▶ Uruchom wszystkie cztery algorytmy",
-        "guide_title": "📖 Przewodnik",
-        "guide": "REINFORCE optymalizuje π(a|s)=softmax(θ) bezpośrednio. Baseline redukuje wariancję. Actor-Critic używa krytyka TD(0).",
         "returns_title": "📈 Zwroty epizodów", "returns_caption": "MA-30. REINFORCE+Baseline najbardziej stabilny.",
         "pg_loss_title": "📉 Wielkość gradientu", "pg_loss_caption": "",
         "entropy_title": "🌡️ Entropia polityki", "entropy_caption": "",
@@ -48,12 +40,8 @@ T = {
         "glass_title": "🔬 Glass-Box",
         "summary_title": "📊 Podsumowanie", "summary_results": "Porównanie",
         "summary_pros_cons": "Zalety i Wady", "pros": "✅ Zalety", "cons": "❌ Wady",
-        "theory_title": "📚 Teoria",
-        "theory_sections": {"pg": "9.1 Twierdzenie o gradiencie", "reinf": "9.2 REINFORCE", "baseline": "9.3 Baseline", "ac": "9.4 Actor-Critic"},
-        "theory_pg": "∇J(θ) ∝ Σ_s μ(s) Σ_a Q^π(s,a) ∇π(a|s,θ)",
         "theory_reinf": "θ ← θ + α γ^t G_t ∇log π(A_t|S_t,θ)",
         "theory_baseline": "θ ← θ + α γ^t (G_t−b(S_t)) ∇log π",
-        "theory_ac": "δ_t=R+γV(S')−V(S); θ←θ+α γ^t δ_t ∇log π",
         "algo_labels": {"reinforce": "REINFORCE", "reinforce_baseline": "REINFORCE+Baseline", "softmax_td0": "Actor-Critic (TD0)", "reinforce_temp": "REINFORCE τ=0.5"},
         "pros_list": {"reinforce": ["Nieobciążony","Prosty","Brak krytyka"], "reinforce_baseline": ["Niższa wariancja","Nadal nieobciążony","Zalecany"], "softmax_td0": ["Online","Niższa wariancja","Podstawa A2C/PPO"], "reinforce_temp": ["Ostrzejsza polityka","Mniej eksploracji","Dobre dla deterministycznych"]},
         "cons_list": {"reinforce": ["Wysoka wariancja","Wolny","Wymaga epizodu"], "reinforce_baseline": ["Wymaga α_v","Nieco złożony","Nadal MC"], "softmax_td0": ["Obciążony","Dwa LR","Może być niestabilny"], "reinforce_temp": ["Mniej eksploracji","Wrażliwy na τ","Może pominąć optimum"]},
@@ -67,8 +55,6 @@ T = {
         "alpha_critic": "Alpha (Kritiker)", "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
         "seed": "Zufallsseed",
         "run_btn": "▶ Alle Algorithmen starten",
-        "guide_title": "Anleitung",
-        "guide": "Policy-Gradient-Methoden optimieren die Strategie direkt. REINFORCE verwendet G_t als Signal.",
         "returns_title": "Episodenrückgaben",
         "returns_caption": "Gleitender Durchschnitt.",
         "value_title": "Wertfunktion V(s)",
@@ -77,8 +63,6 @@ T = {
         "summary_title": "Zusammenfassung", "summary_results": "Vergleich",
         "summary_pros_cons": "Vor- & Nachteile",
         "pros": "Vorteile", "cons": "Nachteile",
-        "theory_title": "Theorie — Kapitel 09",
-        "theory_sections": {"pg": "9.1 Policy-Gradient-Theorem", "reinforce": "9.2 REINFORCE", "baseline": "9.3 Baseline", "ac": "9.4 Actor-Critic"},
         "algo_labels": {"reinforce": "REINFORCE", "reinforce_baseline": "REINFORCE+Baseline", "actor_critic": "Actor-Critic"},
         "pros_list": {
             "reinforce": ["Direkte Strategieoptimierung", "Funktioniert mit stochastischen Strategien"],
@@ -90,24 +74,19 @@ T = {
             "reinforce_baseline": ["Baseline muss gelernt werden"],
             "actor_critic": ["Zwei Lernraten", "Empfindlich gegenüber Hyperparametern"],
         },
-        "theory_pg": "nabla J(theta) = E_pi[nabla log pi(a|s,theta) G_t]",
         "theory_reinforce": "theta <- theta + alpha*gamma^t*G_t*nabla log pi(A_t|S_t,theta)",
         "theory_baseline": "theta <- theta + alpha*gamma^t*(G_t-b(S_t))*nabla log pi",
-        "theory_ac": "delta_t = R+gamma*V(S')-V(S); theta <- theta+alpha*delta_t*nabla log pi",
     },
     "FR": {
         "title": "Chapitre 09 — Gradient de Politique", "subtitle": "REINFORCE · Actor-Critic · ASP Varsovie",
         "engine_missing": "Exécutez: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Paramètres",
         "n_episodes": "Épisodes", "gamma": "γ", "alpha": "α politique", "alpha_baseline": "α_v baseline",
         "temperature": "τ", "seed": "Graine", "run_btn": "▶ Lancer",
-        "guide_title": "📖 Guide", "guide": "REINFORCE optimise π directement. Baseline réduit variance. Actor-Critic utilise TD(0).",
         "returns_title": "📈 Retours", "returns_caption": "", "pg_loss_title": "📉 Gradient", "pg_loss_caption": "",
         "entropy_title": "🌡️ Entropie", "entropy_caption": "", "value_title": "🏛️ V(s)", "value_caption": "",
         "theta_title": "🗺️ θ[s][a]", "theta_caption": "", "glass_title": "🔬 Glass-Box",
         "summary_title": "📊 Résumé", "summary_results": "Comparaison", "summary_pros_cons": "Avantages & Inconvénients",
         "pros": "✅ Pros", "cons": "❌ Cons", "theory_title": "📚 Théorie",
-        "theory_sections": {"pg": "9.1 Théorème PG", "reinf": "9.2 REINFORCE", "baseline": "9.3 Baseline", "ac": "9.4 Actor-Critic"},
-        "theory_pg": "∇J(θ)∝Σμ(s)ΣQ∇π", "theory_reinf": "θ←θ+αγ^t G_t ∇log π",
         "theory_baseline": "θ←θ+αγ^t(G_t−b)∇log π", "theory_ac": "δ=R+γV'−V; θ←θ+αδ∇log π",
         "algo_labels": {"reinforce": "REINFORCE", "reinforce_baseline": "REINFORCE+Baseline", "softmax_td0": "Actor-Critic", "reinforce_temp": "τ=0.5"},
         "pros_list": {"reinforce": ["Non biaisé"], "reinforce_baseline": ["Variance réduite"], "softmax_td0": ["En ligne"], "reinforce_temp": ["Politique nette"]},
@@ -118,14 +97,11 @@ T = {
         "engine_missing": "Ejecute: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Configuración",
         "n_episodes": "Episodios", "gamma": "γ", "alpha": "α política", "alpha_baseline": "α_v baseline",
         "temperature": "τ", "seed": "Semilla", "run_btn": "▶ Ejecutar",
-        "guide_title": "📖 Guía", "guide": "REINFORCE optimiza π directamente. Baseline reduce varianza. Actor-Critic usa TD(0).",
         "returns_title": "📈 Retornos", "returns_caption": "", "pg_loss_title": "📉 Gradiente", "pg_loss_caption": "",
         "entropy_title": "🌡️ Entropía", "entropy_caption": "", "value_title": "🏛️ V(s)", "value_caption": "",
         "theta_title": "🗺️ θ[s][a]", "theta_caption": "", "glass_title": "🔬 Glass-Box",
         "summary_title": "📊 Resumen", "summary_results": "Comparación", "summary_pros_cons": "Pros y Contras",
         "pros": "✅ Pros", "cons": "❌ Cons", "theory_title": "📚 Teoría",
-        "theory_sections": {"pg": "9.1 Teorema PG", "reinf": "9.2 REINFORCE", "baseline": "9.3 Baseline", "ac": "9.4 Actor-Critic"},
-        "theory_pg": "∇J(θ)∝Σμ(s)ΣQ∇π", "theory_reinf": "θ←θ+αγ^t G_t ∇log π",
         "theory_baseline": "θ←θ+αγ^t(G_t−b)∇log π", "theory_ac": "δ=R+γV'−V; θ←θ+αδ∇log π",
         "algo_labels": {"reinforce": "REINFORCE", "reinforce_baseline": "REINFORCE+Baseline", "softmax_td0": "Actor-Critic", "reinforce_temp": "τ=0.5"},
         "pros_list": {"reinforce": ["No sesgado"], "reinforce_baseline": ["Varianza reducida"], "softmax_td0": ["En línea"], "reinforce_temp": ["Política nítida"]},
@@ -207,7 +183,6 @@ def render():
     f5.update_layout(height=280, margin=dict(l=60,r=20,t=20,b=40)); st.plotly_chart(f5, width='stretch')
     st.subheader(tx["glass_title"]); _glass(res, tx)
     st.subheader(tx["summary_title"]); _summary(res, tx)
-    _theory(tx)
 
 def _glass(res, tx):
     opts = {tx["algo_labels"][k]: k for k in ALGOS}
@@ -239,8 +214,3 @@ def _summary(res, tx):
         with c1: st.markdown(f"**{label} — {tx['pros']}**"); [st.markdown(f"- {p}") for p in tx["pros_list"][k]]
         with c2: st.markdown(f"**{label} — {tx['cons']}**"); [st.markdown(f"- {c}") for c in tx["cons_list"][k]]
         st.markdown("---")
-
-def _theory(tx):
-    st.markdown("---"); st.subheader(tx["theory_title"])
-    for k in ["pg","reinf","baseline","ac"]:
-        with st.expander(tx["theory_sections"][k], expanded=False): st.markdown(tx[f"theory_{k}"])

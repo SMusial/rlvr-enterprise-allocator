@@ -21,33 +21,6 @@ T = {
         "seed": "Random seed",
         "n_episodes": "Episodes (learning curve)",
         "run_btn": "▶ Run Episode",
-        "guide_title": "🎓 How to use this chapter",
-        "guide": """
-**Step 1 — Set ε (exploration rate)**
-Move the slider. ε=1.0 means the agent picks randomly every time (pure exploration).
-ε=0.0 means it always picks the best known action (pure exploitation — but since the
-Q-table is all zeros in Ch01, this is also random). Try ε=0.5 to start.
-
-**Step 2 — Set technicians and work orders**
-5 technicians / 10 work orders is a good starting point. More orders = longer episode.
-
-**Step 3 — Click ▶ Run Episode**
-The Rust engine runs the full MDP loop and returns every step.
-
-**Step 4 — Read the Warsaw map**
-Blue markers = technicians (T0–T4). Coloured markers = work orders (W0–W9).
-Green lines = SLA met. Red lines = SLA breached. Click any marker for details.
-
-**Step 5 — Use the Step slider**
-Move it to highlight a specific dispatch decision on the map and in the Glass-Box.
-
-**Step 6 — Read the Glass-Box**
-Every row shows the full MDP tuple: Sₜ (state), Aₜ (action), Rₜ (reward), Gₜ (return).
-The Bellman equation is shown greyed out — it activates in Chapter 02.
-
-**Step 7 — Read the Episode Summary**
-Quantified business results + pros/cons of the ε-greedy method used in this chapter.
-""",
         "map_title": "📍 Warsaw Dispatch Map",
         "map_caption": "Blue = Technicians · Amber/Red = Work Orders · Green = SLA met · Red = SLA breach",
         "step_slider": "🔍 Highlight step",
@@ -64,28 +37,6 @@ Quantified business results + pros/cons of the ε-greedy method used in this cha
         "curve_x": "Episode",
         "curve_y": "Total Discounted Return Gₜ",
         "curve_mean": "Rolling mean (5 ep)",
-        "theory_title": "📖 Theory — Chapter 01",
-        "theory_sections": {
-            "mdp": "§1.1 The MDP Framework",
-            "egreedy": "§1.1 ε-Greedy Policy",
-            "gt": "§1.1 Discounted Return Gₜ",
-            "ndarray": "§1.2.1 ndarray Q-Table",
-            "reward": "§1.1 Reward Design",
-        },
-        "theory_mdp": r"""
-**The MDP tuple (S, A, P, R, γ)** is the mathematical foundation of every RL system.
-
-- **S** — State space: technician positions, skills, availability; work order locations, urgency
-- **A** — Action space: assign technician i to work order j
-- **P(s'|s,a)** — Transition: next state depends *only* on current state + action (Markov property)
-- **R(s,a)** — Reward: +10 SLA met, −5 breach, −2 skill mismatch, −0.1×km distance
-- **γ** — Discount factor: how much future rewards are worth vs immediate ones
-
-**Markov property** (implemented in `transition()` in `ch01_asp_dispatch.rs`):
-$$P(s_{t+1} | s_t, a_t, s_{t-1}, \ldots) = P(s_{t+1} | s_t, a_t)$$
-
-The future depends only on *now* — not on history. This makes the problem tractable.
-""",
         "theory_egreedy": r"""
 **ε-greedy** is the simplest exploration strategy — the one used in this chapter.
 
@@ -185,32 +136,6 @@ This produces realistic SLA rates of 77–93% depending on dispatch quality.
         "seed": "Ziarno losowości",
         "n_episodes": "Epizody (krzywa uczenia)",
         "run_btn": "▶ Uruchom epizod",
-        "guide_title": "🎓 Jak korzystać z tego rozdziału",
-        "guide": """
-**Krok 1 — Ustaw ε (współczynnik eksploracji)**
-Przesuń suwak. ε=1.0 oznacza losowy wybór (czysta eksploracja).
-ε=0.0 oznacza zawsze najlepszą znaną akcję (eksploatacja — ale w Ch01 tabela Q jest zerowa,
-więc to też jest losowe). Zacznij od ε=0.5.
-
-**Krok 2 — Ustaw techników i zlecenia**
-5 techników / 10 zleceń to dobry punkt startowy.
-
-**Krok 3 — Kliknij ▶ Uruchom epizod**
-Silnik Rust wykonuje pełną pętlę MDP i zwraca każdy krok.
-
-**Krok 4 — Odczytaj mapę Warszawy**
-Niebieskie markery = technicy (T0–T4). Kolorowe markery = zlecenia (Z0–Z9).
-Zielone linie = SLA spełnione. Czerwone linie = naruszenie SLA.
-
-**Krok 5 — Użyj suwaka kroków**
-Przesuń, aby podświetlić konkretną decyzję dyspozytury na mapie i w Glass-Box.
-
-**Krok 6 — Odczytaj Glass-Box**
-Każdy wiersz pokazuje pełną krotkę MDP: Sₜ, Aₜ, Rₜ, Gₜ.
-
-**Krok 7 — Odczytaj podsumowanie epizodu**
-Wymierne wyniki biznesowe + zalety i wady metody ε-zachłannej.
-""",
         "map_title": "📍 Mapa dyspozytury Warszawa",
         "map_caption": "Niebieski = Technicy · Bursztynowy/Czerwony = Zlecenia · Zielony = SLA OK · Czerwony = Naruszenie SLA",
         "step_slider": "🔍 Podświetl krok",
@@ -227,26 +152,6 @@ Wymierne wyniki biznesowe + zalety i wady metody ε-zachłannej.
         "curve_x": "Epizod",
         "curve_y": "Łączny zdyskontowany zwrot Gₜ",
         "curve_mean": "Średnia krocząca (5 ep)",
-        "theory_title": "📖 Teoria — Rozdział 01",
-        "theory_sections": {
-            "mdp": "§1.1 Framework MDP",
-            "egreedy": "§1.1 Polityka ε-zachłanna",
-            "gt": "§1.1 Zdyskontowany zwrot Gₜ",
-            "ndarray": "§1.2.1 Tabela Q ndarray",
-            "reward": "§1.1 Projektowanie nagrody",
-        },
-        "theory_mdp": r"""
-**Krotka MDP (S, A, P, R, γ)** to matematyczna podstawa każdego systemu RL.
-
-- **S** — Przestrzeń stanów: pozycje techników, umiejętności, dostępność; lokalizacje zleceń, pilność
-- **A** — Przestrzeń akcji: przypisz technika i do zlecenia j
-- **P(s'|s,a)** — Przejście: następny stan zależy *tylko* od bieżącego stanu + akcji (własność Markowa)
-- **R(s,a)** — Nagroda: +10 SLA spełnione, −5 naruszenie, −2 niedopasowanie, −0.1×km odległość
-- **γ** — Współczynnik dyskontowania: jak bardzo przyszłe nagrody są warte w porównaniu z natychmiastowymi
-
-**Własność Markowa** (zaimplementowana w `transition()` w `ch01_asp_dispatch.rs`):
-$$P(s_{t+1} | s_t, a_t, s_{t-1}, \ldots) = P(s_{t+1} | s_t, a_t)$$
-""",
         "theory_egreedy": r"""
 **ε-zachłanna** to najprostsza strategia eksploracji — używana w tym rozdziale.
 
@@ -329,16 +234,6 @@ Realistyczne wskaźniki SLA: 77–93% w zależności od jakości dyspozycji.
         "seed": "Graine aléatoire",
         "n_episodes": "Épisodes (courbe d'apprentissage)",
         "run_btn": "▶ Lancer l'épisode",
-        "guide_title": "🎓 Comment utiliser ce chapitre",
-        "guide": """
-**Étape 1 — Réglez ε** : ε=1.0 = exploration pure, ε=0.0 = exploitation pure.
-**Étape 2 — Réglez techniciens et ordres** : 5/10 est un bon point de départ.
-**Étape 3 — Cliquez ▶ Lancer l'épisode** : le moteur Rust exécute la boucle MDP complète.
-**Étape 4 — Lisez la carte de Varsovie** : bleu = techniciens, couleur = ordres, vert = SLA respecté.
-**Étape 5 — Utilisez le curseur d'étape** pour mettre en évidence une décision spécifique.
-**Étape 6 — Lisez le Glass-Box** : chaque ligne montre le tuple MDP complet Sₜ, Aₜ, Rₜ, Gₜ.
-**Étape 7 — Lisez le résumé** : résultats quantifiés + avantages/inconvénients de la méthode.
-""",
         "map_title": "📍 Carte de dispatch Varsovie",
         "map_caption": "Bleu = Techniciens · Ambre/Rouge = Ordres · Vert = SLA respecté · Rouge = Violation SLA",
         "step_slider": "🔍 Mettre en évidence l'étape",
@@ -355,19 +250,6 @@ Realistyczne wskaźniki SLA: 77–93% w zależności od jakości dyspozycji.
         "curve_x": "Épisode",
         "curve_y": "Retour actualisé total Gₜ",
         "curve_mean": "Moyenne mobile (5 ép)",
-        "theory_title": "📖 Théorie — Chapitre 01",
-        "theory_sections": {
-            "mdp": "§1.1 Le cadre MDP",
-            "egreedy": "§1.1 Politique ε-greedy",
-            "gt": "§1.1 Retour actualisé Gₜ",
-            "ndarray": "§1.2.1 Table Q ndarray",
-            "reward": "§1.1 Conception de la récompense",
-        },
-        "theory_mdp": r"""
-**Le tuple MDP (S, A, P, R, γ)** est le fondement mathématique de tout système RL.
-$$P(s_{t+1} | s_t, a_t) \text{ — propriété de Markov}$$
-Implémenté dans `transition()` dans `ch01_asp_dispatch.rs`.
-""",
         "theory_egreedy": r"""
 **ε-greedy** est la stratégie d'exploration la plus simple.
 $$a_t = \begin{cases} \text{action aléatoire} & \text{avec probabilité } \varepsilon \\ \arg\max_a Q(s,a) & \text{avec probabilité } 1-\varepsilon \end{cases}$$
@@ -427,16 +309,6 @@ Taux SLA réaliste : 77–93%.
         "seed": "Zufallsseed",
         "n_episodes": "Episoden (Lernkurve)",
         "run_btn": "▶ Episode starten",
-        "guide_title": "🎓 Anleitung",
-        "guide": """
-**Schritt 1 — ε einstellen**: ε=1.0 = reine Exploration, ε=0.0 = reine Exploitation.
-**Schritt 2 — Techniker und Aufträge einstellen**: 5/10 ist ein guter Ausgangspunkt.
-**Schritt 3 — ▶ Episode starten klicken**: Rust-Engine führt die vollständige MDP-Schleife aus.
-**Schritt 4 — Warschau-Karte lesen**: Blau = Techniker, Farbe = Aufträge, Grün = SLA erfüllt.
-**Schritt 5 — Schritt-Schieberegler verwenden** um eine bestimmte Entscheidung hervorzuheben.
-**Schritt 6 — Glass-Box lesen**: jede Zeile zeigt das vollständige MDP-Tupel Sₜ, Aₜ, Rₜ, Gₜ.
-**Schritt 7 — Zusammenfassung lesen**: quantifizierte Ergebnisse + Vor-/Nachteile der Methode.
-""",
         "map_title": "📍 Warschau Dispositionskarte",
         "map_caption": "Blau = Techniker · Bernstein/Rot = Aufträge · Grün = SLA erfüllt · Rot = SLA-Verletzung",
         "step_slider": "🔍 Schritt hervorheben",
@@ -453,19 +325,6 @@ Taux SLA réaliste : 77–93%.
         "curve_x": "Episode",
         "curve_y": "Gesamter diskontierter Ertrag Gₜ",
         "curve_mean": "Gleitender Durchschnitt (5 Ep)",
-        "theory_title": "📖 Theorie — Kapitel 01",
-        "theory_sections": {
-            "mdp": "§1.1 Das MDP-Framework",
-            "egreedy": "§1.1 ε-greedy-Strategie",
-            "gt": "§1.1 Diskontierter Ertrag Gₜ",
-            "ndarray": "§1.2.1 ndarray Q-Tabelle",
-            "reward": "§1.1 Belohnungsdesign",
-        },
-        "theory_mdp": r"""
-**Das MDP-Tupel (S, A, P, R, γ)** ist das mathematische Fundament jedes RL-Systems.
-$$P(s_{t+1} | s_t, a_t) \text{ — Markov-Eigenschaft}$$
-Implementiert in `transition()` in `ch01_asp_dispatch.rs`.
-""",
         "theory_egreedy": r"""
 **ε-greedy** ist die einfachste Explorationsstrategie.
 $$a_t = \begin{cases} \text{zufällige Aktion} & \text{mit Wahrscheinlichkeit } \varepsilon \\ \arg\max_a Q(s,a) & \text{mit Wahrscheinlichkeit } 1-\varepsilon \end{cases}$$
@@ -525,16 +384,6 @@ Realistische SLA-Rate: 77–93%.
         "seed": "Semilla aleatoria",
         "n_episodes": "Episodios (curva de aprendizaje)",
         "run_btn": "▶ Ejecutar episodio",
-        "guide_title": "🎓 Cómo usar este capítulo",
-        "guide": """
-**Paso 1 — Ajuste ε**: ε=1.0 = exploración pura, ε=0.0 = explotación pura.
-**Paso 2 — Ajuste técnicos y órdenes**: 5/10 es un buen punto de partida.
-**Paso 3 — Haga clic en ▶ Ejecutar episodio**: el motor Rust ejecuta el bucle MDP completo.
-**Paso 4 — Lea el mapa de Varsovia**: azul = técnicos, color = órdenes, verde = SLA cumplido.
-**Paso 5 — Use el control deslizante de pasos** para resaltar una decisión específica.
-**Paso 6 — Lea el Glass-Box**: cada fila muestra la tupla MDP completa Sₜ, Aₜ, Rₜ, Gₜ.
-**Paso 7 — Lea el resumen**: resultados cuantificados + pros/contras del método.
-""",
         "map_title": "📍 Mapa de despacho Varsovia",
         "map_caption": "Azul = Técnicos · Ámbar/Rojo = Órdenes · Verde = SLA cumplido · Rojo = Violación SLA",
         "step_slider": "🔍 Resaltar paso",
@@ -551,19 +400,6 @@ Realistische SLA-Rate: 77–93%.
         "curve_x": "Episodio",
         "curve_y": "Retorno total descontado Gₜ",
         "curve_mean": "Media móvil (5 ep)",
-        "theory_title": "📖 Teoría — Capítulo 01",
-        "theory_sections": {
-            "mdp": "§1.1 El marco MDP",
-            "egreedy": "§1.1 Política ε-greedy",
-            "gt": "§1.1 Retorno descontado Gₜ",
-            "ndarray": "§1.2.1 Tabla Q ndarray",
-            "reward": "§1.1 Diseño de recompensa",
-        },
-        "theory_mdp": r"""
-**La tupla MDP (S, A, P, R, γ)** es el fundamento matemático de todo sistema RL.
-$$P(s_{t+1} | s_t, a_t) \text{ — propiedad de Markov}$$
-Implementado en `transition()` en `ch01_asp_dispatch.rs`.
-""",
         "theory_egreedy": r"""
 **ε-greedy** es la estrategia de exploración más simple.
 $$a_t = \begin{cases} \text{acción aleatoria} & \text{con probabilidad } \varepsilon \\ \arg\max_a Q(s,a) & \text{con probabilidad } 1-\varepsilon \end{cases}$$
@@ -1087,9 +923,6 @@ def render():
         seed      = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
         n_ep      = st.sidebar.slider(tx["n_episodes"], 5, 100, 30)
 
-        # --- guide ---
-        with st.expander(tx["guide_title"], expanded=False):
-            st.markdown(tx["guide"])
 
         # --- run button ---
         run = st.button(tx["run_btn"], type="primary")
@@ -1120,7 +953,6 @@ def render():
         # --- render if data available ---
         if "ch01_steps" not in st.session_state:
             st.info("Configure settings in the sidebar and click **▶ Run Episode**.")
-            _render_theory(tx, lang)
             return
 
         steps  = st.session_state["ch01_steps"]
@@ -1170,7 +1002,6 @@ def render():
                         avg_dist, avg_reward, sla_saved, total_gt, tx)
 
         # --- theory ---
-        _render_theory(tx, lang)
 
 
 # ---------------------------------------------------------------------------
@@ -1390,21 +1221,3 @@ Ch02 will train the Q-table and improve these numbers.*
 # ---------------------------------------------------------------------------
 # Theory panel
 # ---------------------------------------------------------------------------
-def _render_theory(tx, lang):
-    st.markdown("---")
-    st.subheader(tx["theory_title"])
-
-    active = st.session_state.get("theory_active", None)
-
-    sections = [
-        ("mdp",     tx["theory_sections"]["mdp"],     tx["theory_mdp"]),
-        ("egreedy", tx["theory_sections"]["egreedy"],  tx["theory_egreedy"]),
-        ("gt",      tx["theory_sections"]["gt"],       tx["theory_gt"]),
-        ("ndarray", tx["theory_sections"]["ndarray"],  tx["theory_ndarray"]),
-        ("reward",  tx["theory_sections"]["reward"],   tx["theory_reward"]),
-    ]
-
-    for key, label, content in sections:
-        expanded = (key == active)
-        with st.expander(label, expanded=expanded):
-            st.markdown(content)

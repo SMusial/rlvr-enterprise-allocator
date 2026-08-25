@@ -17,7 +17,6 @@ T = {
         "kappa": "κ — Exploration bonus (Dyna-Q+)",
         "seed": "Random seed",
         "run_btn": "▶ Run All Four Algorithms",
-        "guide_title": "🎓 How to use this chapter",
         "guide": """
 **Step 1 — Understand n-Step TD**
 n=1 → TD(0). n=∞ → Monte Carlo. n=3-5 → sweet spot.
@@ -58,7 +57,6 @@ How many (s,a) pairs has Dyna-Q learned? Should grow toward N_STATES × N_ACTION
         "summary_results": "Algorithm Comparison",
         "summary_pros_cons": "Algorithms — Pros & Cons",
         "pros": "✅ Pros", "cons": "❌ Cons",
-        "theory_title": "📖 Theory — Chapter 07",
         "theory_sections": {
             "nstep":    "§7.1 n-Step TD Returns",
             "nsarsa":   "§7.2 n-Step SARSA",
@@ -145,7 +143,6 @@ Implemented in `dyna_q_plus()` in `ch07_nstep.rs`.
         "kappa": "κ — Bonus eksploracji (Dyna-Q+)",
         "seed": "Ziarno losowości",
         "run_btn": "▶ Uruchom wszystkie cztery algorytmy",
-        "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
 **Krok 1** — n-krokowe TD: n=1 to TD(0), n=∞ to MC, n=3-5 to optimum.
 **Krok 2** — Dyna-Q = Q-Learning + model + k kroków planowania per krok.
@@ -171,7 +168,6 @@ Implemented in `dyna_q_plus()` in `ch07_nstep.rs`.
         "summary_results": "Porównanie algorytmów",
         "summary_pros_cons": "Algorytmy — Zalety i Wady",
         "pros": "✅ Zalety", "cons": "❌ Wady",
-        "theory_title": "📖 Teoria — Rozdział 07",
         "theory_sections": {
             "nstep":     "§7.1 n-krokowe zwroty TD",
             "nsarsa":    "§7.2 n-krokowy SARSA",
@@ -231,8 +227,6 @@ Implementacja: `dyna_q_plus()` w `ch07_nstep.rs`
         "n_step": "n — Schrittweite", "planning_steps": "Planungsschritte (Dyna-Q)",
         "seed": "Zufallsseed",
         "run_btn": "▶ Alle Algorithmen starten",
-        "guide_title": "Anleitung",
-        "guide": "n-Schritt TD brückt MC (n=∞) und TD(0) (n=1). Dyna-Q kombiniert modellfreies Lernen mit Planung.",
         "returns_title": "Episodenrückgaben",
         "returns_caption": "Gleitender Durchschnitt.",
         "value_title": "Wertfunktion V(s)",
@@ -241,8 +235,6 @@ Implementacja: `dyna_q_plus()` w `ch07_nstep.rs`
         "summary_title": "Zusammenfassung", "summary_results": "Vergleich",
         "summary_pros_cons": "Vor- & Nachteile",
         "pros": "Vorteile", "cons": "Nachteile",
-        "theory_title": "Theorie — Kapitel 07",
-        "theory_sections": {"nstep": "7.1 n-Schritt TD", "dynaq": "7.2 Dyna-Q"},
         "algo_labels": {"nstep_sarsa": "n-Schritt SARSA", "nstep_qlearning": "n-Schritt Q-Learning", "dynaq": "Dyna-Q"},
         "pros_list": {
             "nstep_sarsa": ["Brückt MC und TD", "Flexibel über n"],
@@ -269,8 +261,6 @@ Implementacja: `dyna_q_plus()` w `ch07_nstep.rs`
         "kappa": "κ — Bonus d'exploration",
         "seed": "Graine",
         "run_btn": "▶ Lancer les quatre algorithmes",
-        "guide_title": "🎓 Guide",
-        "guide": "n=1→TD, n=∞→MC. Dyna-Q = Q-Learning + modèle + k étapes de planification.",
         "returns_title": "📈 Retours", "returns_caption": "Dyna-Q converge le plus vite.",
         "td_error_title": "📉 Erreur TD", "td_error_caption": "",
         "value_title": "📊 V(s)", "value_caption": "",
@@ -281,8 +271,6 @@ Implementacja: `dyna_q_plus()` w `ch07_nstep.rs`
         "summary_title": "📊 Résumé", "summary_results": "Comparaison",
         "summary_pros_cons": "Avantages & Inconvénients",
         "pros": "✅", "cons": "❌",
-        "theory_title": "📖 Théorie",
-        "theory_sections": {"nstep": "§7.1 TD n-pas", "nsarsa": "§7.2 SARSA n-pas", "dynaq": "§7.4 Dyna-Q", "dynaqplus": "§7.5 Dyna-Q+"},
         "theory_nstep": "G^(n)_t = R_{t+1} + γR_{t+2} + ... + γ^n V(S_{t+n})",
         "theory_nsarsa": "G^(n)_t = ... + γ^n Q(S_{t+n}, A_{t+n})",
         "theory_dynaq": "Q-Learning + modèle + k étapes de planification.",
@@ -301,8 +289,6 @@ Implementacja: `dyna_q_plus()` w `ch07_nstep.rs`
         "planning_steps": "k — Pasos de planificación",
         "kappa": "κ — Bonus de exploración", "seed": "Semilla",
         "run_btn": "▶ Ejecutar los cuatro algoritmos",
-        "guide_title": "🎓 Guía",
-        "guide": "n=1→TD, n=∞→MC. Dyna-Q = Q-Learning + modelo + k pasos de planificación.",
         "returns_title": "📈 Retornos", "returns_caption": "Dyna-Q converge más rápido.",
         "td_error_title": "📉 Error TD", "td_error_caption": "",
         "value_title": "📊 V(s)", "value_caption": "",
@@ -313,8 +299,6 @@ Implementacja: `dyna_q_plus()` w `ch07_nstep.rs`
         "summary_title": "📊 Resumen", "summary_results": "Comparación",
         "summary_pros_cons": "Pros y Contras",
         "pros": "✅", "cons": "❌",
-        "theory_title": "📖 Teoría",
-        "theory_sections": {"nstep": "§7.1 TD n-pasos", "nsarsa": "§7.2 SARSA n-pasos", "dynaq": "§7.4 Dyna-Q", "dynaqplus": "§7.5 Dyna-Q+"},
         "theory_nstep": "G^(n)_t = R_{t+1} + γR_{t+2} + ... + γ^n V(S_{t+n})",
         "theory_nsarsa": "G^(n)_t = ... + γ^n Q(S_{t+n}, A_{t+n})",
         "theory_dynaq": "Q-Learning + modelo + k pasos de planificación.",
@@ -370,9 +354,6 @@ def render():
     kappa          = st.sidebar.slider(tx["kappa"],          0.0, 0.01, 0.001, 0.0001, format="%.4f")
     seed           = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
-    with st.expander(tx["guide_title"], expanded=False):
-        st.markdown(tx["guide"])
-
     if st.button(tx["run_btn"], type="primary"):
         with st.spinner("Running Rust n-step/Dyna engine..."):
             result = rlvr_py.run_ch07_nstep(
@@ -384,7 +365,6 @@ def render():
 
     if "ch07_result" not in st.session_state:
         st.info("Configure settings and click **▶ Run All Four Algorithms**.")
-        _render_theory(tx)
         return
 
     result       = st.session_state["ch07_result"]
@@ -483,7 +463,6 @@ def render():
     st.subheader(tx["summary_title"])
     _render_summary(result, tx, algos)
 
-    _render_theory(tx)
 
 
 def _render_glass_box(result, tx):
@@ -536,10 +515,3 @@ def _render_summary(result, tx, algos):
             for c in tx["cons_list"][key]: st.markdown(f"- {c}")
         st.markdown("---")
 
-
-def _render_theory(tx):
-    st.markdown("---")
-    st.subheader(tx["theory_title"])
-    for key in ["nstep", "nsarsa", "dynaq", "dynaqplus"]:
-        with st.expander(tx["theory_sections"][key], expanded=False):
-            st.markdown(tx[f"theory_{key}"])

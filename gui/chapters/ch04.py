@@ -15,33 +15,6 @@ T = {
         "theta": "θ — Convergence threshold",
         "seed": "Random seed",
         "run_btn": "▶ Run All Three DP Algorithms",
-        "guide_title": "🎓 How to use this chapter",
-        "guide": """
-**Step 1 — Understand the three algorithms**
-This chapter runs three DP algorithms simultaneously on the same ASP environment:
-- **Policy Iteration (PI)**: alternates between policy evaluation and policy improvement
-- **Value Iteration (VI)**: directly applies Bellman optimality equation (from Ch02)
-- **Async VI**: updates states in order of Bellman residual (highest first)
-
-**Step 2 — Set γ and θ**
-Same as Ch02. γ=0.95, θ=1e-6 is a good start.
-
-**Step 3 — Click ▶ Run All Three DP Algorithms**
-All three run simultaneously. Results appear side by side.
-
-**Step 4 — Compare convergence curves**
-PI curve = inner evaluation sweeps. VI curve = Bellman iterations. Async VI = prioritized sweeps.
-Watch how Async VI converges faster by focusing on high-residual states first.
-
-**Step 5 — Read the Policy Evolution table**
-Shows how the policy changes at each PI outer iteration. Usually stabilises in 3-5 steps.
-
-**Step 6 — Read the Bellman Residual heatmap**
-Which states have the highest residual after convergence? These are the hardest to optimise.
-
-**Step 7 — Verify PI = VI policy**
-Both algorithms must find the same optimal policy — the Glass-Box shows the diff.
-""",
         "kpi_pi_iters": "PI outer iterations",
         "kpi_vi_iters": "VI iterations",
         "kpi_async_iters": "Async VI iterations",
@@ -65,32 +38,6 @@ Both algorithms must find the same optimal policy — the Glass-Box shows the di
         "summary_pros_cons": "DP Algorithms — Pros & Cons",
         "pros": "✅ Pros",
         "cons": "❌ Cons",
-        "theory_title": "📖 Theory — Chapter 04",
-        "theory_sections": {
-            "dp_intro": "§4.1 Introduction to Dynamic Programming",
-            "policy_eval": "§4.2 Policy Evaluation",
-            "policy_improve": "§4.2 Policy Improvement",
-            "pi": "§4.2 Policy Iteration",
-            "vi": "§4.3 Value Iteration",
-            "async_dp": "§4.4 Asynchronous DP & Prioritized Sweeping",
-        },
-        "theory_dp_intro": r"""
-**Dynamic Programming (DP)** solves complex problems by breaking them into simpler subproblems.
-
-The **Principle of Optimality** (Bellman, 1957):
-> An optimal policy has the property that, regardless of the initial state and decision, the remaining decisions constitute an optimal policy for the subproblem starting from the resulting state.
-
-In RL, DP requires a **perfect model** of the environment (transition probabilities P and rewards R).
-This is the key difference from TD Learning (Ch06) which learns without a model.
-
-Three DP methods compared in this chapter:
-
-| Method | Updates | Requires model | Convergence |
-|---|---|---|---|
-| Policy Iteration | Eval + Improve alternating | Yes | Guaranteed, fast |
-| Value Iteration | Bellman optimality directly | Yes | Guaranteed, simple |
-| Async VI | Prioritized by residual | Yes | Faster in practice |
-""",
         "theory_policy_eval": r"""
 **Policy Evaluation** computes V^π(s) for a fixed policy π using the Bellman expectation equation:
 
@@ -125,19 +72,6 @@ Implemented in `policy_improvement()` in `ch04_dp.rs`.
 PI typically converges in very few outer iterations (3–10) even for large state spaces.
 
 Implemented in `policy_iteration()` in `ch04_dp.rs`.
-""",
-        "theory_vi": r"""
-**Value Iteration** directly applies the Bellman optimality equation without a separate policy:
-
-V^(k+1)(s) = max_a Σ_s' P(s'|s,a) · [R(s,a) + γ · V^(k)(s')]
-
-Stop when ‖V^(k+1) - V^(k)‖∞ < θ. Extract policy: π*(s) = argmax_a Q*(s,a).
-
-**PI vs VI trade-off:**
-- PI: fewer outer iterations, but each requires full policy evaluation (many inner sweeps)
-- VI: more iterations, but each is a single Bellman sweep — often faster in total
-
-Implemented in `value_iteration_sync()` in `ch04_dp.rs`.
 """,
         "theory_async_dp": r"""
 **Asynchronous DP** updates states selectively rather than all at once.
@@ -210,14 +144,6 @@ Implemented in `async_value_iteration()` in `ch04_dp.rs`.
         "theta": "θ — Konvergenzschwelle",
         "seed": "Zufallsseed",
         "run_btn": "▶ Alle drei DP-Algorithmen starten",
-        "guide_title": "ℹ️ Anleitung",
-        "guide": """**Schritt 1** — Drei DP-Algorithmen gleichzeitig: PI, VI, Async VI.
-**Schritt 2** — γ und θ einstellen. γ=0.95, θ=1e-6 ist ein guter Start.
-**Schritt 3** — Klicken, um alle drei Algorithmen zu starten.
-**Schritt 4** — Konvergenzkurven vergleichen.
-**Schritt 5** — Strategieentwicklungstabelle (PI) lesen.
-**Schritt 6** — Bellman-Residual-Heatmap lesen.
-**Schritt 7** — Verifizieren, dass PI = VI Strategie.""",
         "kpi_pi_iters": "PI-Außeniterationen",
         "kpi_vi_iters": "VI-Iterationen",
         "kpi_async_iters": "Async-VI-Iterationen",
@@ -241,25 +167,6 @@ Implemented in `async_value_iteration()` in `ch04_dp.rs`.
         "summary_pros_cons": "DP-Algorithmen — Vor- & Nachteile",
         "pros": "✅ Vorteile",
         "cons": "❌ Nachteile",
-        "theory_title": "📚 Theorie — Kapitel 04",
-        "theory_sections": {
-            "dp_intro":       "4.1 Einführung in die Dynamische Programmierung",
-            "policy_eval":    "4.2 Strategiebewertung",
-            "policy_improve": "4.2 Strategieverbesserung",
-            "pi":             "4.2 Policy Iteration",
-            "vi":             "4.3 Value Iteration",
-            "async_dp":       "4.4 Asynchrones DP & Priorisiertes Sweeping",
-        },
-        "theory_dp_intro": r"""**Dynamische Programmierung (DP)** löst komplexe Probleme durch Zerlegung in Teilprobleme.
-**Optimalitätsprinzip** (Bellman, 1957): Eine optimale Strategie bleibt für jedes Teilproblem optimal.
-Drei DP-Methoden in diesem Kapitel:
-
-| Methode | Aktualisierungen | Modell nötig | Konvergenz |
-|---|---|---|---|
-| Policy Iteration | Bewertung + Verbesserung | Ja | Garantiert, schnell |
-| Value Iteration | Bellman-Optimalität direkt | Ja | Garantiert, einfach |
-| Async VI | Priorisiert nach Residual | Ja | Schneller in der Praxis |
-""",
         "theory_policy_eval": r"""**Strategiebewertung** berechnet V^π(s) für eine feste Strategie π:
 V^π(s) = Σ_s' P(s'|s,π(s)) [R(s,π(s)) + γ V^π(s')]
 Iterieren bis ‖V^(k+1) - V^(k)‖ < θ.
@@ -274,10 +181,6 @@ Theorem: V^π'(s) ≥ V^π(s) für alle s.
 3. **Verbessern**: π' = greedy(V^π)
 4. Falls π' = π → STOP. Sonst π ← π', weiter zu 2.
 Konvergenz in endlich vielen Schritten garantiert.
-""",
-        "theory_vi": r"""**Value Iteration** wendet die Bellman-Optimalitätsgleichung direkt an:
-V^(k+1)(s) = max_a Σ_s' P(s'|s,a) [R(s,a) + γ V^(k)(s')]
-Stopp wenn ‖V^(k+1) - V^(k)‖ < θ.
 """,
         "theory_async_dp": r"""**Asynchrones DP** aktualisiert Zustände selektiv nach Bellman-Residual:
 Residual(s) = |V^(k+1)(s) - V^(k)(s)|
@@ -332,16 +235,6 @@ Zustände mit hohem Residual werden zuerst aktualisiert.
         "theta": "θ — Seuil de convergence",
         "seed": "Graine aléatoire",
         "run_btn": "▶ Lancer les trois algorithmes DP",
-        "guide_title": "🎓 Comment utiliser ce chapitre",
-        "guide": """
-**Étape 1** — Trois algorithmes DP simultanément : PI, VI, VI Async.
-**Étape 2** — Réglez γ et θ. γ=0.95, θ=1e-6 est un bon départ.
-**Étape 3** — Cliquez ▶ pour lancer les trois algorithmes.
-**Étape 4** — Comparez les courbes de convergence.
-**Étape 5** — Lisez l'évolution de la politique (tableau PI).
-**Étape 6** — Lisez la carte thermique des résidus de Bellman.
-**Étape 7** — Vérifiez que PI = VI politique.
-""",
         "kpi_pi_iters": "Itérations PI externes",
         "kpi_vi_iters": "Itérations VI",
         "kpi_async_iters": "Itérations VI Async",
@@ -365,19 +258,6 @@ Zustände mit hohem Residual werden zuerst aktualisiert.
         "summary_pros_cons": "Algorithmes DP — Avantages & Inconvénients",
         "pros": "✅ Avantages",
         "cons": "❌ Inconvénients",
-        "theory_title": "📖 Théorie — Chapitre 04",
-        "theory_sections": {
-            "dp_intro": "§4.1 Introduction à la programmation dynamique",
-            "policy_eval": "§4.2 Évaluation de politique",
-            "policy_improve": "§4.2 Amélioration de politique",
-            "pi": "§4.2 Itération de politique",
-            "vi": "§4.3 Itération de valeur",
-            "async_dp": "§4.4 DP asynchrone & balayage priorisé",
-        },
-        "theory_dp_intro": r"""
-**Programmation Dynamique (DP)** résout des problèmes complexes en les décomposant en sous-problèmes.
-**Principe d'optimalité** (Bellman, 1957) : une politique optimale reste optimale pour tout sous-problème.
-""",
         "theory_policy_eval": r"""
 **Évaluation de politique** : V^π(s) = Σ_s' P(s'|s,π(s)) · [R(s,π(s)) + γ · V^π(s')]
 Itérer jusqu'à ‖V^(k+1) - V^(k)‖∞ < θ.
@@ -389,9 +269,6 @@ Théorème : V^π'(s) ≥ V^π(s) pour tout s.
         "theory_pi": r"""
 **Itération de politique** : alterner évaluation et amélioration jusqu'à stabilisation.
 Convergence garantie en nombre fini d'étapes.
-""",
-        "theory_vi": r"""
-**Itération de valeur** : V^(k+1)(s) = max_a Σ_s' P(s'|s,a) · [R(s,a) + γ · V^(k)(s')]
 """,
         "theory_async_dp": r"""
 **DP asynchrone** : mettre à jour les états par ordre de résidu de Bellman décroissant.
@@ -418,16 +295,6 @@ Résidu(s) = |V^(k+1)(s) - V^(k)(s)|
         "theta": "θ — Umbral de convergencia",
         "seed": "Semilla aleatoria",
         "run_btn": "▶ Ejecutar los tres algoritmos DP",
-        "guide_title": "🎓 Cómo usar este capítulo",
-        "guide": """
-**Paso 1** — Tres algoritmos DP simultáneamente: PI, VI, VI Async.
-**Paso 2** — Ajuste γ y θ. γ=0.95, θ=1e-6 es un buen inicio.
-**Paso 3** — Haga clic ▶ para ejecutar los tres algoritmos.
-**Paso 4** — Compare las curvas de convergencia.
-**Paso 5** — Lea la evolución de la política (tabla PI).
-**Paso 6** — Lea el mapa de calor de residuos de Bellman.
-**Paso 7** — Verifique que PI = VI política.
-""",
         "kpi_pi_iters": "Iteraciones PI externas",
         "kpi_vi_iters": "Iteraciones VI",
         "kpi_async_iters": "Iteraciones VI Async",
@@ -451,19 +318,6 @@ Résidu(s) = |V^(k+1)(s) - V^(k)(s)|
         "summary_pros_cons": "Algoritmos DP — Pros y Contras",
         "pros": "✅ Pros",
         "cons": "❌ Contras",
-        "theory_title": "📖 Teoría — Capítulo 04",
-        "theory_sections": {
-            "dp_intro": "§4.1 Introducción a la programación dinámica",
-            "policy_eval": "§4.2 Evaluación de política",
-            "policy_improve": "§4.2 Mejora de política",
-            "pi": "§4.2 Iteración de política",
-            "vi": "§4.3 Iteración de valor",
-            "async_dp": "§4.4 DP asíncrono y barrido priorizado",
-        },
-        "theory_dp_intro": r"""
-**Programación Dinámica (DP)** resuelve problemas complejos descomponiéndolos en subproblemas.
-**Principio de optimalidad** (Bellman, 1957): una política óptima sigue siendo óptima para cualquier subproblema.
-""",
         "theory_policy_eval": r"""
 **Evaluación de política**: V^π(s) = Σ_s' P(s'|s,π(s)) · [R(s,π(s)) + γ · V^π(s')]
 """,
@@ -472,9 +326,6 @@ Résidu(s) = |V^(k+1)(s) - V^(k)(s)|
 """,
         "theory_pi": r"""
 **Iteración de política**: alternar evaluación y mejora hasta estabilización.
-""",
-        "theory_vi": r"""
-**Iteración de valor**: V^(k+1)(s) = max_a Σ_s' P(s'|s,a) · [R(s,a) + γ · V^(k)(s')]
 """,
         "theory_async_dp": r"""
 **DP asíncrono**: actualizar estados por orden de residuo de Bellman decreciente.
@@ -500,16 +351,6 @@ Résidu(s) = |V^(k+1)(s) - V^(k)(s)|
         "theta": "θ — Próg zbieżności",
         "seed": "Ziarno losowości",
         "run_btn": "▶ Uruchom wszystkie trzy algorytmy DP",
-        "guide_title": "🎓 Jak korzystać z tego rozdziału",
-        "guide": """
-**Krok 1** — Trzy algorytmy DP jednocześnie: PI, VI, Async VI.
-**Krok 2** — Ustaw γ i θ. γ=0.95, θ=1e-6 to dobry start.
-**Krok 3** — Kliknij ▶ aby uruchomić wszystkie trzy algorytmy.
-**Krok 4** — Porównaj krzywe zbieżności.
-**Krok 5** — Odczytaj ewolucję polityki (tabela PI).
-**Krok 6** — Odczytaj mapę ciepła residuali Bellmana.
-**Krok 7** — Zweryfikuj że PI = VI polityka.
-""",
         "kpi_pi_iters": "Iteracje PI zewnętrzne",
         "kpi_vi_iters": "Iteracje VI",
         "kpi_async_iters": "Iteracje Async VI",
@@ -533,19 +374,6 @@ Résidu(s) = |V^(k+1)(s) - V^(k)(s)|
         "summary_pros_cons": "Algorytmy DP — Zalety i Wady",
         "pros": "✅ Zalety",
         "cons": "❌ Wady",
-        "theory_title": "📖 Teoria — Rozdział 04",
-        "theory_sections": {
-            "dp_intro": "§4.1 Wprowadzenie do programowania dynamicznego",
-            "policy_eval": "§4.2 Ewaluacja polityki",
-            "policy_improve": "§4.2 Poprawa polityki",
-            "pi": "§4.2 Iteracja polityki",
-            "vi": "§4.3 Iteracja wartości",
-            "async_dp": "§4.4 Asynchroniczne DP i priorytetyzacja stanów",
-        },
-        "theory_dp_intro": r"""
-**Programowanie Dynamiczne (DP)** rozwiązuje złożone problemy przez dekompozycję na podproblemy.
-**Zasada optymalności** (Bellman, 1957): optymalna polityka pozostaje optymalna dla każdego podproblemu.
-""",
         "theory_policy_eval": r"""
 **Ewaluacja polityki**: V^π(s) = Σ_s' P(s'|s,π(s)) · [R(s,π(s)) + γ · V^π(s')]
 Iteruj aż ‖V^(k+1) - V^(k)‖∞ < θ.
@@ -557,9 +385,6 @@ Twierdzenie: V^π'(s) ≥ V^π(s) dla każdego s.
         "theory_pi": r"""
 **Iteracja polityki**: naprzemiennie ewaluacja i poprawa aż do stabilizacji.
 Zbieżność gwarantowana w skończonej liczbie kroków.
-""",
-        "theory_vi": r"""
-**Iteracja wartości**: V^(k+1)(s) = max_a Σ_s' P(s'|s,a) · [R(s,a) + γ · V^(k)(s')]
 """,
         "theory_async_dp": r"""
 **Asynchroniczne DP**: aktualizuj stany w kolejności malejącego residualu Bellmana.
@@ -616,9 +441,6 @@ def render():
     )
     seed = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
-    with st.expander(tx["guide_title"], expanded=False):
-        st.markdown(tx["guide"])
-
     run = st.button(tx["run_btn"], type="primary")
 
     if run:
@@ -628,7 +450,6 @@ def render():
 
     if "ch04_result" not in st.session_state:
         st.info("Configure settings and click **▶ Run All Three DP Algorithms**.")
-        _render_theory(tx)
         return
 
     result      = st.session_state["ch04_result"]
@@ -682,7 +503,6 @@ def render():
     _render_summary(pi, vi, av, tx)
 
     # Theory
-    _render_theory(tx)
 
 
 # ---------------------------------------------------------------------------
@@ -865,18 +685,3 @@ def _render_summary(pi, vi, av, tx):
                 st.markdown(f"- {c}")
         st.markdown("---")
 
-
-def _render_theory(tx):
-    st.markdown("---")
-    st.subheader(tx["theory_title"])
-    sections = [
-        ("dp_intro",       tx["theory_sections"]["dp_intro"],       tx["theory_dp_intro"]),
-        ("policy_eval",    tx["theory_sections"]["policy_eval"],    tx["theory_policy_eval"]),
-        ("policy_improve", tx["theory_sections"]["policy_improve"], tx["theory_policy_improve"]),
-        ("pi",             tx["theory_sections"]["pi"],             tx["theory_pi"]),
-        ("vi",             tx["theory_sections"]["vi"],             tx["theory_vi"]),
-        ("async_dp",       tx["theory_sections"]["async_dp"],       tx["theory_async_dp"]),
-    ]
-    for key, label, content in sections:
-        with st.expander(label, expanded=False):
-            st.markdown(content)

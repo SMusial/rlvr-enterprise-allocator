@@ -16,36 +16,6 @@ T = {
         "ucb_c": "c — UCB exploration constant",
         "seed": "Random seed",
         "run_btn": "▶ Run All Three Algorithms",
-        "guide_title": "🎓 How to use this chapter",
-        "guide": """
-**Step 1 — Understand the problem**
-We have 5 skill slots (arms): HVAC, Electrical, Plumbing, Network, Mechanical.
-Each has an unknown true SLA success rate. The agent must learn which skill slot
-produces the best SLA outcomes through repeated dispatch decisions.
-
-**Step 2 — Set the number of steps**
-More steps = more learning. Try 200 first, then 1000 to see convergence.
-
-**Step 3 — Set ε (epsilon-greedy exploration rate)**
-Higher ε = more random exploration. Lower ε = more exploitation of known best arm.
-The decay rate α controls how fast ε shrinks over time.
-
-**Step 4 — Set c (UCB exploration constant)**
-Higher c = UCB explores more aggressively. Lower c = more exploitation.
-Try c=2.0 (standard) vs c=0.5 (conservative).
-
-**Step 5 — Click ▶ Run All Three Algorithms**
-All three algorithms run simultaneously on the same problem for fair comparison.
-
-**Step 6 — Read the Cumulative Regret chart**
-Lower regret = better algorithm. Watch Thompson Sampling pull ahead over time.
-
-**Step 7 — Read the Arm Pull Distribution**
-Which skill slots did each algorithm favour? Did they find the true best arm (Plumbing)?
-
-**Step 8 — Read the Q-value convergence**
-Watch estimated Q(a) values converge toward the true SLA rates.
-""",
         "regret_title": "📈 Cumulative Regret — All Three Algorithms",
         "regret_x": "Step",
         "regret_y": "Cumulative Regret",
@@ -75,29 +45,6 @@ Watch estimated Q(a) values converge toward the true SLA rates.
         "best_arm_label": "Best arm identified",
         "total_regret_label": "Total regret",
         "total_reward_label": "Total reward",
-        "theory_title": "📖 Theory — Chapter 03",
-        "theory_sections": {
-            "bandit": "§3.1 The Multi-Armed Bandit Problem",
-            "egreedy": "§3.2 Epsilon-Greedy with Annealing",
-            "ucb": "§3.3 Upper Confidence Bound (UCB1)",
-            "thompson": "§3.3 Thompson Sampling",
-            "regret": "§3.1 Regret Analysis",
-        },
-        "theory_bandit": r"""
-**The Multi-Armed Bandit Problem** is the simplest RL setting — no state transitions, just repeated action selection.
-
-- **K arms** = K skill slots (HVAC, Electrical, Plumbing, Network, Mechanical)
-- **Reward** = 1 if SLA met, 0 if breached (Bernoulli reward)
-- **Goal** = maximise cumulative reward over T steps
-- **Challenge** = true SLA rates are unknown — must be learned through pulls
-
-**Regret** measures the cost of not always picking the best arm:
-$$\text{Regret}(T) = \sum_{t=1}^{T} \left[ \mu^* - \mu_{a_t} \right]$$
-
-where $\mu^* = \max_a \mu_a$ is the optimal arm's true SLA rate.
-
-Implemented in `ch03_bandit.rs` — `pull_arm()`, `update_q()`.
-""",
         "theory_egreedy": r"""
 **Epsilon-Greedy with Annealing** — the baseline bandit algorithm.
 
@@ -212,15 +159,6 @@ makes a suboptimal choice and how quickly it recovers.
         "ucb_c": "c — UCB-Explorationskonstante",
         "seed": "Zufallsseed",
         "run_btn": "▶ Alle drei Algorithmen starten",
-        "guide_title": "ℹ️ Anleitung",
-        "guide": """**Schritt 1** — 5 Qualifikationsslots (Arme): HVAC, Elektrik, Sanitär, Netzwerk, Mechanik.
-**Schritt 2** — Anzahl der Schritte einstellen. Versuchen Sie 200, dann 1000.
-**Schritt 3** — ε und Abklingrate einstellen.
-**Schritt 4** — c (UCB-Konstante) einstellen. Vergleichen Sie c=2.0 vs c=0.5.
-**Schritt 5** — Klicken Sie, um alle drei Algorithmen gleichzeitig zu starten.
-**Schritt 6** — Kumulatives Bedauern lesen. Niedriger = besser.
-**Schritt 7** — Armziehungsverteilung lesen. Haben sie den besten Arm gefunden?
-**Schritt 8** — Q-Wert-Konvergenz zu echten SLA-Raten lesen.""",
         "regret_title": "📉 Kumulatives Bedauern — Alle drei Algorithmen",
         "regret_x": "Schritt",
         "regret_y": "Kumulatives Bedauern",
@@ -250,17 +188,6 @@ makes a suboptimal choice and how quickly it recovers.
         "best_arm_label": "Identifizierter bester Arm",
         "total_regret_label": "Gesamtbedauern",
         "total_reward_label": "Gesamtbelohnung",
-        "theory_title": "📚 Theorie — Kapitel 03",
-        "theory_sections": {
-            "bandit":   "3.1 Das Mehrarmige-Bandit-Problem",
-            "egreedy":  "3.2 Epsilon-Greedy mit Abkühlung",
-            "ucb":      "3.3 Obere Konfidenzschranke (UCB1)",
-            "thompson": "3.3 Thompson-Sampling",
-            "regret":   "3.1 Bedauernanalyse",
-        },
-        "theory_bandit": r"""**Das Mehrarmige-Bandit-Problem**: K Arme, stochastische Belohnungen, keine Zustandsübergänge.
-$$\text{Bedauern}(T) = \sum_{t=1}^{T} \left[ \mu^* - \mu_{a_t} \right]$$
-Implementiert in `ch03_bandit.rs`.""",
         "theory_egreedy": r"""**Epsilon-Greedy mit Abkühlung**:
 $$\varepsilon_t = \max\left(\varepsilon_{\min},\ \frac{\varepsilon_0}{1 + \alpha t}\right)$$
 $$Q(a) \leftarrow Q(a) + \frac{1}{N(a)} \left[ R - Q(a) \right]$$""",
@@ -297,17 +224,6 @@ Bedauernschranke: $O(\sqrt{KT \ln T})$""",
         "ucb_c": "c — Constante d'exploration UCB",
         "seed": "Graine aléatoire",
         "run_btn": "▶ Lancer les trois algorithmes",
-        "guide_title": "🎓 Comment utiliser ce chapitre",
-        "guide": """
-**Étape 1** — 5 créneaux de compétences (bras) : HVAC, Électricité, Plomberie, Réseau, Mécanique.
-**Étape 2** — Réglez le nombre d'étapes. Essayez 200 puis 1000.
-**Étape 3** — Réglez ε et le taux de décroissance α.
-**Étape 4** — Réglez c (constante UCB). Essayez c=2.0 vs c=0.5.
-**Étape 5** — Cliquez ▶ pour lancer les trois algorithmes simultanément.
-**Étape 6** — Lisez le graphique de regret cumulatif. Plus bas = meilleur.
-**Étape 7** — Lisez la distribution des tirages. Ont-ils trouvé le meilleur bras (Plomberie) ?
-**Étape 8** — Lisez la convergence des valeurs Q vers les vrais taux SLA.
-""",
         "regret_title": "📈 Regret cumulatif — Trois algorithmes",
         "regret_x": "Étape",
         "regret_y": "Regret cumulatif",
@@ -337,18 +253,6 @@ Bedauernschranke: $O(\sqrt{KT \ln T})$""",
         "best_arm_label": "Meilleur bras identifié",
         "total_regret_label": "Regret total",
         "total_reward_label": "Récompense totale",
-        "theory_title": "📖 Théorie — Chapitre 03",
-        "theory_sections": {
-            "bandit": "§3.1 Le problème du bandit multi-bras",
-            "egreedy": "§3.2 Epsilon-Greedy avec recuit",
-            "ucb": "§3.3 Borne de confiance supérieure (UCB1)",
-            "thompson": "§3.3 Échantillonnage de Thompson",
-            "regret": "§3.1 Analyse du regret",
-        },
-        "theory_bandit": r"""
-**Le problème du bandit multi-bras** : K bras, récompenses stochastiques, pas de transitions d'état.
-$$\text{Regret}(T) = \sum_{t=1}^{T} \left[ \mu^* - \mu_{a_t} \right]$$
-""",
         "theory_egreedy": r"""
 **Epsilon-Greedy avec recuit** :
 $$\varepsilon_t = \max\left(\varepsilon_{\min},\ \frac{\varepsilon_0}{1 + \alpha t}\right)$$
@@ -394,17 +298,6 @@ Borne de regret : $O(\sqrt{KT \ln T})$
         "ucb_c": "c — Constante de exploración UCB",
         "seed": "Semilla aleatoria",
         "run_btn": "▶ Ejecutar los tres algoritmos",
-        "guide_title": "🎓 Cómo usar este capítulo",
-        "guide": """
-**Paso 1** — 5 ranuras de habilidades (brazos): HVAC, Eléctrico, Fontanería, Red, Mecánico.
-**Paso 2** — Ajuste el número de pasos. Pruebe 200 y luego 1000.
-**Paso 3** — Ajuste ε y la tasa de decaimiento α.
-**Paso 4** — Ajuste c (constante UCB). Pruebe c=2.0 vs c=0.5.
-**Paso 5** — Haga clic ▶ para ejecutar los tres algoritmos simultáneamente.
-**Paso 6** — Lea el gráfico de arrepentimiento acumulado. Más bajo = mejor.
-**Paso 7** — Lea la distribución de tiradas. ¿Encontraron el mejor brazo (Fontanería)?
-**Paso 8** — Lea la convergencia de valores Q hacia las tasas SLA reales.
-""",
         "regret_title": "📈 Arrepentimiento acumulado — Tres algoritmos",
         "regret_x": "Paso",
         "regret_y": "Arrepentimiento acumulado",
@@ -434,18 +327,6 @@ Borne de regret : $O(\sqrt{KT \ln T})$
         "best_arm_label": "Mejor brazo identificado",
         "total_regret_label": "Arrepentimiento total",
         "total_reward_label": "Recompensa total",
-        "theory_title": "📖 Teoría — Capítulo 03",
-        "theory_sections": {
-            "bandit": "§3.1 El problema del bandido multi-brazo",
-            "egreedy": "§3.2 Epsilon-Greedy con recocido",
-            "ucb": "§3.3 Cota de confianza superior (UCB1)",
-            "thompson": "§3.3 Muestreo de Thompson",
-            "regret": "§3.1 Análisis del arrepentimiento",
-        },
-        "theory_bandit": r"""
-**El problema del bandido multi-brazo** : K brazos, recompensas estocásticas, sin transiciones de estado.
-$$\text{Regret}(T) = \sum_{t=1}^{T} \left[ \mu^* - \mu_{a_t} \right]$$
-""",
         "theory_egreedy": r"""
 **Epsilon-Greedy con recocido** :
 $$\varepsilon_t = \max\left(\varepsilon_{\min},\ \frac{\varepsilon_0}{1 + \alpha t}\right)$$
@@ -489,17 +370,6 @@ $$\text{UCB}(a) = Q(a) + c \sqrt{\frac{\ln t}{N(a)}}$$
         "ucb_c": "c — Stała eksploracji UCB",
         "seed": "Ziarno losowości",
         "run_btn": "▶ Uruchom wszystkie trzy algorytmy",
-        "guide_title": "🎓 Jak korzystać z tego rozdziału",
-        "guide": """
-**Krok 1** — 5 slotów umiejętności (ramion): HVAC, Elektryka, Hydraulika, Sieć, Mechanika.
-**Krok 2** — Ustaw liczbę kroków. Zacznij od 200, potem 1000.
-**Krok 3** — Ustaw ε i współczynnik zaniku α.
-**Krok 4** — Ustaw c (stała UCB). Porównaj c=2.0 vs c=0.5.
-**Krok 5** — Kliknij ▶ aby uruchomić wszystkie trzy algorytmy jednocześnie.
-**Krok 6** — Odczytaj wykres skumulowanego żalu. Niżej = lepiej.
-**Krok 7** — Odczytaj rozkład losowań. Czy znalazły najlepsze ramię (Hydraulika)?
-**Krok 8** — Odczytaj zbieżność wartości Q do prawdziwych wskaźników SLA.
-""",
         "regret_title": "📈 Skumulowany żal — Trzy algorytmy",
         "regret_x": "Krok",
         "regret_y": "Skumulowany żal",
@@ -529,18 +399,6 @@ $$\text{UCB}(a) = Q(a) + c \sqrt{\frac{\ln t}{N(a)}}$$
         "best_arm_label": "Zidentyfikowane najlepsze ramię",
         "total_regret_label": "Całkowity żal",
         "total_reward_label": "Całkowita nagroda",
-        "theory_title": "📖 Teoria — Rozdział 03",
-        "theory_sections": {
-            "bandit": "§3.1 Problem wieloręki bandyta",
-            "egreedy": "§3.2 Epsilon-zachłanny z wygaszaniem",
-            "ucb": "§3.3 Górna granica ufności (UCB1)",
-            "thompson": "§3.3 Próbkowanie Thompsona",
-            "regret": "§3.1 Analiza żalu",
-        },
-        "theory_bandit": r"""
-**Problem wieloręki bandyta** : K ramion, stochastyczne nagrody, brak przejść stanów.
-$$\text{Żal}(T) = \sum_{t=1}^{T} \left[ \mu^* - \mu_{a_t} \right]$$
-""",
         "theory_egreedy": r"""
 **Epsilon-zachłanny z wygaszaniem** :
 $$\varepsilon_t = \max\left(\varepsilon_{\min},\ \frac{\varepsilon_0}{1 + \alpha t}\right)$$
@@ -616,9 +474,6 @@ def render():
     ucb_c         = st.sidebar.slider(tx["ucb_c"],         0.1, 5.0, 2.0, 0.1)
     seed          = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
-    with st.expander(tx["guide_title"], expanded=False):
-        st.markdown(tx["guide"])
-
     run = st.button(tx["run_btn"], type="primary")
 
     if run:
@@ -631,7 +486,6 @@ def render():
 
     if "ch03_raw" not in st.session_state:
         st.info("Configure settings and click **▶ Run All Three Algorithms**.")
-        _render_theory(tx)
         return
 
     raw       = st.session_state["ch03_raw"]
@@ -678,7 +532,6 @@ def render():
     _render_summary(results, arm_names, true_rates, tx)
 
     # Theory
-    _render_theory(tx)
 
 
 # ---------------------------------------------------------------------------
@@ -894,16 +747,3 @@ def _render_summary(results, arm_names, true_rates, tx):
 # ---------------------------------------------------------------------------
 # Theory
 # ---------------------------------------------------------------------------
-def _render_theory(tx):
-    st.markdown("---")
-    st.subheader(tx["theory_title"])
-    sections = [
-        ("bandit",    tx["theory_sections"]["bandit"],    tx["theory_bandit"]),
-        ("egreedy",   tx["theory_sections"]["egreedy"],   tx["theory_egreedy"]),
-        ("ucb",       tx["theory_sections"]["ucb"],       tx["theory_ucb"]),
-        ("thompson",  tx["theory_sections"]["thompson"],  tx["theory_thompson"]),
-        ("regret",    tx["theory_sections"]["regret"],    tx["theory_regret"]),
-    ]
-    for key, label, content in sections:
-        with st.expander(label, expanded=False):
-            st.markdown(content)

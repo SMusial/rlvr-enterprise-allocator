@@ -45,7 +45,6 @@ TX = {
         "title": "Chapitre 12 — Théorie des jeux & Équilibre de Nash",
         "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Varsovie",
         "engine_missing": "Exécutez: cd rlvr-py && maturin develop",
-        "guide": "Nash Q: équilibre de Nash. Correlated Q: distribution conjointe. Minimax Q: jeu à somme nulle. Fictitious Play: meilleure réponse.",
         "labels": {"nash_q":"Nash Q","correlated_q":"Correlated Q","minimax_q":"Minimax Q","fictitious":"Fictitious Play"},
         "settings": "Paramètres", "episodes": "Épisodes", "gamma": "Gamma", "alpha": "Alpha",
         "epsilon": "Epsilon", "edecay": "Décroissance", "zerosum": "Jeu à somme nulle", "seed": "Graine",
@@ -57,7 +56,6 @@ TX = {
         "title": "Capítulo 12 — Teoría de juegos & Equilibrio de Nash",
         "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Varsovia",
         "engine_missing": "Ejecute: cd rlvr-py && maturin develop",
-        "guide": "Nash Q: equilibrio de Nash. Correlated Q: distribución conjunta. Minimax Q: juego suma cero. Fictitious Play: mejor respuesta.",
         "labels": {"nash_q":"Nash Q","correlated_q":"Correlated Q","minimax_q":"Minimax Q","fictitious":"Fictitious Play"},
         "settings": "Configuración", "episodes": "Episodios", "gamma": "Gamma", "alpha": "Alpha",
         "epsilon": "Epsilon", "edecay": "Decaimiento", "zerosum": "Juego suma cero", "seed": "Semilla",
@@ -69,7 +67,6 @@ TX = {
         "title": "Rozdział 12 — Teoria gier & Równowaga Nasha",
         "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Warszawa",
         "engine_missing": "Uruchom: cd rlvr-py && maturin develop",
-        "guide": "Nash Q: równowaga Nasha. Correlated Q: wspólna dystrybucja. Minimax Q: gra zerowa. Fictitious Play: najlepsza odpowiedź.",
         "labels": {"nash_q":"Nash Q","correlated_q":"Correlated Q","minimax_q":"Minimax Q","fictitious":"Fictitious Play"},
         "settings": "Ustawienia", "episodes": "Epizody", "gamma": "Gamma", "alpha": "Alpha",
         "epsilon": "Epsilon", "edecay": "Zanik epsilon", "zerosum": "Gra zerowa (tryb Minimax)", "seed": "Ziarno",
@@ -100,8 +97,6 @@ T = {
         "gamma": "gamma",
         "gap": "gap",
         "glass": "glass",
-        "guide": "guide",
-        "guide_title": "guide_title",
         "labels": "labels",
         "ret": "ret",
         "run": "run",
@@ -151,9 +146,6 @@ def render():
     edec     = st.sidebar.slider(tx["edecay"],0.0,0.1,0.01,0.001,format="%.3f")
     zero_sum = st.sidebar.checkbox(tx["zerosum"],value=False)
     seed     = st.sidebar.number_input(tx["seed"],0,9999,42)
-
-    with st.expander(tx["guide_title"],expanded=False):
-        st.markdown(tx["guide"])
     if False: st.markdown(
             "Nash Q: converges to Nash equilibrium - neither player can improve unilaterally.\n\n"
             "Correlated Q: broader than Nash - agents coordinate via joint distribution.\n\n"
@@ -171,7 +163,6 @@ def render():
 
     if "ch12_result" not in st.session_state:
         st.info("Configure settings and click Run.")
-        _theory()
         return
 
     res   = st.session_state["ch12_result"]
@@ -228,7 +219,6 @@ def render():
     _glass(res, tx)
     st.subheader(tx["summary"])
     _summary(res, tx)
-    _theory()
 
 def _glass(res, tx=None):
     opts={LABELS[k]:k for k in ALGOS}
@@ -256,17 +246,3 @@ def _summary(res, tx=None):
         ng=sum(r["nash_gap_curve"])/max(1,len(r["nash_gap_curve"]))
         rows.append({"Algorithm":LABELS[k],"Avg return (last 100)":f"{avg:.3f}","Steps":str(r["total_steps"]),"Avg Nash gap":f"{ng:.4f}","V*(S0)":f"{r['values'][0]:.3f}","V*(S7)":f"{r['values'][7]:.3f}"})
     st.dataframe(rows,hide_index=True)
-
-def _theory():
-    st.markdown("---")
-    st.subheader("Theory - Chapter 12")
-    with st.expander("12.1 Nash Equilibrium",expanded=False):
-        st.markdown("V_i(s, pi_i*, pi_j*) >= V_i(s, pi_i, pi_j*) for all pi_i")
-    with st.expander("12.2 Nash Q-Learning",expanded=False):
-        st.markdown("Q_i(s,a0,a1) += alpha * [r_i + gamma * V_i^Nash(s') - Q_i(s,a0,a1)]")
-    with st.expander("12.3 Correlated Q-Learning",expanded=False):
-        st.markdown("Joint distribution sigma(a0,a1|s) updated via regret matching.")
-    with st.expander("12.4 Minimax Q-Learning",expanded=False):
-        st.markdown("Zero-sum: max_{pi_0} min_{pi_1} V_0(s, pi_0, pi_1)")
-    with st.expander("12.5 Fictitious Play",expanded=False):
-        st.markdown("Best response to empirical average: pi_j(a|s) = N_j(s,a) / sum N_j(s,a)")

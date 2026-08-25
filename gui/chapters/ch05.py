@@ -13,7 +13,6 @@ T = {
         "epsilon_decay": "ε decay rate α",
         "seed": "Random seed",
         "run_btn": "▶ Run All Four MC Algorithms",
-        "guide_title": "🎓 How to use this chapter",
         "guide": """
 **Step 1 — Understand the key difference from Ch04**
 MC methods learn WITHOUT a model — no P(s\'|s,a) needed.
@@ -57,7 +56,6 @@ See exact returns G_t for each state in a selected episode.
         "summary_pros_cons": "MC Algorithms — Pros & Cons",
         "pros": "✅ Pros",
         "cons": "❌ Cons",
-        "theory_title": "📖 Theory — Chapter 05",
         "theory_sections": {
             "intro":       "§5.1 Monte Carlo Methods — Introduction",
             "first_visit": "§5.2 First-Visit MC Prediction",
@@ -156,10 +154,6 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
         "sidebar_title": "Einstellungen",
         "n_episodes": "Episoden", "gamma": "Gamma", "epsilon": "Epsilon", "seed": "Zufallsseed",
         "run_btn": "▶ Monte-Carlo starten",
-        "guide_title": "Anleitung",
-        "guide": "MC lernt aus vollständigen Episoden. G_t wird rückwärts berechnet und zum Aktualisieren von V(s) verwendet.",
-        "theory_title": "Theorie — Kapitel 05",
-        "theory_sections": {"mc": "5.1 Monte-Carlo-Vorhersage", "control": "5.2 MC-Kontrolle"},
         "summary_title": "Zusammenfassung", "summary_results": "Ergebnisse",
         "summary_pros_cons": "Monte-Carlo — Vor- & Nachteile",
         "pros": "Vorteile", "cons": "Nachteile",
@@ -177,8 +171,6 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
         "epsilon_decay": "Taux de décroissance ε α",
         "seed": "Graine aléatoire",
         "run_btn": "▶ Lancer les quatre algorithmes MC",
-        "guide_title": "🎓 Comment utiliser ce chapitre",
-        "guide": "Quatre algorithmes MC sans modèle. Augmentez le nombre d\'épisodes pour voir la convergence.",
         "returns_title": "📈 Retours par épisode — Quatre algorithmes",
         "returns_caption": "Moyenne mobile des retours. Le contrôle on-policy devrait s\'améliorer.",
         "value_title": "📊 Fonction de valeur V(s) — MC vs référence DP",
@@ -195,7 +187,6 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
         "summary_results": "Comparaison des algorithmes",
         "summary_pros_cons": "Algorithmes MC — Avantages & Inconvénients",
         "pros": "✅ Avantages", "cons": "❌ Inconvénients",
-        "theory_title": "📖 Théorie — Chapitre 05",
         "theory_sections": {
             "intro": "§5.1 Introduction aux méthodes MC",
             "first_visit": "§5.2 Prédiction MC First-Visit",
@@ -223,8 +214,6 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
         "epsilon_decay": "Tasa de decaimiento ε α",
         "seed": "Semilla aleatoria",
         "run_btn": "▶ Ejecutar los cuatro algoritmos MC",
-        "guide_title": "🎓 Cómo usar este capítulo",
-        "guide": "Cuatro algoritmos MC sin modelo. Aumente el número de episodios para ver la convergencia.",
         "returns_title": "📈 Retornos por episodio — Cuatro algoritmos",
         "returns_caption": "Media móvil de retornos. El control on-policy debería mejorar.",
         "value_title": "📊 Función de valor V(s) — MC vs referencia DP",
@@ -241,7 +230,6 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
         "summary_results": "Comparación de algoritmos",
         "summary_pros_cons": "Algoritmos MC — Pros y Contras",
         "pros": "✅ Pros", "cons": "❌ Contras",
-        "theory_title": "📖 Teoría — Capítulo 05",
         "theory_sections": {
             "intro": "§5.1 Introducción a los métodos MC",
             "first_visit": "§5.2 Predicción MC First-Visit",
@@ -269,7 +257,6 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
         "epsilon_decay": "Współczynnik zaniku ε α",
         "seed": "Ziarno losowości",
         "run_btn": "▶ Uruchom wszystkie cztery algorytmy MC",
-        "guide_title": "🎓 Jak korzystać z tego rozdziału",
         "guide": """
 **Krok 1** — MC uczy się BEZ modelu P(s\'|s,a) — tylko z epizodów.
 **Krok 2** — Ustaw liczbę epizodów. Zacznij od 200, potem 2000.
@@ -295,7 +282,6 @@ Implemented in `mc_off_policy_control()` in `ch05_mc.rs`.
         "summary_results": "Porównanie algorytmów",
         "summary_pros_cons": "Algorytmy MC — Zalety i Wady",
         "pros": "✅ Zalety", "cons": "❌ Wady",
-        "theory_title": "📖 Teoria — Rozdział 05",
         "theory_sections": {
             "intro": "§5.1 Wprowadzenie do metod Monte Carlo",
             "first_visit": "§5.2 Predykcja MC First-Visit",
@@ -359,9 +345,6 @@ def render():
     epsilon_decay = st.sidebar.slider(tx["epsilon_decay"], 0.0, 0.1, 0.01, 0.001, format="%.3f")
     seed          = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
-    with st.expander(tx["guide_title"], expanded=False):
-        st.markdown(tx["guide"])
-
     if st.button(tx["run_btn"], type="primary"):
         with st.spinner("Running Rust MC engine..."):
             result = rlvr_py.run_ch05_mc(
@@ -372,7 +355,6 @@ def render():
 
     if "ch05_result" not in st.session_state:
         st.info("Configure settings and click **▶ Run All Four MC Algorithms**.")
-        _render_theory(tx)
         return
 
     result      = st.session_state["ch05_result"]
@@ -469,7 +451,6 @@ def render():
     st.subheader(tx["summary_title"])
     _render_summary(result, tx, algos)
 
-    _render_theory(tx)
 
 
 def _render_glass_box(result, tx, state_names, action_names):
@@ -509,10 +490,3 @@ def _render_summary(result, tx, algos):
             for c in tx["cons_list"][key]: st.markdown(f"- {c}")
         st.markdown("---")
 
-
-def _render_theory(tx):
-    st.markdown("---")
-    st.subheader(tx["theory_title"])
-    for key in ["intro", "first_visit", "every_visit", "on_policy", "off_policy"]:
-        with st.expander(tx["theory_sections"][key], expanded=False):
-            st.markdown(tx[f"theory_{key}"])

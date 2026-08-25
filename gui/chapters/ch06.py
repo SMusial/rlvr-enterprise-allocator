@@ -14,7 +14,6 @@ T = {
         "epsilon_decay": "ε decay rate",
         "seed": "Random seed",
         "run_btn": "▶ Run TD(0), SARSA and Q-Learning",
-        "guide_title": "🎓 How to use this chapter",
         "guide": """
 **Step 1 — Understand the key difference from Ch05 (MC)**
 TD methods update after EVERY step, not after episode end.
@@ -61,25 +60,6 @@ TD methods should converge to the same policy as DP — without needing P(s'|s,a
         "summary_pros_cons": "TD Algorithms — Pros & Cons",
         "pros": "✅ Pros",
         "cons": "❌ Cons",
-        "theory_title": "📖 Theory — Chapter 06",
-        "theory_sections": {
-            "td_intro":  "§6.1 Temporal Difference Learning",
-            "td0":       "§6.1 TD(0) Prediction",
-            "sarsa":     "§6.2 SARSA — On-Policy TD Control",
-            "qlearning": "§6.3 Q-Learning — Off-Policy TD Control",
-            "comparison":"§6.4 SARSA vs Q-Learning",
-        },
-        "theory_td_intro": r"""
-**Temporal Difference (TD) Learning** combines ideas from MC and DP:
-- Like MC: model-free, learns from experience
-- Like DP: bootstraps — updates using current estimates, not waiting for episode end
-
-The TD error (delta):
-δ_t = R_{t+1} + γ V(S_{t+1}) - V(S_t)
-
-This is the "surprise" signal — how much better or worse than expected.
-Implemented in `ch06_td.rs`.
-""",
         "theory_td0": r"""
 **TD(0) Prediction** updates V(s) after every step:
 
@@ -152,7 +132,6 @@ In ASP: SARSA is safer during training, Q-Learning finds the better final policy
         "alpha": "α — Lernrate", "epsilon": "ε — Anfängliche Exploration",
         "epsilon_decay": "ε-Abklingrate", "seed": "Zufallsseed",
         "run_btn": "▶ TD(0), SARSA und Q-Learning starten",
-        "guide_title": "Anleitung",
         "guide": """**Schritt 1** — TD aktualisiert nach JEDEM Schritt (nicht nach Episodenende wie MC).
 **Schritt 2** — SARSA = On-Policy. Q-Learning = Off-Policy.
 **Schritt 3** — α (Lernrate) einstellen. α=0.1 ist ein guter Start.
@@ -175,16 +154,6 @@ In ASP: SARSA is safer during training, Q-Learning finds the better final policy
         "summary_results": "Algorithmenvergleich",
         "summary_pros_cons": "TD-Algorithmen — Vor- & Nachteile",
         "pros": "Vorteile", "cons": "Nachteile",
-        "theory_title": "Theorie — Kapitel 06",
-        "theory_sections": {
-            "td_intro":   "6.1 Temporales Differenzlernen",
-            "td0":        "6.1 TD(0)-Vorhersage",
-            "sarsa":      "6.2 SARSA — On-Policy TD-Kontrolle",
-            "qlearning":  "6.3 Q-Learning — Off-Policy TD-Kontrolle",
-            "comparison": "6.4 SARSA vs. Q-Learning",
-        },
-        "theory_td_intro": r"""**Temporales Differenzlernen (TD)** kombiniert MC und DP.
-TD-Fehler: $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$""",
         "theory_td0": r"$V(S_t) \leftarrow V(S_t) + lpha[R_{t+1} + \gamma V(S_{t+1}) - V(S_t)]$",
         "theory_sarsa": r"$Q(S_t,A_t) \leftarrow Q(S_t,A_t) + lpha[R_{t+1} + \gamma Q(S_{t+1},A_{t+1}) - Q(S_t,A_t)]$",
         "theory_qlearning": r"$Q(S_t,A_t) \leftarrow Q(S_t,A_t) + lpha[R_{t+1} + \gamma \max_{a'} Q(S_{t+1},a') - Q(S_t,A_t)]$",
@@ -213,8 +182,6 @@ TD-Fehler: $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$""",
         "epsilon_decay": "Taux de décroissance ε",
         "seed": "Graine aléatoire",
         "run_btn": "▶ Lancer TD(0), SARSA et Q-Learning",
-        "guide_title": "🎓 Comment utiliser ce chapitre",
-        "guide": "TD met à jour après chaque étape (pas après l'épisode). SARSA = on-policy. Q-Learning = off-policy.",
         "returns_title": "📈 Retours par épisode",
         "returns_caption": "Moyenne mobile. Q-Learning devrait converger le plus vite.",
         "td_error_title": "📉 Erreur TD",
@@ -231,92 +198,6 @@ TD-Fehler: $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$""",
         "summary_results": "Comparaison des algorithmes",
         "summary_pros_cons": "Algorithmes TD — Avantages & Inconvénients",
         "pros": "✅ Avantages", "cons": "❌ Inconvénients",
-        "theory_title": "📖 Théorie — Chapitre 06",
-        "theory_sections": {
-            "td_intro": "§6.1 Apprentissage par différences temporelles",
-            "td0": "§6.1 Prédiction TD(0)",
-            "sarsa": "§6.2 SARSA — Contrôle TD on-policy",
-            "qlearning": "§6.3 Q-Learning — Contrôle TD off-policy",
-            "comparison": "§6.4 SARSA vs Q-Learning",
-        },
-        "theory_td_intro": "δ_t = R_{t+1} + γ V(S_{t+1}) - V(S_t)",
-        "theory_td0": "V(S_t) ← V(S_t) + α [R_{t+1} + γ V(S_{t+1}) - V(S_t)]",
-        "theory_sarsa": "Q(S_t,A_t) ← Q(S_t,A_t) + α [R_{t+1} + γ Q(S_{t+1},A_{t+1}) - Q(S_t,A_t)]",
-        "theory_qlearning": "Q(S_t,A_t) ← Q(S_t,A_t) + α [R_{t+1} + γ max_a' Q(S_{t+1},a') - Q(S_t,A_t)]",
-        "theory_comparison": "SARSA: on-policy, sûr. Q-Learning: off-policy, optimal.",
-        "algo_labels": {"td0": "TD(0)", "sarsa": "SARSA", "qlearning": "Q-Learning"},
-        "pros_list": {"td0": ["En ligne", "Sans modèle"], "sarsa": ["Sûr pendant l'apprentissage", "On-policy"], "qlearning": ["Apprend Q* directement", "Off-policy"]},
-        "cons_list": {"td0": ["Prédit seulement V^pi", "Biaisé"], "sarsa": ["Sous-optimal si ε élevé"], "qlearning": ["Risqué pendant l'apprentissage", "Biais de maximisation"]},
-    },
-    "ES": {
-        "title": "Capítulo 06 — Aprendizaje por Diferencias Temporales",
-        "subtitle": "TD(0) · SARSA · Q-Learning · ASP · Región de Varsovia",
-        "engine_missing": "Ejecute: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Configuración TD",
-        "n_episodes": "Número de episodios",
-        "gamma": "γ — Factor de descuento",
-        "alpha": "α — Tasa de aprendizaje",
-        "epsilon": "ε — Exploración inicial",
-        "epsilon_decay": "Tasa de decaimiento ε",
-        "seed": "Semilla aleatoria",
-        "run_btn": "▶ Ejecutar TD(0), SARSA y Q-Learning",
-        "guide_title": "🎓 Cómo usar este capítulo",
-        "guide": "TD actualiza después de cada paso. SARSA = on-policy. Q-Learning = off-policy.",
-        "returns_title": "📈 Retornos por episodio",
-        "returns_caption": "Media móvil. Q-Learning debería converger más rápido.",
-        "td_error_title": "📉 Error TD",
-        "td_error_caption": "El error TD decrece con el aprendizaje.",
-        "value_title": "📊 Función de valor V(s)",
-        "value_caption": "Las estimaciones TD convergen hacia la solución DP (Ch04).",
-        "policy_title": "🎯 Política óptima — SARSA vs Q-Learning",
-        "policy_caption": "Q-Learning encuentra la política óptima. SARSA la más segura.",
-        "qtable_title": "📊 Tabla Q",
-        "qtable_caption": "Valores Q(s,a). Seleccione el algoritmo.",
-        "glass_title": "🔬 Glass-Box — Traza de actualización TD",
-        "glass_headers": ["Episodio", "Paso", "Estado", "Acción", "Recompensa", "Siguiente estado", "Error TD"],
-        "summary_title": "📊 Resumen",
-        "summary_results": "Comparación de algoritmos",
-        "summary_pros_cons": "Algoritmos TD — Pros y Contras",
-        "pros": "✅ Pros", "cons": "❌ Contras",
-        "theory_title": "📖 Teoría — Capítulo 06",
-        "theory_sections": {
-            "td_intro": "§6.1 Aprendizaje por diferencias temporales",
-            "td0": "§6.1 Predicción TD(0)",
-            "sarsa": "§6.2 SARSA — Control TD on-policy",
-            "qlearning": "§6.3 Q-Learning — Control TD off-policy",
-            "comparison": "§6.4 SARSA vs Q-Learning",
-        },
-        "theory_td_intro": "δ_t = R_{t+1} + γ V(S_{t+1}) - V(S_t)",
-        "theory_td0": "V(S_t) ← V(S_t) + α [R_{t+1} + γ V(S_{t+1}) - V(S_t)]",
-        "theory_sarsa": "Q(S_t,A_t) ← Q(S_t,A_t) + α [R_{t+1} + γ Q(S_{t+1},A_{t+1}) - Q(S_t,A_t)]",
-        "theory_qlearning": "Q(S_t,A_t) ← Q(S_t,A_t) + α [R_{t+1} + γ max_a' Q(S_{t+1},a') - Q(S_t,A_t)]",
-        "theory_comparison": "SARSA: on-policy, seguro. Q-Learning: off-policy, óptimo.",
-        "algo_labels": {"td0": "TD(0)", "sarsa": "SARSA", "qlearning": "Q-Learning"},
-        "pros_list": {"td0": ["En línea", "Sin modelo"], "sarsa": ["Seguro durante aprendizaje", "On-policy"], "qlearning": ["Aprende Q* directamente", "Off-policy"]},
-        "cons_list": {"td0": ["Solo predice V^pi", "Sesgado"], "sarsa": ["Subóptimo si ε alto"], "qlearning": ["Arriesgado durante aprendizaje", "Sesgo de maximización"]},
-    },
-    "PL": {
-        "title": "Rozdział 06 — Uczenie przez Różnice Temporalne",
-        "subtitle": "TD(0) · SARSA · Q-Learning · Dyspozytura ASP · Region Warszawy",
-        "engine_missing": "Uruchom: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Ustawienia TD",
-        "n_episodes": "Liczba epizodów",
-        "gamma": "γ — Współczynnik dyskontowania",
-        "alpha": "α — Współczynnik uczenia",
-        "epsilon": "ε — Eksploracja początkowa",
-        "epsilon_decay": "Współczynnik zaniku ε",
-        "seed": "Ziarno losowości",
-        "run_btn": "▶ Uruchom TD(0), SARSA i Q-Learning",
-        "guide_title": "🎓 Jak korzystać z tego rozdziału",
-        "guide": """
-**Krok 1** — TD aktualizuje po KAŻDYM kroku (nie po epizodzie jak MC).
-**Krok 2** — SARSA = on-policy (używa tej samej polityki do uczenia i zachowania).
-**Krok 3** — Q-Learning = off-policy (uczy się optymalnej polityki niezależnie od zachowania).
-**Krok 4** — Ustaw α (współczynnik uczenia). α=0.1 to dobry start.
-**Krok 5** — Kliknij ▶ aby uruchomić wszystkie trzy algorytmy.
-**Krok 6** — Odczytaj krzywą błędu TD — powinna maleć w czasie.
-**Krok 7** — Porównaj polityki SARSA vs Q-Learning — Q-Learning powinien znaleźć lepszą.
-""",
         "returns_title": "📈 Zwroty epizodów — TD(0), SARSA, Q-Learning",
         "returns_caption": "Średnia krocząca zwrotów. Q-Learning powinien zbiegać najszybciej.",
         "td_error_title": "📉 Błąd TD — |R + γV(s') - V(s)|",
@@ -333,22 +214,6 @@ TD-Fehler: $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$""",
         "summary_results": "Porównanie algorytmów",
         "summary_pros_cons": "Algorytmy TD — Zalety i Wady",
         "pros": "✅ Zalety", "cons": "❌ Wady",
-        "theory_title": "📖 Teoria — Rozdział 06",
-        "theory_sections": {
-            "td_intro":  "§6.1 Uczenie przez różnice temporalne",
-            "td0":       "§6.1 Predykcja TD(0)",
-            "sarsa":     "§6.2 SARSA — On-policy TD Control",
-            "qlearning": "§6.3 Q-Learning — Off-policy TD Control",
-            "comparison":"§6.4 SARSA vs Q-Learning",
-        },
-        "theory_td_intro": r"""
-**Uczenie przez różnice temporalne (TD)** łączy MC i DP:
-- Jak MC: bez modelu, uczy z doświadczenia
-- Jak DP: bootstrapping — aktualizuje używając bieżących estymат
-
-Błąd TD (delta): δ_t = R_{t+1} + γ V(S_{t+1}) - V(S_t)
-Implementacja: `ch06_td.rs`
-""",
         "theory_td0": "V(S_t) ← V(S_t) + α [R_{t+1} + γ V(S_{t+1}) - V(S_t)]",
         "theory_sarsa": "Q(S_t,A_t) ← Q(S_t,A_t) + α [R_{t+1} + γ Q(S_{t+1},A_{t+1}) - Q(S_t,A_t)]",
         "theory_qlearning": "Q(S_t,A_t) ← Q(S_t,A_t) + α [R_{t+1} + γ max_a' Q(S_{t+1},a') - Q(S_t,A_t)]",
@@ -411,9 +276,6 @@ def render():
     epsilon_decay = st.sidebar.slider(tx["epsilon_decay"], 0.0, 0.1, 0.01, 0.001, format="%.3f")
     seed          = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
-    with st.expander(tx["guide_title"], expanded=False):
-        st.markdown(tx["guide"])
-
     if st.button(tx["run_btn"], type="primary"):
         with st.spinner("Running Rust TD engine..."):
             result = rlvr_py.run_ch06_td(
@@ -424,7 +286,6 @@ def render():
 
     if "ch06_result" not in st.session_state:
         st.info("Configure settings and click **▶ Run TD(0), SARSA and Q-Learning**.")
-        _render_theory(tx)
         return
 
     result       = st.session_state["ch06_result"]
@@ -524,7 +385,6 @@ def render():
     st.subheader(tx["summary_title"])
     _render_summary(result, tx, algos)
 
-    _render_theory(tx)
 
 
 def _render_glass_box(result, tx):
@@ -571,10 +431,3 @@ def _render_summary(result, tx, algos):
             for c in tx["cons_list"][key]: st.markdown(f"- {c}")
         st.markdown("---")
 
-
-def _render_theory(tx):
-    st.markdown("---")
-    st.subheader(tx["theory_title"])
-    for key in ["td_intro","td0","sarsa","qlearning","comparison"]:
-        with st.expander(tx["theory_sections"][key], expanded=False):
-            st.markdown(tx[f"theory_{key}"])

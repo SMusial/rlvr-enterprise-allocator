@@ -15,32 +15,6 @@ T = {
         "theta": "θ — Convergence threshold",
         "seed": "Random seed",
         "run_btn": "▶ Run Value Iteration",
-        "guide_title": "🎓 How to use this chapter",
-        "guide": """
-**Step 1 — Set γ (discount factor)**
-γ controls how much the agent values future rewards. γ=0.99 = farsighted (plans ahead).
-γ=0.5 = myopic (only cares about immediate reward). Watch how γ affects convergence speed.
-
-**Step 2 — Set θ (convergence threshold)**
-θ is how small the change in V must be before we stop iterating.
-Smaller θ = more precise but more iterations. Try 1e-6 to start.
-
-**Step 3 — Click ▶ Run Value Iteration**
-The Rust engine builds the ASP transition matrix, reward matrix, and runs Bellman iterations.
-
-**Step 4 — Read the Value Function chart**
-Each bar = long-term value of being in that operational state.
-S0 (all available) should be highest. S7 (SLA breach imminent) should be lowest.
-
-**Step 5 — Read the Optimal Policy table**
-For each operational state, the table shows which dispatch strategy maximises long-term value.
-
-**Step 6 — Read the Convergence curve**
-Watch ‖V^(k+1) - V^(k)‖∞ decay to zero — this is the contraction mapping theorem in action.
-
-**Step 7 — Read the Glass-Box Bellman trace**
-See the exact Bellman update for each state in the first 3 iterations.
-""",
         "value_title": "📊 Optimal Value Function V*(s)",
         "value_caption": "Long-term expected reward of being in each operational state under optimal policy",
         "policy_title": "🎯 Optimal Policy π*(s)",
@@ -77,45 +51,6 @@ See the exact Bellman update for each state in the first 3 iterations.
         "metric_worst_state": "Worst operational state",
         "metric_value_range": "Value range V*(s)",
         "metric_contraction": "Contraction verified",
-        "theory_title": "📖 Theory — Chapter 02",
-        "theory_sections": {
-            "bellman": "§2.3 Bellman Optimality Equation",
-            "vi": "§2.3 Value Iteration Algorithm",
-            "contraction": "§2.3 Contraction Mapping Theorem",
-            "linear": "§2.2 Linear System Solution",
-            "policy": "§2.3 Policy Extraction",
-        },
-        "theory_bellman": r"""
-**Bellman Optimality Equation** defines the value of a state under the optimal policy:
-
-$$V^*(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-
-- The value of state s = best action × (immediate reward + discounted future value)
-- This is recursive — V*(s) depends on V*(s')
-- Value Iteration solves this by iterating until convergence
-
-Implemented in `value_iteration()` in `ch02_bellman.rs`.
-""",
-        "theory_vi": r"""
-**Value Iteration** repeatedly applies the Bellman operator until convergence:
-
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^{(k)}(s') \right]$$
-
-Starting from V⁽⁰⁾ = 0, each iteration brings V closer to V*.
-Stop when: $\|V^{(k+1)} - V^{(k)}\|_\infty < \theta$
-
-The Glass-Box shows the exact update for each state in the first 3 iterations.
-""",
-        "theory_contraction": r"""
-**Contraction Mapping Theorem** guarantees convergence:
-
-$$\|V^{(k+1)} - V^{(k)}\|_\infty \leq \gamma \|V^{(k)} - V^{(k-1)}\|_\infty$$
-
-The Bellman operator is a γ-contraction — each iteration reduces the error by factor γ.
-Since γ < 1, the sequence converges to a unique fixed point V*.
-
-Verified in `verify_contraction()` in `ch02_bellman.rs`.
-""",
         "theory_linear": r"""
 **Exact solution via linear system** — for a fixed policy π:
 
@@ -125,16 +60,6 @@ Where $P^\pi$ is the transition matrix under policy π and $r^\pi$ is the reward
 Solved using **nalgebra LU decomposition** in `solve_exact()` in `ch02_bellman.rs`.
 
 This gives the exact value function without iteration — but only works for small state spaces.
-""",
-        "theory_policy": r"""
-**Policy Extraction** — greedy policy from V*:
-
-$$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-
-Once V* is known, the optimal action in each state is simply the one that maximises
-the right-hand side of the Bellman equation.
-
-Implemented in `extract_policy()` in `ch02_bellman.rs`.
 """,
     },
         "DE": {
@@ -146,14 +71,6 @@ Implemented in `extract_policy()` in `ch02_bellman.rs`.
         "theta": "θ — Konvergenzschwelle",
         "seed": "Zufallsseed",
         "run_btn": "▶ Wertiteration starten",
-        "guide_title": "ℹ️ Anleitung",
-        "guide": """**Schritt 1 — γ einstellen**: γ=0.99 = weitsichtig, γ=0.5 = kurzsichtig.
-**Schritt 2 — θ einstellen**: kleiner = genauer, aber mehr Iterationen.
-**Schritt 3 — Wertiteration starten**: Rust-Engine baut Übergangsmatrix und iteriert.
-**Schritt 4 — Wertfunktion lesen**: jeder Balken = langfristiger Wert des Zustands.
-**Schritt 5 — Optimale Strategie lesen**: beste Dispatch-Strategie für jeden Zustand.
-**Schritt 6 — Konvergenzkurve lesen**: Abfall von V^(k+1) - V^(k).
-**Schritt 7 — Glass-Box lesen**: Bellman-Update für jeden Zustand.""",
         "value_title": "📊 Optimale Wertfunktion V*(s)",
         "value_caption": "Langfristig erwartete Belohnung für jeden Betriebszustand",
         "policy_title": "🎯 Optimale Strategie π*(s)",
@@ -190,28 +107,9 @@ Implemented in `extract_policy()` in `ch02_bellman.rs`.
         "metric_worst_state": "Schlechtester Betriebszustand",
         "metric_value_range": "Wertebereich V*(s)",
         "metric_contraction": "Kontraktion verifiziert",
-        "theory_title": "📚 Theorie — Kapitel 02",
-        "theory_sections": {
-            "bellman":     "2.3 Bellman-Optimalitätsgleichung",
-            "vi":          "2.3 Wertiterationsalgorithmus",
-            "contraction": "2.3 Kontraktionsabbildungssatz",
-            "linear":      "2.2 Lineare System-Lösung",
-            "policy":      "2.3 Strategieextraktion",
-        },
-        "theory_bellman": r"""**Bellman-Optimalitätsgleichung**:
-$$V^*(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-Implementiert in `value_iteration()` in `ch02_bellman.rs`.""",
-        "theory_vi": r"""**Wertiteration** wendet den Bellman-Operator iterativ an:
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^{(k)}(s') \right]$$
-Stopp wenn: $\|V^{(k+1)} - V^{(k)}\|_\infty < \theta$""",
-        "theory_contraction": r"""**Kontraktionsabbildungssatz** garantiert Konvergenz:
-$$\|V^{(k+1)} - V^{(k)}\|_\infty \leq \gamma \|V^{(k)} - V^{(k-1)}\|_\infty$$
-Verifiziert in `verify_contraction()` in `ch02_bellman.rs`.""",
         "theory_linear": r"""**Exakte Lösung** für eine feste Strategie π:
 $$V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$$
 Gelöst mit **nalgebra LU-Zerlegung** in `solve_exact()` in `ch02_bellman.rs`.""",
-        "theory_policy": r"""**Strategieextraktion** — gierige Strategie aus V*:
-$$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$""",
     },
     "FR": {
         "title": "Chapitre 02 — MDP Discret & Optimalité de Bellman",
@@ -222,16 +120,6 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "theta": "θ — Seuil de convergence",
         "seed": "Graine aléatoire",
         "run_btn": "▶ Lancer l'itération de valeur",
-        "guide_title": "🎓 Comment utiliser ce chapitre",
-        "guide": """
-**Étape 1 — Réglez γ** : γ=0.99 = prévoyant, γ=0.5 = myope.
-**Étape 2 — Réglez θ** : plus petit = plus précis mais plus d'itérations.
-**Étape 3 — Cliquez ▶** : le moteur Rust construit la matrice de transition et itère.
-**Étape 4 — Lisez la fonction de valeur** : chaque barre = valeur à long terme de l'état.
-**Étape 5 — Lisez la politique optimale** : meilleure stratégie pour chaque état.
-**Étape 6 — Lisez la courbe de convergence** : décroissance de ‖V^(k+1) - V^(k)‖∞.
-**Étape 7 — Lisez le Glass-Box** : mise à jour de Bellman pour chaque état.
-""",
         "value_title": "📊 Fonction de valeur optimale V*(s)",
         "value_caption": "Récompense attendue à long terme pour chaque état opérationnel",
         "policy_title": "🎯 Politique optimale π*(s)",
@@ -268,32 +156,8 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "metric_worst_state": "Pire état opérationnel",
         "metric_value_range": "Plage de valeurs V*(s)",
         "metric_contraction": "Contraction vérifiée",
-        "theory_title": "📖 Théorie — Chapitre 02",
-        "theory_sections": {
-            "bellman": "§2.3 Équation d'optimalité de Bellman",
-            "vi": "§2.3 Algorithme d'itération de valeur",
-            "contraction": "§2.3 Théorème de contraction",
-            "linear": "§2.2 Solution par système linéaire",
-            "policy": "§2.3 Extraction de politique",
-        },
-        "theory_bellman": r"""
-**Équation d'optimalité de Bellman** :
-$$V^*(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-""",
-        "theory_vi": r"""
-**Itération de valeur** :
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^{(k)}(s') \right]$$
-""",
-        "theory_contraction": r"""
-**Théorème de contraction** :
-$$\|V^{(k+1)} - V^{(k)}\|_\infty \leq \gamma \|V^{(k)} - V^{(k-1)}\|_\infty$$
-""",
         "theory_linear": r"""
 **Solution exacte** : $V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$ via décomposition LU nalgebra.
-""",
-        "theory_policy": r"""
-**Extraction de politique** :
-$$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
 """,
     },
     "ES": {
@@ -305,16 +169,6 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "theta": "θ — Umbral de convergencia",
         "seed": "Semilla aleatoria",
         "run_btn": "▶ Ejecutar iteración de valor",
-        "guide_title": "🎓 Cómo usar este capítulo",
-        "guide": """
-**Paso 1 — Ajuste γ** : γ=0.99 = previsor, γ=0.5 = miope.
-**Paso 2 — Ajuste θ** : más pequeño = más preciso pero más iteraciones.
-**Paso 3 — Haga clic ▶** : el motor Rust construye la matriz de transición e itera.
-**Paso 4 — Lea la función de valor** : cada barra = valor a largo plazo del estado.
-**Paso 5 — Lea la política óptima** : mejor estrategia para cada estado.
-**Paso 6 — Lea la curva de convergencia** : decaimiento de ‖V^(k+1) - V^(k)‖∞.
-**Paso 7 — Lea el Glass-Box** : actualización de Bellman para cada estado.
-""",
         "value_title": "📊 Función de valor óptima V*(s)",
         "value_caption": "Recompensa esperada a largo plazo para cada estado operacional",
         "policy_title": "🎯 Política óptima π*(s)",
@@ -351,32 +205,8 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "metric_worst_state": "Peor estado operacional",
         "metric_value_range": "Rango de valores V*(s)",
         "metric_contraction": "Contracción verificada",
-        "theory_title": "📖 Teoría — Capítulo 02",
-        "theory_sections": {
-            "bellman": "§2.3 Ecuación de optimalidad de Bellman",
-            "vi": "§2.3 Algoritmo de iteración de valor",
-            "contraction": "§2.3 Teorema de contracción",
-            "linear": "§2.2 Solución por sistema lineal",
-            "policy": "§2.3 Extracción de política",
-        },
-        "theory_bellman": r"""
-**Ecuación de optimalidad de Bellman** :
-$$V^*(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-""",
-        "theory_vi": r"""
-**Iteración de valor** :
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^{(k)}(s') \right]$$
-""",
-        "theory_contraction": r"""
-**Teorema de contracción** :
-$$\|V^{(k+1)} - V^{(k)}\|_\infty \leq \gamma \|V^{(k)} - V^{(k-1)}\|_\infty$$
-""",
         "theory_linear": r"""
 **Solución exacta** : $V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$ via descomposición LU nalgebra.
-""",
-        "theory_policy": r"""
-**Extracción de política** :
-$$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
 """,
     },
     "PL": {
@@ -388,16 +218,6 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "theta": "θ — Próg zbieżności",
         "seed": "Ziarno losowości",
         "run_btn": "▶ Uruchom iterację wartości",
-        "guide_title": "🎓 Jak korzystać z tego rozdziału",
-        "guide": """
-**Krok 1 — Ustaw γ** : γ=0.99 = dalekowzroczny, γ=0.5 = krótkowzroczny.
-**Krok 2 — Ustaw θ** : mniejszy = dokładniejszy, ale więcej iteracji.
-**Krok 3 — Kliknij ▶** : silnik Rust buduje macierz przejść i iteruje.
-**Krok 4 — Odczytaj funkcję wartości** : każdy słupek = długoterminowa wartość stanu.
-**Krok 5 — Odczytaj optymalną politykę** : najlepsza strategia dla każdego stanu.
-**Krok 6 — Odczytaj krzywą zbieżności** : zanik ‖V^(k+1) - V^(k)‖∞.
-**Krok 7 — Odczytaj Glass-Box** : aktualizacja Bellmana dla każdego stanu.
-""",
         "value_title": "📊 Optymalna funkcja wartości V*(s)",
         "value_caption": "Oczekiwana długoterminowa nagroda dla każdego stanu operacyjnego",
         "policy_title": "🎯 Optymalna polityka π*(s)",
@@ -434,32 +254,8 @@ $$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \righ
         "metric_worst_state": "Najgorszy stan operacyjny",
         "metric_value_range": "Zakres wartości V*(s)",
         "metric_contraction": "Kontrakcja zweryfikowana",
-        "theory_title": "📖 Teoria — Rozdział 02",
-        "theory_sections": {
-            "bellman": "§2.3 Równanie optymalności Bellmana",
-            "vi": "§2.3 Algorytm iteracji wartości",
-            "contraction": "§2.3 Twierdzenie o kontrakcji",
-            "linear": "§2.2 Rozwiązanie układu liniowego",
-            "policy": "§2.3 Ekstrakcja polityki",
-        },
-        "theory_bellman": r"""
-**Równanie optymalności Bellmana** :
-$$V^*(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-""",
-        "theory_vi": r"""
-**Iteracja wartości** :
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^{(k)}(s') \right]$$
-""",
-        "theory_contraction": r"""
-**Twierdzenie o kontrakcji** :
-$$\|V^{(k+1)} - V^{(k)}\|_\infty \leq \gamma \|V^{(k)} - V^{(k-1)}\|_\infty$$
-""",
         "theory_linear": r"""
 **Dokładne rozwiązanie** : $V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$ przez dekompozycję LU nalgebra.
-""",
-        "theory_policy": r"""
-**Ekstrakcja polityki** :
-$$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
 """,
     },
 }
@@ -924,9 +720,6 @@ def render():
         )
         seed = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
-        with st.expander(tx["guide_title"], expanded=False):
-            st.markdown(tx["guide"])
-
         run = st.button(tx["run_btn"], type="primary")
 
         if run:
@@ -938,7 +731,6 @@ def render():
 
         if "ch02_result" not in st.session_state:
             st.info("Configure settings and click **▶ Run Value Iteration**.")
-            _render_theory(tx)
             return
 
         result = st.session_state["ch02_result"]
@@ -991,7 +783,6 @@ def render():
                         action_names, tx)
 
         # Theory
-        _render_theory(tx)
 
 
 # ---------------------------------------------------------------------------
@@ -1181,16 +972,3 @@ def _render_summary(values, policy, iterations, curve, state_names,
 # ---------------------------------------------------------------------------
 # Theory panel
 # ---------------------------------------------------------------------------
-def _render_theory(tx):
-    st.markdown("---")
-    st.subheader(tx["theory_title"])
-    sections = [
-        ("bellman",     tx["theory_sections"]["bellman"],     tx["theory_bellman"]),
-        ("vi",          tx["theory_sections"]["vi"],          tx["theory_vi"]),
-        ("contraction", tx["theory_sections"]["contraction"], tx["theory_contraction"]),
-        ("linear",      tx["theory_sections"]["linear"],      tx["theory_linear"]),
-        ("policy",      tx["theory_sections"]["policy"],      tx["theory_policy"]),
-    ]
-    for key, label, content in sections:
-        with st.expander(label, expanded=False):
-            st.markdown(content)

@@ -11,8 +11,6 @@ T = {
         "epsilon": "ε Exploration", "epsilon_decay": "ε decay", "lambda_": "λ Trace decay (0=TD,1≈MC)",
         "replacing": "Replacing traces", "seed": "Seed",
         "run_btn": "▶ Run All Four Algorithms",
-        "guide_title": "📖 Guide",
-        "guide": "λ=0→TD(0). λ=1→MC. λ=0.7 sweet spot. SARSA(λ) on-policy. Q(λ) off-policy with Watkins cut.",
         "returns_title": "📈 Episode Returns", "returns_caption": "MA-30. SARSA(λ=0.7) converges faster than TD0.",
         "td_error_title": "📉 TD Error", "td_error_caption": "",
         "value_title": "🏛️ V(s)", "value_caption": "S7 (SLA breach) should be lowest.",
@@ -21,8 +19,6 @@ T = {
         "glass_title": "🔬 Glass-Box",
         "summary_title": "📊 Summary", "summary_results": "Comparison",
         "summary_pros_cons": "Pros & Cons", "pros": "✅ Pros", "cons": "❌ Cons",
-        "theory_title": "📚 Theory",
-        "theory_sections": {"et": "8.1 Eligibility Traces", "sarsal": "8.2 SARSA(λ)", "ql": "8.3 Q(λ) Watkins", "lambda": "8.4 Choosing λ"},
         "theory_et": "e_t(s,a) = γλ·e_{t-1}(s,a) + 𝟙[s=S_t,a=A_t]  (replacing: set to 1)\nDecay γλ=0.665 for γ=0.95,λ=0.7. Pruned at 1e-8.",
         "theory_sarsal": "δ_t = R+γQ(S',A')−Q(S,A)\nQ(s,a) ← Q(s,a)+α δ_t e_t(s,a)  ∀(s,a)",
         "theory_ql": "TD target: max_a Q(S',a). Traces CUT on non-greedy action (Watkins 1989).",
@@ -40,8 +36,6 @@ T = {
         "epsilon": "ε Eksploracja", "epsilon_decay": "Zanik ε", "lambda_": "λ Zanikanie śladów",
         "replacing": "Replacing traces", "seed": "Ziarno",
         "run_btn": "▶ Uruchom wszystkie cztery algorytmy",
-        "guide_title": "📖 Przewodnik",
-        "guide": "λ=0→TD(0). λ=1→MC. λ=0.7 optimum. SARSA(λ) on-policy. Q(λ) off-policy z cięciem Watkinsa.",
         "returns_title": "📈 Zwroty epizodów", "returns_caption": "MA-30. SARSA(λ=0.7) zbiega szybciej niż TD0.",
         "td_error_title": "📉 Błąd TD", "td_error_caption": "",
         "value_title": "🏛️ V(s)", "value_caption": "S7 powinno być najniższe.",
@@ -50,8 +44,6 @@ T = {
         "glass_title": "🔬 Glass-Box",
         "summary_title": "📊 Podsumowanie", "summary_results": "Porównanie",
         "summary_pros_cons": "Zalety i Wady", "pros": "✅ Zalety", "cons": "❌ Wady",
-        "theory_title": "📚 Teoria",
-        "theory_sections": {"et": "8.1 Ślady kwalifikowalności", "sarsal": "8.2 SARSA(λ)", "ql": "8.3 Q(λ) Watkins", "lambda": "8.4 Dobór λ"},
         "theory_et": "e_t(s,a) = γλ·e_{t-1}(s,a) + 𝟙[s=S_t,a=A_t]\nZanik γλ=0.665 dla γ=0.95,λ=0.7.",
         "theory_sarsal": "Q(s,a) ← Q(s,a)+α δ_t e_t(s,a)  dla WSZYSTKICH (s,a)",
         "theory_ql": "Cel TD: max_a Q(S',a). Ślady CIĘTE przy akcji niegreedy.",
@@ -69,8 +61,6 @@ T = {
         "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
         "lambda_val": "λ — Trace-Abklingrate", "seed": "Zufallsseed",
         "run_btn": "▶ Alle Algorithmen starten",
-        "guide_title": "Anleitung",
-        "guide": "λ=0: reines TD(0). λ=1: reines MC. Eligibility Traces verteilen Kredit auf vergangene Zustände.",
         "returns_title": "Episodenrückgaben",
         "returns_caption": "Gleitender Durchschnitt.",
         "value_title": "Wertfunktion V(s)",
@@ -79,8 +69,6 @@ T = {
         "summary_title": "Zusammenfassung", "summary_results": "Vergleich",
         "summary_pros_cons": "Vor- & Nachteile",
         "pros": "Vorteile", "cons": "Nachteile",
-        "theory_title": "Theorie — Kapitel 08",
-        "theory_sections": {"traces": "8.1 Eligibility Traces", "tdlambda": "8.2 TD(λ)", "sarsa": "8.3 SARSA(λ)"},
         "algo_labels": {"td_lambda": "TD(λ)", "sarsa_lambda": "SARSA(λ)", "q_lambda": "Q(λ) Watkins"},
         "pros_list": {
             "td_lambda": ["Brückt TD und MC", "Schnellere Kreditvergabe"],
@@ -101,13 +89,11 @@ T = {
         "engine_missing": "Exécutez: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Paramètres",
         "n_episodes": "Épisodes", "gamma": "γ", "alpha": "α", "epsilon": "ε", "epsilon_decay": "Décroissance ε",
         "lambda_": "λ traces", "replacing": "Replacing", "seed": "Graine", "run_btn": "▶ Lancer",
-        "guide_title": "📖 Guide", "guide": "λ=0→TD(0). λ=0.7 optimum. SARSA(λ) on-policy. Q(λ) off-policy.",
         "returns_title": "📈 Retours", "returns_caption": "", "td_error_title": "📉 Erreur TD", "td_error_caption": "",
         "value_title": "🏛️ V(s)", "value_caption": "", "trace_title": "🔍 Traces", "trace_caption": "",
         "qtable_title": "🗺️ Table Q", "qtable_caption": "", "glass_title": "🔬 Glass-Box",
         "summary_title": "📊 Résumé", "summary_results": "Comparaison", "summary_pros_cons": "Avantages & Inconvénients",
         "pros": "✅ Pros", "cons": "❌ Cons", "theory_title": "📚 Théorie",
-        "theory_sections": {"et": "8.1 Traces", "sarsal": "8.2 SARSA(λ)", "ql": "8.3 Q(λ)", "lambda": "8.4 Choix λ"},
         "theory_et": "e_t(s,a)=γλ·e_{t-1}(s,a)+𝟙[...]", "theory_sarsal": "Q←Q+αδe ∀(s,a)",
         "theory_ql": "Coupure Watkins si action non-greedy.", "theory_lambda": "λ=0→TD | λ=0.7→optimum | λ=0.99→MC",
         "algo_labels": {"sarsa_lambda": "SARSA(λ)", "q_lambda": "Q(λ)", "sarsa_td0": "λ=0", "sarsa_mc": "λ=0.99"},
@@ -119,13 +105,11 @@ T = {
         "engine_missing": "Ejecute: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Configuración",
         "n_episodes": "Episodios", "gamma": "γ", "alpha": "α", "epsilon": "ε", "epsilon_decay": "Decaimiento ε",
         "lambda_": "λ trazas", "replacing": "Replacing", "seed": "Semilla", "run_btn": "▶ Ejecutar",
-        "guide_title": "📖 Guía", "guide": "λ=0→TD(0). λ=0.7 óptimo. SARSA(λ) on-policy. Q(λ) off-policy.",
         "returns_title": "📈 Retornos", "returns_caption": "", "td_error_title": "📉 Error TD", "td_error_caption": "",
         "value_title": "🏛️ V(s)", "value_caption": "", "trace_title": "🔍 Trazas", "trace_caption": "",
         "qtable_title": "🗺️ Tabla Q", "qtable_caption": "", "glass_title": "🔬 Glass-Box",
         "summary_title": "📊 Resumen", "summary_results": "Comparación", "summary_pros_cons": "Pros y Contras",
         "pros": "✅ Pros", "cons": "❌ Cons", "theory_title": "📚 Teoría",
-        "theory_sections": {"et": "8.1 Trazas", "sarsal": "8.2 SARSA(λ)", "ql": "8.3 Q(λ)", "lambda": "8.4 Elección λ"},
         "theory_et": "e_t(s,a)=γλ·e_{t-1}(s,a)+𝟙[...]", "theory_sarsal": "Q←Q+αδe ∀(s,a)",
         "theory_ql": "Corte Watkins si acción no-greedy.", "theory_lambda": "λ=0→TD | λ=0.7→óptimo | λ=0.99→MC",
         "algo_labels": {"sarsa_lambda": "SARSA(λ)", "q_lambda": "Q(λ)", "sarsa_td0": "λ=0", "sarsa_mc": "λ=0.99"},
@@ -205,7 +189,6 @@ def render():
     f4.update_layout(height=280, margin=dict(l=60,r=20,t=20,b=40)); st.plotly_chart(f4, width='stretch')
     st.subheader(tx["glass_title"]); _glass(res, tx)
     st.subheader(tx["summary_title"]); _summary(res, tx)
-    _theory(tx)
 
 def _glass(res, tx):
     opts = {tx["algo_labels"][k]: k for k in ALGOS}
@@ -237,8 +220,3 @@ def _summary(res, tx):
         with c1: st.markdown(f"**{label} — {tx['pros']}**"); [st.markdown(f"- {p}") for p in tx["pros_list"][k]]
         with c2: st.markdown(f"**{label} — {tx['cons']}**"); [st.markdown(f"- {c}") for c in tx["cons_list"][k]]
         st.markdown("---")
-
-def _theory(tx):
-    st.markdown("---"); st.subheader(tx["theory_title"])
-    for k in ["et","sarsal","ql","lambda"]:
-        with st.expander(tx["theory_sections"][k], expanded=False): st.markdown(tx[f"theory_{k}"])

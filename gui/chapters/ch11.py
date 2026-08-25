@@ -16,7 +16,6 @@ T = {
         "mf_beta":        "Beta - Mean Field influence",
         "seed":           "Seed",
         "run_btn":        "Run All Four Algorithms",
-        "guide_title":    "How to use this chapter",
         "guide": (
             "Scenario: 2 dispatchers share the Warsaw ASP 8-state MDP.\n"
             "Each dispatcher acts independently but their rewards interact.\n\n"
@@ -48,7 +47,6 @@ T = {
         "summary_results":   "Algorithm Comparison",
         "summary_pros_cons": "Algorithms - Pros and Cons",
         "pros": "Pros", "cons": "Cons",
-        "theory_title":      "Theory - Chapter 11",
         "theory_sections": {
             "iql":  "11.1 Independent Q-Learning",
             "jal":  "11.2 Joint Action Learning",
@@ -92,7 +90,6 @@ T = {
         "mf_beta":        "Beta - Wplyw sredniego pola",
         "seed":           "Ziarno",
         "run_btn":        "Uruchom wszystkie cztery algorytmy",
-        "guide_title":    "Jak korzystac z tego rozdzialu",
         "guide": (
             "Scenariusz: 2 dyspozytorzy wspoldziela MDP ASP Warszawa.\n"
             "Kazdy dziala niezaleznie, ale ich nagrody sa powiazane.\n\n"
@@ -114,7 +111,6 @@ T = {
         "summary_results":   "Porownanie algorytmow",
         "summary_pros_cons": "Zalety i Wady",
         "pros": "Zalety", "cons": "Wady",
-        "theory_title":      "Teoria - Rozdzial 11",
         "theory_sections": {
             "iql": "11.1 IQL", "jal": "11.2 JAL",
             "lq":  "11.3 Lenient Q", "mf": "11.4 Mean Field Q",
@@ -150,7 +146,6 @@ T = {
         "mf_beta": "Beta — Mean-Field-Einfluss",
         "seed": "Zufallsseed",
         "run_btn": "▶ Alle vier Algorithmen starten",
-        "guide_title": "Anleitung",
         "guide": (
             "Szenario: 2 Disponenten teilen sich das ASP-MDP.\n"
             "IQL: jeder Agent lernt unabhängig.\n"
@@ -171,7 +166,6 @@ T = {
         "summary_results": "Algorithmenvergleich",
         "summary_pros_cons": "Algorithmen — Vor- & Nachteile",
         "pros": "Vorteile", "cons": "Nachteile",
-        "theory_title": "Theorie — Kapitel 11",
         "theory_sections": {
             "iql": "11.1 IQL", "jal": "11.2 JAL",
             "lq":  "11.3 Lenient Q", "mf": "11.4 Mean Field Q",
@@ -205,8 +199,6 @@ T = {
         "epsilon": "Epsilon", "epsilon_decay": "Decroissance epsilon",
         "leniency_mu": "Mu - Indulgence", "mf_beta": "Beta - Champ moyen",
         "seed": "Graine", "run_btn": "Lancer les quatre algorithmes",
-        "guide_title": "Guide",
-        "guide": "2 agents partagent le MDP ASP. IQL: independant. JAL: modelise partenaire. Lenient: ignore delta<0 avec prob mu. Mean Field: moyenne des actions.",
         "returns_title": "Retours joints", "returns_caption": "",
         "cooperation_title": "Taux de cooperation", "cooperation_caption": "",
         "value_title": "V(s) joint", "value_caption": "",
@@ -215,8 +207,6 @@ T = {
         "summary_title": "Resume", "summary_results": "Comparaison",
         "summary_pros_cons": "Avantages et Inconvenients",
         "pros": "Pros", "cons": "Cons",
-        "theory_title": "Theorie",
-        "theory_sections": {"iql": "11.1 IQL", "jal": "11.2 JAL", "lq": "11.3 Lenient", "mf": "11.4 Mean Field"},
         "theory_iql": "Q_i(s,a) += alpha*[r+gamma*max Q_i(s')-Q_i(s,a)]",
         "theory_jal": "Modelise pi_j depuis frequences d'actions.",
         "theory_lq":  "delta<0: appliquer avec prob (1-mu).",
@@ -234,8 +224,6 @@ T = {
         "epsilon": "Epsilon", "epsilon_decay": "Decaimiento epsilon",
         "leniency_mu": "Mu - Indulgencia", "mf_beta": "Beta - Campo medio",
         "seed": "Semilla", "run_btn": "Ejecutar los cuatro algoritmos",
-        "guide_title": "Guia",
-        "guide": "2 agentes comparten el MDP ASP. IQL: independiente. JAL: modela socio. Lenient: ignora delta<0 con prob mu. Mean Field: media de acciones.",
         "returns_title": "Retornos conjuntos", "returns_caption": "",
         "cooperation_title": "Tasa de cooperacion", "cooperation_caption": "",
         "value_title": "V(s) conjunto", "value_caption": "",
@@ -244,8 +232,6 @@ T = {
         "summary_title": "Resumen", "summary_results": "Comparacion",
         "summary_pros_cons": "Pros y Contras",
         "pros": "Pros", "cons": "Cons",
-        "theory_title": "Teoria",
-        "theory_sections": {"iql": "11.1 IQL", "jal": "11.2 JAL", "lq": "11.3 Lenient", "mf": "11.4 Mean Field"},
         "theory_iql": "Q_i(s,a) += alpha*[r+gamma*max Q_i(s')-Q_i(s,a)]",
         "theory_jal": "Modela pi_j desde frecuencias de acciones.",
         "theory_lq":  "delta<0: aplicar con prob (1-mu).",
@@ -299,9 +285,6 @@ def render():
     mu    = st.sidebar.slider(tx["leniency_mu"],   0.0, 1.0, 0.5, 0.05)
     beta  = st.sidebar.slider(tx["mf_beta"],       0.0, 2.0, 0.5, 0.1)
     seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-
-    with st.expander(tx["guide_title"], expanded=False):
-        st.markdown(tx["guide"])
 
     if st.button(tx["run_btn"], type="primary"):
         with st.spinner("Running Rust MARL engine..."):
@@ -379,7 +362,6 @@ def render():
 
     st.subheader(tx["glass_title"]); _glass(res, tx)
     st.subheader(tx["summary_title"]); _summary(res, tx)
-    _theory(tx)
 
 def _glass(res, tx):
     opts = {tx["algo_labels"][k]: k for k in ALGOS}
@@ -428,9 +410,3 @@ def _summary(res, tx):
             st.markdown(f"**{label} - {tx['cons']}**")
             for c in tx["cons_list"][k]: st.markdown(f"- {c}")
         st.markdown("---")
-
-def _theory(tx):
-    st.markdown("---"); st.subheader(tx["theory_title"])
-    for k in ["iql", "jal", "lq", "mf"]:
-        with st.expander(tx["theory_sections"][k], expanded=False):
-            st.markdown(tx[f"theory_{k}"])

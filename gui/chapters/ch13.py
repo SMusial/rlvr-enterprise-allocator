@@ -31,10 +31,6 @@ TX = {
             "  argmax Q_tot = (argmax Q_0, argmax Q_1)\n"
             "This enables decentralised execution with centralised training."
         ),
-        "theory_igm":   "IGM: argmax_a Q_tot(s,a) = (argmax Q_0(s_0,.), argmax Q_1(s_1,.))",
-        "theory_vdn":   "Q_tot = Q_0(s_0,a_0) + Q_1(s_1,a_1)\ndQ_tot/dQ_i = 1 (equal gradient)",
-        "theory_qmix":  "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s)\nw_i(s) >= 0 (monotonicity)\ndQ_tot/dQ_i = w_i(s) (state-dependent gradient)",
-        "theory_cg":    "Counterfactual advantage:\nA_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)\nIsolates agent i contribution to joint value.",
     },
     "PL": {
         "title":    "Rozdzial 13 - Kooperacyjny MARL: VDN i QMIX",
@@ -57,10 +53,6 @@ TX = {
             "QMIX: Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotoniczna.\n"
             "QMIX+CG: QMIX + kontrfaktyczna linia bazowa."
         ),
-        "theory_igm":  "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
-        "theory_vdn":  "Q_tot = Q_0 + Q_1. Gradient rowny dla obu agentow.",
-        "theory_qmix": "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). w_i >= 0.",
-        "theory_cg":   "Przewaga kontrfaktyczna: A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)",
     },
         "DE": {
         "title": "Kapitel 13 — Kooperatives MARL: VDN und QMIX",
@@ -85,10 +77,6 @@ TX = {
             "QMIX: Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotones Mischen.\n"
             "QMIX+CG: QMIX + kontrafaktische Basislinie für Kreditvergabe."
         ),
-        "theory_igm":   "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
-        "theory_vdn":   r"$Q_{tot} = Q_0(s_0,a_0) + Q_1(s_1,a_1)$",
-        "theory_qmix":  r"$Q_{tot} = w_0(s)Q_0 + w_1(s)Q_1 + b(s),\quad w_i \geq 0$",
-        "theory_cg":    r"$A_i = Q_{tot}(s,\mathbf{a}) - Q_{tot}(s, \mathbf{a}_{-i}, rg\max Q_i)$",
     },
     "FR": {
         "title": "Chapitre 13 - MARL Cooperatif: VDN et QMIX",
@@ -98,11 +86,6 @@ TX = {
         "episodes": "Episodes", "gamma": "Gamma", "alpha": "Alpha",
         "epsilon": "Epsilon", "edecay": "Decroissance", "mhidden": "Unites cachees", "seed": "Graine",
         "labels": {"iql":"IQL","vdn":"VDN","qmix":"QMIX","qmix_cg":"QMIX+CG"},
-        "guide": "VDN: Q_tot = Q_0 + Q_1. QMIX: melange monotone. QMIX+CG: base contrefactuelle.",
-        "theory_igm": "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
-        "theory_vdn": "Q_tot = Q_0 + Q_1",
-        "theory_qmix": "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s), w_i >= 0",
-        "theory_cg": "A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)",
     },
     "ES": {
         "title": "Capitulo 13 - MARL Cooperativo: VDN y QMIX",
@@ -112,11 +95,6 @@ TX = {
         "episodes": "Episodios", "gamma": "Gamma", "alpha": "Alpha",
         "epsilon": "Epsilon", "edecay": "Decaimiento", "mhidden": "Unidades ocultas", "seed": "Semilla",
         "labels": {"iql":"IQL","vdn":"VDN","qmix":"QMIX","qmix_cg":"QMIX+CG"},
-        "guide": "VDN: Q_tot = Q_0 + Q_1. QMIX: mezcla monotona. QMIX+CG: linea base contrafactual.",
-        "theory_igm": "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
-        "theory_vdn": "Q_tot = Q_0 + Q_1",
-        "theory_qmix": "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s), w_i >= 0",
-        "theory_cg": "A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)",
     },
 }
 
@@ -233,7 +211,6 @@ def render():
 
     st.subheader(tx["glass"]); _glass(res,lb)
     st.subheader(tx["summary"]); _summary(res,lb)
-    _theory(tx)
 
 def _glass(res,lb):
     opts = {lb[k]:k for k in ALGOS}
@@ -267,10 +244,3 @@ def _summary(res,lb):
                      "Steps":str(r["total_steps"]),"Avg mixing w":f"{mw:.3f}",
                      "V*(S0)":f"{r['values'][0]:.3f}","V*(S7)":f"{r['values'][7]:.3f}"})
     st.dataframe(rows,hide_index=True)
-
-def _theory(tx):
-    st.markdown("---"); st.subheader("Theory")
-    for k,label in [("igm","13.1 IGM Property"),("vdn","13.2 VDN"),
-                    ("qmix","13.3 QMIX"),("cg","13.4 Counterfactual Baseline")]:
-        with st.expander(label,expanded=False):
-            st.markdown(tx.get(f"theory_{k}",""))

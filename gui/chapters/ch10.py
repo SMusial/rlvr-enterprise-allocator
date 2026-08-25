@@ -17,7 +17,6 @@ T = {
         "uncertainty_beta":   "Beta - Uncertainty bonus weight",
         "seed":           "Seed",
         "run_btn":        "Run All Four Algorithms",
-        "guide_title":    "How to use this chapter",
         "guide": (
             "Step 1 - World Model\n"
             "The agent learns T(s,a,s') and R(s,a) from real experience.\n"
@@ -50,14 +49,12 @@ T = {
         "summary_results":  "Algorithm Comparison",
         "summary_pros_cons":"Algorithms - Pros and Cons",
         "pros": "Pros", "cons": "Cons",
-        "theory_title":     "Theory - Chapter 10",
         "theory_sections": {
             "wm":   "10.1 World Models",
             "ps":   "10.2 Prioritised Sweeping",
             "mbpo": "10.3 Model-Based Policy Gradient",
             "ub":   "10.4 Uncertainty Bonus",
         },
-        "theory_wm":   "T(s,a,s') = P(s'|s,a) learned from counts.\nR(s,a) = mean observed reward.\nPlanning: k Q-Learning steps on model samples.",
         "theory_ps":   "Priority(s,a) = |R(s,a) + gamma*max Q(s') - Q(s,a)|\nPlan from highest priority first.\nPropagate to predecessors after each update.",
         "theory_mbpo": "Real step: collect (s,a,r,s'), update model.\nSynthetic rollout: generate trajectory from model.\nREINFORCE update on synthetic trajectory.",
         "theory_ub":   "Q_bonus(s,a) = Q(s,a) + beta / sqrt(N(s,a) + 1)\nAction selection uses Q_bonus.\nQ update uses standard Q-Learning (no bonus).",
@@ -95,7 +92,6 @@ T = {
         "uncertainty_beta":   "Beta - Waga bonusu niepewnosci",
         "seed":           "Ziarno",
         "run_btn":        "Uruchom wszystkie cztery algorytmy",
-        "guide_title":    "Jak korzystac z tego rozdzialu",
         "guide": (
             "Krok 1 - Model swiata\n"
             "Agent uczy sie T(s,a,s') i R(s,a) z rzeczywistego doswiadczenia.\n\n"
@@ -123,14 +119,12 @@ T = {
         "summary_results":  "Porownanie algorytmow",
         "summary_pros_cons":"Zalety i Wady",
         "pros": "Zalety", "cons": "Wady",
-        "theory_title":     "Teoria - Rozdzial 10",
         "theory_sections": {
             "wm":   "10.1 Modele swiata",
             "ps":   "10.2 Priorytetowe zamiatanie",
             "mbpo": "10.3 Gradient polityki oparty na modelu",
             "ub":   "10.4 Bonus niepewnosci",
         },
-        "theory_wm":   "T(s,a,s') uczone z licznikow. R(s,a) = srednia nagroda.",
         "theory_ps":   "Priorytet(s,a) = |delta|. Planuj od najwyzszego. Propaguj do poprzednikow.",
         "theory_mbpo": "Krok rzeczywisty: zbierz doswiadczenie. Syntetyczna trajektoria: REINFORCE na modelu.",
         "theory_ub":   "Q_bonus(s,a) = Q(s,a) + beta/sqrt(N(s,a)+1). Wybor akcji uzywa Q_bonus.",
@@ -162,8 +156,6 @@ T = {
         "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
         "planning_steps": "Planungsschritte", "seed": "Zufallsseed",
         "run_btn": "▶ Alle Algorithmen starten",
-        "guide_title": "Anleitung",
-        "guide": "Modellbasiertes RL lernt ein Weltmodell T(s,a,s') und R(s,a) und plant damit.",
         "returns_title": "Episodenrückgaben",
         "returns_caption": "Gleitender Durchschnitt.",
         "value_title": "Wertfunktion V(s)",
@@ -172,8 +164,6 @@ T = {
         "summary_title": "Zusammenfassung", "summary_results": "Vergleich",
         "summary_pros_cons": "Vor- & Nachteile",
         "pros": "Vorteile", "cons": "Nachteile",
-        "theory_title": "Theorie — Kapitel 10",
-        "theory_sections": {"wm": "10.1 Weltmodell", "ps": "10.2 Priorisiertes Sweeping", "mbpo": "10.3 MBPO", "ub": "10.4 Unsicherheitsbonus"},
         "algo_labels": {"wm_qlearning": "WM Q-Learning", "prioritized_sweeping": "Priorisiertes Sweeping", "mbpo": "MBPO", "uncertainty_bonus": "Unsicherheitsbonus"},
         "pros_list": {
             "wm_qlearning": ["Effizient durch Planung", "Schnellere Konvergenz"],
@@ -187,7 +177,6 @@ T = {
             "mbpo": ["Zwei Lernraten", "Modell muss genau sein"],
             "uncertainty_bonus": ["β muss eingestellt werden"],
         },
-        "theory_wm": "Weltmodell: T̂(s,a,s') und R̂(s,a) aus Erfahrung gelernt.",
         "theory_ps": "Priorisiertes Sweeping: plane von Zuständen mit höchstem |delta|.",
         "theory_mbpo": "MBPO: synthetische Rollouts auf gelerntem Modell.",
         "theory_ub": r"$Q_{bonus}(s,a) = Q(s,a) + eta/\sqrt{N(s,a)+1}$",
@@ -202,8 +191,6 @@ T = {
         "planning_steps": "k - Etapes planification", "priority_threshold": "Seuil priorite",
         "uncertainty_beta": "Beta - Bonus incertitude", "seed": "Graine",
         "run_btn": "Lancer les quatre algorithmes",
-        "guide_title": "Guide",
-        "guide": "Modele monde: T(s,a,s') et R(s,a) appris. Planification sur modele appris. Balayage prioritaire: planifier depuis |delta| max.",
         "returns_title": "Retours", "returns_caption": "",
         "accuracy_title": "Precision modele", "accuracy_caption": "",
         "planning_title": "Etapes planification", "planning_caption": "",
@@ -213,9 +200,6 @@ T = {
         "summary_title": "Resume", "summary_results": "Comparaison",
         "summary_pros_cons": "Avantages et Inconvenients",
         "pros": "Pros", "cons": "Cons",
-        "theory_title": "Theorie",
-        "theory_sections": {"wm": "10.1 Modeles", "ps": "10.2 Balayage", "mbpo": "10.3 MBPO", "ub": "10.4 Incertitude"},
-        "theory_wm": "T(s,a,s') appris par comptage. R(s,a) = recompense moyenne.",
         "theory_ps": "Priorite = |delta|. Planifier depuis max priorite. Propager aux predecesseurs.",
         "theory_mbpo": "Etape reelle: collecter experience. Trajectoire synthetique: REINFORCE sur modele.",
         "theory_ub": "Q_bonus = Q + beta/sqrt(N+1). Selection action sur Q_bonus.",
@@ -233,8 +217,6 @@ T = {
         "planning_steps": "k - Pasos planificacion", "priority_threshold": "Umbral prioridad",
         "uncertainty_beta": "Beta - Bonus incertidumbre", "seed": "Semilla",
         "run_btn": "Ejecutar los cuatro algoritmos",
-        "guide_title": "Guia",
-        "guide": "Modelo mundo: T(s,a,s') y R(s,a) aprendidos. Planificacion sobre modelo aprendido. Barrido priorizado: planificar desde |delta| max.",
         "returns_title": "Retornos", "returns_caption": "",
         "accuracy_title": "Precision modelo", "accuracy_caption": "",
         "planning_title": "Pasos planificacion", "planning_caption": "",
@@ -244,9 +226,6 @@ T = {
         "summary_title": "Resumen", "summary_results": "Comparacion",
         "summary_pros_cons": "Pros y Contras",
         "pros": "Pros", "cons": "Cons",
-        "theory_title": "Teoria",
-        "theory_sections": {"wm": "10.1 Modelos", "ps": "10.2 Barrido", "mbpo": "10.3 MBPO", "ub": "10.4 Incertidumbre"},
-        "theory_wm": "T(s,a,s') aprendido por conteo. R(s,a) = recompensa media.",
         "theory_ps": "Prioridad = |delta|. Planificar desde max prioridad. Propagar a predecesores.",
         "theory_mbpo": "Paso real: recoger experiencia. Trayectoria sintetica: REINFORCE sobre modelo.",
         "theory_ub": "Q_bonus = Q + beta/sqrt(N+1). Seleccion accion sobre Q_bonus.",
@@ -300,9 +279,6 @@ def render():
     pthr  = st.sidebar.slider(tx["priority_threshold"], 0.001, 0.1, 0.01, 0.001, format="%.3f")
     beta  = st.sidebar.slider(tx["uncertainty_beta"],   0.0, 5.0, 1.0, 0.1)
     seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-
-    with st.expander(tx["guide_title"], expanded=False):
-        st.markdown(tx["guide"])
 
     if st.button(tx["run_btn"], type="primary"):
         with st.spinner("Running Rust world-model engine..."):
@@ -388,7 +364,6 @@ def render():
 
     st.subheader(tx["glass_title"]); _glass(res, tx)
     st.subheader(tx["summary_title"]); _summary(res, tx)
-    _theory(tx)
 
 def _glass(res, tx):
     opts = {tx["algo_labels"][k]: k for k in ALGOS}
@@ -439,9 +414,3 @@ def _summary(res, tx):
             st.markdown(f"**{label} - {tx['cons']}**")
             for c in tx["cons_list"][k]: st.markdown(f"- {c}")
         st.markdown("---")
-
-def _theory(tx):
-    st.markdown("---"); st.subheader(tx["theory_title"])
-    for k in ["wm", "ps", "mbpo", "ub"]:
-        with st.expander(tx["theory_sections"][k], expanded=False):
-            st.markdown(tx[f"theory_{k}"])
