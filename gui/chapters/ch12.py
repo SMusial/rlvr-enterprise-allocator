@@ -91,7 +91,41 @@ def _ma(data,w=30):
     return r
 
 
-T = {"EN": {}}
+T = {
+    "EN": {
+        "alpha": "alpha",
+        "edecay": "edecay",
+        "episodes": "episodes",
+        "epsilon": "epsilon",
+        "gamma": "gamma",
+        "gap": "gap",
+        "glass": "glass",
+        "guide": "guide",
+        "guide_title": "guide_title",
+        "labels": "labels",
+        "ret": "ret",
+        "run": "run",
+        "seed": "seed",
+        "settings": "settings",
+        "strat": "strat",
+        "subtitle": "subtitle",
+        "summary": "summary",
+        "title": "title",
+        "val": "val",
+        "zerosum": "zerosum",
+        "title": "Chapter 12 — Game Theory & Nash Equilibria",
+        "subtitle": "ASP Multi-Agent Dispatch — Warsaw Region",
+        "settings": "Settings",
+        "episodes": "Episodes",
+        "gamma": "Gamma",
+        "alpha": "Alpha",
+        "epsilon": "Epsilon",
+        "seed": "Seed",
+        "run_btn": "▶ Run",
+        "glass": "Glass-Box",
+        "summary": "Summary",
+    }
+}
 
 def _tx(lang):
     """Return translation dict for lang, filling missing keys from EN."""
