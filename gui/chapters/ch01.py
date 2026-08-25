@@ -1063,7 +1063,7 @@ def render():
     st.title(tx["title"])
     st.caption(tx["subtitle"])
 
-    tab1, tab2, tab3 = st.tabs(["🧪 Interactive Lab", "📘 Hands-On Guide EN", "🇵🇱 Hands-On Guide PL"])
+    tab1, tab2, tab3 = st.tabs(["🧪 Interactive Lab", "📘 Hands-On Guide EN", "📙 Hands-On Guide PL"])
     with tab2:
         _render_handbook()
     with tab3:
