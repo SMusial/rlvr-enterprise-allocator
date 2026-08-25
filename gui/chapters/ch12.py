@@ -91,6 +91,8 @@ def _ma(data,w=30):
     return r
 
 
+T = {"EN": {}}
+
 def _tx(lang):
     """Return translation dict for lang, filling missing keys from EN."""
     base = dict(T.get("EN", {}))
