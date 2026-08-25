@@ -83,7 +83,7 @@ See the exact Bellman update for each state in the first 3 iterations.
             "vi": "§2.3 Value Iteration Algorithm",
             "contraction": "§2.3 Contraction Mapping Theorem",
             "linear": "§2.2 Linear System Solution",
-            "policy": "§2.3 Policy Extraction",
+            "policy": "§2.3 Policy Extraction"
         },
         "theory_bellman": r"""
 **Bellman Optimality Equation** defines the value of a state under the optimal policy:
@@ -135,333 +135,8 @@ Once V* is known, the optimal action in each state is simply the one that maximi
 the right-hand side of the Bellman equation.
 
 Implemented in `extract_policy()` in `ch02_bellman.rs`.
-""",
-    },
-        "DE": {
-        "title": "Kapitel 02 — Diskretes MDP & Bellman-Optimalität",
-        "subtitle": "Optimierung der ASP-Betriebszustände — Region Warschau",
-        "engine_missing": "⚠ Rust-Engine nicht gefunden. Ausführen: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ MDP-Einstellungen",
-        "gamma": "γ — Diskontierungsfaktor",
-        "theta": "θ — Konvergenzschwelle",
-        "seed": "Zufallsseed",
-        "run_btn": "▶ Wertiteration starten",
-        "guide_title": "ℹ️ Anleitung",
-        "guide": """**Schritt 1 — γ einstellen**: γ=0.99 = weitsichtig, γ=0.5 = kurzsichtig.
-**Schritt 2 — θ einstellen**: kleiner = genauer, aber mehr Iterationen.
-**Schritt 3 — Wertiteration starten**: Rust-Engine baut Übergangsmatrix und iteriert.
-**Schritt 4 — Wertfunktion lesen**: jeder Balken = langfristiger Wert des Zustands.
-**Schritt 5 — Optimale Strategie lesen**: beste Dispatch-Strategie für jeden Zustand.
-**Schritt 6 — Konvergenzkurve lesen**: Abfall von V^(k+1) - V^(k).
-**Schritt 7 — Glass-Box lesen**: Bellman-Update für jeden Zustand.""",
-        "value_title": "📊 Optimale Wertfunktion V*(s)",
-        "value_caption": "Langfristig erwartete Belohnung für jeden Betriebszustand",
-        "policy_title": "🎯 Optimale Strategie π*(s)",
-        "policy_caption": "Beste Dispatch-Strategie für jeden Betriebszustand",
-        "conv_title": "📉 Konvergenz — V^(k+1) - V^(k)",
-        "conv_x": "Iteration",
-        "conv_y": "Max. Änderung in V",
-        "conv_caption": "Bellman-Kontraktion: jede Iteration reduziert Fehler um Faktor γ",
-        "heatmap_title": "🧮 Übergangsmatrix P(s'|s, a=A1: Qualifikation)",
-        "heatmap_caption": "Übergangswahrscheinlichkeit von Zustand s zu s' unter qualifikationsbasiertem Dispatch",
-        "glass_title": "🔍 Glass-Box — Bellman-Update-Protokoll (erste 3 Iterationen)",
-        "glass_headers": ["Iter", "Zustand", "Beste Aktion", "Q(s,A0)", "Q(s,A1)", "Q(s,A2)", "Q(s,A3)", "V_alt", "V_neu", "δ"],
-        "summary_title": "📋 Zusammenfassung",
-        "summary_results": "Quantifizierte Ergebnisse",
-        "summary_pros_cons": "Diskretes MDP + Wertiteration — Vor- & Nachteile",
-        "pros": "✅ Vorteile",
-        "cons": "❌ Nachteile",
-        "pros_list": [
-            "Garantierte Konvergenz zur optimalen Strategie (Kontraktionsabbildungssatz)",
-            "Exakte Lösung ohne Approximationsfehler für kleine Zustandsräume",
-            "Interpretierbar: Wertfunktion erklärt WARUM jede Aktion gewählt wird",
-            "Lineare Algebra-Lösung verfügbar (nalgebra LU)",
-            "Grundlage für alle nachfolgenden RL-Algorithmen (Ch03–Ch20)",
-        ],
-        "cons_list": [
-            "Benötigt vollständiges Übergangsmodell P(s'|s,a)",
-            "Zustandsraum muss diskret und endlich sein",
-            "Fluch der Dimensionalität: O(|S| × |A|) pro Iteration",
-            "Übergangswahrscheinlichkeiten müssen geschätzt werden",
-            "Ch06 (TD-Lernen) löst die modellfreie Version",
-        ],
-        "metric_iters": "Iterationen bis zur Konvergenz",
-        "metric_best_state": "Bester Betriebszustand",
-        "metric_worst_state": "Schlechtester Betriebszustand",
-        "metric_value_range": "Wertebereich V*(s)",
-        "metric_contraction": "Kontraktion verifiziert",
-        "theory_title": "📚 Theorie — Kapitel 02",
-        "theory_sections": {
-            "bellman":     "2.3 Bellman-Optimalitätsgleichung",
-            "vi":          "2.3 Wertiterationsalgorithmus",
-            "contraction": "2.3 Kontraktionsabbildungssatz",
-            "linear":      "2.2 Lineare System-Lösung",
-            "policy":      "2.3 Strategieextraktion",
-        },
-        "theory_bellman": r"""**Bellman-Optimalitätsgleichung**:
-$$V^*(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-Implementiert in `value_iteration()` in `ch02_bellman.rs`.""",
-        "theory_vi": r"""**Wertiteration** wendet den Bellman-Operator iterativ an:
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^{(k)}(s') \right]$$
-Stopp wenn: $\|V^{(k+1)} - V^{(k)}\|_\infty < \theta$""",
-        "theory_contraction": r"""**Kontraktionsabbildungssatz** garantiert Konvergenz:
-$$\|V^{(k+1)} - V^{(k)}\|_\infty \leq \gamma \|V^{(k)} - V^{(k-1)}\|_\infty$$
-Verifiziert in `verify_contraction()` in `ch02_bellman.rs`.""",
-        "theory_linear": r"""**Exakte Lösung** für eine feste Strategie π:
-$$V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$$
-Gelöst mit **nalgebra LU-Zerlegung** in `solve_exact()` in `ch02_bellman.rs`.""",
-        "theory_policy": r"""**Strategieextraktion** — gierige Strategie aus V*:
-$$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$""",
-    },
-    "FR": {
-        "title": "Chapitre 02 — MDP Discret & Optimalité de Bellman",
-        "subtitle": "Optimisation des états opérationnels ASP · Région de Varsovie",
-        "engine_missing": "⚙️ Moteur Rust introuvable. Exécutez : `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Paramètres MDP",
-        "gamma": "γ — Facteur d'actualisation",
-        "theta": "θ — Seuil de convergence",
-        "seed": "Graine aléatoire",
-        "run_btn": "▶ Lancer l'itération de valeur",
-        "guide_title": "🎓 Comment utiliser ce chapitre",
-        "guide": """
-**Étape 1 — Réglez γ** : γ=0.99 = prévoyant, γ=0.5 = myope.
-**Étape 2 — Réglez θ** : plus petit = plus précis mais plus d'itérations.
-**Étape 3 — Cliquez ▶** : le moteur Rust construit la matrice de transition et itère.
-**Étape 4 — Lisez la fonction de valeur** : chaque barre = valeur à long terme de l'état.
-**Étape 5 — Lisez la politique optimale** : meilleure stratégie pour chaque état.
-**Étape 6 — Lisez la courbe de convergence** : décroissance de ‖V^(k+1) - V^(k)‖∞.
-**Étape 7 — Lisez le Glass-Box** : mise à jour de Bellman pour chaque état.
-""",
-        "value_title": "📊 Fonction de valeur optimale V*(s)",
-        "value_caption": "Récompense attendue à long terme pour chaque état opérationnel",
-        "policy_title": "🎯 Politique optimale π*(s)",
-        "policy_caption": "Meilleure stratégie de dispatch pour chaque état",
-        "conv_title": "📈 Convergence — ‖V^(k+1) - V^(k)‖∞",
-        "conv_x": "Itération",
-        "conv_y": "Changement max de V",
-        "conv_caption": "Contraction de Bellman : chaque itération réduit l'erreur par facteur γ",
-        "heatmap_title": "🗺️ Matrice de transition P(s'|s, a=A1: Compétence)",
-        "heatmap_caption": "Probabilité de transition de l'état s vers s' sous dispatch par compétence",
-        "glass_title": "🔬 Glass-Box — Trace de mise à jour de Bellman (3 premières itérations)",
-        "glass_headers": ["Iter", "État", "Meilleure action", "Q(s,A0)", "Q(s,A1)", "Q(s,A2)", "Q(s,A3)", "V_ancien", "V_nouveau", "Δ"],
-        "summary_title": "📊 Résumé",
-        "summary_results": "Résultats quantifiés",
-        "summary_pros_cons": "MDP Discret + Itération de valeur — Avantages & Inconvénients",
-        "pros": "✅ Avantages",
-        "cons": "❌ Inconvénients",
-        "pros_list": [
-            "Convergence garantie vers la politique optimale",
-            "Solution exacte sans erreur d'approximation",
-            "Interprétable : la fonction de valeur explique chaque décision",
-            "Solution par algèbre linéaire disponible (LU nalgebra)",
-            "Fondation pour tous les algorithmes RL suivants",
-        ],
-        "cons_list": [
-            "Nécessite le modèle de transition complet P(s'|s,a)",
-            "L'espace d'états doit être discret et fini",
-            "Malédiction de la dimensionnalité : O(|S|² × |A|) par itération",
-            "Les probabilités de transition doivent être estimées",
-            "Ch06 (TD Learning) résout la version sans modèle",
-        ],
-        "metric_iters": "Itérations pour converger",
-        "metric_best_state": "Meilleur état opérationnel",
-        "metric_worst_state": "Pire état opérationnel",
-        "metric_value_range": "Plage de valeurs V*(s)",
-        "metric_contraction": "Contraction vérifiée",
-        "theory_title": "📖 Théorie — Chapitre 02",
-        "theory_sections": {
-            "bellman": "§2.3 Équation d'optimalité de Bellman",
-            "vi": "§2.3 Algorithme d'itération de valeur",
-            "contraction": "§2.3 Théorème de contraction",
-            "linear": "§2.2 Solution par système linéaire",
-            "policy": "§2.3 Extraction de politique",
-        },
-        "theory_bellman": r"""
-**Équation d'optimalité de Bellman** :
-$$V^*(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-""",
-        "theory_vi": r"""
-**Itération de valeur** :
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^{(k)}(s') \right]$$
-""",
-        "theory_contraction": r"""
-**Théorème de contraction** :
-$$\|V^{(k+1)} - V^{(k)}\|_\infty \leq \gamma \|V^{(k)} - V^{(k-1)}\|_\infty$$
-""",
-        "theory_linear": r"""
-**Solution exacte** : $V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$ via décomposition LU nalgebra.
-""",
-        "theory_policy": r"""
-**Extraction de politique** :
-$$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-""",
-    },
-    "ES": {
-        "title": "Capítulo 02 — MDP Discreto & Optimalidad de Bellman",
-        "subtitle": "Optimización de estados operacionales ASP · Región de Varsovia",
-        "engine_missing": "⚙️ Motor Rust no encontrado. Ejecute: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Configuración MDP",
-        "gamma": "γ — Factor de descuento",
-        "theta": "θ — Umbral de convergencia",
-        "seed": "Semilla aleatoria",
-        "run_btn": "▶ Ejecutar iteración de valor",
-        "guide_title": "🎓 Cómo usar este capítulo",
-        "guide": """
-**Paso 1 — Ajuste γ** : γ=0.99 = previsor, γ=0.5 = miope.
-**Paso 2 — Ajuste θ** : más pequeño = más preciso pero más iteraciones.
-**Paso 3 — Haga clic ▶** : el motor Rust construye la matriz de transición e itera.
-**Paso 4 — Lea la función de valor** : cada barra = valor a largo plazo del estado.
-**Paso 5 — Lea la política óptima** : mejor estrategia para cada estado.
-**Paso 6 — Lea la curva de convergencia** : decaimiento de ‖V^(k+1) - V^(k)‖∞.
-**Paso 7 — Lea el Glass-Box** : actualización de Bellman para cada estado.
-""",
-        "value_title": "📊 Función de valor óptima V*(s)",
-        "value_caption": "Recompensa esperada a largo plazo para cada estado operacional",
-        "policy_title": "🎯 Política óptima π*(s)",
-        "policy_caption": "Mejor estrategia de despacho para cada estado",
-        "conv_title": "📈 Convergencia — ‖V^(k+1) - V^(k)‖∞",
-        "conv_x": "Iteración",
-        "conv_y": "Cambio máximo en V",
-        "conv_caption": "Contracción de Bellman: cada iteración reduce el error por factor γ",
-        "heatmap_title": "🗺️ Matriz de transición P(s'|s, a=A1: Habilidad)",
-        "heatmap_caption": "Probabilidad de transición del estado s al estado s' bajo despacho por habilidad",
-        "glass_title": "🔬 Glass-Box — Traza de actualización de Bellman (primeras 3 iteraciones)",
-        "glass_headers": ["Iter", "Estado", "Mejor acción", "Q(s,A0)", "Q(s,A1)", "Q(s,A2)", "Q(s,A3)", "V_ant", "V_nuevo", "Δ"],
-        "summary_title": "📊 Resumen",
-        "summary_results": "Resultados cuantificados",
-        "summary_pros_cons": "MDP Discreto + Iteración de valor — Pros y Contras",
-        "pros": "✅ Pros",
-        "cons": "❌ Contras",
-        "pros_list": [
-            "Convergencia garantizada a la política óptima",
-            "Solución exacta sin error de aproximación",
-            "Interpretable: la función de valor explica cada decisión",
-            "Solución por álgebra lineal disponible (LU nalgebra)",
-            "Base para todos los algoritmos RL siguientes",
-        ],
-        "cons_list": [
-            "Requiere modelo de transición completo P(s'|s,a)",
-            "El espacio de estados debe ser discreto y finito",
-            "Maldición de la dimensionalidad: O(|S|² × |A|) por iteración",
-            "Las probabilidades de transición deben estimarse",
-            "Ch06 (TD Learning) resuelve la versión sin modelo",
-        ],
-        "metric_iters": "Iteraciones para converger",
-        "metric_best_state": "Mejor estado operacional",
-        "metric_worst_state": "Peor estado operacional",
-        "metric_value_range": "Rango de valores V*(s)",
-        "metric_contraction": "Contracción verificada",
-        "theory_title": "📖 Teoría — Capítulo 02",
-        "theory_sections": {
-            "bellman": "§2.3 Ecuación de optimalidad de Bellman",
-            "vi": "§2.3 Algoritmo de iteración de valor",
-            "contraction": "§2.3 Teorema de contracción",
-            "linear": "§2.2 Solución por sistema lineal",
-            "policy": "§2.3 Extracción de política",
-        },
-        "theory_bellman": r"""
-**Ecuación de optimalidad de Bellman** :
-$$V^*(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-""",
-        "theory_vi": r"""
-**Iteración de valor** :
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^{(k)}(s') \right]$$
-""",
-        "theory_contraction": r"""
-**Teorema de contracción** :
-$$\|V^{(k+1)} - V^{(k)}\|_\infty \leq \gamma \|V^{(k)} - V^{(k-1)}\|_\infty$$
-""",
-        "theory_linear": r"""
-**Solución exacta** : $V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$ via descomposición LU nalgebra.
-""",
-        "theory_policy": r"""
-**Extracción de política** :
-$$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-""",
-    },
-    "PL": {
-        "title": "Rozdział 02 — Dyskretny MDP i Optymalność Bellmana",
-        "subtitle": "Optymalizacja stanów operacyjnych ASP · Region Warszawy",
-        "engine_missing": "⚙️ Silnik Rust nie znaleziony. Uruchom: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Ustawienia MDP",
-        "gamma": "γ — Współczynnik dyskontowania",
-        "theta": "θ — Próg zbieżności",
-        "seed": "Ziarno losowości",
-        "run_btn": "▶ Uruchom iterację wartości",
-        "guide_title": "🎓 Jak korzystać z tego rozdziału",
-        "guide": """
-**Krok 1 — Ustaw γ** : γ=0.99 = dalekowzroczny, γ=0.5 = krótkowzroczny.
-**Krok 2 — Ustaw θ** : mniejszy = dokładniejszy, ale więcej iteracji.
-**Krok 3 — Kliknij ▶** : silnik Rust buduje macierz przejść i iteruje.
-**Krok 4 — Odczytaj funkcję wartości** : każdy słupek = długoterminowa wartość stanu.
-**Krok 5 — Odczytaj optymalną politykę** : najlepsza strategia dla każdego stanu.
-**Krok 6 — Odczytaj krzywą zbieżności** : zanik ‖V^(k+1) - V^(k)‖∞.
-**Krok 7 — Odczytaj Glass-Box** : aktualizacja Bellmana dla każdego stanu.
-""",
-        "value_title": "📊 Optymalna funkcja wartości V*(s)",
-        "value_caption": "Oczekiwana długoterminowa nagroda dla każdego stanu operacyjnego",
-        "policy_title": "🎯 Optymalna polityka π*(s)",
-        "policy_caption": "Najlepsza strategia dyspozycji dla każdego stanu",
-        "conv_title": "📈 Zbieżność — ‖V^(k+1) - V^(k)‖∞",
-        "conv_x": "Iteracja",
-        "conv_y": "Maks. zmiana V",
-        "conv_caption": "Kontrakcja Bellmana: każda iteracja redukuje błąd o czynnik γ",
-        "heatmap_title": "🗺️ Macierz przejść P(s'|s, a=A1: Dopasowanie)",
-        "heatmap_caption": "Prawdopodobieństwo przejścia ze stanu s do s' przy dyspozycji dopasowanej",
-        "glass_title": "🔬 Glass-Box — Ślad aktualizacji Bellmana (pierwsze 3 iteracje)",
-        "glass_headers": ["Iter", "Stan", "Najlepsza akcja", "Q(s,A0)", "Q(s,A1)", "Q(s,A2)", "Q(s,A3)", "V_stare", "V_nowe", "Δ"],
-        "summary_title": "📊 Podsumowanie",
-        "summary_results": "Wymierne wyniki",
-        "summary_pros_cons": "Dyskretny MDP + Iteracja wartości — Zalety i Wady",
-        "pros": "✅ Zalety",
-        "cons": "❌ Wady",
-        "pros_list": [
-            "Gwarantowana zbieżność do optymalnej polityki",
-            "Dokładne rozwiązanie bez błędu aproksymacji",
-            "Interpretowalny: funkcja wartości wyjaśnia każdą decyzję",
-            "Rozwiązanie algebraiczne dostępne (LU nalgebra)",
-            "Fundament dla wszystkich kolejnych algorytmów RL",
-        ],
-        "cons_list": [
-            "Wymaga pełnego modelu przejść P(s'|s,a)",
-            "Przestrzeń stanów musi być dyskretna i skończona",
-            "Przekleństwo wymiarowości: O(|S|² × |A|) na iterację",
-            "Prawdopodobieństwa przejść muszą być oszacowane",
-            "Ch06 (TD Learning) rozwiązuje wersję bez modelu",
-        ],
-        "metric_iters": "Iteracje do zbieżności",
-        "metric_best_state": "Najlepszy stan operacyjny",
-        "metric_worst_state": "Najgorszy stan operacyjny",
-        "metric_value_range": "Zakres wartości V*(s)",
-        "metric_contraction": "Kontrakcja zweryfikowana",
-        "theory_title": "📖 Teoria — Rozdział 02",
-        "theory_sections": {
-            "bellman": "§2.3 Równanie optymalności Bellmana",
-            "vi": "§2.3 Algorytm iteracji wartości",
-            "contraction": "§2.3 Twierdzenie o kontrakcji",
-            "linear": "§2.2 Rozwiązanie układu liniowego",
-            "policy": "§2.3 Ekstrakcja polityki",
-        },
-        "theory_bellman": r"""
-**Równanie optymalności Bellmana** :
-$$V^*(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-""",
-        "theory_vi": r"""
-**Iteracja wartości** :
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^{(k)}(s') \right]$$
-""",
-        "theory_contraction": r"""
-**Twierdzenie o kontrakcji** :
-$$\|V^{(k+1)} - V^{(k)}\|_\infty \leq \gamma \|V^{(k)} - V^{(k-1)}\|_\infty$$
-""",
-        "theory_linear": r"""
-**Dokładne rozwiązanie** : $V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$ przez dekompozycję LU nalgebra.
-""",
-        "theory_policy": r"""
-**Ekstrakcja polityki** :
-$$\pi^*(s) = \arg\max_a \sum_{s'} P(s'|s,a) \left[ R(s,a) + \gamma V^*(s') \right]$$
-""",
-    },
+"""
+    }
 }
 
 # ---------------------------------------------------------------------------
@@ -895,7 +570,7 @@ function showTab(id){
     )
 
 def render():
-    lang = st.session_state.get("lang", "EN")
+    lang = "EN"
     tx = _tx(lang)
 
     st.title(tx["title"])
@@ -924,9 +599,6 @@ def render():
         )
         seed = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
-        with st.expander(tx["guide_title"], expanded=False):
-            st.markdown(tx["guide"])
-
         run = st.button(tx["run_btn"], type="primary")
 
         if run:
@@ -938,7 +610,6 @@ def render():
 
         if "ch02_result" not in st.session_state:
             st.info("Configure settings and click **▶ Run Value Iteration**.")
-            _render_theory(tx)
             return
 
         result = st.session_state["ch02_result"]
@@ -991,7 +662,6 @@ def render():
                         action_names, tx)
 
         # Theory
-        _render_theory(tx)
 
 
 # ---------------------------------------------------------------------------
@@ -1040,7 +710,7 @@ def _render_policy_table(policy, state_names, action_names, values, tx):
             "Situation": state_names[s].split(":")[1].strip(),
             "Optimal Action": f"A{a}",
             "Strategy": action_names[a].split(":")[1].strip(),
-            "V*(s)": f"{values[s]:.3f}",
+            "V*(s)": f"{values[s]:.3f}"
         })
     st.dataframe(rows, width='stretch', hide_index=True)
 
@@ -1120,7 +790,7 @@ def _render_glass_box(trace, state_names, action_names, tx):
             tx["glass_headers"][6]: f"{step['q_values'][3]:.3f}",
             tx["glass_headers"][7]: f"{step['v_old']:.3f}",
             tx["glass_headers"][8]: f"{step['v_new']:.3f}",
-            tx["glass_headers"][9]: f"{step['delta']:.4f}",
+            tx["glass_headers"][9]: f"{step['delta']:.4f}"
         })
 
     st.dataframe(rows, width='stretch', height=300)
@@ -1181,16 +851,3 @@ def _render_summary(values, policy, iterations, curve, state_names,
 # ---------------------------------------------------------------------------
 # Theory panel
 # ---------------------------------------------------------------------------
-def _render_theory(tx):
-    st.markdown("---")
-    st.subheader(tx["theory_title"])
-    sections = [
-        ("bellman",     tx["theory_sections"]["bellman"],     tx["theory_bellman"]),
-        ("vi",          tx["theory_sections"]["vi"],          tx["theory_vi"]),
-        ("contraction", tx["theory_sections"]["contraction"], tx["theory_contraction"]),
-        ("linear",      tx["theory_sections"]["linear"],      tx["theory_linear"]),
-        ("policy",      tx["theory_sections"]["policy"],      tx["theory_policy"]),
-    ]
-    for key, label, content in sections:
-        with st.expander(label, expanded=False):
-            st.markdown(content)

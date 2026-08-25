@@ -34,90 +34,8 @@ TX = {
         "theory_igm":   "IGM: argmax_a Q_tot(s,a) = (argmax Q_0(s_0,.), argmax Q_1(s_1,.))",
         "theory_vdn":   "Q_tot = Q_0(s_0,a_0) + Q_1(s_1,a_1)\ndQ_tot/dQ_i = 1 (equal gradient)",
         "theory_qmix":  "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s)\nw_i(s) >= 0 (monotonicity)\ndQ_tot/dQ_i = w_i(s) (state-dependent gradient)",
-        "theory_cg":    "Counterfactual advantage:\nA_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)\nIsolates agent i contribution to joint value.",
-    },
-    "PL": {
-        "title":    "Rozdzial 13 - Kooperacyjny MARL: VDN i QMIX",
-        "subtitle": "IQL Baseline - VDN - QMIX - QMIX+CG - 2 Agenci - ASP Warszawa",
-        "run":      "Uruchom wszystkie cztery algorytmy",
-        "ret":      "Wspolne zwroty epizodow",
-        "mix":      "Wagi mieszania (QMIX)",
-        "jq":       "Wspolne Q_tot",
-        "val":      "Wspolna funkcja wartosci V(s)",
-        "glass":    "Glass-Box",
-        "summary":  "Podsumowanie",
-        "episodes": "Epizody", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon":  "Epsilon", "edecay": "Zanik epsilon",
-        "mhidden":  "Ukryte jednostki sieci mieszania", "seed": "Ziarno",
-        "labels":   {"iql":"IQL Baseline","vdn":"VDN","qmix":"QMIX","qmix_cg":"QMIX+CG"},
-        "guide": (
-            "Ustawienie kooperacyjne: obaj agenci dziela TE SAMA wspolna nagrode.\n"
-            "IQL: kazdy agent ignoruje drugiego.\n"
-            "VDN: Q_tot = Q_0 + Q_1. Prosta dekompozycja addytywna.\n"
-            "QMIX: Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotoniczna.\n"
-            "QMIX+CG: QMIX + kontrfaktyczna linia bazowa."
-        ),
-        "theory_igm":  "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
-        "theory_vdn":  "Q_tot = Q_0 + Q_1. Gradient rowny dla obu agentow.",
-        "theory_qmix": "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). w_i >= 0.",
-        "theory_cg":   "Przewaga kontrfaktyczna: A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)",
-    },
-        "DE": {
-        "title": "Kapitel 13 — Kooperatives MARL: VDN und QMIX",
-        "subtitle": "IQL Baseline — VDN — QMIX — QMIX+CG — 2 Agenten — ASP Warschau",
-        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "Einstellungen",
-        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "edecay": "Epsilon-Abklingrate",
-        "mhidden": "Versteckte Einheiten des Mischnetzwerks", "seed": "Zufallsseed",
-        "run": "▶ Alle vier Algorithmen starten",
-        "ret": "Gemeinsame Episodenrückgaben",
-        "mix": "Mischgewichte (QMIX)",
-        "jq": "Gemeinsames Q_tot",
-        "val": "Gemeinsame Wertfunktion V(s)",
-        "glass": "Glass-Box",
-        "summary": "Zusammenfassung",
-        "labels": {"iql": "IQL Baseline", "vdn": "VDN", "qmix": "QMIX", "qmix_cg": "QMIX+CG"},
-        "guide": (
-            "Kooperatives Szenario: beide Agenten teilen dieselbe gemeinsame Belohnung.\n"
-            "IQL: jeder Agent ignoriert den anderen.\n"
-            "VDN: Q_tot = Q_0 + Q_1. Einfache additive Zerlegung.\n"
-            "QMIX: Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotones Mischen.\n"
-            "QMIX+CG: QMIX + kontrafaktische Basislinie für Kreditvergabe."
-        ),
-        "theory_igm":   "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
-        "theory_vdn":   r"$Q_{tot} = Q_0(s_0,a_0) + Q_1(s_1,a_1)$",
-        "theory_qmix":  r"$Q_{tot} = w_0(s)Q_0 + w_1(s)Q_1 + b(s),\quad w_i \geq 0$",
-        "theory_cg":    r"$A_i = Q_{tot}(s,\mathbf{a}) - Q_{tot}(s, \mathbf{a}_{-i}, rg\max Q_i)$",
-    },
-    "FR": {
-        "title": "Chapitre 13 - MARL Cooperatif: VDN et QMIX",
-        "subtitle": "IQL - VDN - QMIX - QMIX+CG - ASP Varsovie",
-        "run": "Lancer", "ret": "Retours", "mix": "Poids de melange",
-        "jq": "Q_tot joint", "val": "V(s)", "glass": "Glass-Box", "summary": "Resume",
-        "episodes": "Episodes", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "edecay": "Decroissance", "mhidden": "Unites cachees", "seed": "Graine",
-        "labels": {"iql":"IQL","vdn":"VDN","qmix":"QMIX","qmix_cg":"QMIX+CG"},
-        "guide": "VDN: Q_tot = Q_0 + Q_1. QMIX: melange monotone. QMIX+CG: base contrefactuelle.",
-        "theory_igm": "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
-        "theory_vdn": "Q_tot = Q_0 + Q_1",
-        "theory_qmix": "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s), w_i >= 0",
-        "theory_cg": "A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)",
-    },
-    "ES": {
-        "title": "Capitulo 13 - MARL Cooperativo: VDN y QMIX",
-        "subtitle": "IQL - VDN - QMIX - QMIX+CG - ASP Varsovia",
-        "run": "Ejecutar", "ret": "Retornos", "mix": "Pesos de mezcla",
-        "jq": "Q_tot conjunto", "val": "V(s)", "glass": "Glass-Box", "summary": "Resumen",
-        "episodes": "Episodios", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "edecay": "Decaimiento", "mhidden": "Unidades ocultas", "seed": "Semilla",
-        "labels": {"iql":"IQL","vdn":"VDN","qmix":"QMIX","qmix_cg":"QMIX+CG"},
-        "guide": "VDN: Q_tot = Q_0 + Q_1. QMIX: mezcla monotona. QMIX+CG: linea base contrafactual.",
-        "theory_igm": "IGM: argmax Q_tot = (argmax Q_0, argmax Q_1)",
-        "theory_vdn": "Q_tot = Q_0 + Q_1",
-        "theory_qmix": "Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s), w_i >= 0",
-        "theory_cg": "A_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)",
-    },
+        "theory_cg":    "Counterfactual advantage:\nA_i = Q_tot(s,a) - Q_tot(s, a_{-i}, argmax Q_i)\nIsolates agent i contribution to joint value."
+    }
 }
 
 def _ma(data, w=30):
@@ -140,7 +58,7 @@ def _tx(lang):
 
 
 def render():
-    lang = st.session_state.get("lang","EN")
+    lang = "EN"
     tx   = _tx(lang)
     lb   = tx["labels"]
     st.title(tx["title"]); st.caption(tx["subtitle"])

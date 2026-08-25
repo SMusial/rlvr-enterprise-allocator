@@ -53,7 +53,7 @@ T = {
             "iql":  "11.1 Independent Q-Learning",
             "jal":  "11.2 Joint Action Learning",
             "lq":   "11.3 Lenient Q-Learning",
-            "mf":   "11.4 Mean Field Q-Learning",
+            "mf":   "11.4 Mean Field Q-Learning"
         },
         "theory_iql":  "Each agent i runs Q-Learning independently:\nQ_i(s,a) += alpha * [r + gamma * max Q_i(s') - Q_i(s,a)]\nOther agents treated as part of environment.",
         "theory_jal":  "Agent i models partner j's policy pi_j(a|s) from action frequencies.\nQ update uses expected value: E_{a_j ~ pi_j}[max Q_i(s')].",
@@ -63,204 +63,28 @@ T = {
             "iql":       "IQL",
             "jal":       "JAL",
             "lenient":   "Lenient Q",
-            "meanfield": "Mean Field Q",
+            "meanfield": "Mean Field Q"
         },
         "pros_list": {
             "iql":       ["Simplest MARL", "No communication needed", "Scales to N agents"],
             "jal":       ["Models partner policy", "Better coordination", "Principled joint value"],
             "lenient":   ["Robust to partner mistakes", "Avoids miscoordination", "Tunable via mu"],
-            "meanfield": ["Scales to large N", "Principled mean-field theory", "Low communication"],
+            "meanfield": ["Scales to large N", "Principled mean-field theory", "Low communication"]
         },
         "cons_list": {
             "iql":       ["Non-stationary environment", "No coordination", "May not converge"],
             "jal":       ["Requires observing partner actions", "O(|A|^N) joint space", "Slow model update"],
             "lenient":   ["mu must be tuned", "May ignore valid penalties", "Slower convergence"],
-            "meanfield": ["Mean approximation loses info", "Beta must be tuned", "Assumes homogeneous agents"],
-        },
-    },
-    "PL": {
-        "title":    "Rozdzial 11 - Wieloagentowe RL",
-        "subtitle": "IQL - JAL - Lenient Q - Mean Field Q - 2 Dyspozytorzy - ASP Warszawa",
-        "engine_missing": "Uruchom: `cd rlvr-py && maturin develop`",
-        "sidebar_title":  "Ustawienia",
-        "n_episodes":     "Epizody",
-        "gamma":          "Gamma - Dyskonto",
-        "alpha":          "Alpha - Uczenie",
-        "epsilon":        "Epsilon - Eksploracja",
-        "epsilon_decay":  "Zanik epsilon",
-        "leniency_mu":    "Mu - Lagodnosc (0=IQL, 1=pelna)",
-        "mf_beta":        "Beta - Wplyw sredniego pola",
-        "seed":           "Ziarno",
-        "run_btn":        "Uruchom wszystkie cztery algorytmy",
-        "guide_title":    "Jak korzystac z tego rozdzialu",
-        "guide": (
-            "Scenariusz: 2 dyspozytorzy wspoldziela MDP ASP Warszawa.\n"
-            "Kazdy dziala niezaleznie, ale ich nagrody sa powiazane.\n\n"
-            "Krok 1 - IQL: kazdy agent uczy sie Q-Learning niezaleznie.\n"
-            "Krok 2 - JAL: kazdy agent modeluje politike partnera.\n"
-            "Krok 3 - Lenient Q: ujemne delty ignorowane z prawdopodobienstwem mu.\n"
-            "Krok 4 - Mean Field Q: wspolne dzialanie aproksymowane srednia."
-        ),
-        "returns_title":     "Wspolne zwroty epizodow",
-        "returns_caption":   "MA-30. Sredni zwrot obu agentow.",
-        "cooperation_title": "Wspolczynnik wspolpracy",
-        "cooperation_caption": "Ulamek krokow, w ktorych obaj agenci wybrali ta sama akcje.",
-        "value_title":       "Wspolna funkcja wartosci V(s)",
-        "value_caption":     "Srednie V(s) obu agentow. S7 powinno byc najnizsze.",
-        "qtable_title":      "Heatmapa tabeli Q",
-        "qtable_caption":    "",
-        "glass_title":       "Glass-Box - Mechanika MARL",
-        "summary_title":     "Podsumowanie",
-        "summary_results":   "Porownanie algorytmow",
-        "summary_pros_cons": "Zalety i Wady",
-        "pros": "Zalety", "cons": "Wady",
-        "theory_title":      "Teoria - Rozdzial 11",
-        "theory_sections": {
-            "iql": "11.1 IQL", "jal": "11.2 JAL",
-            "lq":  "11.3 Lenient Q", "mf": "11.4 Mean Field Q",
-        },
-        "theory_iql":  "Q_i(s,a) += alpha * [r + gamma * max Q_i(s') - Q_i(s,a)]",
-        "theory_jal":  "Agent i modeluje pi_j(a|s) z czestosci akcji partnera.",
-        "theory_lq":   "delta < 0: zastosuj z prawdopodobienstwem (1-mu). mu=0 -> IQL.",
-        "theory_mf":   "mean_a_j(s) = srednia krocaca akcji partnera w stanie s.",
-        "algo_labels": {
-            "iql": "IQL", "jal": "JAL", "lenient": "Lenient Q", "meanfield": "Mean Field Q",
-        },
-        "pros_list": {
-            "iql":       ["Najprostszy MARL", "Brak komunikacji", "Skaluje do N agentow"],
-            "jal":       ["Modeluje politike partnera", "Lepsza koordynacja", "Zasadnicza wartosc wspolna"],
-            "lenient":   ["Odporny na bledy partnera", "Unika blednej koordynacji", "Regulowany przez mu"],
-            "meanfield": ["Skaluje do duzego N", "Zasadnicza teoria sredniego pola", "Niska komunikacja"],
-        },
-        "cons_list": {
-            "iql":       ["Niestacjonarne srodowisko", "Brak koordynacji", "Moze nie zbiegac"],
-            "jal":       ["Wymaga obserwacji akcji partnera", "O(|A|^N) przestrzen", "Wolna aktualizacja modelu"],
-            "lenient":   ["mu do strojenia", "Moze ignorowac kary", "Wolniejsza zbieznosc"],
-            "meanfield": ["Srednia traci informacje", "Beta do strojenia", "Zaklada jednorodnych agentow"],
-        },
-    },
-        "DE": {
-        "title": "Kapitel 11 — Multi-Agenten-RL",
-        "subtitle": "IQL — JAL — Lenient Q — Mean Field Q — 2 Agenten — ASP Warschau",
-        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "Einstellungen",
-        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
-        "leniency_mu": "Mu — Nachsichtigkeit (0=IQL, 1=voll nachsichtig)",
-        "mf_beta": "Beta — Mean-Field-Einfluss",
-        "seed": "Zufallsseed",
-        "run_btn": "▶ Alle vier Algorithmen starten",
-        "guide_title": "Anleitung",
-        "guide": (
-            "Szenario: 2 Disponenten teilen sich das ASP-MDP.\n"
-            "IQL: jeder Agent lernt unabhängig.\n"
-            "JAL: jeder Agent modelliert die Strategie des Partners.\n"
-            "Lenient Q: negative Deltas werden mit Wahrscheinlichkeit mu ignoriert.\n"
-            "Mean Field Q: gemeinsame Aktion durch Mittelwert approximiert."
-        ),
-        "returns_title": "Gemeinsame Episodenrückgaben",
-        "returns_caption": "MA-30. Mittlere Rückgabe beider Agenten.",
-        "cooperation_title": "Kooperationsrate",
-        "cooperation_caption": "Anteil der Schritte, bei denen beide Agenten dieselbe Aktion wählten.",
-        "value_title": "Gemeinsame Wertfunktion V(s)",
-        "value_caption": "Mittleres V(s) beider Agenten. S7 sollte am niedrigsten sein.",
-        "qtable_title": "Q-Tabellen-Heatmap",
-        "qtable_caption": "",
-        "glass_title": "Glass-Box — MARL-Mechanik",
-        "summary_title": "Zusammenfassung",
-        "summary_results": "Algorithmenvergleich",
-        "summary_pros_cons": "Algorithmen — Vor- & Nachteile",
-        "pros": "Vorteile", "cons": "Nachteile",
-        "theory_title": "Theorie — Kapitel 11",
-        "theory_sections": {
-            "iql": "11.1 IQL", "jal": "11.2 JAL",
-            "lq":  "11.3 Lenient Q", "mf": "11.4 Mean Field Q",
-        },
-        "theory_iql":  r"$Q_i(s,a) \mathrel{+}= lpha [r + \gamma \max Q_i(s') - Q_i(s,a)]$",
-        "theory_jal":  "Agent i modelliert π_j(a|s) aus Aktionshäufigkeiten des Partners.",
-        "theory_lq":   "δ < 0: mit Wahrscheinlichkeit (1-μ) anwenden. μ=0 → IQL.",
-        "theory_mf":   r"$ar{a}_j(s)$ = laufender Mittelwert der Partneraktionen in Zustand s.",
-        "algo_labels": {
-            "iql": "IQL", "jal": "JAL", "lenient": "Lenient Q", "meanfield": "Mean Field Q",
-        },
-        "pros_list": {
-            "iql":       ["Einfachstes MARL", "Keine Kommunikation nötig", "Skaliert auf N Agenten"],
-            "jal":       ["Modelliert Partnerstrategie", "Bessere Koordination"],
-            "lenient":   ["Robust gegenüber Partnerfehlern", "Vermeidet Fehlkoordination"],
-            "meanfield": ["Skaliert auf großes N", "Geringe Kommunikation"],
-        },
-        "cons_list": {
-            "iql":       ["Nicht-stationäre Umgebung", "Keine Koordination"],
-            "jal":       ["Benötigt Beobachtung der Partneraktionen", "O(|A|^N) Raum"],
-            "lenient":   ["μ muss eingestellt werden", "Kann gültige Strafen ignorieren"],
-            "meanfield": ["Mittelwert verliert Information", "β muss eingestellt werden"],
-        },
-    },
-    "FR": {
-        "title": "Chapitre 11 - RL Multi-Agent",
-        "subtitle": "IQL - JAL - Lenient Q - Mean Field Q - 2 Agents - ASP Varsovie",
-        "engine_missing": "Executez: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "Parametres",
-        "n_episodes": "Episodes", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "epsilon_decay": "Decroissance epsilon",
-        "leniency_mu": "Mu - Indulgence", "mf_beta": "Beta - Champ moyen",
-        "seed": "Graine", "run_btn": "Lancer les quatre algorithmes",
-        "guide_title": "Guide",
-        "guide": "2 agents partagent le MDP ASP. IQL: independant. JAL: modelise partenaire. Lenient: ignore delta<0 avec prob mu. Mean Field: moyenne des actions.",
-        "returns_title": "Retours joints", "returns_caption": "",
-        "cooperation_title": "Taux de cooperation", "cooperation_caption": "",
-        "value_title": "V(s) joint", "value_caption": "",
-        "qtable_title": "Table Q", "qtable_caption": "",
-        "glass_title": "Glass-Box",
-        "summary_title": "Resume", "summary_results": "Comparaison",
-        "summary_pros_cons": "Avantages et Inconvenients",
-        "pros": "Pros", "cons": "Cons",
-        "theory_title": "Theorie",
-        "theory_sections": {"iql": "11.1 IQL", "jal": "11.2 JAL", "lq": "11.3 Lenient", "mf": "11.4 Mean Field"},
-        "theory_iql": "Q_i(s,a) += alpha*[r+gamma*max Q_i(s')-Q_i(s,a)]",
-        "theory_jal": "Modelise pi_j depuis frequences d'actions.",
-        "theory_lq":  "delta<0: appliquer avec prob (1-mu).",
-        "theory_mf":  "mean_a_j(s) = moyenne courante des actions du partenaire.",
-        "algo_labels": {"iql": "IQL", "jal": "JAL", "lenient": "Lenient Q", "meanfield": "Mean Field Q"},
-        "pros_list": {"iql": ["Simple"], "jal": ["Coordination"], "lenient": ["Robuste"], "meanfield": ["Scalable"]},
-        "cons_list": {"iql": ["Non-stationnaire"], "jal": ["Lent"], "lenient": ["mu a regler"], "meanfield": ["Approximation"]},
-    },
-    "ES": {
-        "title": "Capitulo 11 - RL Multi-Agente",
-        "subtitle": "IQL - JAL - Lenient Q - Mean Field Q - 2 Agentes - ASP Varsovia",
-        "engine_missing": "Ejecute: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "Configuracion",
-        "n_episodes": "Episodios", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "epsilon_decay": "Decaimiento epsilon",
-        "leniency_mu": "Mu - Indulgencia", "mf_beta": "Beta - Campo medio",
-        "seed": "Semilla", "run_btn": "Ejecutar los cuatro algoritmos",
-        "guide_title": "Guia",
-        "guide": "2 agentes comparten el MDP ASP. IQL: independiente. JAL: modela socio. Lenient: ignora delta<0 con prob mu. Mean Field: media de acciones.",
-        "returns_title": "Retornos conjuntos", "returns_caption": "",
-        "cooperation_title": "Tasa de cooperacion", "cooperation_caption": "",
-        "value_title": "V(s) conjunto", "value_caption": "",
-        "qtable_title": "Tabla Q", "qtable_caption": "",
-        "glass_title": "Glass-Box",
-        "summary_title": "Resumen", "summary_results": "Comparacion",
-        "summary_pros_cons": "Pros y Contras",
-        "pros": "Pros", "cons": "Cons",
-        "theory_title": "Teoria",
-        "theory_sections": {"iql": "11.1 IQL", "jal": "11.2 JAL", "lq": "11.3 Lenient", "mf": "11.4 Mean Field"},
-        "theory_iql": "Q_i(s,a) += alpha*[r+gamma*max Q_i(s')-Q_i(s,a)]",
-        "theory_jal": "Modela pi_j desde frecuencias de acciones.",
-        "theory_lq":  "delta<0: aplicar con prob (1-mu).",
-        "theory_mf":  "mean_a_j(s) = media corriente de acciones del socio.",
-        "algo_labels": {"iql": "IQL", "jal": "JAL", "lenient": "Lenient Q", "meanfield": "Mean Field Q"},
-        "pros_list": {"iql": ["Simple"], "jal": ["Coordinacion"], "lenient": ["Robusto"], "meanfield": ["Escalable"]},
-        "cons_list": {"iql": ["No estacionario"], "jal": ["Lento"], "lenient": ["mu a ajustar"], "meanfield": ["Aproximacion"]},
-    },
+            "meanfield": ["Mean approximation loses info", "Beta must be tuned", "Assumes homogeneous agents"]
+        }
+    }
 }
 
 COLORS = {
     "iql":       "#8B5CF6",
     "jal":       "#0082F0",
     "lenient":   "#0FC373",
-    "meanfield": "#FF8C0A",
+    "meanfield": "#FF8C0A"
 }
 ALGOS = ["iql", "jal", "lenient", "meanfield"]
 
@@ -281,7 +105,7 @@ def _tx(lang):
     return base
 
 def render():
-    lang = st.session_state.get("lang", "EN")
+    lang = "EN"
     tx   = _tx(lang)
     st.title(tx["title"])
     st.caption(tx["subtitle"])
@@ -299,9 +123,6 @@ def render():
     mu    = st.sidebar.slider(tx["leniency_mu"],   0.0, 1.0, 0.5, 0.05)
     beta  = st.sidebar.slider(tx["mf_beta"],       0.0, 2.0, 0.5, 0.1)
     seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-
-    with st.expander(tx["guide_title"], expanded=False):
-        st.markdown(tx["guide"])
 
     if st.button(tx["run_btn"], type="primary"):
         with st.spinner("Running Rust MARL engine..."):
@@ -416,7 +237,7 @@ def _summary(res, tx):
             "Total steps":           str(r["total_steps"]),
             "Avg cooperation":       f"{coop:.3f}",
             "V*(S0)":                f"{r['values'][0]:.3f}",
-            "V*(S7)":                f"{r['values'][7]:.3f}",
+            "V*(S7)":                f"{r['values'][7]:.3f}"
         })
     st.dataframe(rows, hide_index=True)
     for k in ALGOS:

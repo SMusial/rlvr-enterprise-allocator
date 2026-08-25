@@ -63,7 +63,7 @@ How many (s,a) pairs has Dyna-Q learned? Should grow toward N_STATES × N_ACTION
             "nstep":    "§7.1 n-Step TD Returns",
             "nsarsa":   "§7.2 n-Step SARSA",
             "dynaq":    "§7.4 Dyna-Q",
-            "dynaqplus":"§7.5 Dyna-Q+",
+            "dynaqplus":"§7.5 Dyna-Q+"
         },
         "theory_nstep": r"""
 **n-Step TD** generalises TD(0) and MC:
@@ -115,221 +115,28 @@ Implemented in `dyna_q_plus()` in `ch07_nstep.rs`.
             "nstep_td":    "n-Step TD",
             "nstep_sarsa": "n-Step SARSA",
             "dyna_q":      "Dyna-Q",
-            "dyna_q_plus": "Dyna-Q+",
+            "dyna_q_plus": "Dyna-Q+"
         },
         "pros_list": {
             "nstep_td":    ["Bridges TD and MC", "Tunable bias-variance via n", "No model needed"],
             "nstep_sarsa": ["On-policy, safe", "n-step reduces variance vs TD(0)", "No model needed"],
             "dyna_q":      ["Sample efficient — k planning steps", "Learns model of environment", "Converges faster than Q-Learning"],
-            "dyna_q_plus": ["Handles non-stationary environments", "Exploration bonus prevents stagnation", "Best of Dyna-Q + exploration"],
+            "dyna_q_plus": ["Handles non-stationary environments", "Exploration bonus prevents stagnation", "Best of Dyna-Q + exploration"]
         },
         "cons_list": {
             "nstep_td":    ["Must wait n steps before update", "Higher memory (stores n transitions)", "n must be tuned"],
             "nstep_sarsa": ["On-policy — needs epsilon > 0", "n must be tuned", "Slower than Dyna-Q"],
             "dyna_q":      ["Model may be wrong (stale)", "k planning steps add computation", "Assumes stationary environment"],
-            "dyna_q_plus": ["κ must be tuned", "More complex than Dyna-Q", "Bonus can cause over-exploration"],
-        },
-    },
-    "PL": {
-        "title": "Rozdział 07 — n-krokowe TD i Planowanie z Dyna-Q",
-        "subtitle": "n-Step TD · n-Step SARSA · Dyna-Q · Dyna-Q+ · ASP Warszawa",
-        "engine_missing": "Uruchom: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Ustawienia",
-        "n_episodes": "Liczba epizodów",
-        "gamma": "γ — Współczynnik dyskontowania",
-        "alpha": "α — Współczynnik uczenia",
-        "epsilon": "ε — Eksploracja początkowa",
-        "epsilon_decay": "Współczynnik zaniku ε",
-        "n_step": "n — Rozmiar kroku (1=TD, duże=MC)",
-        "planning_steps": "k — Kroki planowania (Dyna-Q)",
-        "kappa": "κ — Bonus eksploracji (Dyna-Q+)",
-        "seed": "Ziarno losowości",
-        "run_btn": "▶ Uruchom wszystkie cztery algorytmy",
-        "guide_title": "🎓 Jak korzystać z tego rozdziału",
-        "guide": """
-**Krok 1** — n-krokowe TD: n=1 to TD(0), n=∞ to MC, n=3-5 to optimum.
-**Krok 2** — Dyna-Q = Q-Learning + model + k kroków planowania per krok.
-**Krok 3** — Dyna-Q+ dodaje bonus κ√τ(s,a) dla rzadko próbowanych przejść.
-**Krok 4** — Porównaj n=1 vs n=5 vs n=10 — obserwuj wpływ na zbieżność.
-**Krok 5** — Porównaj k=0 vs k=5 vs k=20 — Dyna-Q uczy się szybciej.
-**Krok 6** — Odczytaj rozmiar modelu — ile par (s,a) Dyna-Q się nauczyło.
-""",
-        "returns_title": "📈 Zwroty epizodów — Cztery algorytmy",
-        "returns_caption": "Średnia krocząca. Dyna-Q powinien zbiegać najszybciej dzięki planowaniu.",
-        "td_error_title": "📉 Krzywa błędu TD",
-        "td_error_caption": "Błąd TD maleje w miarę uczenia. Dyna-Q spada najszybciej.",
-        "value_title": "📊 Funkcja wartości V(s)",
-        "value_caption": "Wszystkie algorytmy powinny zbiegać do podobnych V*(s).",
-        "nstep_title": "📊 Porównanie n-krokowych zwrotów (n=1 vs n=3 vs n=10)",
-        "nstep_caption": "Większe n = bardziej jak MC. Optimum zazwyczaj n=3-5.",
-        "model_title": "🗺️ Pokrycie modelu Dyna-Q",
-        "model_caption": "Ile par (s,a) model się nauczył. Maks = 32.",
-        "qtable_title": "📊 Heatmapa tabeli Q",
-        "qtable_caption": "Wartości Q(s,a). Wybierz algorytm.",
-        "glass_title": "🔬 Glass-Box — Ślad kroków planowania",
-        "summary_title": "📊 Podsumowanie",
-        "summary_results": "Porównanie algorytmów",
-        "summary_pros_cons": "Algorytmy — Zalety i Wady",
-        "pros": "✅ Zalety", "cons": "❌ Wady",
-        "theory_title": "📖 Teoria — Rozdział 07",
-        "theory_sections": {
-            "nstep":     "§7.1 n-krokowe zwroty TD",
-            "nsarsa":    "§7.2 n-krokowy SARSA",
-            "dynaq":     "§7.4 Dyna-Q",
-            "dynaqplus": "§7.5 Dyna-Q+",
-        },
-        "theory_nstep": r"""
-**n-krokowe TD** uogólnia TD(0) i MC:
-G^(n)_t = R_{t+1} + γR_{t+2} + ... + γ^(n-1)R_{t+n} + γ^n V(S_{t+n})
-V(S_t) ← V(S_t) + α [G^(n)_t - V(S_t)]
-Implementacja: `nstep_td_prediction()` w `ch07_nstep.rs`
-""",
-        "theory_nsarsa": r"""
-**n-krokowy SARSA**:
-G^(n)_t = R_{t+1} + ... + γ^(n-1)R_{t+n} + γ^n Q(S_{t+n}, A_{t+n})
-Q(S_t,A_t) ← Q(S_t,A_t) + α [G^(n)_t - Q(S_t,A_t)]
-""",
-        "theory_dynaq": r"""
-**Dyna-Q** — integracja uczenia i planowania:
-1. Aktualizacja Q-Learning (prawdziwy krok)
-2. Aktualizacja modelu: Model(s,a) = (R, s')
-3. Planowanie (k razy): losuj (s,a) z modelu, aktualizuj Q
-Implementacja: `dyna_q()` w `ch07_nstep.rs`
-""",
-        "theory_dynaqplus": r"""
-**Dyna-Q+** — bonus eksploracji:
-r' = r + κ√τ(s,a)
-τ(s,a) = kroki od ostatniej próby (s,a)
-Implementacja: `dyna_q_plus()` w `ch07_nstep.rs`
-""",
-        "algo_labels": {
-            "nstep_td":    "n-krokowe TD",
-            "nstep_sarsa": "n-krokowy SARSA",
-            "dyna_q":      "Dyna-Q",
-            "dyna_q_plus": "Dyna-Q+",
-        },
-        "pros_list": {
-            "nstep_td":    ["Łączy TD i MC", "Regulowany bias-wariancja przez n", "Bez modelu"],
-            "nstep_sarsa": ["On-policy, bezpieczny", "n kroków redukuje wariancję", "Bez modelu"],
-            "dyna_q":      ["Efektywny próbkowo", "Uczy modelu środowiska", "Szybsza zbieżność"],
-            "dyna_q_plus": ["Obsługuje niestacjonarne środowiska", "Bonus eksploracji", "Najlepszy z Dyna-Q"],
-        },
-        "cons_list": {
-            "nstep_td":    ["Czeka n kroków przed aktualizacją", "Wyższa pamięć", "n wymaga strojenia"],
-            "nstep_sarsa": ["On-policy — wymaga ε > 0", "n wymaga strojenia"],
-            "dyna_q":      ["Model może być nieaktualny", "k kroków planowania = więcej obliczeń"],
-            "dyna_q_plus": ["κ wymaga strojenia", "Bardziej złożony niż Dyna-Q"],
-        },
-    },
-        "DE": {
-        "title": "Kapitel 07 — n-Schritt TD & Dyna-Q",
-        "subtitle": "n-Schritt SARSA — n-Schritt Q-Learning — Dyna-Q — ASP Warschau",
-        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "Einstellungen",
-        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
-        "n_step": "n — Schrittweite", "planning_steps": "Planungsschritte (Dyna-Q)",
-        "seed": "Zufallsseed",
-        "run_btn": "▶ Alle Algorithmen starten",
-        "guide_title": "Anleitung",
-        "guide": "n-Schritt TD brückt MC (n=∞) und TD(0) (n=1). Dyna-Q kombiniert modellfreies Lernen mit Planung.",
-        "returns_title": "Episodenrückgaben",
-        "returns_caption": "Gleitender Durchschnitt.",
-        "value_title": "Wertfunktion V(s)",
-        "value_caption": "Vergleich aller Algorithmen.",
-        "glass_title": "Glass-Box",
-        "summary_title": "Zusammenfassung", "summary_results": "Vergleich",
-        "summary_pros_cons": "Vor- & Nachteile",
-        "pros": "Vorteile", "cons": "Nachteile",
-        "theory_title": "Theorie — Kapitel 07",
-        "theory_sections": {"nstep": "7.1 n-Schritt TD", "dynaq": "7.2 Dyna-Q"},
-        "algo_labels": {"nstep_sarsa": "n-Schritt SARSA", "nstep_qlearning": "n-Schritt Q-Learning", "dynaq": "Dyna-Q"},
-        "pros_list": {
-            "nstep_sarsa": ["Brückt MC und TD", "Flexibel über n"],
-            "nstep_qlearning": ["Off-Policy", "Bessere Kreditvergabe"],
-            "dynaq": ["Effizient durch Planung", "Schnellere Konvergenz"],
-        },
-        "cons_list": {
-            "nstep_sarsa": ["n muss eingestellt werden"],
-            "nstep_qlearning": ["Speicher für n-Schritt-Puffer"],
-            "dynaq": ["Benötigt Modell", "Modellierungsfehler können schaden"],
-        },
-        "theory_nstep": r"$G_t^{(n)} = R_{t+1} + \gamma R_{t+2} + \ldots + \gamma^{n-1} R_{t+n} + \gamma^n V(S_{t+n})$",
-        "theory_dynaq": "Dyna-Q: Q-Learning + Modelllernen + Planung (k simulierte Schritte pro echtem Schritt).",
-    },
-    "FR": {
-        "title": "Chapitre 07 — TD n-pas & Planification avec Dyna-Q",
-        "subtitle": "TD n-pas · SARSA n-pas · Dyna-Q · Dyna-Q+ · ASP Varsovie",
-        "engine_missing": "Exécutez : `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Paramètres",
-        "n_episodes": "Nombre d'épisodes",
-        "gamma": "γ", "alpha": "α", "epsilon": "ε",
-        "epsilon_decay": "Décroissance ε", "n_step": "n",
-        "planning_steps": "k — Étapes de planification",
-        "kappa": "κ — Bonus d'exploration",
-        "seed": "Graine",
-        "run_btn": "▶ Lancer les quatre algorithmes",
-        "guide_title": "🎓 Guide",
-        "guide": "n=1→TD, n=∞→MC. Dyna-Q = Q-Learning + modèle + k étapes de planification.",
-        "returns_title": "📈 Retours", "returns_caption": "Dyna-Q converge le plus vite.",
-        "td_error_title": "📉 Erreur TD", "td_error_caption": "",
-        "value_title": "📊 V(s)", "value_caption": "",
-        "nstep_title": "📊 Comparaison n-pas", "nstep_caption": "",
-        "model_title": "🗺️ Couverture modèle Dyna-Q", "model_caption": "Max = 32.",
-        "qtable_title": "📊 Table Q", "qtable_caption": "",
-        "glass_title": "🔬 Glass-Box",
-        "summary_title": "📊 Résumé", "summary_results": "Comparaison",
-        "summary_pros_cons": "Avantages & Inconvénients",
-        "pros": "✅", "cons": "❌",
-        "theory_title": "📖 Théorie",
-        "theory_sections": {"nstep": "§7.1 TD n-pas", "nsarsa": "§7.2 SARSA n-pas", "dynaq": "§7.4 Dyna-Q", "dynaqplus": "§7.5 Dyna-Q+"},
-        "theory_nstep": "G^(n)_t = R_{t+1} + γR_{t+2} + ... + γ^n V(S_{t+n})",
-        "theory_nsarsa": "G^(n)_t = ... + γ^n Q(S_{t+n}, A_{t+n})",
-        "theory_dynaq": "Q-Learning + modèle + k étapes de planification.",
-        "theory_dynaqplus": "r' = r + κ√τ(s,a)",
-        "algo_labels": {"nstep_td": "TD n-pas", "nstep_sarsa": "SARSA n-pas", "dyna_q": "Dyna-Q", "dyna_q_plus": "Dyna-Q+"},
-        "pros_list": {"nstep_td": ["Relie TD et MC"], "nstep_sarsa": ["On-policy"], "dyna_q": ["Efficace"], "dyna_q_plus": ["Exploration bonus"]},
-        "cons_list": {"nstep_td": ["Attend n pas"], "nstep_sarsa": ["ε > 0"], "dyna_q": ["Modèle peut être périmé"], "dyna_q_plus": ["κ à régler"]},
-    },
-    "ES": {
-        "title": "Capítulo 07 — TD n-pasos & Planificación con Dyna-Q",
-        "subtitle": "TD n-pasos · SARSA n-pasos · Dyna-Q · Dyna-Q+ · ASP Varsovia",
-        "engine_missing": "Ejecute: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Configuración",
-        "n_episodes": "Episodios", "gamma": "γ", "alpha": "α", "epsilon": "ε",
-        "epsilon_decay": "Decaimiento ε", "n_step": "n",
-        "planning_steps": "k — Pasos de planificación",
-        "kappa": "κ — Bonus de exploración", "seed": "Semilla",
-        "run_btn": "▶ Ejecutar los cuatro algoritmos",
-        "guide_title": "🎓 Guía",
-        "guide": "n=1→TD, n=∞→MC. Dyna-Q = Q-Learning + modelo + k pasos de planificación.",
-        "returns_title": "📈 Retornos", "returns_caption": "Dyna-Q converge más rápido.",
-        "td_error_title": "📉 Error TD", "td_error_caption": "",
-        "value_title": "📊 V(s)", "value_caption": "",
-        "nstep_title": "📊 Comparación n-pasos", "nstep_caption": "",
-        "model_title": "🗺️ Cobertura modelo Dyna-Q", "model_caption": "Máx = 32.",
-        "qtable_title": "📊 Tabla Q", "qtable_caption": "",
-        "glass_title": "🔬 Glass-Box",
-        "summary_title": "📊 Resumen", "summary_results": "Comparación",
-        "summary_pros_cons": "Pros y Contras",
-        "pros": "✅", "cons": "❌",
-        "theory_title": "📖 Teoría",
-        "theory_sections": {"nstep": "§7.1 TD n-pasos", "nsarsa": "§7.2 SARSA n-pasos", "dynaq": "§7.4 Dyna-Q", "dynaqplus": "§7.5 Dyna-Q+"},
-        "theory_nstep": "G^(n)_t = R_{t+1} + γR_{t+2} + ... + γ^n V(S_{t+n})",
-        "theory_nsarsa": "G^(n)_t = ... + γ^n Q(S_{t+n}, A_{t+n})",
-        "theory_dynaq": "Q-Learning + modelo + k pasos de planificación.",
-        "theory_dynaqplus": "r' = r + κ√τ(s,a)",
-        "algo_labels": {"nstep_td": "TD n-pasos", "nstep_sarsa": "SARSA n-pasos", "dyna_q": "Dyna-Q", "dyna_q_plus": "Dyna-Q+"},
-        "pros_list": {"nstep_td": ["Une TD y MC"], "nstep_sarsa": ["On-policy"], "dyna_q": ["Eficiente"], "dyna_q_plus": ["Bonus exploración"]},
-        "cons_list": {"nstep_td": ["Espera n pasos"], "nstep_sarsa": ["ε > 0"], "dyna_q": ["Modelo puede quedar obsoleto"], "dyna_q_plus": ["κ a ajustar"]},
-    },
+            "dyna_q_plus": ["κ must be tuned", "More complex than Dyna-Q", "Bonus can cause over-exploration"]
+        }
+    }
 }
 
 COLORS = {
     "nstep_td":    "#0082F0",
     "nstep_sarsa": "#FF8C0A",
     "dyna_q":      "#0FC373",
-    "dyna_q_plus": "#FF3232",
+    "dyna_q_plus": "#FF3232"
 }
 
 def _moving_avg(data, window=20):
@@ -349,7 +156,7 @@ def _tx(lang):
     return base
 
 def render():
-    lang = st.session_state.get("lang", "EN")
+    lang = "EN"
     tx = _tx(lang)
     st.title(tx["title"])
     st.caption(tx["subtitle"])
@@ -370,9 +177,6 @@ def render():
     kappa          = st.sidebar.slider(tx["kappa"],          0.0, 0.01, 0.001, 0.0001, format="%.4f")
     seed           = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
-    with st.expander(tx["guide_title"], expanded=False):
-        st.markdown(tx["guide"])
-
     if st.button(tx["run_btn"], type="primary"):
         with st.spinner("Running Rust n-step/Dyna engine..."):
             result = rlvr_py.run_ch07_nstep(
@@ -384,7 +188,6 @@ def render():
 
     if "ch07_result" not in st.session_state:
         st.info("Configure settings and click **▶ Run All Four Algorithms**.")
-        _render_theory(tx)
         return
 
     result       = st.session_state["ch07_result"]
@@ -397,7 +200,7 @@ def render():
     for i, key in enumerate(algos):
         r = result[key]
         avg = sum(r["returns_curve"][-50:]) / min(50, len(r["returns_curve"]))
-        extra = f"Model: {r['model_size']}" if r["model_size"] > 0 else f"Steps: {r['total_steps']:,}"
+        extra = f"Model: {r['model_size']}" if r["model_size"] > 0 else f"Steps: {r['total_steps']:}"
         cols[i].metric(tx["algo_labels"][key], f"Avg: {avg:.2f}", extra)
 
     # Returns
@@ -483,8 +286,6 @@ def render():
     st.subheader(tx["summary_title"])
     _render_summary(result, tx, algos)
 
-    _render_theory(tx)
-
 
 def _render_glass_box(result, tx):
     algo_options = {tx["algo_labels"][k]: k for k in
@@ -521,7 +322,7 @@ def _render_summary(result, tx, algos):
             "Total steps":         str(r["total_steps"]),
             "Model size":          str(r["model_size"]),
             "V*(S0)":              f"{r['values'][0]:.3f}",
-            "V*(S7)":              f"{r['values'][7]:.3f}",
+            "V*(S7)":              f"{r['values'][7]:.3f}"
         })
     st.dataframe(rows, hide_index=True)
     st.markdown(f"#### {tx['summary_pros_cons']}")
@@ -536,10 +337,3 @@ def _render_summary(result, tx, algos):
             for c in tx["cons_list"][key]: st.markdown(f"- {c}")
         st.markdown("---")
 
-
-def _render_theory(tx):
-    st.markdown("---")
-    st.subheader(tx["theory_title"])
-    for key in ["nstep", "nsarsa", "dynaq", "dynaqplus"]:
-        with st.expander(tx["theory_sections"][key], expanded=False):
-            st.markdown(tx[f"theory_{key}"])
