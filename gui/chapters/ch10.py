@@ -1,11 +1,266 @@
 import streamlit as st
 import plotly.graph_objects as go
 
+T = {
+    "EN": {
+        "title":    "Chapter 10 - Model-Based RL: World Models",
+        "subtitle": "WM Q-Learning - Prioritised Sweeping - MBPO - Uncertainty Bonus - Warsaw ASP",
+        "engine_missing": "Run: `cd rlvr-py && maturin develop`",
+        "sidebar_title":  "Settings",
+        "n_episodes":     "Episodes",
+        "gamma":          "Gamma - Discount",
+        "alpha":          "Alpha - Learning rate",
+        "epsilon":        "Epsilon - Exploration",
+        "epsilon_decay":  "Epsilon decay",
+        "planning_steps": "k - Planning steps per real step",
+        "priority_threshold": "Priority threshold (Prioritised Sweeping)",
+        "uncertainty_beta":   "Beta - Uncertainty bonus weight",
+        "seed":           "Seed",
+        "run_btn":        "Run All Four Algorithms",
+        "guide_title":    "How to use this chapter",
+        "guide": (
+            "Step 1 - World Model\n"
+            "The agent learns T(s,a,s') and R(s,a) from real experience.\n"
+            "Planning uses the learned model instead of the real environment.\n\n"
+            "Step 2 - WM Q-Learning vs Dyna-Q (Ch07)\n"
+            "Same idea as Dyna-Q but with an explicit tabular world model object.\n"
+            "Model accuracy chart shows how well T(s,a,s') is learned.\n\n"
+            "Step 3 - Prioritised Sweeping\n"
+            "Plan from states with highest |delta| first.\n"
+            "Propagates value updates to predecessors - faster convergence.\n\n"
+            "Step 4 - MBPO (Model-Based Policy Gradient)\n"
+            "Use learned model to generate synthetic rollouts for REINFORCE.\n"
+            "Combines model-based efficiency with policy gradient flexibility.\n\n"
+            "Step 5 - Uncertainty Bonus\n"
+            "UCB-style: Q_bonus(s,a) = Q(s,a) + beta/sqrt(N(s,a)+1).\n"
+            "Encourages exploration of rarely-visited state-action pairs."
+        ),
+        "returns_title":    "Episode Returns - All Four Algorithms",
+        "returns_caption":  "MA-30. Prioritised Sweeping should converge fastest.",
+        "accuracy_title":   "Model Accuracy",
+        "accuracy_caption": "Fraction of (s,a) where learned T matches true T. Increases with experience.",
+        "planning_title":   "Planning Steps Used per Episode",
+        "planning_caption": "Actual planning steps executed. Prioritised Sweeping may use fewer.",
+        "value_title":      "Value Function V(s)",
+        "value_caption":    "S7 (SLA breach) should be lowest across all algorithms.",
+        "qtable_title":     "Q-Table Heatmap",
+        "qtable_caption":   "Q(s,a) values. Select algorithm.",
+        "glass_title":      "Glass-Box - World Model Mechanics",
+        "summary_title":    "Summary",
+        "summary_results":  "Algorithm Comparison",
+        "summary_pros_cons":"Algorithms - Pros and Cons",
+        "pros": "Pros", "cons": "Cons",
+        "theory_title":     "Theory - Chapter 10",
+        "theory_sections": {
+            "wm":   "10.1 World Models",
+            "ps":   "10.2 Prioritised Sweeping",
+            "mbpo": "10.3 Model-Based Policy Gradient",
+            "ub":   "10.4 Uncertainty Bonus",
+        },
+        "theory_wm":   "T(s,a,s') = P(s'|s,a) learned from counts.\nR(s,a) = mean observed reward.\nPlanning: k Q-Learning steps on model samples.",
+        "theory_ps":   "Priority(s,a) = |R(s,a) + gamma*max Q(s') - Q(s,a)|\nPlan from highest priority first.\nPropagate to predecessors after each update.",
+        "theory_mbpo": "Real step: collect (s,a,r,s'), update model.\nSynthetic rollout: generate trajectory from model.\nREINFORCE update on synthetic trajectory.",
+        "theory_ub":   "Q_bonus(s,a) = Q(s,a) + beta / sqrt(N(s,a) + 1)\nAction selection uses Q_bonus.\nQ update uses standard Q-Learning (no bonus).",
+        "algo_labels": {
+            "wm_qlearning": "WM Q-Learning",
+            "pri_sweeping": "Prioritised Sweeping",
+            "mbpo":         "MBPO (PG)",
+            "uncertainty":  "Uncertainty Bonus",
+        },
+        "pros_list": {
+            "wm_qlearning": ["Simple extension of Dyna-Q", "Explicit model reuse", "k planning steps tunable"],
+            "pri_sweeping": ["Fastest convergence", "Efficient planning budget", "Propagates value to predecessors"],
+            "mbpo":         ["Policy gradient flexibility", "No Q-table needed", "Combines model + PG"],
+            "uncertainty":  ["Principled exploration", "No epsilon needed", "Adapts to visit counts"],
+        },
+        "cons_list": {
+            "wm_qlearning": ["Random planning - inefficient", "Model errors compound", "Same as Dyna-Q"],
+            "pri_sweeping": ["Priority queue overhead", "Predecessor search O(|S||A|)", "Sensitive to threshold"],
+            "mbpo":         ["Model errors in rollouts", "Two learning rates", "High variance PG"],
+            "uncertainty":  ["Beta must be tuned", "Bonus fades with visits", "May over-explore"],
+        },
+    },
+    "PL": {
+        "title":    "Rozdzial 10 - RL oparte na modelu: Modele swiata",
+        "subtitle": "WM Q-Learning - Priorytetowe zamiatanie - MBPO - Bonus niepewnosci - ASP Warszawa",
+        "engine_missing": "Uruchom: `cd rlvr-py && maturin develop`",
+        "sidebar_title":  "Ustawienia",
+        "n_episodes":     "Epizody",
+        "gamma":          "Gamma - Dyskonto",
+        "alpha":          "Alpha - Uczenie",
+        "epsilon":        "Epsilon - Eksploracja",
+        "epsilon_decay":  "Zanik epsilon",
+        "planning_steps": "k - Kroki planowania na krok rzeczywisty",
+        "priority_threshold": "Prog priorytetu",
+        "uncertainty_beta":   "Beta - Waga bonusu niepewnosci",
+        "seed":           "Ziarno",
+        "run_btn":        "Uruchom wszystkie cztery algorytmy",
+        "guide_title":    "Jak korzystac z tego rozdzialu",
+        "guide": (
+            "Krok 1 - Model swiata\n"
+            "Agent uczy sie T(s,a,s') i R(s,a) z rzeczywistego doswiadczenia.\n\n"
+            "Krok 2 - WM Q-Learning vs Dyna-Q (Rozdzial 07)\n"
+            "Ta sama idea co Dyna-Q, ale z jawnym obiektem modelu swiata.\n\n"
+            "Krok 3 - Priorytetowe zamiatanie\n"
+            "Planuj od stanow z najwyzszym |delta| jako pierwsze.\n\n"
+            "Krok 4 - MBPO\n"
+            "Uzyj modelu do generowania syntetycznych trajektorii dla REINFORCE.\n\n"
+            "Krok 5 - Bonus niepewnosci\n"
+            "Q_bonus(s,a) = Q(s,a) + beta/sqrt(N(s,a)+1)."
+        ),
+        "returns_title":    "Zwroty epizodow",
+        "returns_caption":  "MA-30. Priorytetowe zamiatanie powinno zbiegac najszybciej.",
+        "accuracy_title":   "Dokladnosc modelu",
+        "accuracy_caption": "Ulamek (s,a) gdzie nauczony T odpowiada prawdziwemu T.",
+        "planning_title":   "Kroki planowania na epizod",
+        "planning_caption": "Rzeczywiste kroki planowania.",
+        "value_title":      "Funkcja wartosci V(s)",
+        "value_caption":    "S7 powinno byc najnizsze.",
+        "qtable_title":     "Heatmapa tabeli Q",
+        "qtable_caption":   "",
+        "glass_title":      "Glass-Box - Mechanika modelu swiata",
+        "summary_title":    "Podsumowanie",
+        "summary_results":  "Porownanie algorytmow",
+        "summary_pros_cons":"Zalety i Wady",
+        "pros": "Zalety", "cons": "Wady",
+        "theory_title":     "Teoria - Rozdzial 10",
+        "theory_sections": {
+            "wm":   "10.1 Modele swiata",
+            "ps":   "10.2 Priorytetowe zamiatanie",
+            "mbpo": "10.3 Gradient polityki oparty na modelu",
+            "ub":   "10.4 Bonus niepewnosci",
+        },
+        "theory_wm":   "T(s,a,s') uczone z licznikow. R(s,a) = srednia nagroda.",
+        "theory_ps":   "Priorytet(s,a) = |delta|. Planuj od najwyzszego. Propaguj do poprzednikow.",
+        "theory_mbpo": "Krok rzeczywisty: zbierz doswiadczenie. Syntetyczna trajektoria: REINFORCE na modelu.",
+        "theory_ub":   "Q_bonus(s,a) = Q(s,a) + beta/sqrt(N(s,a)+1). Wybor akcji uzywa Q_bonus.",
+        "algo_labels": {
+            "wm_qlearning": "WM Q-Learning",
+            "pri_sweeping": "Priorytetowe zamiatanie",
+            "mbpo":         "MBPO (PG)",
+            "uncertainty":  "Bonus niepewnosci",
+        },
+        "pros_list": {
+            "wm_qlearning": ["Proste rozszerzenie Dyna-Q", "Jawne ponowne uzycie modelu", "k krokow planowalnych"],
+            "pri_sweeping": ["Najszybsza zbieznosc", "Efektywny budzet planowania", "Propaguje wartosc"],
+            "mbpo":         ["Elastycznosc gradientu polityki", "Brak tabeli Q", "Laczy model + PG"],
+            "uncertainty":  ["Zasadnicza eksploracja", "Brak epsilon", "Adaptuje sie do liczby wizyt"],
+        },
+        "cons_list": {
+            "wm_qlearning": ["Losowe planowanie", "Bledy modelu sie kumuluja", "Jak Dyna-Q"],
+            "pri_sweeping": ["Narzut kolejki priorytetowej", "Szukanie poprzednikow O(|S||A|)", "Wrazliwy na prog"],
+            "mbpo":         ["Bledy modelu w trajektoriach", "Dwa wspolczynniki uczenia", "Wysoki variance PG"],
+            "uncertainty":  ["Beta do strojenia", "Bonus zanika z wizytami", "Moze nadmiernie eksplorowac"],
+        },
+    },
+        "DE": {
+        "title": "Kapitel 10 — Modellbasiertes RL",
+        "subtitle": "Weltmodell — Priorisiertes Sweeping — MBPO — ASP Warschau",
+        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "Einstellungen",
+        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
+        "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
+        "planning_steps": "Planungsschritte", "seed": "Zufallsseed",
+        "run_btn": "▶ Alle Algorithmen starten",
+        "guide_title": "Anleitung",
+        "guide": "Modellbasiertes RL lernt ein Weltmodell T(s,a,s') und R(s,a) und plant damit.",
+        "returns_title": "Episodenrückgaben",
+        "returns_caption": "Gleitender Durchschnitt.",
+        "value_title": "Wertfunktion V(s)",
+        "value_caption": "",
+        "glass_title": "Glass-Box",
+        "summary_title": "Zusammenfassung", "summary_results": "Vergleich",
+        "summary_pros_cons": "Vor- & Nachteile",
+        "pros": "Vorteile", "cons": "Nachteile",
+        "theory_title": "Theorie — Kapitel 10",
+        "theory_sections": {"wm": "10.1 Weltmodell", "ps": "10.2 Priorisiertes Sweeping", "mbpo": "10.3 MBPO", "ub": "10.4 Unsicherheitsbonus"},
+        "algo_labels": {"wm_qlearning": "WM Q-Learning", "prioritized_sweeping": "Priorisiertes Sweeping", "mbpo": "MBPO", "uncertainty_bonus": "Unsicherheitsbonus"},
+        "pros_list": {
+            "wm_qlearning": ["Effizient durch Planung", "Schnellere Konvergenz"],
+            "prioritized_sweeping": ["Fokussiert auf wichtige Zustände", "Sehr effizient"],
+            "mbpo": ["Verbindet modellbasiert und modellfrei", "Gute Probeneffizienz"],
+            "uncertainty_bonus": ["Exploration durch Unsicherheit", "UCB-Stil"],
+        },
+        "cons_list": {
+            "wm_qlearning": ["Modellierungsfehler können schaden"],
+            "prioritized_sweeping": ["Komplexität der Prioritätswarteschlange"],
+            "mbpo": ["Zwei Lernraten", "Modell muss genau sein"],
+            "uncertainty_bonus": ["β muss eingestellt werden"],
+        },
+        "theory_wm": "Weltmodell: T̂(s,a,s') und R̂(s,a) aus Erfahrung gelernt.",
+        "theory_ps": "Priorisiertes Sweeping: plane von Zuständen mit höchstem |delta|.",
+        "theory_mbpo": "MBPO: synthetische Rollouts auf gelerntem Modell.",
+        "theory_ub": r"$Q_{bonus}(s,a) = Q(s,a) + eta/\sqrt{N(s,a)+1}$",
+    },
+    "FR": {
+        "title": "Chapitre 10 - RL base sur modele: Modeles du monde",
+        "subtitle": "WM Q-Learning - Balayage prioritaire - MBPO - Bonus incertitude - ASP Varsovie",
+        "engine_missing": "Executez: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "Parametres",
+        "n_episodes": "Episodes", "gamma": "Gamma", "alpha": "Alpha",
+        "epsilon": "Epsilon", "epsilon_decay": "Decroissance epsilon",
+        "planning_steps": "k - Etapes planification", "priority_threshold": "Seuil priorite",
+        "uncertainty_beta": "Beta - Bonus incertitude", "seed": "Graine",
+        "run_btn": "Lancer les quatre algorithmes",
+        "guide_title": "Guide",
+        "guide": "Modele monde: T(s,a,s') et R(s,a) appris. Planification sur modele appris. Balayage prioritaire: planifier depuis |delta| max.",
+        "returns_title": "Retours", "returns_caption": "",
+        "accuracy_title": "Precision modele", "accuracy_caption": "",
+        "planning_title": "Etapes planification", "planning_caption": "",
+        "value_title": "V(s)", "value_caption": "",
+        "qtable_title": "Table Q", "qtable_caption": "",
+        "glass_title": "Glass-Box",
+        "summary_title": "Resume", "summary_results": "Comparaison",
+        "summary_pros_cons": "Avantages et Inconvenients",
+        "pros": "Pros", "cons": "Cons",
+        "theory_title": "Theorie",
+        "theory_sections": {"wm": "10.1 Modeles", "ps": "10.2 Balayage", "mbpo": "10.3 MBPO", "ub": "10.4 Incertitude"},
+        "theory_wm": "T(s,a,s') appris par comptage. R(s,a) = recompense moyenne.",
+        "theory_ps": "Priorite = |delta|. Planifier depuis max priorite. Propager aux predecesseurs.",
+        "theory_mbpo": "Etape reelle: collecter experience. Trajectoire synthetique: REINFORCE sur modele.",
+        "theory_ub": "Q_bonus = Q + beta/sqrt(N+1). Selection action sur Q_bonus.",
+        "algo_labels": {"wm_qlearning": "WM Q-Learning", "pri_sweeping": "Balayage prioritaire", "mbpo": "MBPO", "uncertainty": "Bonus incertitude"},
+        "pros_list": {"wm_qlearning": ["Simple"], "pri_sweeping": ["Rapide"], "mbpo": ["Flexible"], "uncertainty": ["Exploration"]},
+        "cons_list": {"wm_qlearning": ["Aleatoire"], "pri_sweeping": ["Complexe"], "mbpo": ["Variance"], "uncertainty": ["Beta a regler"]},
+    },
+    "ES": {
+        "title": "Capitulo 10 - RL basado en modelo: Modelos del mundo",
+        "subtitle": "WM Q-Learning - Barrido priorizado - MBPO - Bonus incertidumbre - ASP Varsovia",
+        "engine_missing": "Ejecute: `cd rlvr-py && maturin develop`",
+        "sidebar_title": "Configuracion",
+        "n_episodes": "Episodios", "gamma": "Gamma", "alpha": "Alpha",
+        "epsilon": "Epsilon", "epsilon_decay": "Decaimiento epsilon",
+        "planning_steps": "k - Pasos planificacion", "priority_threshold": "Umbral prioridad",
+        "uncertainty_beta": "Beta - Bonus incertidumbre", "seed": "Semilla",
+        "run_btn": "Ejecutar los cuatro algoritmos",
+        "guide_title": "Guia",
+        "guide": "Modelo mundo: T(s,a,s') y R(s,a) aprendidos. Planificacion sobre modelo aprendido. Barrido priorizado: planificar desde |delta| max.",
+        "returns_title": "Retornos", "returns_caption": "",
+        "accuracy_title": "Precision modelo", "accuracy_caption": "",
+        "planning_title": "Pasos planificacion", "planning_caption": "",
+        "value_title": "V(s)", "value_caption": "",
+        "qtable_title": "Tabla Q", "qtable_caption": "",
+        "glass_title": "Glass-Box",
+        "summary_title": "Resumen", "summary_results": "Comparacion",
+        "summary_pros_cons": "Pros y Contras",
+        "pros": "Pros", "cons": "Cons",
+        "theory_title": "Teoria",
+        "theory_sections": {"wm": "10.1 Modelos", "ps": "10.2 Barrido", "mbpo": "10.3 MBPO", "ub": "10.4 Incertidumbre"},
+        "theory_wm": "T(s,a,s') aprendido por conteo. R(s,a) = recompensa media.",
+        "theory_ps": "Prioridad = |delta|. Planificar desde max prioridad. Propagar a predecesores.",
+        "theory_mbpo": "Paso real: recoger experiencia. Trayectoria sintetica: REINFORCE sobre modelo.",
+        "theory_ub": "Q_bonus = Q + beta/sqrt(N+1). Seleccion accion sobre Q_bonus.",
+        "algo_labels": {"wm_qlearning": "WM Q-Learning", "pri_sweeping": "Barrido priorizado", "mbpo": "MBPO", "uncertainty": "Bonus incertidumbre"},
+        "pros_list": {"wm_qlearning": ["Simple"], "pri_sweeping": ["Rapido"], "mbpo": ["Flexible"], "uncertainty": ["Exploracion"]},
+        "cons_list": {"wm_qlearning": ["Aleatorio"], "pri_sweeping": ["Complejo"], "mbpo": ["Varianza"], "uncertainty": ["Beta a ajustar"]},
+    },
+}
+
 COLORS = {
     "wm_qlearning": "#8B5CF6",
     "pri_sweeping": "#0082F0",
     "mbpo":         "#0FC373",
-    "uncertainty":  "#FF8C0A"
+    "uncertainty":  "#FF8C0A",
 }
 ALGOS = ["wm_qlearning", "pri_sweeping", "mbpo", "uncertainty"]
 
@@ -17,9 +272,17 @@ def _ma(data, w=30):
     return r
 
 
+def _tx(lang):
+    """Return translation dict for lang, filling missing keys from EN."""
+    base = dict(T.get("EN", {}))
+    over = T.get(lang, {})
+    for k, v in over.items():
+        base[k] = v
+    return base
+
 def render():
-    
-    
+    lang = st.session_state.get("lang", "EN")
+    tx   = _tx(lang)
     st.title(tx["title"])
     st.caption(tx["subtitle"])
     try:
@@ -37,6 +300,9 @@ def render():
     pthr  = st.sidebar.slider(tx["priority_threshold"], 0.001, 0.1, 0.01, 0.001, format="%.3f")
     beta  = st.sidebar.slider(tx["uncertainty_beta"],   0.0, 5.0, 1.0, 0.1)
     seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
+
+    with st.expander(tx["guide_title"], expanded=False):
+        st.markdown(tx["guide"])
 
     if st.button(tx["run_btn"], type="primary"):
         with st.spinner("Running Rust world-model engine..."):
@@ -161,7 +427,7 @@ def _summary(res, tx):
             "Model size":            str(r["model_size"]),
             "Avg accuracy":          f"{acc:.3f}",
             "V*(S0)":                f"{r['values'][0]:.3f}",
-            "V*(S7)":                f"{r['values'][7]:.3f}"
+            "V*(S7)":                f"{r['values'][7]:.3f}",
         })
     st.dataframe(rows, hide_index=True)
     for k in ALGOS:
