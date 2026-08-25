@@ -40,7 +40,7 @@ def _ma(data, w=30):
 
 
 def render():
-    lang = "EN"; tx = T.get("EN", {})
+    lang = "EN"; tx = T["EN"]
     st.title(tx["title"]); st.caption(tx["subtitle"])
     try: import rlvr_py
     except ImportError: st.error(tx["engine_missing"]); return

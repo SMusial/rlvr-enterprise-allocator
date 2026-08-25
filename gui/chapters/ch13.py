@@ -45,7 +45,7 @@ def _ma(data, w=30):
 
 def render():
     lang = "EN"
-    tx = T.get("EN", {})
+    tx = TX["EN"]
     lb   = tx["labels"]
     st.title(tx["title"]); st.caption(tx["subtitle"])
     try: import rlvr_py
