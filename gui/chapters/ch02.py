@@ -314,6 +314,13 @@ def _render_handbook_pl():
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Podrecznik - Rozdzial 02</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
@@ -338,7 +345,9 @@ th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
 td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
 tr:hover td{background:#252840}
 code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em}
-.formula{background:#252840;border-radius:8px;padding:1rem;margin:.75rem 0;text-align:center;font-size:1.05em;color:#FFD700;font-family:monospace}
+.formula{background:#252840;border-radius:8px;padding:1.25rem;margin:.75rem 0;text-align:center;overflow-x:auto}
+.formula .MathJax{color:#FFD700 !important}
+mjx-container{color:#FFD700 !important}
 .step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
 .step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
 .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
@@ -438,7 +447,7 @@ Iteracja Warto&#x15B;ci odpowiada przez iteracyjne rozwi&#x105;zanie r&#xF3;wnan
 <!-- TEORIA -->
 <div id="theory" class="tab-content">
 <h2>&#x1F9EE; R&#xF3;wnanie Bellmana</h2>
-<div class="formula">V*(s) = max_a SUM_s' P(s'|s,a) [ R(s,a) + gamma * V*(s') ]</div>
+<div class="formula">$$V^*(s) = \\max_a \\sum_{s'} P(s'|s,a)igl[R(s,a) + \\gamma \\cdot V^*(s')igr]$$</div>
 <div class="card"><strong>Co oznacza ka&#x17C;dy sk&#x142;adnik:</strong>
 <ul>
 <li><strong>V*(s)</strong> &#x2014; optymalna d&#x142;ugoterminowa warto&#x15B;&#x107; stanu s</li>
@@ -449,20 +458,21 @@ Iteracja Warto&#x15B;ci odpowiada przez iteracyjne rozwi&#x105;zanie r&#xF3;wnan
 </ul>
 </div>
 <h2>Algorytm Iteracji Warto&#x15B;ci</h2>
-<div class="step"><div class="step-num">1</div><div>Inicjalizuj V(s) = 0 dla wszystkich stan&#xF3;w</div></div>
-<div class="step"><div class="step-num">2</div><div>Dla ka&#x17C;dego s: V_new(s) = max_a SUM P(s'|s,a)[R(s,a) + gamma*V(s')]</div></div>
-<div class="step"><div class="step-num">3</div><div>Oblicz delta = max_s |V_new(s) - V(s)|</div></div>
-<div class="step"><div class="step-num">4</div><div>Aktualizuj V &larr; V_new</div></div>
-<div class="step"><div class="step-num">5</div><div>Je&#x15B;li delta &lt; theta &#x2192; STOP. W przeciwnym razie id&#x17A; do kroku 2.</div></div>
-<div class="step"><div class="step-num">6</div><div>Wyod&#x119;bnij polityk&#x119;: pi*(s) = argmax_a SUM P(s'|s,a)[R(s,a) + gamma*V*(s')]</div></div>
+<div class="step"><div class="step-num">1</div><div>Inicjalizuj $V(s) = 0$ dla wszystkich stan&#xF3;w</div></div>
+<div class="step"><div class="step-num">2</div><div>Dla ka&#x17C;dego $s$: $V_{	ext{new}}(s) = \\max_a \\sum_{s'} P(s'|s,a)igl[R(s,a) + \\gamma V(s')igr]$</div></div>
+<div class="step"><div class="step-num">3</div><div>Oblicz $\\delta = \\max_s |V_{	ext{new}}(s) - V(s)|$</div></div>
+<div class="step"><div class="step-num">4</div><div>Aktualizuj $V \\leftarrow V_{	ext{new}}$</div></div>
+<div class="step"><div class="step-num">5</div><div>Je&#x15B;li $\\delta < 	heta$ &#x2192; STOP. W przeciwnym razie id&#x17A; do kroku 2.</div></div>
+<div class="step"><div class="step-num">6</div><div>Wyod&#x119;bnij polityk&#x119;: $\\pi^*(s) = rg\\max_a \\sum_{s'} P(s'|s,a)igl[R(s,a) + \\gamma V^*(s')igr]$</div></div>
 <h2>Twierdzenie o kontrakcji</h2>
 <div class="card purple">Operator Bellmana T jest gamma-kontrakcj&#x105;:<br>
-<div class="formula">||TV - TV'||_inf &lt;= gamma * ||V - V'||_inf</div>
+<div class="formula">$$\\|TV - TV'\\|_\\infty \\leq \\gamma \\cdot \\|V - V'\\|_\\infty$$</div>
 Dlatego VI zbiega do jedynego punktu sta&#x142;ego V*. Krzywa zbie&#x17C;no&#x15B;ci w UI pokazuje t&#x119; kontrakcj&#x119; w dzia&#x142;aniu.</div>
 <h2>solve_exact() &#x2014; Rozk&#x142;ad LU</h2>
-<div class="card green">Dla ustalonej polityki pi: V^pi = (I - gamma * P^pi)^-1 * r^pi<br>
+<div class="card green">Dla ustalonej polityki $\\pi$:
+<div class="formula">$$V^\\pi = (I - \\gamma P^\\pi)^{-1} r^\\pi$$</div>
 Zaimplementowane w <code>solve_exact()</code> przez <strong>nalgebra LU</strong>.<br>
-U&#x17C;yj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10000 (koszt O(|S|^3)).</div>
+U&#x17C;yj gdy $|S| \\leq 1000$. Unikaj gdy $|S| > 10000$ (koszt $\\mathcal{O}(|S|^3)$).</div>
 </div>
 
 <!-- ŚRODOWISKO -->
