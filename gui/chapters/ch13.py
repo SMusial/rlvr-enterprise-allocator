@@ -5,8 +5,7 @@ import plotly.graph_objects as go
 COLORS = {"iql":"#8B5CF6","vdn":"#0082F0","qmix":"#0FC373","qmix_cg":"#FF8C0A"}
 ALGOS  = ["iql","vdn","qmix","qmix_cg"]
 
-TX = {
-    "EN": {
+TX = {"EN": {
         "title":    "Chapter 13 - Cooperative MARL: VDN and QMIX",
         "subtitle": "IQL Baseline - VDN - QMIX - QMIX+CG - 2 Agents - Warsaw ASP",
         "run":      "Run All Four Algorithms",
@@ -31,72 +30,7 @@ TX = {
             "  argmax Q_tot = (argmax Q_0, argmax Q_1)\n"
             "This enables decentralised execution with centralised training."
         ),
-    },
-    "PL": {
-        "title":    "Rozdzial 13 - Kooperacyjny MARL: VDN i QMIX",
-        "subtitle": "IQL Baseline - VDN - QMIX - QMIX+CG - 2 Agenci - ASP Warszawa",
-        "run":      "Uruchom wszystkie cztery algorytmy",
-        "ret":      "Wspolne zwroty epizodow",
-        "mix":      "Wagi mieszania (QMIX)",
-        "jq":       "Wspolne Q_tot",
-        "val":      "Wspolna funkcja wartosci V(s)",
-        "glass":    "Glass-Box",
-        "summary":  "Podsumowanie",
-        "episodes": "Epizody", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon":  "Epsilon", "edecay": "Zanik epsilon",
-        "mhidden":  "Ukryte jednostki sieci mieszania", "seed": "Ziarno",
-        "labels":   {"iql":"IQL Baseline","vdn":"VDN","qmix":"QMIX","qmix_cg":"QMIX+CG"},
-        "guide": (
-            "Ustawienie kooperacyjne: obaj agenci dziela TE SAMA wspolna nagrode.\n"
-            "IQL: kazdy agent ignoruje drugiego.\n"
-            "VDN: Q_tot = Q_0 + Q_1. Prosta dekompozycja addytywna.\n"
-            "QMIX: Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotoniczna.\n"
-            "QMIX+CG: QMIX + kontrfaktyczna linia bazowa."
-        ),
-    },
-        "DE": {
-        "title": "Kapitel 13 — Kooperatives MARL: VDN und QMIX",
-        "subtitle": "IQL Baseline — VDN — QMIX — QMIX+CG — 2 Agenten — ASP Warschau",
-        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "Einstellungen",
-        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "edecay": "Epsilon-Abklingrate",
-        "mhidden": "Versteckte Einheiten des Mischnetzwerks", "seed": "Zufallsseed",
-        "run": "▶ Alle vier Algorithmen starten",
-        "ret": "Gemeinsame Episodenrückgaben",
-        "mix": "Mischgewichte (QMIX)",
-        "jq": "Gemeinsames Q_tot",
-        "val": "Gemeinsame Wertfunktion V(s)",
-        "glass": "Glass-Box",
-        "summary": "Zusammenfassung",
-        "labels": {"iql": "IQL Baseline", "vdn": "VDN", "qmix": "QMIX", "qmix_cg": "QMIX+CG"},
-        "guide": (
-            "Kooperatives Szenario: beide Agenten teilen dieselbe gemeinsame Belohnung.\n"
-            "IQL: jeder Agent ignoriert den anderen.\n"
-            "VDN: Q_tot = Q_0 + Q_1. Einfache additive Zerlegung.\n"
-            "QMIX: Q_tot = w_0(s)*Q_0 + w_1(s)*Q_1 + b(s). Monotones Mischen.\n"
-            "QMIX+CG: QMIX + kontrafaktische Basislinie für Kreditvergabe."
-        ),
-    },
-    "FR": {
-        "title": "Chapitre 13 - MARL Cooperatif: VDN et QMIX",
-        "subtitle": "IQL - VDN - QMIX - QMIX+CG - ASP Varsovie",
-        "run": "Lancer", "ret": "Retours", "mix": "Poids de melange",
-        "jq": "Q_tot joint", "val": "V(s)", "glass": "Glass-Box", "summary": "Resume",
-        "episodes": "Episodes", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "edecay": "Decroissance", "mhidden": "Unites cachees", "seed": "Graine",
-        "labels": {"iql":"IQL","vdn":"VDN","qmix":"QMIX","qmix_cg":"QMIX+CG"},
-    },
-    "ES": {
-        "title": "Capitulo 13 - MARL Cooperativo: VDN y QMIX",
-        "subtitle": "IQL - VDN - QMIX - QMIX+CG - ASP Varsovia",
-        "run": "Ejecutar", "ret": "Retornos", "mix": "Pesos de mezcla",
-        "jq": "Q_tot conjunto", "val": "V(s)", "glass": "Glass-Box", "summary": "Resumen",
-        "episodes": "Episodios", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "edecay": "Decaimiento", "mhidden": "Unidades ocultas", "seed": "Semilla",
-        "labels": {"iql":"IQL","vdn":"VDN","qmix":"QMIX","qmix_cg":"QMIX+CG"},
-    },
-}
+    }}
 
 def _ma(data, w=30):
     r = []
@@ -105,20 +39,12 @@ def _ma(data, w=30):
     return r
 
 
-def _tx(lang):
+def _tx(lang=None):
     import copy
-    base = copy.deepcopy(TX.get("EN", {}))
-    over = TX.get(lang, {})
-    for k, v in over.items():
-        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
-            base[k] = {**base[k], **v}
-        else:
-            base[k] = v
-    return base
-
+    return copy.deepcopy(TX.get("EN", {}))
 
 def render():
-    lang = st.session_state.get("lang","EN")
+    lang = "EN"
     tx   = _tx(lang)
     lb   = tx["labels"]
     st.title(tx["title"]); st.caption(tx["subtitle"])

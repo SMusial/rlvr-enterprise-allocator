@@ -1,8 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-T = {
-    "EN": {
+T = {"EN": {
         "title": "Chapter 08 — Eligibility Traces & TD(λ)",
         "subtitle": "SARSA(λ) · Q(λ) Watkins · λ=0 (TD0) · λ=0.99 (≈MC) · Warsaw ASP",
         "engine_missing": "Run: `cd rlvr-py && maturin develop`",
@@ -26,97 +25,7 @@ T = {
         "algo_labels": {"sarsa_lambda": "SARSA(λ)", "q_lambda": "Q(λ) Watkins", "sarsa_td0": "SARSA λ=0 (TD0)", "sarsa_mc": "SARSA λ=0.99 (≈MC)"},
         "pros_list": {"sarsa_lambda": ["On-policy, safe","Fast backward credit","λ tunes bias-variance"], "q_lambda": ["Off-policy","Watkins cut prevents divergence","Aggressive exploration"], "sarsa_td0": ["Simplest","Low variance","Baseline ref"], "sarsa_mc": ["Near-zero bias","Full propagation","Upper bound λ"]},
         "cons_list": {"sarsa_lambda": ["Needs ε>0","O(|S||A|)/step","λ to tune"], "q_lambda": ["Traces cut on explore","Less propagation","Instability risk"], "sarsa_td0": ["Slow credit","Many episodes","No backward prop"], "sarsa_mc": ["High variance","Needs episode end","Unstable small α"]},
-    },
-    "PL": {
-        "title": "Rozdział 08 — Ślady Kwalifikowalności & TD(λ)",
-        "subtitle": "SARSA(λ) · Q(λ) Watkins · λ=0 (TD0) · λ=0.99 (≈MC) · ASP Warszawa",
-        "engine_missing": "Uruchom: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Ustawienia",
-        "n_episodes": "Epizody", "gamma": "γ Dyskonto", "alpha": "α Uczenie",
-        "epsilon": "ε Eksploracja", "epsilon_decay": "Zanik ε", "lambda_": "λ Zanikanie śladów",
-        "replacing": "Replacing traces", "seed": "Ziarno",
-        "run_btn": "▶ Uruchom wszystkie cztery algorytmy",
-        "returns_title": "📈 Zwroty epizodów", "returns_caption": "MA-30. SARSA(λ=0.7) zbiega szybciej niż TD0.",
-        "td_error_title": "📉 Błąd TD", "td_error_caption": "",
-        "value_title": "🏛️ V(s)", "value_caption": "S7 powinno być najniższe.",
-        "trace_title": "🔍 Aktywne ślady", "trace_caption": "Wyższe λ → więcej aktywnych śladów.",
-        "qtable_title": "🗺️ Heatmapa Q", "qtable_caption": "",
-        "glass_title": "🔬 Glass-Box",
-        "summary_title": "📊 Podsumowanie", "summary_results": "Porównanie",
-        "summary_pros_cons": "Zalety i Wady", "pros": "✅ Zalety", "cons": "❌ Wady",
-        "theory_et": "e_t(s,a) = γλ·e_{t-1}(s,a) + 𝟙[s=S_t,a=A_t]\nZanik γλ=0.665 dla γ=0.95,λ=0.7.",
-        "theory_sarsal": "Q(s,a) ← Q(s,a)+α δ_t e_t(s,a)  dla WSZYSTKICH (s,a)",
-        "theory_ql": "Cel TD: max_a Q(S',a). Ślady CIĘTE przy akcji niegreedy.",
-        "theory_lambda": "λ=0→TD(0) | λ=0.7→optimum | λ=0.99→≈MC",
-        "algo_labels": {"sarsa_lambda": "SARSA(λ)", "q_lambda": "Q(λ) Watkins", "sarsa_td0": "SARSA λ=0 (TD0)", "sarsa_mc": "SARSA λ=0.99 (≈MC)"},
-        "pros_list": {"sarsa_lambda": ["On-policy","Szybkie przypisanie zasługi","λ reguluje bias-variance"], "q_lambda": ["Off-policy","Cięcie Watkinsa","Agresywna eksploracja"], "sarsa_td0": ["Najprostszy","Niski variance","Punkt odniesienia"], "sarsa_mc": ["Prawie zerowy bias","Pełna propagacja","Górna granica λ"]},
-        "cons_list": {"sarsa_lambda": ["Wymaga ε>0","O(|S||A|)/krok","λ do strojenia"], "q_lambda": ["Ślady cięte","Mniej propagacji","Ryzyko niestabilności"], "sarsa_td0": ["Wolne przypisanie","Wiele epizodów","Brak propagacji wstecz"], "sarsa_mc": ["Wysoki variance","Wymaga zakończenia","Niestabilny przy małym α"]},
-    },
-        "DE": {
-        "title": "Kapitel 08 — Eligibility Traces",
-        "subtitle": "TD(λ) — SARSA(λ) — Q(λ) Watkins — ASP Warschau",
-        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "Einstellungen",
-        "n_episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "epsilon_decay": "Epsilon-Abklingrate",
-        "lambda_val": "λ — Trace-Abklingrate", "seed": "Zufallsseed",
-        "run_btn": "▶ Alle Algorithmen starten",
-        "returns_title": "Episodenrückgaben",
-        "returns_caption": "Gleitender Durchschnitt.",
-        "value_title": "Wertfunktion V(s)",
-        "value_caption": "",
-        "glass_title": "Glass-Box",
-        "summary_title": "Zusammenfassung", "summary_results": "Vergleich",
-        "summary_pros_cons": "Vor- & Nachteile",
-        "pros": "Vorteile", "cons": "Nachteile",
-        "algo_labels": {"td_lambda": "TD(λ)", "sarsa_lambda": "SARSA(λ)", "q_lambda": "Q(λ) Watkins"},
-        "pros_list": {
-            "td_lambda": ["Brückt TD und MC", "Schnellere Kreditvergabe"],
-            "sarsa_lambda": ["On-Policy mit Traces", "Bessere Konvergenz"],
-            "q_lambda": ["Off-Policy mit Traces", "Watkins-Schnitt bei Exploration"],
-        },
-        "cons_list": {
-            "td_lambda": ["λ muss eingestellt werden"],
-            "sarsa_lambda": ["Speicher für Traces"],
-            "q_lambda": ["Watkins-Schnitt reduziert Effizienz"],
-        },
-        "theory_traces": r"$e_t(s) = \gamma\lambda e_{t-1}(s) + \mathbf{1}[S_t = s]$",
-        "theory_tdlambda": r"$V(s) \leftarrow V(s) + lpha\delta_t e_t(s)$",
-        "theory_sarsa": r"$Q(s,a) \leftarrow Q(s,a) + lpha\delta_t e_t(s,a)$",
-    },
-    "FR": {
-        "title": "Chapitre 08 — Traces d'éligibilité & TD(λ)", "subtitle": "SARSA(λ) · Q(λ) · ASP Varsovie",
-        "engine_missing": "Exécutez: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Paramètres",
-        "n_episodes": "Épisodes", "gamma": "γ", "alpha": "α", "epsilon": "ε", "epsilon_decay": "Décroissance ε",
-        "lambda_": "λ traces", "replacing": "Replacing", "seed": "Graine", "run_btn": "▶ Lancer",
-        "returns_title": "📈 Retours", "returns_caption": "", "td_error_title": "📉 Erreur TD", "td_error_caption": "",
-        "value_title": "🏛️ V(s)", "value_caption": "", "trace_title": "🔍 Traces", "trace_caption": "",
-        "qtable_title": "🗺️ Table Q", "qtable_caption": "", "glass_title": "🔬 Glass-Box",
-        "summary_title": "📊 Résumé", "summary_results": "Comparaison", "summary_pros_cons": "Avantages & Inconvénients",
-        "pros": "✅ Pros", "cons": "❌ Cons", "theory_title": "📚 Théorie",
-        "theory_et": "e_t(s,a)=γλ·e_{t-1}(s,a)+𝟙[...]", "theory_sarsal": "Q←Q+αδe ∀(s,a)",
-        "theory_ql": "Coupure Watkins si action non-greedy.", "theory_lambda": "λ=0→TD | λ=0.7→optimum | λ=0.99→MC",
-        "algo_labels": {"sarsa_lambda": "SARSA(λ)", "q_lambda": "Q(λ)", "sarsa_td0": "λ=0", "sarsa_mc": "λ=0.99"},
-        "pros_list": {"sarsa_lambda": ["On-policy"], "q_lambda": ["Off-policy"], "sarsa_td0": ["Simple"], "sarsa_mc": ["Faible biais"]},
-        "cons_list": {"sarsa_lambda": ["λ à régler"], "q_lambda": ["Coupure"], "sarsa_td0": ["Lent"], "sarsa_mc": ["Variance"]},
-    },
-    "ES": {
-        "title": "Capítulo 08 — Trazas de Elegibilidad & TD(λ)", "subtitle": "SARSA(λ) · Q(λ) · ASP Varsovia",
-        "engine_missing": "Ejecute: `cd rlvr-py && maturin develop`", "sidebar_title": "⚙️ Configuración",
-        "n_episodes": "Episodios", "gamma": "γ", "alpha": "α", "epsilon": "ε", "epsilon_decay": "Decaimiento ε",
-        "lambda_": "λ trazas", "replacing": "Replacing", "seed": "Semilla", "run_btn": "▶ Ejecutar",
-        "returns_title": "📈 Retornos", "returns_caption": "", "td_error_title": "📉 Error TD", "td_error_caption": "",
-        "value_title": "🏛️ V(s)", "value_caption": "", "trace_title": "🔍 Trazas", "trace_caption": "",
-        "qtable_title": "🗺️ Tabla Q", "qtable_caption": "", "glass_title": "🔬 Glass-Box",
-        "summary_title": "📊 Resumen", "summary_results": "Comparación", "summary_pros_cons": "Pros y Contras",
-        "pros": "✅ Pros", "cons": "❌ Cons", "theory_title": "📚 Teoría",
-        "theory_et": "e_t(s,a)=γλ·e_{t-1}(s,a)+𝟙[...]", "theory_sarsal": "Q←Q+αδe ∀(s,a)",
-        "theory_ql": "Corte Watkins si acción no-greedy.", "theory_lambda": "λ=0→TD | λ=0.7→óptimo | λ=0.99→MC",
-        "algo_labels": {"sarsa_lambda": "SARSA(λ)", "q_lambda": "Q(λ)", "sarsa_td0": "λ=0", "sarsa_mc": "λ=0.99"},
-        "pros_list": {"sarsa_lambda": ["On-policy"], "q_lambda": ["Off-policy"], "sarsa_td0": ["Simple"], "sarsa_mc": ["Bajo sesgo"]},
-        "cons_list": {"sarsa_lambda": ["λ a ajustar"], "q_lambda": ["Corte"], "sarsa_td0": ["Lento"], "sarsa_mc": ["Varianza"]},
-    },
-}
+    }}
 COLORS = {"sarsa_lambda": "#8B5CF6", "q_lambda": "#0082F0", "sarsa_td0": "#FF8C0A", "sarsa_mc": "#0FC373"}
 ALGOS  = ["sarsa_lambda", "q_lambda", "sarsa_td0", "sarsa_mc"]
 
@@ -127,16 +36,12 @@ def _ma(data, w=30):
     return r
 
 
-def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
-    over = T.get(lang, {})
-    for k, v in over.items():
-        base[k] = v
-    return base
+def _tx(lang=None):
+    import copy
+    return copy.deepcopy(T.get("EN", {}))
 
 def render():
-    lang = st.session_state.get("lang", "EN"); tx = _tx(lang)
+    lang = "EN"; tx = _tx(lang)
     st.title(tx["title"]); st.caption(tx["subtitle"])
     try: import rlvr_py
     except ImportError: st.error(tx["engine_missing"]); return

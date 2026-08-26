@@ -1,8 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-T = {
-    "EN": {
+T = {"EN": {
         "title": "Chapter 06 — Temporal Difference Learning",
         "subtitle": "TD(0) · SARSA · Q-Learning · ASP Dispatch · Warsaw Region",
         "engine_missing": "Run: `cd rlvr-py && maturin develop`",
@@ -122,122 +121,7 @@ In ASP: SARSA is safer during training, Q-Learning finds the better final policy
             "sarsa":     ["Suboptimal if epsilon stays high", "On-policy — needs epsilon > 0", "Slower than Q-Learning in safe environments"],
             "qlearning": ["Can be risky during learning", "Overestimates Q values (maximisation bias)", "Sensitive to alpha"],
         },
-    },
-        "DE": {
-        "title": "Kapitel 06 — Temporale Differenzlernen",
-        "subtitle": "TD(0) — SARSA — Q-Learning — ASP Warschau",
-        "engine_missing": "Ausführen: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "TD-Einstellungen",
-        "n_episodes": "Episoden", "gamma": "γ — Diskontierungsfaktor",
-        "alpha": "α — Lernrate", "epsilon": "ε — Anfängliche Exploration",
-        "epsilon_decay": "ε-Abklingrate", "seed": "Zufallsseed",
-        "run_btn": "▶ TD(0), SARSA und Q-Learning starten",
-        "guide": """**Schritt 1** — TD aktualisiert nach JEDEM Schritt (nicht nach Episodenende wie MC).
-**Schritt 2** — SARSA = On-Policy. Q-Learning = Off-Policy.
-**Schritt 3** — α (Lernrate) einstellen. α=0.1 ist ein guter Start.
-**Schritt 4** — Klicken, um alle drei Algorithmen zu starten.
-**Schritt 5** — TD-Fehlerkurve lesen — sollte gegen null gehen.
-**Schritt 6** — Q-Learning vs SARSA-Strategien vergleichen.""",
-        "returns_title": "Episodenrückgaben — TD(0), SARSA, Q-Learning",
-        "returns_caption": "Gleitender Durchschnitt. Q-Learning sollte am schnellsten konvergieren.",
-        "td_error_title": "TD-Fehler — |R + γV(s') - V(s)|",
-        "td_error_caption": "TD-Fehler nimmt ab, wenn der Agent lernt.",
-        "value_title": "Wertfunktion V(s) — TD vs. DP-Referenz",
-        "value_caption": "TD-Schätzungen sollten zur DP-Lösung (Ch04) konvergieren.",
-        "policy_title": "Optimale Strategie — SARSA vs. Q-Learning",
-        "policy_caption": "Q-Learning findet optimale Strategie. SARSA findet sicherste.",
-        "qtable_title": "Q-Tabellen-Heatmap",
-        "qtable_caption": "Q(s,a)-Werte. Algorithmus auswählen.",
-        "glass_title": "Glass-Box — TD-Update-Protokoll",
-        "glass_headers": ["Episode", "Schritt", "Zustand", "Aktion", "Belohnung", "Nächster Zustand", "TD-Fehler"],
-        "summary_title": "Zusammenfassung",
-        "summary_results": "Algorithmenvergleich",
-        "summary_pros_cons": "TD-Algorithmen — Vor- & Nachteile",
-        "pros": "Vorteile", "cons": "Nachteile",
-        "theory_td0": r"$V(S_t) \leftarrow V(S_t) + lpha[R_{t+1} + \gamma V(S_{t+1}) - V(S_t)]$",
-        "theory_sarsa": r"$Q(S_t,A_t) \leftarrow Q(S_t,A_t) + lpha[R_{t+1} + \gamma Q(S_{t+1},A_{t+1}) - Q(S_t,A_t)]$",
-        "theory_qlearning": r"$Q(S_t,A_t) \leftarrow Q(S_t,A_t) + lpha[R_{t+1} + \gamma \max_{a'} Q(S_{t+1},a') - Q(S_t,A_t)]$",
-        "theory_comparison": "SARSA: On-Policy, sicher. Q-Learning: Off-Policy, optimal.",
-        "algo_labels": {"td0": "TD(0)", "sarsa": "SARSA", "qlearning": "Q-Learning"},
-        "pros_list": {
-            "td0":       ["Online-Lernen", "Kein Modell nötig", "Geringere Varianz als MC"],
-            "sarsa":     ["Sicher während des Lernens", "On-Policy", "Konvergiert zur optimalen ε-weichen Strategie"],
-            "qlearning": ["Lernt Q* direkt", "Off-Policy", "Konvergiert zur optimalen gierigen Strategie"],
-        },
-        "cons_list": {
-            "td0":       ["Sagt nur V^π vorher", "Verzerrt (Bootstrapping)", "Empfindlich gegenüber α"],
-            "sarsa":     ["Suboptimal bei hohem ε", "On-Policy erfordert ε > 0"],
-            "qlearning": ["Kann während des Lernens riskant sein", "Maximierungsverzerrung"],
-        },
-    },
-    "FR": {
-        "title": "Chapitre 06 — Apprentissage par Différences Temporelles",
-        "subtitle": "TD(0) · SARSA · Q-Learning · ASP · Région de Varsovie",
-        "engine_missing": "Exécutez : `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Paramètres TD",
-        "n_episodes": "Nombre d'épisodes",
-        "gamma": "γ — Facteur d'actualisation",
-        "alpha": "α — Taux d'apprentissage",
-        "epsilon": "ε — Exploration initiale",
-        "epsilon_decay": "Taux de décroissance ε",
-        "seed": "Graine aléatoire",
-        "run_btn": "▶ Lancer TD(0), SARSA et Q-Learning",
-        "returns_title": "📈 Retours par épisode",
-        "returns_caption": "Moyenne mobile. Q-Learning devrait converger le plus vite.",
-        "td_error_title": "📉 Erreur TD",
-        "td_error_caption": "L'erreur TD décroît au fil de l'apprentissage.",
-        "value_title": "📊 Fonction de valeur V(s)",
-        "value_caption": "Les estimations TD convergent vers la solution DP (Ch04).",
-        "policy_title": "🎯 Politique optimale — SARSA vs Q-Learning",
-        "policy_caption": "Q-Learning trouve la politique optimale. SARSA trouve la plus sûre.",
-        "qtable_title": "📊 Table Q",
-        "qtable_caption": "Valeurs Q(s,a). Sélectionnez l'algorithme.",
-        "glass_title": "🔬 Glass-Box — Trace de mise à jour TD",
-        "glass_headers": ["Épisode", "Étape", "État", "Action", "Récompense", "État suivant", "Erreur TD"],
-        "summary_title": "📊 Résumé",
-        "summary_results": "Comparaison des algorithmes",
-        "summary_pros_cons": "Algorithmes TD — Avantages & Inconvénients",
-        "pros": "✅ Avantages", "cons": "❌ Inconvénients",
-        "returns_title": "📈 Zwroty epizodów — TD(0), SARSA, Q-Learning",
-        "returns_caption": "Średnia krocząca zwrotów. Q-Learning powinien zbiegać najszybciej.",
-        "td_error_title": "📉 Błąd TD — |R + γV(s') - V(s)|",
-        "td_error_caption": "Błąd TD maleje w miarę uczenia się agenta.",
-        "value_title": "📊 Funkcja wartości V(s) — TD vs referencja DP",
-        "value_caption": "Estymaty TD zbiegają do rozwiązania DP (Ch04) bez modelu P.",
-        "policy_title": "🎯 Optymalna polityka — SARSA vs Q-Learning",
-        "policy_caption": "Q-Learning znajduje optymalną politykę. SARSA — najbezpieczniejszą.",
-        "qtable_title": "📊 Tabela Q",
-        "qtable_caption": "Wartości Q(s,a). Wybierz algorytm.",
-        "glass_title": "🔬 Glass-Box — Ślad aktualizacji TD",
-        "glass_headers": ["Epizod", "Krok", "Stan", "Akcja", "Nagroda", "Następny stan", "Błąd TD"],
-        "summary_title": "📊 Podsumowanie",
-        "summary_results": "Porównanie algorytmów",
-        "summary_pros_cons": "Algorytmy TD — Zalety i Wady",
-        "pros": "✅ Zalety", "cons": "❌ Wady",
-        "theory_td0": "V(S_t) ← V(S_t) + α [R_{t+1} + γ V(S_{t+1}) - V(S_t)]",
-        "theory_sarsa": "Q(S_t,A_t) ← Q(S_t,A_t) + α [R_{t+1} + γ Q(S_{t+1},A_{t+1}) - Q(S_t,A_t)]",
-        "theory_qlearning": "Q(S_t,A_t) ← Q(S_t,A_t) + α [R_{t+1} + γ max_a' Q(S_{t+1},a') - Q(S_t,A_t)]",
-        "theory_comparison": r"""
-**Jedna linia różnicy:**
-SARSA:      Q(s,a) += α [R + γ Q(s', a') - Q(s,a)]   gdzie a' ~ ε-zachłanna
-Q-Learning: Q(s,a) += α [R + γ max_a' Q(s', a') - Q(s,a)]
-
-SARSA jest bezpieczniejszy podczas uczenia (uwzględnia eksplorację).
-Q-Learning znajduje lepszą politykę końcową (bezpośrednio optymalizuje Q*).
-""",
-        "algo_labels": {"td0": "TD(0)", "sarsa": "SARSA", "qlearning": "Q-Learning"},
-        "pros_list": {
-            "td0":       ["Uczenie online — aktualizacja po każdym kroku", "Bez modelu", "Niższa wariancja niż MC"],
-            "sarsa":     ["Bezpieczny podczas uczenia", "On-policy — spójny z zachowaniem", "Zbiega do optymalnej polityki epsilon-soft"],
-            "qlearning": ["Bezpośrednio uczy Q*", "Off-policy — może uczyć z dowolnych danych", "Zbiega do optymalnej zachłannej polityki"],
-        },
-        "cons_list": {
-            "td0":       ["Tylko predykcja V^pi", "Obciążony (bootstrapping)", "Wrażliwy na α"],
-            "sarsa":     ["Suboptymalny gdy ε wysokie", "On-policy — wymaga ε > 0"],
-            "qlearning": ["Ryzykowny podczas uczenia", "Przeszacowuje Q (bias maksymalizacji)", "Wrażliwy na α"],
-        },
-    },
-}
+    }}
 
 COLORS = {"td0": "#0082F0", "sarsa": "#FF8C0A", "qlearning": "#0FC373"}
 
@@ -249,16 +133,12 @@ def _moving_avg(data, window=20):
     return result
 
 
-def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
-    over = T.get(lang, {})
-    for k, v in over.items():
-        base[k] = v
-    return base
+def _tx(lang=None):
+    import copy
+    return copy.deepcopy(T.get("EN", {}))
 
 def render():
-    lang = st.session_state.get("lang", "EN")
+    lang = "EN"
     tx = _tx(lang)
     st.title(tx["title"])
     st.caption(tx["subtitle"])

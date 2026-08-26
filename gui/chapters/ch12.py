@@ -1,8 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-TX = {
-    "EN": {
+TX = {"EN": {
         "title": "Chapter 12 - Game Theory and Nash Equilibrium",
         "subtitle": "Nash Q - Correlated Q - Minimax Q - Fictitious Play - Warsaw ASP",
         "engine_missing": "Run: cd rlvr-py && maturin develop",
@@ -20,64 +19,7 @@ TX = {
         "ret": "Joint Episode Returns", "gap": "Nash Gap (Exploitability)",
         "strat": "Mixed Strategy Profile", "val": "Joint Value Function V(s)",
         "glass": "Glass-Box", "summary": "Summary",
-    },
-    "DE": {
-        "title": "Kapitel 12 — Spieltheorie & Nash-Gleichgewicht",
-        "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Warschau",
-        "engine_missing": "Ausführen: cd rlvr-py && maturin develop",
-        "guide": (
-            "Nash Q: konvergiert zum Nash-Gleichgewicht.\n\n"
-            "Correlated Q: breiter als Nash — Agenten koordinieren über gemeinsame Verteilung.\n\n"
-            "Minimax Q: Nullsummenspiel — Spieler 0 maximiert Worst-Case-Auszahlung.\n\n"
-            "Fictitious Play: beste Antwort auf empirischen Durchschnitt des Gegners.\n\n"
-            "Nash-Lücke beobachten: niedriger = näher am Gleichgewicht."
-        ),
-        "labels": {"nash_q":"Nash Q","correlated_q":"Correlated Q","minimax_q":"Minimax Q","fictitious":"Fictitious Play"},
-        "settings": "Einstellungen", "episodes": "Episoden", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "edecay": "Epsilon-Abklingrate",
-        "zerosum": "Nullsummenspiel (Minimax-Modus)", "seed": "Zufallsseed",
-        "run": "▶ Alle vier Algorithmen starten", "guide_title": "ℹ️ Anleitung",
-        "ret": "Gemeinsame Episodenrückgaben", "gap": "Nash-Lücke (Exploitierbarkeit)",
-        "strat": "Gemischtes Strategieprofil", "val": "Gemeinsame Wertfunktion V(s)",
-        "glass": "Glass-Box", "summary": "Zusammenfassung",
-    },
-    "FR": {
-        "title": "Chapitre 12 — Théorie des jeux & Équilibre de Nash",
-        "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Varsovie",
-        "engine_missing": "Exécutez: cd rlvr-py && maturin develop",
-        "guide": "Nash Q: équilibre de Nash. Correlated Q: distribution conjointe. Minimax Q: jeu à somme nulle. Fictitious Play: meilleure réponse.",
-        "labels": {"nash_q":"Nash Q","correlated_q":"Correlated Q","minimax_q":"Minimax Q","fictitious":"Fictitious Play"},
-        "settings": "Paramètres", "episodes": "Épisodes", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "edecay": "Décroissance", "zerosum": "Jeu à somme nulle", "seed": "Graine",
-        "run": "Lancer", "guide_title": "Guide",
-        "ret": "Retours joints", "gap": "Lacune Nash", "strat": "Profil stratégie", "val": "V(s)",
-        "glass": "Glass-Box", "summary": "Résumé",
-    },
-    "ES": {
-        "title": "Capítulo 12 — Teoría de juegos & Equilibrio de Nash",
-        "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Varsovia",
-        "engine_missing": "Ejecute: cd rlvr-py && maturin develop",
-        "guide": "Nash Q: equilibrio de Nash. Correlated Q: distribución conjunta. Minimax Q: juego suma cero. Fictitious Play: mejor respuesta.",
-        "labels": {"nash_q":"Nash Q","correlated_q":"Correlated Q","minimax_q":"Minimax Q","fictitious":"Fictitious Play"},
-        "settings": "Configuración", "episodes": "Episodios", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "edecay": "Decaimiento", "zerosum": "Juego suma cero", "seed": "Semilla",
-        "run": "Ejecutar", "guide_title": "Guía",
-        "ret": "Retornos conjuntos", "gap": "Brecha Nash", "strat": "Perfil estrategia", "val": "V(s)",
-        "glass": "Glass-Box", "summary": "Resumen",
-    },
-    "PL": {
-        "title": "Rozdział 12 — Teoria gier & Równowaga Nasha",
-        "subtitle": "Nash Q — Correlated Q — Minimax Q — Fictitious Play — ASP Warszawa",
-        "engine_missing": "Uruchom: cd rlvr-py && maturin develop",
-        "guide": "Nash Q: równowaga Nasha. Correlated Q: wspólna dystrybucja. Minimax Q: gra zerowa. Fictitious Play: najlepsza odpowiedź.",
-        "labels": {"nash_q":"Nash Q","correlated_q":"Correlated Q","minimax_q":"Minimax Q","fictitious":"Fictitious Play"},
-        "settings": "Ustawienia", "episodes": "Epizody", "gamma": "Gamma", "alpha": "Alpha",
-        "epsilon": "Epsilon", "edecay": "Zanik epsilon", "zerosum": "Gra zerowa (tryb Minimax)", "seed": "Ziarno",
-        "run": "▶ Uruchom wszystkie cztery algorytmy", "guide_title": "Przewodnik",
-        "ret": "Wspólne zwroty epizodów", "gap": "Luka Nasha", "strat": "Profil strategii mieszanej", "val": "V(s)",
-        "glass": "Glass-Box", "summary": "Podsumowanie",
-    },
-}
+    }}
 
 
 COLORS = {"nash_q":"#8B5CF6","correlated_q":"#0082F0","minimax_q":"#0FC373","fictitious":"#FF8C0A"}
@@ -91,16 +33,12 @@ def _ma(data,w=30):
     return r
 
 
-def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(TX.get("EN", {}))
-    over = TX.get(lang, {})
-    for k, v in over.items():
-        base[k] = v
-    return base
+def _tx(lang=None):
+    import copy
+    return copy.deepcopy(TX.get("EN", {}))
 
 def render():
-    lang = st.session_state.get("lang","EN")
+    lang = "EN"
     tx = _tx(lang)
     st.title(tx["title"])
     st.caption(tx["subtitle"])

@@ -5,8 +5,7 @@ import plotly.express as px
 # ---------------------------------------------------------------------------
 # Translations
 # ---------------------------------------------------------------------------
-T = {
-    "EN": {
+T = {"EN": {
         "title": "Chapter 02 — Discrete MDP & Bellman Optimality",
         "subtitle": "ASP Operational State Optimisation · Warsaw Region",
         "engine_missing": "⚙️ Rust engine not found. Run: `cd rlvr-py && maturin develop`",
@@ -61,216 +60,15 @@ Solved using **nalgebra LU decomposition** in `solve_exact()` in `ch02_bellman.r
 
 This gives the exact value function without iteration — but only works for small state spaces.
 """,
-    },
-        "DE": {
-        "title": "Kapitel 02 — Diskretes MDP & Bellman-Optimalität",
-        "subtitle": "Optimierung der ASP-Betriebszustände — Region Warschau",
-        "engine_missing": "⚠ Rust-Engine nicht gefunden. Ausführen: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ MDP-Einstellungen",
-        "gamma": "γ — Diskontierungsfaktor",
-        "theta": "θ — Konvergenzschwelle",
-        "seed": "Zufallsseed",
-        "run_btn": "▶ Wertiteration starten",
-        "value_title": "📊 Optimale Wertfunktion V*(s)",
-        "value_caption": "Langfristig erwartete Belohnung für jeden Betriebszustand",
-        "policy_title": "🎯 Optimale Strategie π*(s)",
-        "policy_caption": "Beste Dispatch-Strategie für jeden Betriebszustand",
-        "conv_title": "📉 Konvergenz — V^(k+1) - V^(k)",
-        "conv_x": "Iteration",
-        "conv_y": "Max. Änderung in V",
-        "conv_caption": "Bellman-Kontraktion: jede Iteration reduziert Fehler um Faktor γ",
-        "heatmap_title": "🧮 Übergangsmatrix P(s'|s, a=A1: Qualifikation)",
-        "heatmap_caption": "Übergangswahrscheinlichkeit von Zustand s zu s' unter qualifikationsbasiertem Dispatch",
-        "glass_title": "🔍 Glass-Box — Bellman-Update-Protokoll (erste 3 Iterationen)",
-        "glass_headers": ["Iter", "Zustand", "Beste Aktion", "Q(s,A0)", "Q(s,A1)", "Q(s,A2)", "Q(s,A3)", "V_alt", "V_neu", "δ"],
-        "summary_title": "📋 Zusammenfassung",
-        "summary_results": "Quantifizierte Ergebnisse",
-        "summary_pros_cons": "Diskretes MDP + Wertiteration — Vor- & Nachteile",
-        "pros": "✅ Vorteile",
-        "cons": "❌ Nachteile",
-        "pros_list": [
-            "Garantierte Konvergenz zur optimalen Strategie (Kontraktionsabbildungssatz)",
-            "Exakte Lösung ohne Approximationsfehler für kleine Zustandsräume",
-            "Interpretierbar: Wertfunktion erklärt WARUM jede Aktion gewählt wird",
-            "Lineare Algebra-Lösung verfügbar (nalgebra LU)",
-            "Grundlage für alle nachfolgenden RL-Algorithmen (Ch03–Ch20)",
-        ],
-        "cons_list": [
-            "Benötigt vollständiges Übergangsmodell P(s'|s,a)",
-            "Zustandsraum muss diskret und endlich sein",
-            "Fluch der Dimensionalität: O(|S| × |A|) pro Iteration",
-            "Übergangswahrscheinlichkeiten müssen geschätzt werden",
-            "Ch06 (TD-Lernen) löst die modellfreie Version",
-        ],
-        "metric_iters": "Iterationen bis zur Konvergenz",
-        "metric_best_state": "Bester Betriebszustand",
-        "metric_worst_state": "Schlechtester Betriebszustand",
-        "metric_value_range": "Wertebereich V*(s)",
-        "metric_contraction": "Kontraktion verifiziert",
-        "theory_linear": r"""**Exakte Lösung** für eine feste Strategie π:
-$$V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$$
-Gelöst mit **nalgebra LU-Zerlegung** in `solve_exact()` in `ch02_bellman.rs`.""",
-    },
-    "FR": {
-        "title": "Chapitre 02 — MDP Discret & Optimalité de Bellman",
-        "subtitle": "Optimisation des états opérationnels ASP · Région de Varsovie",
-        "engine_missing": "⚙️ Moteur Rust introuvable. Exécutez : `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Paramètres MDP",
-        "gamma": "γ — Facteur d'actualisation",
-        "theta": "θ — Seuil de convergence",
-        "seed": "Graine aléatoire",
-        "run_btn": "▶ Lancer l'itération de valeur",
-        "value_title": "📊 Fonction de valeur optimale V*(s)",
-        "value_caption": "Récompense attendue à long terme pour chaque état opérationnel",
-        "policy_title": "🎯 Politique optimale π*(s)",
-        "policy_caption": "Meilleure stratégie de dispatch pour chaque état",
-        "conv_title": "📈 Convergence — ‖V^(k+1) - V^(k)‖∞",
-        "conv_x": "Itération",
-        "conv_y": "Changement max de V",
-        "conv_caption": "Contraction de Bellman : chaque itération réduit l'erreur par facteur γ",
-        "heatmap_title": "🗺️ Matrice de transition P(s'|s, a=A1: Compétence)",
-        "heatmap_caption": "Probabilité de transition de l'état s vers s' sous dispatch par compétence",
-        "glass_title": "🔬 Glass-Box — Trace de mise à jour de Bellman (3 premières itérations)",
-        "glass_headers": ["Iter", "État", "Meilleure action", "Q(s,A0)", "Q(s,A1)", "Q(s,A2)", "Q(s,A3)", "V_ancien", "V_nouveau", "Δ"],
-        "summary_title": "📊 Résumé",
-        "summary_results": "Résultats quantifiés",
-        "summary_pros_cons": "MDP Discret + Itération de valeur — Avantages & Inconvénients",
-        "pros": "✅ Avantages",
-        "cons": "❌ Inconvénients",
-        "pros_list": [
-            "Convergence garantie vers la politique optimale",
-            "Solution exacte sans erreur d'approximation",
-            "Interprétable : la fonction de valeur explique chaque décision",
-            "Solution par algèbre linéaire disponible (LU nalgebra)",
-            "Fondation pour tous les algorithmes RL suivants",
-        ],
-        "cons_list": [
-            "Nécessite le modèle de transition complet P(s'|s,a)",
-            "L'espace d'états doit être discret et fini",
-            "Malédiction de la dimensionnalité : O(|S|² × |A|) par itération",
-            "Les probabilités de transition doivent être estimées",
-            "Ch06 (TD Learning) résout la version sans modèle",
-        ],
-        "metric_iters": "Itérations pour converger",
-        "metric_best_state": "Meilleur état opérationnel",
-        "metric_worst_state": "Pire état opérationnel",
-        "metric_value_range": "Plage de valeurs V*(s)",
-        "metric_contraction": "Contraction vérifiée",
-        "theory_linear": r"""
-**Solution exacte** : $V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$ via décomposition LU nalgebra.
-""",
-    },
-    "ES": {
-        "title": "Capítulo 02 — MDP Discreto & Optimalidad de Bellman",
-        "subtitle": "Optimización de estados operacionales ASP · Región de Varsovia",
-        "engine_missing": "⚙️ Motor Rust no encontrado. Ejecute: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Configuración MDP",
-        "gamma": "γ — Factor de descuento",
-        "theta": "θ — Umbral de convergencia",
-        "seed": "Semilla aleatoria",
-        "run_btn": "▶ Ejecutar iteración de valor",
-        "value_title": "📊 Función de valor óptima V*(s)",
-        "value_caption": "Recompensa esperada a largo plazo para cada estado operacional",
-        "policy_title": "🎯 Política óptima π*(s)",
-        "policy_caption": "Mejor estrategia de despacho para cada estado",
-        "conv_title": "📈 Convergencia — ‖V^(k+1) - V^(k)‖∞",
-        "conv_x": "Iteración",
-        "conv_y": "Cambio máximo en V",
-        "conv_caption": "Contracción de Bellman: cada iteración reduce el error por factor γ",
-        "heatmap_title": "🗺️ Matriz de transición P(s'|s, a=A1: Habilidad)",
-        "heatmap_caption": "Probabilidad de transición del estado s al estado s' bajo despacho por habilidad",
-        "glass_title": "🔬 Glass-Box — Traza de actualización de Bellman (primeras 3 iteraciones)",
-        "glass_headers": ["Iter", "Estado", "Mejor acción", "Q(s,A0)", "Q(s,A1)", "Q(s,A2)", "Q(s,A3)", "V_ant", "V_nuevo", "Δ"],
-        "summary_title": "📊 Resumen",
-        "summary_results": "Resultados cuantificados",
-        "summary_pros_cons": "MDP Discreto + Iteración de valor — Pros y Contras",
-        "pros": "✅ Pros",
-        "cons": "❌ Contras",
-        "pros_list": [
-            "Convergencia garantizada a la política óptima",
-            "Solución exacta sin error de aproximación",
-            "Interpretable: la función de valor explica cada decisión",
-            "Solución por álgebra lineal disponible (LU nalgebra)",
-            "Base para todos los algoritmos RL siguientes",
-        ],
-        "cons_list": [
-            "Requiere modelo de transición completo P(s'|s,a)",
-            "El espacio de estados debe ser discreto y finito",
-            "Maldición de la dimensionalidad: O(|S|² × |A|) por iteración",
-            "Las probabilidades de transición deben estimarse",
-            "Ch06 (TD Learning) resuelve la versión sin modelo",
-        ],
-        "metric_iters": "Iteraciones para converger",
-        "metric_best_state": "Mejor estado operacional",
-        "metric_worst_state": "Peor estado operacional",
-        "metric_value_range": "Rango de valores V*(s)",
-        "metric_contraction": "Contracción verificada",
-        "theory_linear": r"""
-**Solución exacta** : $V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$ via descomposición LU nalgebra.
-""",
-    },
-    "PL": {
-        "title": "Rozdział 02 — Dyskretny MDP i Optymalność Bellmana",
-        "subtitle": "Optymalizacja stanów operacyjnych ASP · Region Warszawy",
-        "engine_missing": "⚙️ Silnik Rust nie znaleziony. Uruchom: `cd rlvr-py && maturin develop`",
-        "sidebar_title": "⚙️ Ustawienia MDP",
-        "gamma": "γ — Współczynnik dyskontowania",
-        "theta": "θ — Próg zbieżności",
-        "seed": "Ziarno losowości",
-        "run_btn": "▶ Uruchom iterację wartości",
-        "value_title": "📊 Optymalna funkcja wartości V*(s)",
-        "value_caption": "Oczekiwana długoterminowa nagroda dla każdego stanu operacyjnego",
-        "policy_title": "🎯 Optymalna polityka π*(s)",
-        "policy_caption": "Najlepsza strategia dyspozycji dla każdego stanu",
-        "conv_title": "📈 Zbieżność — ‖V^(k+1) - V^(k)‖∞",
-        "conv_x": "Iteracja",
-        "conv_y": "Maks. zmiana V",
-        "conv_caption": "Kontrakcja Bellmana: każda iteracja redukuje błąd o czynnik γ",
-        "heatmap_title": "🗺️ Macierz przejść P(s'|s, a=A1: Dopasowanie)",
-        "heatmap_caption": "Prawdopodobieństwo przejścia ze stanu s do s' przy dyspozycji dopasowanej",
-        "glass_title": "🔬 Glass-Box — Ślad aktualizacji Bellmana (pierwsze 3 iteracje)",
-        "glass_headers": ["Iter", "Stan", "Najlepsza akcja", "Q(s,A0)", "Q(s,A1)", "Q(s,A2)", "Q(s,A3)", "V_stare", "V_nowe", "Δ"],
-        "summary_title": "📊 Podsumowanie",
-        "summary_results": "Wymierne wyniki",
-        "summary_pros_cons": "Dyskretny MDP + Iteracja wartości — Zalety i Wady",
-        "pros": "✅ Zalety",
-        "cons": "❌ Wady",
-        "pros_list": [
-            "Gwarantowana zbieżność do optymalnej polityki",
-            "Dokładne rozwiązanie bez błędu aproksymacji",
-            "Interpretowalny: funkcja wartości wyjaśnia każdą decyzję",
-            "Rozwiązanie algebraiczne dostępne (LU nalgebra)",
-            "Fundament dla wszystkich kolejnych algorytmów RL",
-        ],
-        "cons_list": [
-            "Wymaga pełnego modelu przejść P(s'|s,a)",
-            "Przestrzeń stanów musi być dyskretna i skończona",
-            "Przekleństwo wymiarowości: O(|S|² × |A|) na iterację",
-            "Prawdopodobieństwa przejść muszą być oszacowane",
-            "Ch06 (TD Learning) rozwiązuje wersję bez modelu",
-        ],
-        "metric_iters": "Iteracje do zbieżności",
-        "metric_best_state": "Najlepszy stan operacyjny",
-        "metric_worst_state": "Najgorszy stan operacyjny",
-        "metric_value_range": "Zakres wartości V*(s)",
-        "metric_contraction": "Kontrakcja zweryfikowana",
-        "theory_linear": r"""
-**Dokładne rozwiązanie** : $V^\pi = (I - \gamma P^\pi)^{-1} r^\pi$ przez dekompozycję LU nalgebra.
-""",
-    },
-}
+    }}
 
 # ---------------------------------------------------------------------------
 # Main render
 # ---------------------------------------------------------------------------
 
-def _tx(lang):
-    """Return translation dict for lang, filling missing keys from EN."""
-    base = dict(T.get("EN", {}))
-    over = T.get(lang, {})
-    for k, v in over.items():
-        base[k] = v
-    return base
+def _tx(lang=None):
+    import copy
+    return copy.deepcopy(T.get("EN", {}))
 
 def _render_handbook():
     _hcol1, _hcol2 = st.columns([8, 1])
@@ -691,7 +489,7 @@ function showTab(id){
     )
 
 def render():
-    lang = st.session_state.get("lang", "EN")
+    lang = "EN"
     tx = _tx(lang)
 
     st.title(tx["title"])
