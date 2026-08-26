@@ -150,15 +150,15 @@ details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d315
 
 .formula{background:#252840;border-radius:8px;padding:2rem;margin:1rem 0;text-align:center}
 
-.katex-display{color:#FFD700;transform:scale(0.65);transform-origin:center;display:block;margin:1.5rem 0}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0;overflow-x:auto}
 .katex{color:#FFD700}
 .formula{background:#252840;border-radius:8px;padding:2rem;margin:1rem 0;text-align:center}
 
-.katex-display{color:#FFD700;transform:scale(0.65);transform-origin:center;display:block;margin:1.5rem 0}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0;overflow-x:auto}
 .katex{color:#FFD700}
 .formula{background:#252840;border-radius:8px;padding:2rem;margin:1rem 0;text-align:center}
 
-.katex-display{color:#FFD700;transform:scale(0.65);transform-origin:center;display:block;margin:1.5rem 0}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0;overflow-x:auto}
 .katex{color:#FFD700}
 .formula{background:#252840;border-radius:8px;padding:2rem;margin:1rem 0;text-align:center}
 </style>
