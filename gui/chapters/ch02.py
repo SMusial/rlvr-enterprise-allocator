@@ -630,7 +630,6 @@ def _render_handbook():
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hands-On Guide - Chapter 02</title>
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
@@ -652,12 +651,10 @@ h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
 .card.purple{border-left-color:#8B5CF6}
 table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
 th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
-td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154;font-size:1rem}
 tr:hover td{background:#252840}
 code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
-.formula{background:#252840;border-radius:8px;padding:1rem 1.5rem;margin:.75rem 0;color:#FFD700;overflow-x:auto}
-.formula .MathJax{color:#FFD700 !important}
-mjx-container{color:#FFD700 !important}
+.formula{background:#252840;border-radius:8px;padding:1rem 1.5rem;margin:.75rem 0;text-align:center;font-size:1.15em;color:#FFD700;font-family:monospace;letter-spacing:.02em}
 .step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
 .step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
 .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
@@ -672,6 +669,7 @@ details{background:#252840;border-radius:6px;padding:.75rem 1rem;margin-top:.75r
 details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.9rem;user-select:none}
 details summary:hover{color:#FFB347}
 details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154;color:#e8eaf6}
+.answer .formula{font-size:1.05em;margin:.5rem 0}
 .quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
 .quiz-question p{font-weight:600;margin-bottom:.75rem;color:#e8eaf6}
 .quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0;transition:background .15s}
@@ -723,19 +721,19 @@ details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d315
 <h2>&#x1F3E2; Business Problem</h2>
 <div class="card blue"><strong>Warsaw ASP Dispatch Centre</strong> &mdash; 8 operational states, 4 dispatch actions.<br><br>
 The question: <em>what is the long-term value of being in each operational state?</em><br><br>
-Value Iteration answers this by solving the Bellman equation iteratively &mdash; no simulation needed, just <span style="color:#FFD700;font-family:monospace">P(s'|s,a)</span> and <span style="color:#FFD700;font-family:monospace">R(s,a)</span>.</div>
+Value Iteration answers this by solving the Bellman equation iteratively &mdash; no simulation needed, just P(s'|s,a) and R(s,a).</div>
 <div class="kpi">
 <div class="kpi-card"><div class="kpi-val">8</div><div class="kpi-label">Operational States</div></div>
 <div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Dispatch Actions</div></div>
-<div class="kpi-card"><div class="kpi-val"><span style="color:#FFD700;font-family:monospace">&gamma;</span></div><div class="kpi-label">Discount factor</div></div>
-<div class="kpi-card"><div class="kpi-val"><span style="color:#FFD700;font-family:monospace">	heta</span></div><div class="kpi-label">Convergence threshold</div></div>
+<div class="kpi-card"><div class="kpi-val">&gamma;</div><div class="kpi-label">Discount factor</div></div>
+<div class="kpi-card"><div class="kpi-val">&theta;</div><div class="kpi-label">Convergence threshold</div></div>
 </div>
 </div>
 
 <!-- WHAT IS CH02 -->
 <div id="what" class="tab-content">
 <h2>&#x2753; What is Chapter 02?</h2>
-<div class="card blue">Ch02 introduces <strong>model-based planning</strong>. We know <span style="color:#FFD700;font-family:monospace">P(s'|s,a)</span> and <span style="color:#FFD700;font-family:monospace">R(s,a)</span> &mdash; built analytically for the Warsaw ASP. Value Iteration solves the Bellman equation without simulation.</div>
+<div class="card blue">Ch02 introduces <strong>model-based planning</strong>. We know P(s'|s,a) and R(s,a) &mdash; built analytically for the Warsaw ASP. Value Iteration solves the Bellman equation without simulation.</div>
 <h2>Operational states from <code>STATE_NAMES</code></h2>
 <table><tr><th>State</th><th>Name</th><th>Description</th></tr>
 <tr><td><code>S0</code></td><td>All available, no urgent</td><td>Best situation &mdash; all technicians available</td></tr>
@@ -759,37 +757,37 @@ Value Iteration answers this by solving the Bellman equation iteratively &mdash;
 <!-- RL THEORY -->
 <div id="theory" class="tab-content">
 <h2>&#x1F9EE; Bellman Optimality Equation</h2>
-<div class="formula"><div class="formula">V*(s) = max<sub>a</sub> &sum;<sub>s'</sub> P(s'|s,a)[R(s,a) + &gamma; &middot; V*(s')ight]</div></div>
+<div class="formula">V*(s) = max<sub>a</sub> &sum;<sub>s'</sub> P(s'|s,a) &middot; [ R(s,a) + &gamma; &middot; V*(s') ]</div>
 <div class="card"><strong>What each term means:</strong>
 <ul>
-<li><strong><span style="color:#FFD700;font-family:monospace">V*(s)</span></strong> &mdash; optimal long-term value of being in state <span style="color:#FFD700;font-family:monospace">s</span></li>
-<li><strong><span style="color:#FFD700;font-family:monospace">max<sub>a</sub></span></strong> &mdash; choose the action that maximises value</li>
-<li><strong><span style="color:#FFD700;font-family:monospace">P(s'|s,a)</span></strong> &mdash; probability of transitioning to <span style="color:#FFD700;font-family:monospace">s'</span> given <span style="color:#FFD700;font-family:monospace">(s,a)</span></li>
-<li><strong><span style="color:#FFD700;font-family:monospace">R(s,a)</span></strong> &mdash; immediate reward for taking action <span style="color:#FFD700;font-family:monospace">a</span> in state <span style="color:#FFD700;font-family:monospace">s</span></li>
-<li><strong><span style="color:#FFD700;font-family:monospace">&gamma; &middot; V*(s')</span></strong> &mdash; discounted future value of the next state</li>
+<li><strong>V*(s)</strong> &mdash; optimal long-term value of being in state s</li>
+<li><strong>max<sub>a</sub></strong> &mdash; choose the action that maximises value</li>
+<li><strong>P(s'|s,a)</strong> &mdash; probability of transitioning to s' given (s,a)</li>
+<li><strong>R(s,a)</strong> &mdash; immediate reward for taking action a in state s</li>
+<li><strong>&gamma; &middot; V*(s')</strong> &mdash; discounted future value of the next state</li>
 </ul>
 </div>
 <h2>Value Iteration Algorithm</h2>
-<div class="step"><div class="step-num">1</div><div>Initialise <span style="color:#FFD700;font-family:monospace">V(s) = 0</span> for all states</div></div>
-<div class="step"><div class="step-num">2</div><div>For each <span style="color:#FFD700;font-family:monospace">s</span>: <span style="color:#FFD700;font-family:monospace">V<sup>(k+1)</sup>(s) = max<sub>a</sub> &sum;<sub>s'</sub> P(s'|s,a)[R(s,a) + &gamma; V<sup>(k)</sup>(s')ight]</span></div></div>
-<div class="step"><div class="step-num">3</div><div>Compute <span style="color:#FFD700;font-family:monospace">&delta; = max<sub>s</sub> |V<sup>(k+1)</sup>(s) - V<sup>(k)</sup>(s)ight|</span></div></div>
-<div class="step"><div class="step-num">4</div><div>Update <span style="color:#FFD700;font-family:monospace">V &larr; V<sup>(k+1)</sup></span></div></div>
-<div class="step"><div class="step-num">5</div><div>If <span style="color:#FFD700;font-family:monospace">&delta; < 	heta</span> &rarr; STOP. Otherwise go to step 2.</div></div>
-<div class="step"><div class="step-num">6</div><div>Extract policy: <span style="color:#FFD700;font-family:monospace">&pi;^*(s) = rgmax<sub>a</sub> &sum;<sub>s'</sub> P(s'|s,a)[R(s,a) + &gamma; V*(s')ight]</span></div></div>
+<div class="step"><div class="step-num">1</div><div>Initialise V(s) = 0 for all states</div></div>
+<div class="step"><div class="step-num">2</div><div>For each s: V<sup>(k+1)</sup>(s) = max<sub>a</sub> &sum;<sub>s'</sub> P(s'|s,a) &middot; [ R(s,a) + &gamma; &middot; V<sup>(k)</sup>(s') ]</div></div>
+<div class="step"><div class="step-num">3</div><div>Compute &delta; = max<sub>s</sub> | V<sup>(k+1)</sup>(s) &minus; V<sup>(k)</sup>(s) |</div></div>
+<div class="step"><div class="step-num">4</div><div>Update V &larr; V<sup>(k+1)</sup></div></div>
+<div class="step"><div class="step-num">5</div><div>If &delta; &lt; &theta; &rarr; STOP. Otherwise go to step 2.</div></div>
+<div class="step"><div class="step-num">6</div><div>Extract policy: &pi;*(s) = argmax<sub>a</sub> &sum;<sub>s'</sub> P(s'|s,a) &middot; [ R(s,a) + &gamma; &middot; V*(s') ]</div></div>
 <h2>Contraction Mapping Theorem</h2>
-<div class="card purple">The Bellman operator <span style="color:#FFD700;font-family:monospace">T</span> is a <span style="color:#FFD700;font-family:monospace">&gamma;</span>-contraction:
-<div class="formula"><div class="formula">\\|TV - TV'\\|_&infin; &le; &gamma; \\|V - V'\\|_&infin;</div></div>
-Therefore VI converges to a unique fixed point <span style="color:#FFD700;font-family:monospace">V*</span>. The convergence curve in the UI shows this contraction in action.</div>
+<div class="card purple">The Bellman operator <strong>T</strong> is a &gamma;-contraction:
+<div class="formula">|| TV &minus; TV' ||<sub>&infin;</sub> &le; &gamma; &middot; || V &minus; V' ||<sub>&infin;</sub></div>
+Therefore VI converges to a unique fixed point V*. The convergence curve in the UI shows this contraction in action.</div>
 <h2><code>solve_exact()</code> &mdash; LU Decomposition</h2>
-<div class="card green">For a fixed policy <span style="color:#FFD700;font-family:monospace">&pi;</span>:
-<div class="formula"><div class="formula">V^&pi; = (I - &gamma; P^&pi;)<sup>-1</sup> r^&pi;</div></div>
+<div class="card green">For a fixed policy &pi;:
+<div class="formula">V<sup>&pi;</sup> = ( I &minus; &gamma; P<sup>&pi;</sup> )<sup>&minus;1</sup> &middot; r<sup>&pi;</sup></div>
 Implemented in <code>solve_exact()</code> in <code>ch02_bellman.rs</code> using <strong>nalgebra LU</strong>.<br>
-Use when <span style="color:#FFD700;font-family:monospace">|S| &le; 1000</span>. Avoid when <span style="color:#FFD700;font-family:monospace">|S| > 10{,}000</span> (cost <span style="color:#FFD700;font-family:monospace">O(|S|^3)</span>).</div>
+Use when |S| &le; 1000. Avoid when |S| &gt; 10,000 (cost O(|S|<sup>3</sup>)).</div>
 </div>
 
 <!-- ENVIRONMENT -->
 <div id="env" class="tab-content">
-<h2>&#x1F5FA; Reward Matrix <span style="color:#FFD700;font-family:monospace">R(s,a)</span> from <code>build_asp_rewards()</code></h2>
+<h2>&#x1F5FA; Reward Matrix R(s,a) from <code>build_asp_rewards()</code></h2>
 <table><tr><th>State</th><th>A0: Nearest</th><th>A1: Skill</th><th>A2: Senior</th><th>A3: Hold</th></tr>
 <tr><td>S0</td><td>5.0</td><td><strong>8.0</strong></td><td>6.0</td><td>1.0</td></tr>
 <tr><td>S1</td><td>6.0</td><td><strong>9.0</strong></td><td>7.0</td><td>&minus;3.0</td></tr>
@@ -806,12 +804,12 @@ Use when <span style="color:#FFD700;font-family:monospace">|S| &le; 1000</span>.
 <!-- HOW TO USE UI -->
 <div id="ui" class="tab-content">
 <h2>&#x1F3AE; How to use the Ch02 interface</h2>
-<div class="step"><div class="step-num">1</div><div><strong>Set <span style="color:#FFD700;font-family:monospace">&gamma;</span> (discount factor)</strong><br><span style="color:#FFD700;font-family:monospace">&gamma;=0.99</span> = far-sighted agent. <span style="color:#FFD700;font-family:monospace">&gamma;=0.5</span> = short-sighted. Start with <span style="color:#FFD700;font-family:monospace">0.95</span>.</div></div>
-<div class="step"><div class="step-num">2</div><div><strong>Set <span style="color:#FFD700;font-family:monospace">	heta</span> (convergence threshold)</strong><br>Smaller <span style="color:#FFD700;font-family:monospace">	heta</span> = more precise but slower. Start with <span style="color:#FFD700;font-family:monospace">10<sup>-6</sup></span>.</div></div>
+<div class="step"><div class="step-num">1</div><div><strong>Set &gamma; (discount factor)</strong><br>&gamma;=0.99 = far-sighted agent. &gamma;=0.5 = short-sighted. Start with 0.95.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Set &theta; (convergence threshold)</strong><br>Smaller &theta; = more precise but slower. Start with 1e-6.</div></div>
 <div class="step"><div class="step-num">3</div><div><strong>Click &#x25B6; Run Value Iteration</strong><br>The Rust engine builds the ASP transition matrix and runs Bellman iterations.</div></div>
-<div class="step"><div class="step-num">4</div><div><strong>Read the Value Function chart</strong><br><span style="color:#FFD700;font-family:monospace">S_0</span> bar should be tallest, <span style="color:#FFD700;font-family:monospace">S_7</span> shortest. If not &mdash; check <span style="color:#FFD700;font-family:monospace">&gamma;</span>.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Read the Value Function chart</strong><br>S0 bar should be tallest, S7 shortest. If not &mdash; check &gamma;.</div></div>
 <div class="step"><div class="step-num">5</div><div><strong>Read the Optimal Policy table</strong><br>Which dispatch strategy maximises long-term value for each state?</div></div>
-<div class="step"><div class="step-num">6</div><div><strong>Read the Convergence curve</strong><br>Observe the exponential decay of <span style="color:#FFD700;font-family:monospace">\\|&Delta; V\\|_&infin;</span> towards zero.</div></div>
+<div class="step"><div class="step-num">6</div><div><strong>Read the Convergence curve</strong><br>Observe the exponential decay of ||&Delta;V||<sub>&infin;</sub> towards zero.</div></div>
 <div class="step"><div class="step-num">7</div><div><strong>Read the Glass-Box Bellman trace</strong><br>Exact Bellman update for each state in the first 3 iterations.</div></div>
 </div>
 
@@ -819,56 +817,56 @@ Use when <span style="color:#FFD700;font-family:monospace">|S| &le; 1000</span>.
 <div id="interp" class="tab-content">
 <h2>&#x1F4CA; Interpreting the results</h2>
 
-<h3>&#x1F4CA; Value Function Chart <span style="color:#FFD700;font-family:monospace">V*(s)</span></h3>
+<h3>&#x1F4CA; Value Function Chart V*(s)</h3>
 <div class="card blue">
 <strong>Axes:</strong><br>
-&bull; X-axis: operational states <span style="color:#FFD700;font-family:monospace">S_0</span>&ndash;<span style="color:#FFD700;font-family:monospace">S_7</span> (best to worst)<br>
-&bull; Y-axis: optimal long-term value <span style="color:#FFD700;font-family:monospace">V*(s)</span> &mdash; higher is better<br><br>
-<strong>Purpose:</strong> Shows how "valuable" each operational state is from a long-term perspective. The agent aims to stay in high-<span style="color:#FFD700;font-family:monospace">V*(s)</span> states.<br><br>
+&bull; X-axis: operational states S0&ndash;S7 (best to worst)<br>
+&bull; Y-axis: optimal long-term value V*(s) &mdash; higher is better<br><br>
+<strong>Purpose:</strong> Shows how "valuable" each operational state is from a long-term perspective. The agent aims to stay in high-V*(s) states.<br><br>
 <strong>What to watch:</strong><br>
-&bull; <span style="color:#FFD700;font-family:monospace">S_0</span> should have the highest value &mdash; best operational situation<br>
-&bull; <span style="color:#FFD700;font-family:monospace">S_7</span> should have the lowest value &mdash; SLA breach imminent<br>
-&bull; The gap <span style="color:#FFD700;font-family:monospace">V*(S_0) - V*(S_7)</span> grows with <span style="color:#FFD700;font-family:monospace">&gamma;</span> &mdash; higher <span style="color:#FFD700;font-family:monospace">&gamma;</span> = agent values good states more
+&bull; S0 should have the highest value &mdash; best operational situation<br>
+&bull; S7 should have the lowest value &mdash; SLA breach imminent<br>
+&bull; The gap V*(S0) &minus; V*(S7) grows with &gamma; &mdash; higher &gamma; = agent values good states more
 </div>
 
-<h3>&#x1F3AF; Optimal Policy Table <span style="color:#FFD700;font-family:monospace">&pi;^*(s)</span></h3>
+<h3>&#x1F3AF; Optimal Policy Table &pi;*(s)</h3>
 <div class="card">
 <strong>Table columns:</strong>
 <table><tr><th>Column</th><th>Meaning</th></tr>
-<tr><td>State</td><td>Operational state <span style="color:#FFD700;font-family:monospace">S_0</span>&ndash;<span style="color:#FFD700;font-family:monospace">S_7</span></td></tr>
-<tr><td>Optimal Action</td><td>Dispatch action that maximises <span style="color:#FFD700;font-family:monospace">V*(s)</span></td></tr>
-<tr><td><span style="color:#FFD700;font-family:monospace">V*(s)</span></td><td>Optimal value of this state after convergence</td></tr>
+<tr><td>State</td><td>Operational state S0&ndash;S7</td></tr>
+<tr><td>Optimal Action</td><td>Dispatch action that maximises V*(s)</td></tr>
+<tr><td>V*(s)</td><td>Optimal value of this state after convergence</td></tr>
 </table>
 <strong>Purpose:</strong> Shows what the agent should do in each state to maximise long-term value.<br><br>
 <strong>What to watch:</strong><br>
 &bull; A1 (skill-matched) should dominate &mdash; skill match gives highest reward<br>
-&bull; A3 (Hold) should never appear in <span style="color:#FFD700;font-family:monospace">S_6</span>/<span style="color:#FFD700;font-family:monospace">S_7</span> &mdash; penalty too high<br>
-&bull; Changing <span style="color:#FFD700;font-family:monospace">&gamma;</span> may change the policy in intermediate states
+&bull; A3 (Hold) should never appear in S6/S7 &mdash; penalty too high<br>
+&bull; Changing &gamma; may change the policy in intermediate states
 </div>
 
-<h3>&#x1F4C9; Convergence Curve <span style="color:#FFD700;font-family:monospace">\\|&Delta; V\\|_&infin;</span></h3>
+<h3>&#x1F4C9; Convergence Curve ||&Delta;V||<sub>&infin;</sub></h3>
 <div class="card green">
 <strong>Axes:</strong><br>
-&bull; X-axis: Bellman iteration number <span style="color:#FFD700;font-family:monospace">(0, 1, 2, &hellip;)</span><br>
-&bull; Y-axis: maximum value change <span style="color:#FFD700;font-family:monospace">\\|V<sup>(k+1)</sup> - V<sup>(k)</sup>\\|_&infin;</span> (log scale)<br><br>
-<strong>Purpose:</strong> Shows how fast the algorithm converges to <span style="color:#FFD700;font-family:monospace">V*</span>. Each iteration reduces the error by factor <span style="color:#FFD700;font-family:monospace">&gamma;</span>.<br><br>
+&bull; X-axis: Bellman iteration number (0, 1, 2, &hellip;)<br>
+&bull; Y-axis: maximum value change ||V<sup>(k+1)</sup> &minus; V<sup>(k)</sup>||<sub>&infin;</sub> (log scale)<br><br>
+<strong>Purpose:</strong> Shows how fast the algorithm converges to V*. Each iteration reduces the error by factor &gamma;.<br><br>
 <strong>What to watch:</strong><br>
 &bull; Curve should be monotonically decreasing &mdash; if not, implementation error<br>
-&bull; Slope <span style="color:#FFD700;font-family:monospace">pprox \\log(&gamma;)</span> &mdash; higher <span style="color:#FFD700;font-family:monospace">&gamma;</span> = slower convergence<br>
-&bull; Flat curve = convergence reached &mdash; <span style="color:#FFD700;font-family:monospace">&delta; < 	heta</span>
+&bull; Slope &asymp; log(&gamma;) &mdash; higher &gamma; = slower convergence<br>
+&bull; Flat curve = convergence reached &mdash; &delta; &lt; &theta;
 </div>
 
-<h3>&#x1F525; Reward Heatmap <span style="color:#FFD700;font-family:monospace">R(s,a)</span></h3>
+<h3>&#x1F525; Reward Heatmap R(s,a)</h3>
 <div class="card orange">
 <strong>Axes:</strong><br>
-&bull; X-axis: dispatch actions <span style="color:#FFD700;font-family:monospace">A_0</span>&ndash;<span style="color:#FFD700;font-family:monospace">A_3</span><br>
-&bull; Y-axis: operational states <span style="color:#FFD700;font-family:monospace">S_0</span>&ndash;<span style="color:#FFD700;font-family:monospace">S_7</span><br>
-&bull; Cell colour: reward value <span style="color:#FFD700;font-family:monospace">R(s,a)</span> &mdash; green = high, red = low<br><br>
+&bull; X-axis: dispatch actions A0&ndash;A3<br>
+&bull; Y-axis: operational states S0&ndash;S7<br>
+&bull; Cell colour: reward value R(s,a) &mdash; green = high, red = low<br><br>
 <strong>Purpose:</strong> Visualises the reward matrix &mdash; which (state, action) combinations are profitable.<br><br>
 <strong>What to watch:</strong><br>
-&bull; Column <span style="color:#FFD700;font-family:monospace">A_1</span> should be brightest &mdash; skill match gives highest reward<br>
-&bull; Column <span style="color:#FFD700;font-family:monospace">A_3</span> in <span style="color:#FFD700;font-family:monospace">S_6</span>/<span style="color:#FFD700;font-family:monospace">S_7</span> should be darkest &mdash; penalties <span style="color:#FFD700;font-family:monospace">-8</span> and <span style="color:#FFD700;font-family:monospace">-10</span><br>
-&bull; Row <span style="color:#FFD700;font-family:monospace">S_1</span> should be brighter than <span style="color:#FFD700;font-family:monospace">S_0</span> &mdash; urgency increases reward for fast response
+&bull; Column A1 should be brightest &mdash; skill match gives highest reward<br>
+&bull; Column A3 in S6/S7 should be darkest &mdash; penalties &minus;8 and &minus;10<br>
+&bull; Row S1 should be brighter than S0 &mdash; urgency increases reward for fast response
 </div>
 
 <h3>&#x1F52C; Glass-Box &mdash; Bellman Update Trace</h3>
@@ -876,27 +874,27 @@ Use when <span style="color:#FFD700;font-family:monospace">|S| &le; 1000</span>.
 <strong>Glass-Box table columns:</strong>
 <table><tr><th>Column</th><th>Meaning</th><th>Example</th></tr>
 <tr><td>Iteration</td><td>Bellman iteration number (1, 2, 3)</td><td>1</td></tr>
-<tr><td>State</td><td>Operational state being updated</td><td><span style="color:#FFD700;font-family:monospace">S_0</span></td></tr>
-<tr><td>Old <span style="color:#FFD700;font-family:monospace">V(s)</span></td><td>State value before update</td><td>0.0000</td></tr>
-<tr><td>New <span style="color:#FFD700;font-family:monospace">V(s)</span></td><td>State value after Bellman update</td><td>8.0000</td></tr>
-<tr><td><span style="color:#FFD700;font-family:monospace">&Delta; V</span></td><td>Value change <span style="color:#FFD700;font-family:monospace">= |V<sup>new</sup> - V<sup>old</sup>|</span></td><td>8.0000</td></tr>
-<tr><td>Best Action</td><td>Action that gave the highest value</td><td><span style="color:#FFD700;font-family:monospace">A_1</span></td></tr>
+<tr><td>State</td><td>Operational state being updated</td><td>S0</td></tr>
+<tr><td>Old V(s)</td><td>State value before update</td><td>0.0000</td></tr>
+<tr><td>New V(s)</td><td>State value after Bellman update</td><td>8.0000</td></tr>
+<tr><td>&Delta;V</td><td>Value change = |V<sup>new</sup> &minus; V<sup>old</sup>|</td><td>8.0000</td></tr>
+<tr><td>Best Action</td><td>Action that gave the highest value</td><td>A1</td></tr>
 </table>
 <strong>Purpose:</strong> Shows exactly how Bellman updates each state step by step.<br><br>
 <strong>What to watch:</strong><br>
-&bull; <span style="color:#FFD700;font-family:monospace">&Delta; V</span> in iteration <span style="color:#FFD700;font-family:monospace">k+1</span> should be <span style="color:#FFD700;font-family:monospace">pprox &gamma; &middot; &Delta; V</span> in iteration <span style="color:#FFD700;font-family:monospace">k</span> (contraction theorem)<br>
-&bull; Best Action should stabilise after a few iterations &mdash; that is <span style="color:#FFD700;font-family:monospace">&pi;^*</span><br>
-&bull; Old <span style="color:#FFD700;font-family:monospace">V(s)</span> in iteration 1 = 0 for all states (initialisation)
+&bull; &Delta;V in iteration k+1 should be &asymp; &gamma; &middot; &Delta;V in iteration k (contraction theorem)<br>
+&bull; Best Action should stabilise after a few iterations &mdash; that is &pi;*<br>
+&bull; Old V(s) in iteration 1 = 0 for all states (initialisation)
 </div>
 
 <h3>&#x1F4CB; Results Summary Table</h3>
 <div class="card purple">
 <strong>Table columns:</strong>
 <table><tr><th>Column</th><th>Meaning</th></tr>
-<tr><td>Iterations to converge</td><td>Number of Bellman iterations until <span style="color:#FFD700;font-family:monospace">&delta; < 	heta</span></td></tr>
-<tr><td>Best operational state</td><td>State with highest <span style="color:#FFD700;font-family:monospace">V*(s)</span> &mdash; should be <span style="color:#FFD700;font-family:monospace">S_0</span></td></tr>
-<tr><td>Worst operational state</td><td>State with lowest <span style="color:#FFD700;font-family:monospace">V*(s)</span> &mdash; should be <span style="color:#FFD700;font-family:monospace">S_7</span></td></tr>
-<tr><td><span style="color:#FFD700;font-family:monospace">V*(s)</span> range</td><td>Spread of values from min to max</td></tr>
+<tr><td>Iterations to converge</td><td>Number of Bellman iterations until &delta; &lt; &theta;</td></tr>
+<tr><td>Best operational state</td><td>State with highest V*(s) &mdash; should be S0</td></tr>
+<tr><td>Worst operational state</td><td>State with lowest V*(s) &mdash; should be S7</td></tr>
+<tr><td>V*(s) range</td><td>Spread of values from min to max</td></tr>
 <tr><td>Contraction verified</td><td>Whether the contraction theorem was confirmed</td></tr>
 </table>
 </div>
@@ -905,11 +903,11 @@ Use when <span style="color:#FFD700;font-family:monospace">|S| &le; 1000</span>.
 <!-- EXERCISES -->
 <div id="exercises" class="tab-content">
 <h2>&#x1F9EA; Hands-On Exercises</h2>
-<div class="card"><h3>Exercise 1 &mdash; <span style="color:#FFD700;font-family:monospace">&gamma;</span> sensitivity</h3>Run with <span style="color:#FFD700;font-family:monospace">&gamma;=0.99</span> then <span style="color:#FFD700;font-family:monospace">&gamma;=0.5</span>. How does the range of <span style="color:#FFD700;font-family:monospace">V*(s)</span> change? Why does <span style="color:#FFD700;font-family:monospace">S_7</span> get worse with higher <span style="color:#FFD700;font-family:monospace">&gamma;</span>?</div>
-<div class="card blue"><h3>Exercise 2 &mdash; <span style="color:#FFD700;font-family:monospace">	heta</span> precision</h3>Compare <span style="color:#FFD700;font-family:monospace">	heta=10<sup>-3</sup></span> vs <span style="color:#FFD700;font-family:monospace">	heta=10<sup>-7</sup></span>. More iterations? Is the policy different?</div>
-<div class="card orange"><h3>Exercise 3 &mdash; Policy verification</h3>Does the optimal policy always choose <span style="color:#FFD700;font-family:monospace">A_1</span>? Find a state where <span style="color:#FFD700;font-family:monospace">A_0</span> or <span style="color:#FFD700;font-family:monospace">A_2</span> might be preferred.</div>
-<div class="card green"><h3>Exercise 4 &mdash; Contraction</h3>In the Glass-Box, verify that <span style="color:#FFD700;font-family:monospace">&Delta; V<sub>k+1</sub> pprox &gamma; &middot; &Delta; V_k</span>. This is the contraction mapping theorem in action.</div>
-<div class="card purple"><h3>Exercise 5 &mdash; LU vs VI</h3>Run with <span style="color:#FFD700;font-family:monospace">&gamma;=0.95</span> and <span style="color:#FFD700;font-family:monospace">	heta=10<sup>-6</sup></span>. Check in the Rust code whether VI and LU results differ by less than <span style="color:#FFD700;font-family:monospace">10<sup>-4</sup></span>.</div>
+<div class="card"><h3>Exercise 1 &mdash; &gamma; sensitivity</h3>Run with &gamma;=0.99 then &gamma;=0.5. How does the range of V*(s) change? Why does S7 get worse with higher &gamma;?</div>
+<div class="card blue"><h3>Exercise 2 &mdash; &theta; precision</h3>Compare &theta;=1e-3 vs &theta;=1e-7. More iterations? Is the policy different?</div>
+<div class="card orange"><h3>Exercise 3 &mdash; Policy verification</h3>Does the optimal policy always choose A1? Find a state where A0 or A2 might be preferred.</div>
+<div class="card green"><h3>Exercise 4 &mdash; Contraction</h3>In the Glass-Box, verify that &Delta;V<sub>k+1</sub> &asymp; &gamma; &middot; &Delta;V<sub>k</sub>. This is the contraction mapping theorem in action.</div>
+<div class="card purple"><h3>Exercise 5 &mdash; LU vs VI</h3>Run with &gamma;=0.95 and &theta;=1e-6. Check in the Rust code whether VI and LU results differ by less than 1e-4.</div>
 </div>
 
 <!-- TASKS -->
@@ -919,53 +917,53 @@ Use when <span style="color:#FFD700;font-family:monospace">|S| &le; 1000</span>.
 
 <div class="task-card">
 <h3>Task 1 &mdash; Manual Bellman Iteration</h3>
-<p>You have 2 states (<span style="color:#FFD700;font-family:monospace">S_0</span>, <span style="color:#FFD700;font-family:monospace">S_7</span>) and 1 action. <span style="color:#FFD700;font-family:monospace">R(S_0,A_0)=8</span>, <span style="color:#FFD700;font-family:monospace">R(S_7,A_0)=1</span>. <span style="color:#FFD700;font-family:monospace">P(S_0|S_0,A_0)=0.9</span>, <span style="color:#FFD700;font-family:monospace">P(S_7|S_0,A_0)=0.1</span>. <span style="color:#FFD700;font-family:monospace">P(S_0|S_7,A_0)=0.2</span>, <span style="color:#FFD700;font-family:monospace">P(S_7|S_7,A_0)=0.8</span>. <span style="color:#FFD700;font-family:monospace">&gamma;=0.9</span>. Perform 2 Bellman iterations manually starting from <span style="color:#FFD700;font-family:monospace">V(S_0)=V(S_7)=0</span>.</p>
+<p>You have 2 states (S0, S7) and 1 action. R(S0,A0)=8, R(S7,A0)=1. P(S0|S0,A0)=0.9, P(S7|S0,A0)=0.1. P(S0|S7,A0)=0.2, P(S7|S7,A0)=0.8. &gamma;=0.9. Perform 2 Bellman iterations manually starting from V(S0)=V(S7)=0.</p>
 <details>
 <summary>&#x1F4A1; Show answer</summary>
 <div class="answer">
 <strong>Iteration 1:</strong><br>
-<div class="formula">V<sup>(1)</sup>(S_0) = 8 + 0.9 &middot; (0.9 &middot; 0 + 0.1 &middot; 0) = <strong>8.0</strong></div>
-<div class="formula">V<sup>(1)</sup>(S_7) = 1 + 0.9 &middot; (0.2 &middot; 0 + 0.8 &middot; 0) = <strong>1.0</strong></div>
+<div class="formula">V<sup>(1)</sup>(S0) = 8 + 0.9 &middot; (0.9 &middot; 0 + 0.1 &middot; 0) = <strong>8.0</strong></div>
+<div class="formula">V<sup>(1)</sup>(S7) = 1 + 0.9 &middot; (0.2 &middot; 0 + 0.8 &middot; 0) = <strong>1.0</strong></div>
 <strong>Iteration 2:</strong><br>
-<div class="formula">V<sup>(2)</sup>(S_0) = 8 + 0.9 &middot; (0.9 &middot; 8 + 0.1 &middot; 1) = 8 + 0.9 &middot; 7.3 = <strong>14.57</strong></div>
-<div class="formula">V<sup>(2)</sup>(S_7) = 1 + 0.9 &middot; (0.2 &middot; 8 + 0.8 &middot; 1) = 1 + 0.9 &middot; 2.4 = <strong>3.16</strong></div>
+<div class="formula">V<sup>(2)</sup>(S0) = 8 + 0.9 &middot; (0.9 &middot; 8 + 0.1 &middot; 1) = 8 + 0.9 &middot; 7.3 = <strong>14.57</strong></div>
+<div class="formula">V<sup>(2)</sup>(S7) = 1 + 0.9 &middot; (0.2 &middot; 8 + 0.8 &middot; 1) = 1 + 0.9 &middot; 2.4 = <strong>3.16</strong></div>
 </div>
 </details>
 </div>
 
 <div class="task-card">
 <h3>Task 2 &mdash; Find the Optimal Policy</h3>
-<p>For state <span style="color:#FFD700;font-family:monospace">S_1</span> you have <span style="color:#FFD700;font-family:monospace">V*(S_0)=50</span>, <span style="color:#FFD700;font-family:monospace">V*(S_7)=10</span>. Transition matrix for <span style="color:#FFD700;font-family:monospace">S_1</span>:<br>
-<span style="color:#FFD700;font-family:monospace">A_0</span>: <span style="color:#FFD700;font-family:monospace">P(S_0|S_1,A_0)=0.6</span>, <span style="color:#FFD700;font-family:monospace">P(S_7|S_1,A_0)=0.4</span>, <span style="color:#FFD700;font-family:monospace">R(S_1,A_0)=6</span><br>
-<span style="color:#FFD700;font-family:monospace">A_1</span>: <span style="color:#FFD700;font-family:monospace">P(S_0|S_1,A_1)=0.8</span>, <span style="color:#FFD700;font-family:monospace">P(S_7|S_1,A_1)=0.2</span>, <span style="color:#FFD700;font-family:monospace">R(S_1,A_1)=9</span><br>
-<span style="color:#FFD700;font-family:monospace">&gamma;=0.95</span>. Which action is optimal?</p>
+<p>For state S1 you have V*(S0)=50, V*(S7)=10.<br>
+A0: P(S0|S1,A0)=0.6, P(S7|S1,A0)=0.4, R(S1,A0)=6<br>
+A1: P(S0|S1,A1)=0.8, P(S7|S1,A1)=0.2, R(S1,A1)=9<br>
+&gamma;=0.95. Which action is optimal?</p>
 <details>
 <summary>&#x1F4A1; Show answer</summary>
 <div class="answer">
-<div class="formula">Q(S_1,A_0) = 6 + 0.95 &middot; (0.6 &middot; 50 + 0.4 &middot; 10) = 6 + 0.95 &middot; 34 = <strong>38.3</strong></div>
-<div class="formula">Q(S_1,A_1) = 9 + 0.95 &middot; (0.8 &middot; 50 + 0.2 &middot; 10) = 9 + 0.95 &middot; 42 = <strong>48.9</strong></div>
-Optimal action: <span style="color:#FFD700;font-family:monospace"><strong>A_1</strong></span> since <span style="color:#FFD700;font-family:monospace">Q(S_1,A_1) > Q(S_1,A_0)</span>
+<div class="formula">Q(S1,A0) = 6 + 0.95 &middot; (0.6 &middot; 50 + 0.4 &middot; 10) = 6 + 0.95 &middot; 34 = <strong>38.3</strong></div>
+<div class="formula">Q(S1,A1) = 9 + 0.95 &middot; (0.8 &middot; 50 + 0.2 &middot; 10) = 9 + 0.95 &middot; 42 = <strong>48.9</strong></div>
+Optimal action: <strong>A1</strong> since Q(S1,A1) &gt; Q(S1,A0)
 </div>
 </details>
 </div>
 
 <div class="task-card">
-<h3>Task 3 &mdash; Effect of <span style="color:#FFD700;font-family:monospace">&gamma;</span> on Policy</h3>
-<p>For state <span style="color:#FFD700;font-family:monospace">S_4</span> you have two actions:<br>
-<span style="color:#FFD700;font-family:monospace">A_0</span>: <span style="color:#FFD700;font-family:monospace">R=3</span>, leads to <span style="color:#FFD700;font-family:monospace">S_2</span> (<span style="color:#FFD700;font-family:monospace">V*=40</span>) with <span style="color:#FFD700;font-family:monospace">p=0.7</span> and <span style="color:#FFD700;font-family:monospace">S_5</span> (<span style="color:#FFD700;font-family:monospace">V*=15</span>) with <span style="color:#FFD700;font-family:monospace">p=0.3</span><br>
-<span style="color:#FFD700;font-family:monospace">A_2</span>: <span style="color:#FFD700;font-family:monospace">R=4</span>, leads to <span style="color:#FFD700;font-family:monospace">S_3</span> (<span style="color:#FFD700;font-family:monospace">V*=35</span>) with <span style="color:#FFD700;font-family:monospace">p=0.9</span> and <span style="color:#FFD700;font-family:monospace">S_6</span> (<span style="color:#FFD700;font-family:monospace">V*=8</span>) with <span style="color:#FFD700;font-family:monospace">p=0.1</span><br>
-Compute <span style="color:#FFD700;font-family:monospace">Q(S_4,A_0)</span> and <span style="color:#FFD700;font-family:monospace">Q(S_4,A_2)</span> for <span style="color:#FFD700;font-family:monospace">&gamma;=0.99</span> and <span style="color:#FFD700;font-family:monospace">&gamma;=0.5</span>. Does the policy change?</p>
+<h3>Task 3 &mdash; Effect of &gamma; on Policy</h3>
+<p>For state S4:<br>
+A0: R=3, leads to S2 (V*=40) with p=0.7 and S5 (V*=15) with p=0.3<br>
+A2: R=4, leads to S3 (V*=35) with p=0.9 and S6 (V*=8) with p=0.1<br>
+Compute Q(S4,A0) and Q(S4,A2) for &gamma;=0.99 and &gamma;=0.5. Does the policy change?</p>
 <details>
 <summary>&#x1F4A1; Show answer</summary>
 <div class="answer">
-<strong><span style="color:#FFD700;font-family:monospace">&gamma;=0.99</span>:</strong><br>
-<div class="formula">Q(S_4,A_0) = 3 + 0.99 &middot; (0.7 &middot; 40 + 0.3 &middot; 15) = 3 + 0.99 &middot; 32.5 = <strong>35.175</strong></div>
-<div class="formula">Q(S_4,A_2) = 4 + 0.99 &middot; (0.9 &middot; 35 + 0.1 &middot; 8) = 4 + 0.99 &middot; 32.3 = <strong>35.977</strong></div>
-Optimal: <span style="color:#FFD700;font-family:monospace">A_2</span><br><br>
-<strong><span style="color:#FFD700;font-family:monospace">&gamma;=0.5</span>:</strong><br>
-<div class="formula">Q(S_4,A_0) = 3 + 0.5 &middot; 32.5 = <strong>19.25</strong></div>
-<div class="formula">Q(S_4,A_2) = 4 + 0.5 &middot; 32.3 = <strong>20.15</strong></div>
-Optimal: <span style="color:#FFD700;font-family:monospace">A_2</span> (same policy, but smaller difference)
+<strong>&gamma;=0.99:</strong>
+<div class="formula">Q(S4,A0) = 3 + 0.99 &middot; (0.7 &middot; 40 + 0.3 &middot; 15) = 3 + 0.99 &middot; 32.5 = <strong>35.175</strong></div>
+<div class="formula">Q(S4,A2) = 4 + 0.99 &middot; (0.9 &middot; 35 + 0.1 &middot; 8) = 4 + 0.99 &middot; 32.3 = <strong>35.977</strong></div>
+Optimal: A2<br><br>
+<strong>&gamma;=0.5:</strong>
+<div class="formula">Q(S4,A0) = 3 + 0.5 &middot; 32.5 = <strong>19.25</strong></div>
+<div class="formula">Q(S4,A2) = 4 + 0.5 &middot; 32.3 = <strong>20.15</strong></div>
+Optimal: A2 (same policy, but smaller difference)
 </div>
 </details>
 </div>
@@ -973,30 +971,30 @@ Optimal: <span style="color:#FFD700;font-family:monospace">A_2</span> (same poli
 <div class="task-card">
 <h3>Task 4 &mdash; Verify the Contraction</h3>
 <p>In the Glass-Box you see:<br>
-Iteration 1: <span style="color:#FFD700;font-family:monospace">\\max &Delta; V = 8.0</span><br>
-Iteration 2: <span style="color:#FFD700;font-family:monospace">\\max &Delta; V = 7.2</span><br>
-Iteration 3: <span style="color:#FFD700;font-family:monospace">\\max &Delta; V = 6.48</span><br>
-What is the value of <span style="color:#FFD700;font-family:monospace">&gamma;</span>? Is the contraction theorem satisfied?</p>
+Iteration 1: max &Delta;V = 8.0<br>
+Iteration 2: max &Delta;V = 7.2<br>
+Iteration 3: max &Delta;V = 6.48<br>
+What is the value of &gamma;? Is the contraction theorem satisfied?</p>
 <details>
 <summary>&#x1F4A1; Show answer</summary>
 <div class="answer">
-<div class="formula">&gamma; = rac{&delta;_2}{&delta;_1} = rac{7.2}{8.0} = <strong>0.9</strong></div>
-Verification: <span style="color:#FFD700;font-family:monospace">rac{&delta;_3}{&delta;_2} = rac{6.48}{7.2} = 0.9</span> &#x2714;<br>
-The contraction theorem is satisfied: each iteration reduces the error by factor <span style="color:#FFD700;font-family:monospace">&gamma;=0.9</span>.
+<div class="formula">&gamma; = &delta;<sub>2</sub> / &delta;<sub>1</sub> = 7.2 / 8.0 = <strong>0.9</strong></div>
+Verification: &delta;<sub>3</sub> / &delta;<sub>2</sub> = 6.48 / 7.2 = 0.9 &#x2714;<br>
+The contraction theorem is satisfied: each iteration reduces the error by factor &gamma;=0.9.
 </div>
 </details>
 </div>
 
 <div class="task-card">
 <h3>Task 5 &mdash; When to use LU instead of VI?</h3>
-<p>You have an ASP system with 50 states and 10 actions. You estimate VI needs 500 iterations to converge. Compare the computational cost of VI vs LU decomposition.</p>
+<p>You have an ASP system with 50 states and 10 actions. VI needs 500 iterations to converge. Compare the computational cost of VI vs LU decomposition.</p>
 <details>
 <summary>&#x1F4A1; Show answer</summary>
 <div class="answer">
-<div class="formula">ext{VI cost} = O(|S|^2 &middot; |A| &middot; 	ext{iterations}) = O(50^2 &middot; 10 &middot; 500) = O(12{,}500{,}000)</div>
-<div class="formula">ext{LU cost} = O(|S|^3) = O(50^3) = O(125{,}000)</div>
-<strong>Conclusion:</strong> For 50 states, LU is ~100x faster. Use LU when <span style="color:#FFD700;font-family:monospace">|S| &le; 1000</span>.<br>
-For <span style="color:#FFD700;font-family:monospace">|S| = 10{,}000</span>: LU <span style="color:#FFD700;font-family:monospace">= O(10<sup>12</sup>)</span> &mdash; too slow. Use VI instead.
+<div class="formula">VI cost = O(|S|<sup>2</sup> &middot; |A| &middot; iters) = O(50<sup>2</sup> &middot; 10 &middot; 500) = O(12,500,000)</div>
+<div class="formula">LU cost = O(|S|<sup>3</sup>) = O(50<sup>3</sup>) = O(125,000)</div>
+<strong>Conclusion:</strong> For 50 states, LU is ~100x faster. Use LU when |S| &le; 1000.<br>
+For |S| = 10,000: LU = O(10<sup>12</sup>) &mdash; too slow. Use VI instead.
 </div>
 </details>
 </div>
@@ -1008,78 +1006,77 @@ For <span style="color:#FFD700;font-family:monospace">|S| = 10{,}000</span>: LU 
 <p style="color:#9ca3af;margin-bottom:1.5rem">Answer all 10 questions and click "Check results". Pass threshold: <strong>90% (9/10)</strong>.</p>
 
 <div class="quiz-question" id="q1">
-<p>1. What does <span style="color:#FFD700;font-family:monospace">V*(s)</span> represent in the Bellman equation?</p>
-<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">The immediate reward for action <span style="color:#FFD700;font-family:monospace">a</span> in state <span style="color:#FFD700;font-family:monospace">s</span></label></div>
-<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">The optimal long-term value of state <span style="color:#FFD700;font-family:monospace">s</span></label></div>
-<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">The probability of transitioning to state <span style="color:#FFD700;font-family:monospace">s</span></label></div>
+<p>1. What does V*(s) represent in the Bellman equation?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">The immediate reward for action a in state s</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">The optimal long-term value of state s</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">The probability of transitioning to state s</label></div>
 </div>
 
 <div class="quiz-question" id="q2">
 <p>2. What is the stopping condition for Value Iteration?</p>
 <div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">After a fixed number of iterations (e.g. 1000)</label></div>
-<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">When <span style="color:#FFD700;font-family:monospace">max<sub>s</sub> |V<sup>(k+1)</sup>(s) - V<sup>(k)</sup>(s)| < 	heta</span></label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">When max|V<sup>(k+1)</sup>(s) &minus; V<sup>(k)</sup>(s)| &lt; &theta;</label></div>
 <div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">When the policy does not change for 10 iterations</label></div>
 </div>
 
 <div class="quiz-question" id="q3">
-<p>3. Why is <span style="color:#FFD700;font-family:monospace">V*(S_0) > V*(S_7)</span> in the ASP?</p>
-<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">Because <span style="color:#FFD700;font-family:monospace">S_0</span> has more technicians than <span style="color:#FFD700;font-family:monospace">S_7</span></label></div>
-<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">Because from <span style="color:#FFD700;font-family:monospace">S_0</span> the agent can achieve higher long-term rewards than from <span style="color:#FFD700;font-family:monospace">S_7</span></label></div>
-<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">Because <span style="color:#FFD700;font-family:monospace">S_0</span> has a higher immediate reward than <span style="color:#FFD700;font-family:monospace">S_7</span></label></div>
+<p>3. Why is V*(S0) &gt; V*(S7) in the ASP?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">Because S0 has more technicians than S7</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">Because from S0 the agent can achieve higher long-term rewards than from S7</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">Because S0 has a higher immediate reward than S7</label></div>
 </div>
 
 <div class="quiz-question" id="q4">
-<p>4. What does <span style="color:#FFD700;font-family:monospace">&gamma; = 0.99</span> vs <span style="color:#FFD700;font-family:monospace">&gamma; = 0.5</span> mean?</p>
-<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a"><span style="color:#FFD700;font-family:monospace">&gamma;=0.99</span> = short-sighted agent, <span style="color:#FFD700;font-family:monospace">&gamma;=0.5</span> = far-sighted</label></div>
-<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b"><span style="color:#FFD700;font-family:monospace">&gamma;=0.99</span> = far-sighted agent, <span style="color:#FFD700;font-family:monospace">&gamma;=0.5</span> = short-sighted</label></div>
-<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c"><span style="color:#FFD700;font-family:monospace">&gamma;</span> does not affect agent behaviour</label></div>
+<p>4. What does &gamma;=0.99 vs &gamma;=0.5 mean for the agent?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">&gamma;=0.99 = short-sighted agent, &gamma;=0.5 = far-sighted</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">&gamma;=0.99 = far-sighted agent, &gamma;=0.5 = short-sighted</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">&gamma; does not affect agent behaviour</label></div>
 </div>
 
 <div class="quiz-question" id="q5">
 <p>5. What does the Bellman Contraction Mapping Theorem state?</p>
-<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">The Bellman operator always increases the difference between <span style="color:#FFD700;font-family:monospace">V</span> and <span style="color:#FFD700;font-family:monospace">V'</span></label></div>
-<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b"><span style="color:#FFD700;font-family:monospace">\\|TV - TV'\\|_&infin; &le; &gamma; \\|V - V'\\|_&infin;</span> &mdash; error shrinks by factor <span style="color:#FFD700;font-family:monospace">&gamma;</span></label></div>
-<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">VI converges only when <span style="color:#FFD700;font-family:monospace">&gamma; = 1</span></label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">The Bellman operator always increases the difference between V and V'</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">||TV &minus; TV'||<sub>&infin;</sub> &le; &gamma; &middot; ||V &minus; V'||<sub>&infin;</sub> &mdash; error shrinks by factor &gamma; each iteration</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">VI converges only when &gamma; = 1</label></div>
 </div>
 
 <div class="quiz-question" id="q6">
 <p>6. When should you use <code>solve_exact()</code> (LU) instead of VI?</p>
 <div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">Always &mdash; LU is always faster</label></div>
-<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">When <span style="color:#FFD700;font-family:monospace">|S| &le; 1000</span> &mdash; LU has cost <span style="color:#FFD700;font-family:monospace">O(|S|^3)</span> so it pays off for small state spaces</label></div>
-<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">When <span style="color:#FFD700;font-family:monospace">&gamma; > 0.99</span></label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">When |S| &le; 1000 &mdash; LU has cost O(|S|<sup>3</sup>) so it pays off for small state spaces</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">When &gamma; &gt; 0.99</label></div>
 </div>
 
 <div class="quiz-question" id="q7">
-<p>7. Why is action <span style="color:#FFD700;font-family:monospace">A_3</span> (Hold) penalised in states <span style="color:#FFD700;font-family:monospace">S_6</span> and <span style="color:#FFD700;font-family:monospace">S_7</span>?</p>
-<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">Because <span style="color:#FFD700;font-family:monospace">A_3</span> is always a bad action regardless of state</label></div>
-<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">Because in <span style="color:#FFD700;font-family:monospace">S_6</span>/<span style="color:#FFD700;font-family:monospace">S_7</span> waiting for a better technician increases SLA breach risk &mdash; penalties <span style="color:#FFD700;font-family:monospace">-8</span> and <span style="color:#FFD700;font-family:monospace">-10</span></label></div>
-<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">Because <span style="color:#FFD700;font-family:monospace">A_3</span> does not exist in states <span style="color:#FFD700;font-family:monospace">S_6</span> and <span style="color:#FFD700;font-family:monospace">S_7</span></label></div>
+<p>7. Why is action A3 (Hold) penalised in states S6 and S7?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">Because A3 is always a bad action regardless of state</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">Because in S6/S7 waiting for a better technician increases SLA breach risk &mdash; penalties &minus;8 and &minus;10</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">Because A3 does not exist in states S6 and S7</label></div>
 </div>
 
 <div class="quiz-question" id="q8">
-<p>8. What does the "<span style="color:#FFD700;font-family:monospace">&Delta; V</span>" column in the Glass-Box show?</p>
+<p>8. What does the "&Delta;V" column in the Glass-Box show?</p>
 <div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">The difference between reward and state value</label></div>
-<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">The change in state value in a given iteration: <span style="color:#FFD700;font-family:monospace">|V<sup>(k+1)</sup>(s) - V<sup>(k)</sup>(s)|</span></label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">The change in state value in a given iteration: |V<sup>(k+1)</sup>(s) &minus; V<sup>(k)</sup>(s)|</label></div>
 <div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">The difference between the best and worst action</label></div>
 </div>
 
 <div class="quiz-question" id="q9">
 <p>9. What are the prerequisites for Value Iteration?</p>
-<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">Only the reward function <span style="color:#FFD700;font-family:monospace">R(s,a)</span></label></div>
-<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">Full model: transition matrix <span style="color:#FFD700;font-family:monospace">P(s'|s,a)</span> and reward function <span style="color:#FFD700;font-family:monospace">R(s,a)</span></label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">Only the reward function R(s,a)</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">Full model: transition matrix P(s'|s,a) and reward function R(s,a)</label></div>
 <div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">Only simulation samples &mdash; no model needed</label></div>
 </div>
 
 <div class="quiz-question" id="q10">
-<p>10. What happens to the convergence curve when you decrease <span style="color:#FFD700;font-family:monospace">	heta</span> from <span style="color:#FFD700;font-family:monospace">10<sup>-3</sup></span> to <span style="color:#FFD700;font-family:monospace">10<sup>-7</sup></span>?</p>
+<p>10. What happens to the convergence curve when you decrease &theta; from 1e-3 to 1e-7?</p>
 <div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">The curve gets shorter &mdash; fewer iterations needed</label></div>
 <div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">The curve gets longer &mdash; more iterations needed to reach the smaller threshold</label></div>
-<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">The curve does not change &mdash; <span style="color:#FFD700;font-family:monospace">	heta</span> does not affect the number of iterations</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">The curve does not change &mdash; &theta; does not affect the number of iterations</label></div>
 </div>
 
 <button class="btn" onclick="checkQuiz()">&#x2705; Check results</button>
 <button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
-
 <div id="quiz-result"></div>
 </div>
 
@@ -1089,12 +1086,12 @@ For <span style="color:#FFD700;font-family:monospace">|S| = 10{,}000</span>: LU 
 <div class="kpi">
 <div class="kpi-card"><div class="kpi-val">8</div><div class="kpi-label">Operational States</div></div>
 <div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Dispatch Actions</div></div>
-<div class="kpi-card"><div class="kpi-val"><span style="color:#FFD700;font-family:monospace">&gamma;</span></div><div class="kpi-label">Farsightedness</div></div>
-<div class="kpi-card"><div class="kpi-val"><span style="color:#FFD700;font-family:monospace">	heta</span></div><div class="kpi-label">Precision</div></div>
+<div class="kpi-card"><div class="kpi-val">&gamma;</div><div class="kpi-label">Farsightedness</div></div>
+<div class="kpi-card"><div class="kpi-val">&theta;</div><div class="kpi-label">Precision</div></div>
 </div>
 <div class="grid2">
-<div class="card green"><strong>&#x2705; Pros</strong><ul><li>Guaranteed convergence to <span style="color:#FFD700;font-family:monospace">V*</span></li><li>Exact solution, no approximation error</li><li>Interpretable: <span style="color:#FFD700;font-family:monospace">V*(s)</span> explains every decision</li><li>LU decomposition for small <span style="color:#FFD700;font-family:monospace">|S|</span></li></ul></div>
-<div class="card red"><strong>&#x274C; Cons</strong><ul><li>Requires full model <span style="color:#FFD700;font-family:monospace">P(s'|s,a)</span></li><li>State space must be discrete and finite</li><li>Curse of dimensionality: <span style="color:#FFD700;font-family:monospace">O(|S|^2 &middot; |A|)</span> per iteration</li></ul></div>
+<div class="card green"><strong>&#x2705; Pros</strong><ul><li>Guaranteed convergence to V*</li><li>Exact solution, no approximation error</li><li>Interpretable: V*(s) explains every decision</li><li>LU decomposition for small |S|</li></ul></div>
+<div class="card red"><strong>&#x274C; Cons</strong><ul><li>Requires full model P(s'|s,a)</li><li>State space must be discrete and finite</li><li>Curse of dimensionality: O(|S|<sup>2</sup> &middot; |A|) per iteration</li></ul></div>
 </div>
 <div class="card green">Value Iteration is the <strong>foundation of all model-based RL</strong>. Every algorithm from Ch03 onwards either uses VI directly or approximates it. Master this chapter before moving on.</div>
 </div>
