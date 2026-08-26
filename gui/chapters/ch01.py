@@ -1,4 +1,5 @@
 
+import os
 import streamlit as st
 import plotly.graph_objects as go
 import json
@@ -129,235 +130,6 @@ This produces realistic SLA rates of 77–93% depending on dispatch quality.
 def _tx(lang=None):
     import copy
     return copy.deepcopy(T.get("EN", {}))
-
-def _render_handbook():
-    _hcol1, _hcol2 = st.columns([8, 1])
-    with _hcol1:
-        st.subheader("Hands-On Guide — Chapter 01")
-    with _hcol2:
-        import re as _re
-        _src = open(__file__, encoding="utf-8").read()
-        _m = _re.search(r'st\.iframe\(\s*"""(.*?)"""', _src, _re.DOTALL)
-        if _m:
-            st.download_button("💾 Save", data=_m.group(1), file_name="handson_ch01_en.html", mime="text/html")
-    st.iframe(
-        """<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hands-On Guide &mdash; Chapter 01</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
-.container{max-width:960px;margin:0 auto;padding:2rem}
-h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
-h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
-h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
-.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
-.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
-.tab-btn:hover{background:#252840;color:#e8eaf6}
-.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
-.tab-content{display:none}
-.tab-content.active{display:block}
-.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
-.card.green{border-left-color:#0FC373}
-.card.blue{border-left-color:#0082F0}
-.card.orange{border-left-color:#FF8C0A}
-.card.red{border-left-color:#FF4B4B}
-.card.purple{border-left-color:#8B5CF6}
-table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
-th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
-td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
-tr:hover td{background:#252840}
-code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em}
-.formula{background:#252840;border-radius:8px;padding:1rem;margin:.75rem 0;text-align:center;font-size:1.05em;color:#FFD700;font-family:monospace}
-.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
-.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
-.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
-.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
-.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
-.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
-@media(max-width:600px){.grid2{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<div class="container">
-<h1>&#x1F4D8; Hands-On Guide &mdash; Chapter 01</h1>
-<p style="color:#9ca3af;margin-bottom:1.5rem"><em>MDP &amp; ASP Dispatch &middot; Warsaw &middot; Rust Engine &middot; Interactive Lab</em></p>
-<div class="tabs">
-  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Introduction</button>
-  <button class="tab-btn" onclick="showTab('what')">&#x2753; What is Ch01?</button>
-  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; RL Theory</button>
-  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; Environment</button>
-  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; How to use UI</button>
-  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretation</button>
-  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; Exercises</button>
-  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Summary</button>
-</div>
-<div id="intro" class="tab-content active">
-<h2>&#x1F3AF; Learning Objectives</h2>
-<div class="card green">After completing this chapter you will be able to:
-<ul>
-<li>Define the 5 components of an MDP: S, A, P, R, &gamma;</li>
-<li>Explain what a state, action, reward and return are in the ASP context</li>
-<li>Implement &epsilon;-greedy exploration and explain the exploration-exploitation trade-off</li>
-<li>Read the Warsaw map and interpret dispatch decisions as MDP transitions</li>
-<li>Read the Glass-Box and trace a full MDP tuple: (S&#x209C;, A&#x209C;, R&#x209C;, G&#x209C;)</li>
-<li>Explain why the Bellman equation is greyed out in Ch01 (activates in Ch02)</li>
-</ul>
-</div>
-<h2>&#x1F3E2; Business Problem</h2>
-<div class="card blue"><strong>Warsaw ASP Dispatch Centre</strong> &mdash; 5 technicians, up to 20 work orders per shift.<br><br>
-Every dispatch decision is an <strong>MDP action</strong>. The outcome is the <strong>reward</strong>. The sequence of decisions is an <strong>episode</strong>.<br><br>
-In Ch01 the Q-table is all zeros &mdash; this is the <em>random baseline</em> against which all future chapters are measured.</div>
-<div class="kpi">
-<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">MDP Components</div></div>
-<div class="kpi-card"><div class="kpi-val">&epsilon;</div><div class="kpi-label">Exploration rate</div></div>
-<div class="kpi-card"><div class="kpi-val">G&#x209C;</div><div class="kpi-label">Discounted return</div></div>
-<div class="kpi-card"><div class="kpi-val">Q=0</div><div class="kpi-label">Q-table in Ch01</div></div>
-</div>
-</div>
-<div id="what" class="tab-content">
-<h2>&#x2753; What is Chapter 01?</h2>
-<div class="card purple">Ch01 is the <strong>starting point of the entire RL course</strong>. There is no learning here &mdash; the agent acts randomly. The goal is to understand the MDP formalism and visualisation tools before learning is introduced.</div>
-<h2>What happens in the Rust engine?</h2>
-<div class="card">Function <code>run_ch01_episode()</code> in <code>ch01_mdp.rs</code>:
-<ol>
-<li>Generates 5 random technicians and N work orders on the Warsaw map</li>
-<li>For each order, selects a technician via &epsilon;-greedy policy (Q=0 &rarr; always random)</li>
-<li>Computes reward R&#x209C; based on: skill match, distance, urgency</li>
-<li>Computes discounted return G&#x209C; backwards through the episode</li>
-<li>Returns full MDP trace: each step (S&#x209C;, A&#x209C;, R&#x209C;, G&#x209C;, explored)</li>
-</ol>
-</div>
-<div class="card red"><strong>Ch01 does NOT:</strong>
-<ul>
-<li>&#x274C; Update Q-table &mdash; Q stays at zero throughout the episode</li>
-<li>&#x274C; Use the Bellman equation &mdash; activates in Ch02</li>
-<li>&#x274C; Learn between episodes &mdash; each episode starts fresh</li>
-<li>&#x274C; Optimise the policy &mdash; that is Ch06 (Q-Learning)</li>
-</ul>
-</div>
-</div>
-<div id="theory" class="tab-content">
-<h2>&#x1F9EE; MDP Formalism</h2>
-<table>
-<tr><th>Component</th><th>Symbol</th><th>ASP meaning</th><th>Example</th></tr>
-<tr><td>State space</td><td><strong>S</strong></td><td>Operational situation of the dispatch centre</td><td>S3: partial availability, high load</td></tr>
-<tr><td>Action space</td><td><strong>A</strong></td><td>Which technician to dispatch to which order</td><td>Send T2 to W5</td></tr>
-<tr><td>Transition model</td><td><strong>P(s'|s,a)</strong></td><td>Probability of the next state</td><td>After dispatch, T2 becomes unavailable</td></tr>
-<tr><td>Reward function</td><td><strong>R(s,a)</strong></td><td>Immediate feedback for the dispatch decision</td><td>+10 SLA met, &minus;50 SLA breached</td></tr>
-<tr><td>Discount factor</td><td><strong>&gamma;</strong></td><td>How much future rewards are valued</td><td>&gamma;=0.95: future rewards worth 95% of immediate</td></tr>
-</table>
-<h2>Discounted Return G&#x209C;</h2>
-<div class="formula">G&#x209C; = R&#x209C;&#x208A;&#x2081; + &gamma; R&#x209C;&#x208A;&#x2082; + &gamma;&sup2; R&#x209C;&#x208A;&#x2083; + &hellip;</div>
-<div class="card"><strong>Worked example</strong> (&gamma;=0.95): G&#x2080; = 10 + 0.95&times;(&minus;5) + 0.95&sup2;&times;10 = <strong>14.275</strong></div>
-<h2>&epsilon;-Greedy Policy</h2>
-<div class="card orange"><strong>With probability &epsilon;:</strong> choose a random action (explore)<br>
-<strong>With probability 1&minus;&epsilon;:</strong> choose the best known action (exploit)<br><br>
-In Ch01 Q=0 &mdash; exploit = random too. &epsilon; only matters from Ch06 onwards.</div>
-<table>
-<tr><th>&epsilon; value</th><th>Behaviour</th><th>When to use</th></tr>
-<tr><td>1.0</td><td>Always random</td><td>Start of training &mdash; know nothing</td></tr>
-<tr><td>0.5</td><td>50/50 explore/exploit</td><td>Mid-training</td></tr>
-<tr><td>0.1</td><td>Mostly exploit</td><td>Late training &mdash; policy nearly optimal</td></tr>
-<tr><td>0.0</td><td>Always greedy</td><td>Evaluation only (no learning)</td></tr>
-</table>
-<h2>Bellman Equation (greyed out in Ch01)</h2>
-<div class="card red">The Bellman equation requires the transition model P(s'|s,a):<br>
-<div class="formula">V*(s) = max_a &sum; P(s'|s,a) [ R(s,a) + &gamma; V*(s') ]</div>
-In Ch01 we don't know P(s'|s,a) &mdash; that's why it's greyed out. Ch02 builds the transition matrix and activates it.</div>
-</div>
-<div id="env" class="tab-content">
-<h2>&#x1F5FA; Warsaw ASP Environment</h2>
-<h3>Technicians (T0&ndash;T4)</h3>
-<table>
-<tr><th>Attribute</th><th>Effect on reward</th></tr>
-<tr><td>Position (lat, lon)</td><td>Distance to order &rarr; travel time</td></tr>
-<tr><td>Skill</td><td>Match to order = bonus, mismatch = penalty</td></tr>
-<tr><td>Availability</td><td>Unavailable technician cannot be dispatched</td></tr>
-</table>
-<h3>Work Orders (W0&ndash;W9)</h3>
-<table>
-<tr><th>Attribute</th><th>Effect on reward</th></tr>
-<tr><td>Position (lat, lon)</td><td>Distance from technician</td></tr>
-<tr><td>Required skill</td><td>Mismatch &rarr; penalty</td></tr>
-<tr><td>Urgency (0.0&ndash;1.0)</td><td>High urgency + delay &rarr; large penalty</td></tr>
-</table>
-<h3>Reward Function R(s,a)</h3>
-<div class="card"><code>R = base + skill_bonus - distance_penalty - urgency_penalty + sla_bonus/penalty</code></div>
-</div>
-<div id="ui" class="tab-content">
-<h2>&#x1F3AE; How to use the Ch01 interface</h2>
-<div class="step"><div class="step-num">1</div><div><strong>Set &epsilon; (exploration rate)</strong><br>Move the slider. &epsilon;=1.0: always random. &epsilon;=0.0: always greedy (in Ch01 = random too since Q=0). Start with &epsilon;=0.5.</div></div>
-<div class="step"><div class="step-num">2</div><div><strong>Set number of technicians and orders</strong><br>5 technicians / 10 orders is a good starting point. More orders = longer episode.</div></div>
-<div class="step"><div class="step-num">3</div><div><strong>Click &#x25B6; Run Episode</strong><br>The Rust engine executes the full MDP loop and returns every step.</div></div>
-<div class="step"><div class="step-num">4</div><div><strong>Read the Warsaw map</strong><br>Blue markers = technicians (T0&ndash;T4). Coloured markers = orders (W0&ndash;W9). Green lines = SLA met. Red lines = SLA breached. Click any marker for details.</div></div>
-<div class="step"><div class="step-num">5</div><div><strong>Use the step slider</strong><br>Move to highlight a specific dispatch decision on the map and in the Glass-Box.</div></div>
-<div class="step"><div class="step-num">6</div><div><strong>Read the Glass-Box</strong><br>Each row shows the full MDP tuple: S&#x209C;, A&#x209C;, R&#x209C;, G&#x209C;. The Bellman column is greyed out &mdash; activates in Ch02.</div></div>
-<div class="step"><div class="step-num">7</div><div><strong>Read the episode summary</strong><br>Quantified business results + pros/cons of the &epsilon;-greedy method.</div></div>
-</div>
-<div id="interp" class="tab-content">
-<h2>&#x1F4CA; Interpreting results</h2>
-<h3>Warsaw Map</h3>
-<div class="card">Green lines = SLA met &mdash; dispatch was on time with the right skills.<br>
-Red lines = SLA breached &mdash; too far, wrong skills, or too slow.<br><br>
-More green lines = better episode. In Ch01 the ratio is random.</div>
-<h3>Glass-Box &mdash; MDP table</h3>
-<table>
-<tr><th>Column</th><th>Meaning</th><th>Example</th></tr>
-<tr><td><code>S&#x209C;</code></td><td>State at time t</td><td>S3: partial availability</td></tr>
-<tr><td><code>A&#x209C;</code></td><td>Action taken</td><td>Send T2 &rarr; W5</td></tr>
-<tr><td><code>R&#x209C;</code></td><td>Immediate reward</td><td>+10.0 (SLA met)</td></tr>
-<tr><td><code>G&#x209C;</code></td><td>Discounted return from this step</td><td>14.275</td></tr>
-</table>
-<div class="card red"><strong>Bellman greyed out</strong> &mdash; requires P(s'|s,a) which we don't have in Ch01. Activates in Ch02.</div>
-<h3>Learning Curve</h3>
-<div class="card blue">In Ch01 the learning curve is <strong>flat</strong> &mdash; the agent does not learn between episodes because Q=0.<br>This is intentional. Ch01 establishes the <em>random baseline</em>. From Ch06 onwards you will see the curve rise.</div>
-</div>
-<div id="exercises" class="tab-content">
-<h2>&#x1F9EA; Hands-On Exercises</h2>
-<div class="card"><h3>Exercise 1 &mdash; Baseline measurement</h3>Run 5 episodes with &epsilon;=1.0 (pure random). Record the average G&#x209C;. This is your Ch01 baseline. Every future chapter should beat this number.</div>
-<div class="card blue"><h3>Exercise 2 &mdash; &epsilon; sensitivity</h3>Run with &epsilon;=0.0 (pure greedy). Is the result better or worse than &epsilon;=1.0? Why? (Hint: Q=0 &mdash; greedy = random in Ch01)</div>
-<div class="card orange"><h3>Exercise 3 &mdash; Map reading</h3>Find the step with the largest negative reward in the Glass-Box. Click that step on the map. What went wrong? Wrong skill? Too far? Too slow?</div>
-<div class="card green"><h3>Exercise 4 &mdash; Return calculation</h3>Take the first 3 rewards from the Glass-Box and manually compute G&#x2080; using &gamma;=0.95. Verify your answer matches the G&#x209C; column.</div>
-<div class="card purple"><h3>Exercise 5 &mdash; &gamma; effect</h3>Run the same episode (same seed) with &gamma;=0.99 and &gamma;=0.5. How does G&#x2080; change? Which agent is more &ldquo;far-sighted&rdquo;?</div>
-</div>
-<div id="summary" class="tab-content">
-<h2>&#x1F4CB; Chapter 01 Summary</h2>
-<div class="kpi">
-<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">MDP Components</div></div>
-<div class="kpi-card"><div class="kpi-val">Q=0</div><div class="kpi-label">No learning</div></div>
-<div class="kpi-card"><div class="kpi-val">&epsilon;</div><div class="kpi-label">Only hyperparameter</div></div>
-<div class="kpi-card"><div class="kpi-val">Ch02</div><div class="kpi-label">Next: Bellman + VI</div></div>
-</div>
-<div class="grid2">
-<div class="card green"><strong>&#x2705; Pros</strong><ul><li>Simple implementation</li><li>Establishes baseline</li><li>Visualises MDP formalism</li><li>Works without P(s'|s,a)</li></ul></div>
-<div class="card red"><strong>&#x274C; Cons</strong><ul><li>No learning &mdash; Q=0 always</li><li>Does not optimise policy</li><li>Results are purely random</li><li>Does not use Bellman</li></ul></div>
-</div>
-<div class="card green">Ch01 establishes the <strong>random baseline</strong>. The Q-table is all zeros. Every algorithm from Ch02 onwards will learn to beat this baseline by updating Q(s,a) after each step.</div>
-</div>
-</div>
-<script>
-function showTab(id){
-  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
-  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
-  document.getElementById(id).classList.add('active');
-  event.target.classList.add('active');
-}
-</script>
-</body>
-</html>""",
-        height=4000,
-    )
-    st.markdown("---")
-    st.markdown(
-        f"&#x1F1F5;&#x1F1F1; **Wersja polska:** [Podr\u0119cznik Rozdzia&#x142; 01 (PL)](https://raw.githubusercontent.com/SMusial/rlvr-enterprise-allocator/main/docs/handson_ch01_pl.html)"
-        " &#x2014; otwiera si\u0119 w osobnym oknie przegl\u0105darki",
-        unsafe_allow_html=False,
-    )
 
 def _render_handbook_pl():
     _plcol1, _plcol2 = st.columns([8, 1])
@@ -559,6 +331,19 @@ function showTab(id){
 </html>""",
         height=4000,
     )
+
+def _render_handbook():
+    import os as _os
+    _col1, _col2 = st.columns([8, 1])
+    with _col1:
+        st.subheader("Hands-On Guide — Chapter 01 (EN)")
+    _base = _os.path.dirname(_os.path.abspath(__file__))
+    _path = _os.path.join(_base, "..", "..", "docs", "handson_ch01_en.html")
+    with open(_path, encoding="utf-8") as _f:
+        _html = _f.read()
+    with _col2:
+        st.download_button("💾 Save", data=_html, file_name="handson_ch01_en.html", mime="text/html")
+    st.iframe(_html, height=4000)
 
 def render():
     lang = "EN"

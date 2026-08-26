@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide - Chapter 01</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+    throwOnError: false
+  });
+});
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+.card.red{border-left-color:#FF4B4B}
+.card.purple{border-left-color:#8B5CF6}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154;font-size:1rem}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
+.katex-display{color:#FFD700;transform:scale(0.65);transform-origin:center;display:block;margin:1.5rem 0}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem;margin:1rem 0;text-align:center}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.task-card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #0082F0}
+.task-card h3{color:#0082F0;margin-bottom:.5rem}
+details{background:#252840;border-radius:6px;padding:.75rem 1rem;margin-top:.75rem;border-left:3px solid #FF8C0A}
+details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.9rem;user-select:none}
+details summary:hover{color:#FFB347}
+details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154;color:#e8eaf6}
+.answer .formula{font-size:1.05em;margin:.5rem 0}
+.quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
+.quiz-question p{font-weight:600;margin-bottom:.75rem;color:#e8eaf6}
+.quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0;transition:background .15s}
+.quiz-option:hover{background:#252840}
+.quiz-option input{accent-color:#8B5CF6;width:1rem;height:1rem;flex-shrink:0}
+.quiz-option label{cursor:pointer;color:#9ca3af;font-size:.9rem}
+.quiz-option.correct label{color:#0FC373;font-weight:600}
+.quiz-option.wrong label{color:#FF4B4B}
+#quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:600;display:none}
+#quiz-result.pass{background:#0FC37322;border:2px solid #0FC373;color:#0FC373}
+#quiz-result.fail{background:#FF4B4B22;border:2px solid #FF4B4B;color:#FF4B4B}
+.btn{background:#8B5CF6;color:white;border:none;padding:.6rem 1.5rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;margin-top:1rem;transition:background .2s}
+.btn:hover{background:#7C3AED}
+.btn.secondary{background:#252840;color:#9ca3af}
+.btn.secondary:hover{background:#2d3154;color:#e8eaf6}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Hands-On Guide &mdash; Chapter 01</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>MDP &amp; &epsilon;-Greedy Dispatch &middot; Warsaw ASP &middot; Rust Engine</em></p>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Introduction</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; What is Ch01?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; RL Theory</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; Environment</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; How to use UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretation</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; Exercises</button>
+  <button class="tab-btn" onclick="showTab('tasks')">&#x1F4DD; Tasks</button>
+  <button class="tab-btn" onclick="showTab('quiz')">&#x1F3AF; Quiz</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Summary</button>
+</div>
+
+<!-- INTRODUCTION -->
+<div id="intro" class="tab-content active">
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card green">After completing this chapter you will be able to:
+<ul>
+<li>Name the 5 components of an MDP: S, A, P, R, &gamma; and map each to the Warsaw ASP context</li>
+<li>Explain what a state, action, reward, and return are in a dispatch scenario</li>
+<li>Implement an &epsilon;-greedy policy and explain the exploration-exploitation trade-off</li>
+<li>Read the Warsaw map and interpret each dispatch decision as an MDP transition</li>
+<li>Read the Glass-Box and trace a full MDP tuple: $(S_t, A_t, R_t, G_t)$</li>
+<li>Explain why the Bellman equation is greyed out in Ch01</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue"><strong>Warsaw ASP Dispatch Centre</strong> &mdash; 5 technicians, up to 20 orders per shift.<br><br>
+Every dispatch decision is an <strong>MDP action</strong>. The outcome is a <strong>reward</strong>. A sequence of decisions is an <strong>episode</strong>.<br><br>
+In Ch01 the Q-table is all zeros &mdash; this is the <em>baseline</em> against which all future chapters are measured.</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">MDP Components</div></div>
+<div class="kpi-card"><div class="kpi-val">&epsilon;</div><div class="kpi-label">Exploration rate</div></div>
+<div class="kpi-card"><div class="kpi-val">$G_t$</div><div class="kpi-label">Discounted return</div></div>
+<div class="kpi-card"><div class="kpi-val">Q=0</div><div class="kpi-label">No learning in Ch01</div></div>
+</div>
+</div>
+
+<!-- WHAT IS CH01 -->
+<div id="what" class="tab-content">
+<h2>&#x2753; What is Chapter 01?</h2>
+<div class="card purple">Ch01 is the <strong>starting point of the entire RL course</strong>. There is no learning &mdash; the agent acts randomly. This is the pure MDP baseline.</div>
+<h2>What happens in the Rust engine?</h2>
+<div class="card">The function <code>run_ch01_episode()</code> in <code>ch01_mdp.rs</code>:
+<ol>
+<li>Generates 5 random technicians and N orders on the Warsaw map</li>
+<li>Selects a technician via &epsilon;-greedy policy (Q=0 &rarr; always random)</li>
+<li>Computes reward $R_t$ based on skill match, distance, and urgency</li>
+<li>Computes discounted return $G_t$ for the full episode</li>
+<li>Returns full MDP trace: $(S_t, A_t, R_t, G_t, \text{explored})$</li>
+</ol>
+</div>
+<div class="card red"><strong>Ch01 does NOT:</strong>
+<ul>
+<li>&#x274C; Update Q &mdash; Q=0 throughout the entire episode</li>
+<li>&#x274C; Use Bellman &mdash; activates in Ch02</li>
+<li>&#x274C; Learn between episodes</li>
+</ul>
+</div>
+<div class="card green"><strong>Ch01 DOES:</strong>
+<ul>
+<li>&#x2705; Establish the MDP formalism for all future chapters</li>
+<li>&#x2705; Generate the baseline $G_t$ to compare against Ch02+</li>
+<li>&#x2705; Visualise the Warsaw dispatch map</li>
+<li>&#x2705; Show the full Glass-Box MDP trace</li>
+</ul>
+</div>
+</div>
+
+<!-- RL THEORY -->
+<div id="theory" class="tab-content">
+<h2>&#x1F9EE; Markov Decision Process (MDP)</h2>
+<table><tr><th>Component</th><th>Symbol</th><th>Meaning in Warsaw ASP</th></tr>
+<tr><td>State space</td><td><strong>S</strong></td><td>Current operational situation of the dispatch centre</td></tr>
+<tr><td>Action space</td><td><strong>A</strong></td><td>Which technician to send to which order</td></tr>
+<tr><td>Transition model</td><td><strong>P(s'|s,a)</strong></td><td>Probability of the next state given (s,a)</td></tr>
+<tr><td>Reward function</td><td><strong>R(s,a)</strong></td><td>Immediate feedback after dispatch decision</td></tr>
+<tr><td>Discount factor</td><td><strong>&gamma;</strong></td><td>How much we value future rewards vs immediate</td></tr>
+</table>
+
+<h2>Discounted Return $G_t$</h2>
+<div class="formula">$$G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \cdots = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}$$</div>
+<div class="card"><strong>Example</strong> (&gamma;=0.95, 3 steps): $R_1=10$, $R_2=-5$, $R_3=10$<br>
+<div class="formula">$$G_0 = 10 + 0.95 \cdot (-5) + 0.95^2 \cdot 10 = 10 - 4.75 + 9.025 = 14.275$$</div>
+</div>
+
+<h2>&epsilon;-Greedy Policy</h2>
+<div class="formula">$$\pi(s) = \begin{cases} \text{random action} & \text{with probability } \varepsilon \\ \arg\max_a Q(s,a) & \text{with probability } 1 - \varepsilon \end{cases}$$</div>
+<div class="card orange"><strong>With probability &epsilon;:</strong> random action (exploration)<br>
+<strong>With probability 1&minus;&epsilon;:</strong> best known action (exploitation)</div>
+<table><tr><th>Value of &epsilon;</th><th>Behaviour</th><th>When to use</th></tr>
+<tr><td>1.0</td><td>Always random</td><td>Start of training (Ch01)</td></tr>
+<tr><td>0.5</td><td>50/50</td><td>Mid training</td></tr>
+<tr><td>0.1</td><td>Mostly exploit</td><td>Late training</td></tr>
+<tr><td>0.0</td><td>Always greedy</td><td>Evaluation only</td></tr>
+</table>
+
+<h2>Why Bellman is greyed out in Ch01</h2>
+<div class="card red">The Bellman update requires $P(s'|s,a)$ &mdash; the transition model. In Ch01 we only observe $(S_t, A_t, R_t)$ without building a model. Bellman activates in Ch02 where we construct $P$ analytically.</div>
+</div>
+
+<!-- ENVIRONMENT -->
+<div id="env" class="tab-content">
+<h2>&#x1F5FA; Warsaw ASP Environment</h2>
+
+<h3>Technicians (T0&ndash;T4)</h3>
+<table><tr><th>Attribute</th><th>Effect on Reward</th></tr>
+<tr><td>Position (lat, lon)</td><td>Distance penalty to order location</td></tr>
+<tr><td>Skill level</td><td>Skill match = bonus, mismatch = penalty</td></tr>
+<tr><td>Availability</td><td>Unavailable technician cannot be dispatched</td></tr>
+</table>
+
+<h3>Orders (W0&ndash;W9)</h3>
+<table><tr><th>Attribute</th><th>Effect on Reward</th></tr>
+<tr><td>Position (lat, lon)</td><td>Distance from assigned technician</td></tr>
+<tr><td>Required skill</td><td>Mismatch = penalty</td></tr>
+<tr><td>Urgency (0.0&ndash;1.0)</td><td>High urgency + delay = large penalty</td></tr>
+</table>
+
+<h3>Reward Function from <code>compute_reward()</code></h3>
+<div class="formula">$$R_t = R_{base} + R_{skill} - R_{distance} - R_{urgency} + R_{SLA}$$</div>
+<table><tr><th>Component</th><th>Value</th><th>Description</th></tr>
+<tr><td>$R_{base}$</td><td>+5.0</td><td>Base reward for any dispatch</td></tr>
+<tr><td>$R_{skill}$</td><td>+3.0</td><td>Skill match bonus</td></tr>
+<tr><td>$R_{distance}$</td><td>0&ndash;5.0</td><td>Scaled by km distance</td></tr>
+<tr><td>$R_{urgency}$</td><td>0&ndash;8.0</td><td>Urgency &times; delay penalty</td></tr>
+<tr><td>$R_{SLA}$</td><td>&plusmn;2.0</td><td>SLA met = +2, breached = &minus;2</td></tr>
+</table>
+</div>
+
+<!-- HOW TO USE UI -->
+<div id="ui" class="tab-content">
+<h2>&#x1F3AE; How to use the Ch01 interface</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Set &epsilon; (exploration rate)</strong><br>Start with &epsilon;=0.5. With Q=0, &epsilon; has no effect &mdash; agent is always random regardless.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Set number of technicians and orders</strong><br>5 technicians / 10 orders is a good starting point.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Set &gamma; (discount factor)</strong><br>Controls how much future rewards are valued. Start with 0.95.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Set random seed</strong><br>Fix the seed to reproduce the same episode. Change it to explore different scenarios.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Click &#x25B6; Run Episode</strong><br>The Rust engine generates technicians and orders, runs the episode, returns the full MDP trace.</div></div>
+<div class="step"><div class="step-num">6</div><div><strong>Read the Warsaw map</strong><br>Green markers = SLA met, red markers = SLA breached. Lines show dispatch assignments.</div></div>
+<div class="step"><div class="step-num">7</div><div><strong>Use the step slider</strong><br>Trace each dispatch decision step by step &mdash; observe $(S_t, A_t, R_t, G_t)$.</div></div>
+<div class="step"><div class="step-num">8</div><div><strong>Read the Glass-Box</strong><br>Full MDP tuple per step. Read the Summary for episode-level KPIs.</div></div>
+</div>
+
+<!-- INTERPRETATION -->
+<div id="interp" class="tab-content">
+<h2>&#x1F4CA; Interpreting the results</h2>
+
+<h3>&#x1F5FA; Warsaw Dispatch Map</h3>
+<div class="card blue">
+<strong>What is shown:</strong><br>
+&bull; Blue circles = technician positions (T0&ndash;T4)<br>
+&bull; Green squares = orders with SLA met<br>
+&bull; Red squares = orders with SLA breached<br>
+&bull; Lines = dispatch assignments (technician &rarr; order)<br><br>
+<strong>Purpose:</strong> Visualises the geographic distribution of dispatches and SLA outcomes across Warsaw.<br><br>
+<strong>What to watch:</strong><br>
+&bull; Many red squares = poor dispatch quality (random in Ch01 is expected)<br>
+&bull; Long lines = high distance penalty in reward<br>
+&bull; Change seed to see different geographic distributions
+</div>
+
+<h3>&#x1F4CA; Reward per Step Chart</h3>
+<div class="card">
+<strong>Axes:</strong><br>
+&bull; X-axis: step number $t$ (each step = one dispatch decision)<br>
+&bull; Y-axis: immediate reward $R_t$ for that step<br><br>
+<strong>Purpose:</strong> Shows how reward varies across dispatch decisions in a single episode.<br><br>
+<strong>What to watch:</strong><br>
+&bull; Large negative spikes = high urgency order + mismatch or long distance<br>
+&bull; High positive bars = skill match + short distance + SLA met<br>
+&bull; In Ch01 the pattern is random &mdash; no learning signal
+</div>
+
+<h3>&#x1F4C9; Discounted Return $G_t$ Chart</h3>
+<div class="card green">
+<strong>Axes:</strong><br>
+&bull; X-axis: step number $t$<br>
+&bull; Y-axis: discounted return $G_t$ from step $t$ to end of episode<br><br>
+<strong>Purpose:</strong> Shows the long-term value of the remaining episode from each step.<br><br>
+<strong>What to watch:</strong><br>
+&bull; $G_0$ = total episode return &mdash; this is the Ch01 baseline<br>
+&bull; $G_t$ decreases as the episode progresses (fewer future steps)<br>
+&bull; Compare $G_0$ across multiple seeds to estimate baseline variability
+</div>
+
+<h3>&#x1F52C; Glass-Box &mdash; MDP Trace</h3>
+<div class="card">
+<strong>Glass-Box table columns:</strong>
+<table><tr><th>Column</th><th>Meaning</th><th>Example</th></tr>
+<tr><td>Step $t$</td><td>Dispatch step number</td><td>0</td></tr>
+<tr><td>State $S_t$</td><td>Operational state before dispatch</td><td>S2</td></tr>
+<tr><td>Action $A_t$</td><td>Technician dispatched to order</td><td>T2 &rarr; W3</td></tr>
+<tr><td>Reward $R_t$</td><td>Immediate reward for this dispatch</td><td>+6.5</td></tr>
+<tr><td>Return $G_t$</td><td>Discounted return from this step</td><td>18.3</td></tr>
+<tr><td>Explored</td><td>Whether &epsilon;-greedy chose randomly</td><td>True</td></tr>
+</table>
+<strong>Purpose:</strong> Full transparency into every MDP decision. In Ch01 Explored=True always (Q=0).<br><br>
+<strong>What to watch:</strong><br>
+&bull; Explored is always True in Ch01 &mdash; confirms pure random policy<br>
+&bull; $G_t$ decreases monotonically &mdash; fewer future rewards remaining<br>
+&bull; Large $|R_t|$ steps dominate $G_0$
+</div>
+
+<h3>&#x1F4CB; Episode Summary Table</h3>
+<div class="card purple">
+<strong>Table columns:</strong>
+<table><tr><th>Column</th><th>Meaning</th></tr>
+<tr><td>Total return $G_0$</td><td>Sum of all discounted rewards &mdash; the Ch01 baseline</td></tr>
+<tr><td>SLA rate</td><td>Percentage of orders meeting SLA deadline</td></tr>
+<tr><td>Avg reward</td><td>Mean $R_t$ across all steps</td></tr>
+<tr><td>Exploration rate</td><td>Fraction of steps where &epsilon;-greedy explored (always 1.0 in Ch01)</td></tr>
+<tr><td>Steps</td><td>Total number of dispatch decisions in the episode</td></tr>
+</table>
+</div>
+</div>
+
+<!-- EXERCISES -->
+<div id="exercises" class="tab-content">
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card"><h3>Exercise 1 &mdash; Establish the baseline</h3>Run 5 episodes with different seeds. Record $G_0$ for each. Compute the mean &mdash; this is your Ch01 baseline to beat in Ch02.</div>
+<div class="card blue"><h3>Exercise 2 &mdash; &epsilon; sensitivity</h3>Run with &epsilon;=1.0 and &epsilon;=0.0. Why are the results similar? (Hint: Q=0 &rarr; argmax Q is always arbitrary)</div>
+<div class="card orange"><h3>Exercise 3 &mdash; Reading the map</h3>Find the step with the largest negative reward. What combination of factors caused it? (distance, urgency, skill mismatch?)</div>
+<div class="card green"><h3>Exercise 4 &mdash; Manual $G_t$ calculation</h3>Take the first 3 rewards from the Glass-Box and compute $G_0$ manually with &gamma;=0.95. Verify against the chart.</div>
+<div class="card purple"><h3>Exercise 5 &mdash; &gamma; effect on $G_0$</h3>Run the same seed with &gamma;=0.99 and &gamma;=0.5. How does $G_0$ change? Which &gamma; is more sensitive to early vs late rewards?</div>
+</div>
+
+<!-- TASKS -->
+<div id="tasks" class="tab-content">
+<h2>&#x1F4DD; Practical Tasks</h2>
+<p style="color:#9ca3af;margin-bottom:1rem">Click "Show answer" to check your solution.</p>
+
+<div class="task-card">
+<h3>Task 1 &mdash; Manual discounted return</h3>
+<p>An episode has 4 steps with rewards: $R_1=8$, $R_2=-3$, $R_3=6$, $R_4=4$. &gamma;=0.95.<br>
+Compute $G_0$, $G_1$, $G_2$, $G_3$ manually.</p>
+<details>
+<summary>&#x1F4A1; Show answer</summary>
+<div class="answer">
+<div class="formula">$$G_3 = R_4 = 4.0$$</div>
+<div class="formula">$$G_2 = R_3 + \gamma G_3 = 6 + 0.95 \cdot 4 = 6 + 3.8 = \mathbf{9.8}$$</div>
+<div class="formula">$$G_1 = R_2 + \gamma G_2 = -3 + 0.95 \cdot 9.8 = -3 + 9.31 = \mathbf{6.31}$$</div>
+<div class="formula">$$G_0 = R_1 + \gamma G_1 = 8 + 0.95 \cdot 6.31 = 8 + 5.99 = \mathbf{13.99}$$</div>
+</div>
+</details>
+</div>
+
+<div class="task-card">
+<h3>Task 2 &mdash; MDP components identification</h3>
+<p>For the dispatch: "Technician T2 (skill=plumbing, at Wola) is sent to Order W5 (skill=plumbing, at Mokotow, urgency=0.9)"<br>
+Identify: $S_t$, $A_t$, $R_t$ components, and what $S_{t+1}$ might be.</p>
+<details>
+<summary>&#x1F4A1; Show answer</summary>
+<div class="answer">
+<strong>$S_t$</strong>: Current dispatch centre state &mdash; T2 available, W5 pending with high urgency<br>
+<strong>$A_t$</strong>: Assign T2 to W5<br>
+<strong>$R_t$ components</strong>: $R_{base}=+5$, $R_{skill}=+3$ (plumbing match), $R_{distance}=-2$ (Wola&rarr;Mokotow ~5km), $R_{urgency}=-1$ (moderate delay)<br>
+<strong>$R_t \approx +5$</strong><br>
+<strong>$S_{t+1}$</strong>: T2 now busy, W5 assigned &mdash; fewer available technicians
+</div>
+</details>
+</div>
+
+<div class="task-card">
+<h3>Task 3 &mdash; &epsilon;-greedy decision</h3>
+<p>Q-table has Q(S2,T0)=0, Q(S2,T1)=0, Q(S2,T2)=0. &epsilon;=0.3.<br>
+What is the probability that the agent selects T1? What if Q(S2,T2)=5.0?</p>
+<details>
+<summary>&#x1F4A1; Show answer</summary>
+<div class="answer">
+<strong>Case 1 — all Q=0:</strong><br>
+<div class="formula">$$P(T1) = \varepsilon \cdot \frac{1}{3} + (1-\varepsilon) \cdot \frac{1}{3} = \frac{1}{3} \approx 0.333$$</div>
+All actions equally likely regardless of &epsilon; when Q values are tied.<br><br>
+<strong>Case 2 — Q(S2,T2)=5.0:</strong><br>
+<div class="formula">$$P(T1) = \varepsilon \cdot \frac{1}{3} = 0.3 \cdot \frac{1}{3} = \mathbf{0.1}$$</div>
+T1 only chosen during exploration. T2 is always chosen during exploitation.
+</div>
+</details>
+</div>
+
+<div class="task-card">
+<h3>Task 4 &mdash; Why Bellman is greyed out</h3>
+<p>The Bellman update is: $Q(s,a) \leftarrow Q(s,a) + \alpha [R + \gamma \max_{a'} Q(s',a') - Q(s,a)]$<br>
+Why can't we apply this in Ch01? What is missing?</p>
+<details>
+<summary>&#x1F4A1; Show answer</summary>
+<div class="answer">
+Ch01 is missing two things needed for Bellman:<br><br>
+1. <strong>No model</strong>: We don't know $P(s'|s,a)$ &mdash; we only observe the next state after taking the action. Ch02 builds $P$ analytically.<br><br>
+2. <strong>No learning rate &alpha;</strong>: Ch01 doesn't update Q at all. Q=0 throughout. The Bellman update would change nothing because every update is immediately overwritten on the next call.<br><br>
+Ch02 introduces Value Iteration which computes $V^*(s)$ using the known model $P(s'|s,a)$.
+</div>
+</details>
+</div>
+
+<div class="task-card">
+<h3>Task 5 &mdash; Baseline comparison</h3>
+<p>You run Ch01 with seed=42 and get $G_0 = 12.4$. After implementing Ch02 (Value Iteration), $G_0 = 31.7$.<br>
+What is the improvement? Is Ch01 a fair baseline?</p>
+<details>
+<summary>&#x1F4A1; Show answer</summary>
+<div class="answer">
+<div class="formula">$$\text{Improvement} = \frac{G_0^{Ch02} - G_0^{Ch01}}{|G_0^{Ch01}|} \times 100 = \frac{31.7 - 12.4}{12.4} \times 100 = \mathbf{+155\%}$$</div>
+<strong>Is Ch01 a fair baseline?</strong> Yes, because:<br>
+&bull; Both use the same environment (same technicians, orders, reward function)<br>
+&bull; Both use the same &gamma; and seed<br>
+&bull; Ch01 represents the <em>best possible random policy</em> &mdash; no cherry-picking<br>
+The improvement shows the value of model-based planning.
+</div>
+</details>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="tab-content">
+<h2>&#x1F3AF; Quiz &mdash; Test Your Knowledge</h2>
+<p style="color:#9ca3af;margin-bottom:1.5rem">Answer all 10 questions and click "Check results". Pass threshold: <strong>90% (9/10)</strong>.</p>
+
+<div class="quiz-question" id="q1">
+<p>1. How many components does a Markov Decision Process have?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">3 &mdash; State, Action, Reward</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">5 &mdash; S, A, P, R, &gamma;</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">4 &mdash; S, A, R, &gamma;</label></div>
+</div>
+
+<div class="quiz-question" id="q2">
+<p>2. In Ch01, why does the &epsilon;-greedy policy always act randomly regardless of &epsilon;?</p>
+<div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">Because &epsilon; is always set to 1.0</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">Because Q=0 for all state-action pairs, so argmax Q is arbitrary</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">Because the Rust engine ignores &epsilon; in Ch01</label></div>
+</div>
+
+<div class="quiz-question" id="q3">
+<p>3. What does $G_0$ represent in the Glass-Box?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">The reward at step 0</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">The total discounted return for the entire episode</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">The average reward per step</label></div>
+</div>
+
+<div class="quiz-question" id="q4">
+<p>4. What is the role of &gamma; (discount factor) in computing $G_t$?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">It scales the immediate reward $R_t$</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">It reduces the weight of future rewards &mdash; higher &gamma; = more far-sighted agent</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">It controls the exploration rate</label></div>
+</div>
+
+<div class="quiz-question" id="q5">
+<p>5. Why is the Bellman equation greyed out in Ch01?</p>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">Because Ch01 is too simple for Bellman</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">Because Ch01 does not build a transition model P(s'|s,a) needed for Bellman updates</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">Because Bellman requires &epsilon; = 0</label></div>
+</div>
+
+<div class="quiz-question" id="q6">
+<p>6. What does "Explored = True" in the Glass-Box mean?</p>
+<div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">The agent chose the best known action</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">The &epsilon;-greedy policy chose a random action (exploration step)</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">A new order was discovered during the episode</label></div>
+</div>
+
+<div class="quiz-question" id="q7">
+<p>7. Which reward component is most affected by sending a distant technician?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">$R_{skill}$</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">$R_{distance}$</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">$R_{base}$</label></div>
+</div>
+
+<div class="quiz-question" id="q8">
+<p>8. What happens to $G_t$ as $t$ increases towards the end of the episode?</p>
+<div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">$G_t$ increases because future rewards compound</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">$G_t$ decreases because there are fewer future rewards remaining</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">$G_t$ stays constant throughout the episode</label></div>
+</div>
+
+<div class="quiz-question" id="q9">
+<p>9. What is the purpose of the Ch01 baseline?</p>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">To show the maximum possible performance</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">To provide a reference $G_0$ from a purely random policy to compare all future chapters against</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">To train the Q-table for Ch02</label></div>
+</div>
+
+<div class="quiz-question" id="q10">
+<p>10. In the Warsaw map, what do red markers indicate?</p>
+<div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">Technician positions</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">Orders where SLA was breached</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">Orders with high urgency regardless of SLA status</label></div>
+</div>
+
+<button class="btn" onclick="checkQuiz()">&#x2705; Check results</button>
+<button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
+<div id="quiz-result"></div>
+</div>
+
+<!-- SUMMARY -->
+<div id="summary" class="tab-content">
+<h2>&#x1F4CB; Summary</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">MDP Components</div></div>
+<div class="kpi-card"><div class="kpi-val">Q=0</div><div class="kpi-label">No learning</div></div>
+<div class="kpi-card"><div class="kpi-val">&epsilon;</div><div class="kpi-label">Only hyperparameter</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch02</div><div class="kpi-label">Next: Bellman</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; What Ch01 gives you</strong><ul><li>MDP formalism for all future chapters</li><li>Random policy baseline $G_0$</li><li>Warsaw dispatch map visualisation</li><li>Full Glass-Box MDP transparency</li></ul></div>
+<div class="card red"><strong>&#x274C; What Ch01 does NOT do</strong><ul><li>No Q-table updates</li><li>No Bellman equation</li><li>No learning between episodes</li><li>No transition model P(s'|s,a)</li></ul></div>
+</div>
+<div class="card green">Ch01 is the <strong>foundation of the entire course</strong>. Every future chapter improves upon the Ch01 baseline. Without understanding Ch01, Ch02&ndash;Ch13 cannot be properly interpreted.</div>
+<div class="card blue" style="margin-top:1rem"><strong>&#x27A1; Next: Chapter 02</strong> &mdash; Value Iteration. We build $P(s'|s,a)$ analytically for the Warsaw ASP and solve the Bellman equation to get $V^*(s)$ &mdash; the first real learning in this course.</div>
+</div>
+
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if(typeof renderMathInElement !== 'undefined'){
+    renderMathInElement(document.getElementById(id),{
+      delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+      throwOnError:false
+    });
+  }
+}
+
+var ANSWERS = {q1:'b',q2:'b',q3:'b',q4:'b',q5:'b',q6:'b',q7:'b',q8:'b',q9:'b',q10:'b'};
+
+function checkQuiz(){
+  var score=0,total=Object.keys(ANSWERS).length;
+  for(var q in ANSWERS){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    document.querySelectorAll('#'+q+' .quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+    if(sel){
+      if(sel.value===ANSWERS[q]){score++;sel.closest('.quiz-option').classList.add('correct');}
+      else{sel.closest('.quiz-option').classList.add('wrong');document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');}
+    } else {
+      document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+    }
+  }
+  var pct=Math.round(score/total*100),res=document.getElementById('quiz-result');
+  res.style.display='block';
+  if(score>=9){res.className='pass';res.innerHTML='&#x1F389; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Congratulations! You can move on to Chapter 02!';}
+  else{res.className='fail';res.innerHTML='&#x274C; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Pass threshold is 90% (9/10). Review the material and try again.';}
+}
+
+function resetQuiz(){
+  document.querySelectorAll('.quiz-option input').forEach(function(i){i.checked=false});
+  document.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+  var res=document.getElementById('quiz-result');res.style.display='none';res.className='';
+}
+</script>
+</body>
+</html>
