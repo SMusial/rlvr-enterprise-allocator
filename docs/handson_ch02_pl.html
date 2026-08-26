@@ -506,6 +506,12 @@ function showTab(id){
   document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
   document.getElementById(id).classList.add('active');
   event.target.classList.add('active');
+  if(typeof renderMathInElement !== 'undefined'){
+    renderMathInElement(document.getElementById(id), {
+      delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+      throwOnError:false
+    });
+  }
 }
 
 var ANSWERS = {q1:'b', q2:'b', q3:'b', q4:'b', q5:'b', q6:'b', q7:'b', q8:'b', q9:'b', q10:'b'};
