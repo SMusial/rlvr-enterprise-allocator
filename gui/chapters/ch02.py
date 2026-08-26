@@ -242,7 +242,7 @@ Iteracja Warto&#x15B;ci odpowiada przez iteracyjne rozwi&#x105;zanie r&#xF3;wnan
 <!-- TEORIA -->
 <div id="theory" class="tab-content">
 <h2>&#x1F9EE; R&#xF3;wnanie Bellmana</h2>
-<div class="formula">$$V^*(s) = \\max_a \\sum_{s'} P(s'|s,a)igl[R(s,a) + \\gamma \\cdot V^*(s')igr]$$</div>
+<div class="formula">$$V^*(s) = \\max_a \\sum_{s'} P(s'|s,a)\\left[R(s,a) + \\gamma \\cdot V^*(s')\\right]$$</div>
 <div class="card"><strong>Co oznacza ka&#x17C;dy sk&#x142;adnik:</strong>
 <ul>
 <li><strong>V*(s)</strong> &#x2014; optymalna d&#x142;ugoterminowa warto&#x15B;&#x107; stanu s</li>
@@ -254,11 +254,11 @@ Iteracja Warto&#x15B;ci odpowiada przez iteracyjne rozwi&#x105;zanie r&#xF3;wnan
 </div>
 <h2>Algorytm Iteracji Warto&#x15B;ci</h2>
 <div class="step"><div class="step-num">1</div><div>Inicjalizuj $V(s) = 0$ dla wszystkich stan&#xF3;w</div></div>
-<div class="step"><div class="step-num">2</div><div>Dla ka&#x17C;dego $s$: $V_{	ext{new}}(s) = \\max_a \\sum_{s'} P(s'|s,a)igl[R(s,a) + \\gamma V(s')igr]$</div></div>
+<div class="step"><div class="step-num">2</div><div>Dla ka&#x17C;dego $s$: $V_{	ext{new}}(s) = \\max_a \\sum_{s'} P(s'|s,a)\\left[R(s,a) + \\gamma V(s')\\right]$</div></div>
 <div class="step"><div class="step-num">3</div><div>Oblicz $\\delta = \\max_s |V_{	ext{new}}(s) - V(s)|$</div></div>
 <div class="step"><div class="step-num">4</div><div>Aktualizuj $V \\leftarrow V_{	ext{new}}$</div></div>
 <div class="step"><div class="step-num">5</div><div>Je&#x15B;li $\\delta < 	heta$ &#x2192; STOP. W przeciwnym razie id&#x17A; do kroku 2.</div></div>
-<div class="step"><div class="step-num">6</div><div>Wyod&#x119;bnij polityk&#x119;: $\\pi^*(s) = rg\\max_a \\sum_{s'} P(s'|s,a)igl[R(s,a) + \\gamma V^*(s')igr]$</div></div>
+<div class="step"><div class="step-num">6</div><div>Wyod&#x119;bnij polityk&#x119;: $\\pi^*(s) = rg\\max_a \\sum_{s'} P(s'|s,a)\\left[R(s,a) + \\gamma V^*(s')\\right]$</div></div>
 <h2>Twierdzenie o kontrakcji</h2>
 <div class="card purple">Operator Bellmana T jest gamma-kontrakcj&#x105;:<br>
 <div class="formula">$$\\|TV - TV'\\|_\\infty \\leq \\gamma \\cdot \\|V - V'\\|_\\infty$$</div>
