@@ -132,14 +132,14 @@ Iteracja Wartości odpowiada przez iteracyjne rozwiązanie równania Bellmana &m
 <div class="card blue">Ch02 wprowadza <strong>planowanie oparte na modelu</strong>. We know P(s'|s,a) and R(s,a) &mdash; built analytically for the Warsaw ASP. Value Iteration solves the Bellman equation without simulation.</div>
 <h2>Stany operacyjne z <code>STATE_NAMES</code></h2>
 <table><tr><th>Stan</th><th>Nazwa</th><th>Opis</th></tr>
-<tr><td><code>S0</code></td><td>All available, no urgent</td><td>Najlepsza sytuacja &mdash; wszyscy dostępni</td></tr>
-<tr><td><code>S1</code></td><td>All available, urgent pending</td><td>Dostępni ale pilne zlecenie czeka</td></tr>
-<tr><td><code>S2</code></td><td>Partial availability, low load</td><td>Część zajęta, znosące obciążenie</td></tr>
-<tr><td><code>S3</code></td><td>Partial availability, high load</td><td>Część zajęta, wysokie obciążenie</td></tr>
-<tr><td><code>S4</code></td><td>Low availability, manageable</td><td>Większość zajęta, znosące</td></tr>
-<tr><td><code>S5</code></td><td>Low availability, high load</td><td>Większość zajęta, krytyczne</td></tr>
-<tr><td><code>S6</code></td><td>Critical, most techs busy</td><td>Prawie wszyscy zajęci, ryzyko SLA</td></tr>
-<tr><td><code>S7</code></td><td>All busy, SLA breach imminent</td><td>Najgorsza sytuacja &mdash; naruszenie SLA bliskie</td></tr>
+<tr><td><code>S0</code></td><td>Wszyscy dostępni, brak pilnych</td><td>Najlepsza sytuacja &mdash; wszyscy dostępni</td></tr>
+<tr><td><code>S1</code></td><td>Wszyscy dostępni, pilne oczekuje</td><td>Dostępni ale pilne zlecenie czeka</td></tr>
+<tr><td><code>S2</code></td><td>Częściowa dostępność, niskie obciążenie</td><td>Część zajęta, znosące obciążenie</td></tr>
+<tr><td><code>S3</code></td><td>Częściowa dostępność, wysokie obciążenie</td><td>Część zajęta, wysokie obciążenie</td></tr>
+<tr><td><code>S4</code></td><td>Niska dostępność, znosące obciążenie</td><td>Większość zajęta, znosące</td></tr>
+<tr><td><code>S5</code></td><td>Niska dostępność, wysokie obciążenie</td><td>Większość zajęta, krytyczne</td></tr>
+<tr><td><code>S6</code></td><td>Krytyczna, większość techników zajęta</td><td>Prawie wszyscy zajęci, ryzyko SLA</td></tr>
+<tr><td><code>S7</code></td><td>Wszyscy zajęci, naruszenie SLA bliskie</td><td>Najgorsza sytuacja &mdash; naruszenie SLA bliskie</td></tr>
 </table>
 <h2>Akcje dyspozycji z <code>ACTION_NAMES</code></h2>
 <table><tr><th>Akcja</th><th>Opis</th><th>Kiedy używać</th></tr>
@@ -200,13 +200,13 @@ Użyj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10 000 (cost O(|S|<sup>3</sup>)).</
 <!-- HOW TO USE UI -->
 <div id="ui" class="tab-content">
 <h2>&#x1F3AE; How to use the Ch02 interface</h2>
-<div class="step"><div class="step-num">1</div><div><strong>Set &gamma; (discount factor)</strong><br>&gamma;=0.99 = dalekowzroczny agent. &gamma;=0.5 = krótkowzroczny. Zacznij od 0.95.</div></div>
-<div class="step"><div class="step-num">2</div><div><strong>Set &theta; (convergence threshold)</strong><br>Smaller &theta; = dokładniejszy ale wolniejszy. Zacznij od 1e-6.</div></div>
-<div class="step"><div class="step-num">3</div><div><strong>Click &#x25B6; Run Value Iteration</strong><br>Silnik Rust buduje macierz przejść ASP i wykonuje iteracje Bellmana.</div></div>
-<div class="step"><div class="step-num">4</div><div><strong>Read the Value Function chart</strong><br>Słupek S0 powinien być najwyższy, S7 najniższy. If not &mdash; check &gamma;.</div></div>
-<div class="step"><div class="step-num">5</div><div><strong>Read the Optimal Policy table</strong><br>Która strategia dyspozycji maksymalizuje wartość długoterminową dla każdego stanu?</div></div>
-<div class="step"><div class="step-num">6</div><div><strong>Read the Convergence curve</strong><br>Obserwuj eksponencjalny zanik ||&Delta;V||<sub>&infin;</sub> do zera.</div></div>
-<div class="step"><div class="step-num">7</div><div><strong>Read the Glass-Box Bellman trace</strong><br>Dokładna aktualizacja Bellmana dla każdego stanu w pierwszych 3 iteracjach.</div></div>
+<div class="step"><div class="step-num">1</div><div><strong>Ustaw &gamma; (współczynnik dyskonta)</strong><br>&gamma;=0.99 = dalekowzroczny agent. &gamma;=0.5 = krótkowzroczny. Zacznij od 0.95.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Ustaw &theta; (próg zbieżności)</strong><br>Smaller &theta; = dokładniejszy ale wolniejszy. Zacznij od 1e-6.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Kliknij &#x25B6; Uruchom Iterację Wartości</strong><br>Silnik Rust buduje macierz przejść ASP i wykonuje iteracje Bellmana.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Odczytaj wykres V*(s)</strong><br>Słupek S0 powinien być najwyższy, S7 najniższy. If not &mdash; check &gamma;.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Odczytaj tabelę optymalnej polityki</strong><br>Która strategia dyspozycji maksymalizuje wartość długoterminową dla każdego stanu?</div></div>
+<div class="step"><div class="step-num">6</div><div><strong>Odczytaj krzywą zbieżności</strong><br>Obserwuj eksponencjalny zanik ||&Delta;V||<sub>&infin;</sub> do zera.</div></div>
+<div class="step"><div class="step-num">7</div><div><strong>Odczytaj Glass-Box</strong><br>Dokładna aktualizacja Bellmana dla każdego stanu w pierwszych 3 iteracjach.</div></div>
 </div>
 
 <!-- INTERPRETATION -->
@@ -230,7 +230,7 @@ Użyj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10 000 (cost O(|S|<sup>3</sup>)).</
 <strong>Kolumny tabeli:</strong>
 <table><tr><th>Column</th><th>Meaning</th></tr>
 <tr><td>Stan</td><td>Operational state S0&ndash;S7</td></tr>
-<tr><td>Optimal Action</td><td>Akcja dyspozycji maksymalizująca V*(s)</td></tr>
+<tr><td>Optymalna akcja</td><td>Akcja dyspozycji maksymalizująca V*(s)</td></tr>
 <tr><td>V*(s)</td><td>Optymalna wartość stanu po konwergencji</td></tr>
 </table>
 <strong>Cel:</strong> Pokazuje co agent powinien robić w każdym stanie.<br><br>
@@ -269,12 +269,12 @@ Użyj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10 000 (cost O(|S|<sup>3</sup>)).</
 <div class="card">
 <strong>Kolumny tabeli Glass-Box:</strong>
 <table><tr><th>Column</th><th>Meaning</th><th>Example</th></tr>
-<tr><td>Iteration</td><td>Numer iteracji Bellmana (1, 2, 3)</td><td>1</td></tr>
+<tr><td>Iteracja</td><td>Numer iteracji Bellmana (1, 2, 3)</td><td>1</td></tr>
 <tr><td>Stan</td><td>Stan operacyjny który jest aktualizowany</td><td>S0</td></tr>
-<tr><td>Old V(s)</td><td>Wartość stanu przed aktualizacją</td><td>0.0000</td></tr>
-<tr><td>New V(s)</td><td>Wartość stanu po aktualizacji Bellmana</td><td>8.0000</td></tr>
+<tr><td>Stara V(s)</td><td>Wartość stanu przed aktualizacją</td><td>0.0000</td></tr>
+<tr><td>Nowa V(s)</td><td>Wartość stanu po aktualizacji Bellmana</td><td>8.0000</td></tr>
 <tr><td>&Delta;V</td><td>Value change = |V<sup>new</sup> &minus; V<sup>old</sup>|</td><td>8.0000</td></tr>
-<tr><td>Best Action</td><td>Akcja która dała najwyższą wartość</td><td>A1</td></tr>
+<tr><td>Najlepsza akcja</td><td>Akcja która dała najwyższą wartość</td><td>A1</td></tr>
 </table>
 <strong>Cel:</strong> Pokazuje dokładnie jak Bellman aktualizuje każdy stan krok po kroku.<br><br>
 <strong>Na co zwrócić uwagę:</strong><br>
@@ -287,11 +287,11 @@ Użyj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10 000 (cost O(|S|<sup>3</sup>)).</
 <div class="card purple">
 <strong>Kolumny tabeli:</strong>
 <table><tr><th>Column</th><th>Meaning</th></tr>
-<tr><td>Iterations to converge</td><td>Liczba iteracji Bellmana do osiągnięcia &delta; &lt; &theta;</td></tr>
-<tr><td>Best operational state</td><td>Stan z najwyższym V*(s) &mdash; powinien być S0</td></tr>
-<tr><td>Worst operational state</td><td>Stan z najniższym V*(s) &mdash; powinien być S7</td></tr>
-<tr><td>V*(s) range</td><td>Rozpiętość wartości od min do max</td></tr>
-<tr><td>Contraction verified</td><td>Czy twierdzenie o kontrakcji zostało potwierdzone</td></tr>
+<tr><td>Iteracje do konwergencji</td><td>Liczba iteracji Bellmana do osiągnięcia &delta; &lt; &theta;</td></tr>
+<tr><td>Najlepszy stan operacyjny</td><td>Stan z najwyższym V*(s) &mdash; powinien być S0</td></tr>
+<tr><td>Najgorszy stan operacyjny</td><td>Stan z najniższym V*(s) &mdash; powinien być S7</td></tr>
+<tr><td>Zakres V*(s)</td><td>Rozpiętość wartości od min do max</td></tr>
+<tr><td>Kontrakcja potwierdzona</td><td>Czy twierdzenie o kontrakcji zostało potwierdzone</td></tr>
 </table>
 </div>
 </div>
@@ -299,11 +299,11 @@ Użyj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10 000 (cost O(|S|<sup>3</sup>)).</
 <!-- EXERCISES -->
 <div id="exercises" class="tab-content">
 <h2>&#x1F9EA; Hands-On Exercises</h2>
-<div class="card"><h3>Exercise 1 &mdash; &gamma; wrażliwość</h3>Run with &gamma;=0.99 then &gamma;=0.5. How does the range of V*(s) change? Why does S7 get worse with higher &gamma;?</div>
-<div class="card blue"><h3>Exercise 2 &mdash; &theta; precyzja</h3>Compare &theta;=1e-3 vs &theta;=1e-7. More iterations? Is the policy different?</div>
-<div class="card orange"><h3>Exercise 3 &mdash; Weryfikacja polityki</h3>Czy optymalna polityka zawsze wybiera A1? Znajdź stan gdzie A0 lub A2 może być preferowane.</div>
-<div class="card green"><h3>Exercise 4 &mdash; Contraction</h3>W Glass-Box zweryfikuj że &Delta;V<sub>k+1</sub> &asymp; &gamma; &middot; &Delta;V<sub>k</sub>. To twierdzenie o kontrakcji w działaniu.</div>
-<div class="card purple"><h3>Exercise 5 &mdash; LU vs VI</h3>Run with &gamma;=0.95 and &theta;=1e-6. Sprawdź w kodzie Rust czy wyniki VI i LU różnią się o mniej niż 1e-4.</div>
+<div class="card"><h3>Ćwiczenie 1 &mdash; &gamma; wrażliwość</h3>Uruchom z &gamma;=0.99 i &gamma;=0.5. Jak zmienia się zakres V*(s)? Dlaczego S7 staje się gorszy przy wyższym &gamma;?</div>
+<div class="card blue"><h3>Ćwiczenie 2 &mdash; &theta; precyzja</h3>Porównaj &theta;=1e-3 vs &theta;=1e-7. Więcej iteracji? Ta sama polityka?</div>
+<div class="card orange"><h3>Ćwiczenie 3 &mdash; Weryfikacja polityki</h3>Czy optymalna polityka zawsze wybiera A1? Znajdź stan gdzie A0 lub A2 może być preferowane.</div>
+<div class="card green"><h3>Ćwiczenie 4 &mdash; Contraction</h3>W Glass-Box zweryfikuj że &Delta;V<sub>k+1</sub> &asymp; &gamma; &middot; &Delta;V<sub>k</sub>. To twierdzenie o kontrakcji w działaniu.</div>
+<div class="card purple"><h3>Ćwiczenie 5 &mdash; LU vs VI</h3>Run with &gamma;=0.95 and &theta;=1e-6. Sprawdź w kodzie Rust czy wyniki VI i LU różnią się o mniej niż 1e-4.</div>
 </div>
 
 <!-- TASKS -->
@@ -317,10 +317,10 @@ Użyj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10 000 (cost O(|S|<sup>3</sup>)).</
 <details>
 <summary>&#x1F4A1; Pokaż odpowiedź</summary>
 <div class="answer">
-<strong>Iteration 1:</strong><br>
+<strong>Iteracja 1:</strong><br>
 <div class="formula">$$V^{(1)}(S_0) = 8 + 0.9\cdot(0.9\cdot 0 + 0.1\cdot 0) = \mathbf{8.0}$$</div>
 <div class="formula">$$V^{(1)}(S_7) = 1 + 0.9\cdot(0.2\cdot 0 + 0.8\cdot 0) = \mathbf{1.0}$$</div>
-<strong>Iteration 2:</strong><br>
+<strong>Iteracja 2:</strong><br>
 <div class="formula">$$V^{(2)}(S_0) = 8 + 0.9\cdot(0.9\cdot 8 + 0.1\cdot 1) = \mathbf{14.57}$$</div>
 <div class="formula">$$V^{(2)}(S_7) = 1 + 0.9\cdot(0.2\cdot 8 + 0.8\cdot 1) = \mathbf{3.16}$$</div>
 </div>
@@ -355,7 +355,7 @@ Compute Q(S4,A0) and Q(S4,A2) for &gamma;=0.99 and &gamma;=0.5. Does the policy 
 <strong>&gamma;=0.99:</strong>
 <div class="formula">$$Q(S_4,A_0) = 3 + 0.99\cdot(0.7\cdot 40 + 0.3\cdot 15) = \mathbf{35.175}$$</div>
 <div class="formula">$$Q(S_4,A_2) = 4 + 0.99\cdot(0.9\cdot 35 + 0.1\cdot 8) = \mathbf{35.977}$$</div>
-Optimal: A2<br><br>
+Optymalna: A2<br><br>
 <strong>&gamma;=0.5:</strong>
 <div class="formula">$$Q(S_4,A_0) = 3 + 0.5\cdot 32.5 = \mathbf{19.25}$$</div>
 <div class="formula">$$Q(S_4,A_2) = 4 + 0.5\cdot 32.3 = \mathbf{20.15}$$</div>
@@ -367,8 +367,8 @@ Optymalna: A2 (ta sama polityka, mniejsza różnica)
 <div class="task-card">
 <h3>Zadanie 4 &mdash; Weryfikacja kontrakcji</h3>
 <p>In the Glass-Box you see:<br>
-Iteration 1: max &Delta;V = 8.0<br>
-Iteration 2: max &Delta;V = 7.2<br>
+Iteracja 1: max &Delta;V = 8.0<br>
+Iteracja 2: max &Delta;V = 7.2<br>
 Iteration 3: max &Delta;V = 6.48<br>
 What is the value of &gamma;? Is the contraction theorem satisfied?</p>
 <details>
