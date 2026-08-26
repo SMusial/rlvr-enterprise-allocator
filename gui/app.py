@@ -14,9 +14,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Language ────────────────────────────────────────────────────────────────
-# Use on_change callback to set session_state BEFORE rerun
-# This eliminates the double-click issue caused by state lag
 
 LANGS = ["EN", "DE", "FR", "ES", "PL"]
 
