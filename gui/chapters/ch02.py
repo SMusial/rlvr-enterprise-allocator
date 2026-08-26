@@ -148,7 +148,17 @@ details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d315
 .btn:hover{background:#7C3AED}
 .btn.secondary{background:#252840;color:#9ca3af}
 .btn.secondary:hover{background:#2d3154;color:#e8eaf6}
+
+.katex{color:#FFD700 !important}
+.katex-display .katex{color:#FFD700 !important}
+.formula{background:#252840;border-radius:8px;padding:1.5rem 2rem;margin:.75rem 0;text-align:center}
+.formula .katex{font-size:1.6em !important}
+.formula .katex-display .katex{font-size:1.6em !important}
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
 </head>
 <body>
 <div class="container">
@@ -685,7 +695,17 @@ details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d315
 .btn:hover{background:#7C3AED}
 .btn.secondary{background:#252840;color:#9ca3af}
 .btn.secondary:hover{background:#2d3154;color:#e8eaf6}
+
+.katex{color:#FFD700 !important}
+.katex-display .katex{color:#FFD700 !important}
+.formula{background:#252840;border-radius:8px;padding:1.5rem 2rem;margin:.75rem 0;text-align:center}
+.formula .katex{font-size:1.6em !important}
+.formula .katex-display .katex{font-size:1.6em !important}
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
 </head>
 <body>
 <div class="container">
@@ -757,7 +777,7 @@ Value Iteration answers this by solving the Bellman equation iteratively &mdash;
 <!-- RL THEORY -->
 <div id="theory" class="tab-content">
 <h2>&#x1F9EE; Bellman Optimality Equation</h2>
-<div class="formula">V*(s) = max<sub>a</sub> &sum;<sub>s'</sub> P(s'|s,a) &middot; [ R(s,a) + &gamma; &middot; V*(s') ]</div>
+<div class="formula">$$V^*(s) = \max_{a} \sum_{s'} P(s'|s,a)\,\bigl[R(s,a) + \gamma \cdot V^*(s')\bigr]$$</div>
 <div class="card"><strong>What each term means:</strong>
 <ul>
 <li><strong>V*(s)</strong> &mdash; optimal long-term value of being in state s</li>
@@ -776,11 +796,11 @@ Value Iteration answers this by solving the Bellman equation iteratively &mdash;
 <div class="step"><div class="step-num">6</div><div>Extract policy: &pi;*(s) = argmax<sub>a</sub> &sum;<sub>s'</sub> P(s'|s,a) &middot; [ R(s,a) + &gamma; &middot; V*(s') ]</div></div>
 <h2>Contraction Mapping Theorem</h2>
 <div class="card purple">The Bellman operator <strong>T</strong> is a &gamma;-contraction:
-<div class="formula">|| TV &minus; TV' ||<sub>&infin;</sub> &le; &gamma; &middot; || V &minus; V' ||<sub>&infin;</sub></div>
+<div class="formula">$$\|\mathcal{T}V - \mathcal{T}V'\|_\infty \leq \gamma \cdot \|V - V'\|_\infty$$</div>
 Therefore VI converges to a unique fixed point V*. The convergence curve in the UI shows this contraction in action.</div>
 <h2><code>solve_exact()</code> &mdash; LU Decomposition</h2>
 <div class="card green">For a fixed policy &pi;:
-<div class="formula">V<sup>&pi;</sup> = ( I &minus; &gamma; P<sup>&pi;</sup> )<sup>&minus;1</sup> &middot; r<sup>&pi;</sup></div>
+<div class="formula">$$V^\pi = (I - \gamma P^\pi)^{-1}\, r^\pi$$</div>
 Implemented in <code>solve_exact()</code> in <code>ch02_bellman.rs</code> using <strong>nalgebra LU</strong>.<br>
 Use when |S| &le; 1000. Avoid when |S| &gt; 10,000 (cost O(|S|<sup>3</sup>)).</div>
 </div>
@@ -922,11 +942,11 @@ Use when |S| &le; 1000. Avoid when |S| &gt; 10,000 (cost O(|S|<sup>3</sup>)).</d
 <summary>&#x1F4A1; Show answer</summary>
 <div class="answer">
 <strong>Iteration 1:</strong><br>
-<div class="formula">V<sup>(1)</sup>(S0) = 8 + 0.9 &middot; (0.9 &middot; 0 + 0.1 &middot; 0) = <strong>8.0</strong></div>
-<div class="formula">V<sup>(1)</sup>(S7) = 1 + 0.9 &middot; (0.2 &middot; 0 + 0.8 &middot; 0) = <strong>1.0</strong></div>
+<div class="formula">$$V^{(1)}(S_0) = 8 + 0.9\cdot(0.9\cdot 0 + 0.1\cdot 0) = \mathbf{8.0}$$</div>
+<div class="formula">$$V^{(1)}(S_7) = 1 + 0.9\cdot(0.2\cdot 0 + 0.8\cdot 0) = \mathbf{1.0}$$</div>
 <strong>Iteration 2:</strong><br>
-<div class="formula">V<sup>(2)</sup>(S0) = 8 + 0.9 &middot; (0.9 &middot; 8 + 0.1 &middot; 1) = 8 + 0.9 &middot; 7.3 = <strong>14.57</strong></div>
-<div class="formula">V<sup>(2)</sup>(S7) = 1 + 0.9 &middot; (0.2 &middot; 8 + 0.8 &middot; 1) = 1 + 0.9 &middot; 2.4 = <strong>3.16</strong></div>
+<div class="formula">$$V^{(2)}(S_0) = 8 + 0.9\cdot(0.9\cdot 8 + 0.1\cdot 1) = \mathbf{14.57}$$</div>
+<div class="formula">$$V^{(2)}(S_7) = 1 + 0.9\cdot(0.2\cdot 8 + 0.8\cdot 1) = \mathbf{3.16}$$</div>
 </div>
 </details>
 </div>
@@ -940,8 +960,8 @@ A1: P(S0|S1,A1)=0.8, P(S7|S1,A1)=0.2, R(S1,A1)=9<br>
 <details>
 <summary>&#x1F4A1; Show answer</summary>
 <div class="answer">
-<div class="formula">Q(S1,A0) = 6 + 0.95 &middot; (0.6 &middot; 50 + 0.4 &middot; 10) = 6 + 0.95 &middot; 34 = <strong>38.3</strong></div>
-<div class="formula">Q(S1,A1) = 9 + 0.95 &middot; (0.8 &middot; 50 + 0.2 &middot; 10) = 9 + 0.95 &middot; 42 = <strong>48.9</strong></div>
+<div class="formula">$$Q(S_1,A_0) = 6 + 0.95\cdot(0.6\cdot 50 + 0.4\cdot 10) = \mathbf{38.3}$$</div>
+<div class="formula">$$Q(S_1,A_1) = 9 + 0.95\cdot(0.8\cdot 50 + 0.2\cdot 10) = \mathbf{48.9}$$</div>
 Optimal action: <strong>A1</strong> since Q(S1,A1) &gt; Q(S1,A0)
 </div>
 </details>
@@ -957,12 +977,12 @@ Compute Q(S4,A0) and Q(S4,A2) for &gamma;=0.99 and &gamma;=0.5. Does the policy 
 <summary>&#x1F4A1; Show answer</summary>
 <div class="answer">
 <strong>&gamma;=0.99:</strong>
-<div class="formula">Q(S4,A0) = 3 + 0.99 &middot; (0.7 &middot; 40 + 0.3 &middot; 15) = 3 + 0.99 &middot; 32.5 = <strong>35.175</strong></div>
-<div class="formula">Q(S4,A2) = 4 + 0.99 &middot; (0.9 &middot; 35 + 0.1 &middot; 8) = 4 + 0.99 &middot; 32.3 = <strong>35.977</strong></div>
+<div class="formula">$$Q(S_4,A_0) = 3 + 0.99\cdot(0.7\cdot 40 + 0.3\cdot 15) = \mathbf{35.175}$$</div>
+<div class="formula">$$Q(S_4,A_2) = 4 + 0.99\cdot(0.9\cdot 35 + 0.1\cdot 8) = \mathbf{35.977}$$</div>
 Optimal: A2<br><br>
 <strong>&gamma;=0.5:</strong>
-<div class="formula">Q(S4,A0) = 3 + 0.5 &middot; 32.5 = <strong>19.25</strong></div>
-<div class="formula">Q(S4,A2) = 4 + 0.5 &middot; 32.3 = <strong>20.15</strong></div>
+<div class="formula">$$Q(S_4,A_0) = 3 + 0.5\cdot 32.5 = \mathbf{19.25}$$</div>
+<div class="formula">$$Q(S_4,A_2) = 4 + 0.5\cdot 32.3 = \mathbf{20.15}$$</div>
 Optimal: A2 (same policy, but smaller difference)
 </div>
 </details>
@@ -978,7 +998,7 @@ What is the value of &gamma;? Is the contraction theorem satisfied?</p>
 <details>
 <summary>&#x1F4A1; Show answer</summary>
 <div class="answer">
-<div class="formula">&gamma; = &delta;<sub>2</sub> / &delta;<sub>1</sub> = 7.2 / 8.0 = <strong>0.9</strong></div>
+<div class="formula">$$\gamma = \frac{\delta_2}{\delta_1} = \frac{7.2}{8.0} = \mathbf{0.9}$$</div>
 Verification: &delta;<sub>3</sub> / &delta;<sub>2</sub> = 6.48 / 7.2 = 0.9 &#x2714;<br>
 The contraction theorem is satisfied: each iteration reduces the error by factor &gamma;=0.9.
 </div>
@@ -991,8 +1011,8 @@ The contraction theorem is satisfied: each iteration reduces the error by factor
 <details>
 <summary>&#x1F4A1; Show answer</summary>
 <div class="answer">
-<div class="formula">VI cost = O(|S|<sup>2</sup> &middot; |A| &middot; iters) = O(50<sup>2</sup> &middot; 10 &middot; 500) = O(12,500,000)</div>
-<div class="formula">LU cost = O(|S|<sup>3</sup>) = O(50<sup>3</sup>) = O(125,000)</div>
+<div class="formula">$$\mathcal{O}(|S|^2 \cdot |A| \cdot T) = \mathcal{O}(12{,}500{,}000)$$</div>
+<div class="formula">$$\mathcal{O}(|S|^3) = \mathcal{O}(50^3) = \mathcal{O}(125{,}000)$$</div>
 <strong>Conclusion:</strong> For 50 states, LU is ~100x faster. Use LU when |S| &le; 1000.<br>
 For |S| = 10,000: LU = O(10<sup>12</sup>) &mdash; too slow. Use VI instead.
 </div>
