@@ -1,7 +1,10 @@
-import importlib
 import streamlit as st
 
-st.set_page_config(page_title="RLVR Enterprise Allocator", layout="wide")
+st.set_page_config(
+    page_title="RLVR Enterprise Allocator",
+    page_icon="🤖",
+    layout="wide",
+)
 
 st.markdown("""
 <style>
@@ -9,33 +12,39 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.sidebar.title("RLVR Enterprise Allocator")
-st.sidebar.markdown("---")
-
-def _on_chapter_change():
-    opts = [f"Chapter {i:02d}" for i in range(1, 21)]
-    st.session_state["chapter_index"] = opts.index(st.session_state["_chapter_select"])
-
-opts = [f"Chapter {i:02d}" for i in range(1, 21)]
-if "chapter_index" not in st.session_state:
-    st.session_state["chapter_index"] = 0
-
-st.sidebar.selectbox(
-    "Chapter",
-    opts,
-    index=st.session_state["chapter_index"],
-    key="_chapter_select",
-    on_change=_on_chapter_change,
+# --- chapter selector ---
+chapter = st.sidebar.selectbox(
+    "📚 Chapter",
+    options=[f"Chapter {i:02d}" for i in range(1, 21)],
 )
 
-chapter = st.session_state["_chapter_select"]
-mod_name = f"gui.chapters.ch{chapter.split()[1]}"
+ch_num = int(chapter.split()[-1])
 
-try:
-    mod = importlib.import_module(mod_name)
-    importlib.reload(mod)
-    mod.render()
-except ModuleNotFoundError:
-    st.warning(f"Chapter module `{mod_name}` not found.")
-except Exception as e:
-    st.exception(e)
+if ch_num == 1:
+    from chapters.ch01 import render; render()
+elif ch_num == 2:
+    from chapters.ch02 import render; render()
+elif ch_num == 3:
+    from chapters.ch03 import render; render()
+elif ch_num == 4:
+    from chapters.ch04 import render; render()
+elif ch_num == 5:
+    from chapters.ch05 import render; render()
+elif ch_num == 6:
+    from chapters.ch06 import render; render()
+elif ch_num == 7:
+    from chapters.ch07 import render; render()
+elif ch_num == 8:
+    from chapters.ch08 import render; render()
+elif ch_num == 9:
+    from chapters.ch09 import render; render()
+elif ch_num == 10:
+    from chapters.ch10 import render; render()
+elif ch_num == 11:
+    from chapters.ch11 import render; render()
+elif ch_num == 12:
+    from chapters.ch12 import render; render()
+elif ch_num == 13:
+    from chapters.ch13 import render; render()
+else:
+    st.info(f"🚧 Chapter {ch_num:02d} is not yet implemented.")
