@@ -81,7 +81,7 @@ def _render_handbook_pl():
         if _m2:
             st.download_button("💾 Save", data=_m2.group(1), file_name="handson_ch02_pl.html", mime="text/html")
     st.iframe(
-        """<!DOCTYPE html>
+        r"""<!DOCTYPE html>
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
@@ -646,7 +646,7 @@ def _render_handbook():
         if _m:
             st.download_button("💾 Save", data=_m.group(1), file_name="handson_ch02_en.html", mime="text/html")
     st.iframe(
-        """<!DOCTYPE html>
+        r"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
