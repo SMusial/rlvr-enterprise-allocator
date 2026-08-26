@@ -595,79 +595,84 @@ U&#x17C;yj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10000 (koszt O(|S|^3)).</div>
 <h2>&#x1F4DD; Zadania praktyczne</h2>
 <p style="color:#9ca3af;margin-bottom:1rem">Kliknij "Poka&#x17C; odpowied&#x17A;" aby sprawdzi&#x107; swoje rozwi&#x105;zanie.</p>
 
+<div class="card">
+<h3>Zadanie 1 &#x2014; R&#x119;czna iteracja Bellmana</h3>
+Masz 2 stany (S0, S7) i 1 akcj&#x119;. R(S0,A0)=8, R(S7,A0)=1. P(S0|S0,A0)=0.9, P(S7|S0,A0)=0.1. P(S0|S7,A0)=0.2, P(S7|S7,A0)=0.8. gamma=0.9. Wykonaj 2 iteracje Bellmana r&#x119;cznie zaczynaj&#x105;c od V(S0)=V(S7)=0.
 <details>
-<summary>Zadanie 1 &#x2014; R&#x119;czna iteracja Bellmana</summary>
+<summary>&#x1F4A1; Poka&#x17C; odpowied&#x17A;</summary>
 <div class="answer">
-<strong>Tre&#x15B;&#x107;:</strong> Masz 2 stany (S0, S7) i 1 akcj&#x119;. R(S0,A0)=8, R(S7,A0)=1. P(S0|S0,A0)=0.9, P(S7|S0,A0)=0.1. P(S0|S7,A0)=0.2, P(S7|S7,A0)=0.8. gamma=0.9. Wykonaj 2 iteracje Bellmana r&#x119;cznie zaczynaj&#x105;c od V(S0)=V(S7)=0.<br><br>
-<strong>Odpowied&#x17A;:</strong><br>
 Iteracja 1:<br>
-V1(S0) = R(S0,A0) + gamma*(0.9*V0(S0) + 0.1*V0(S7)) = 8 + 0.9*(0.9*0 + 0.1*0) = <strong>8.0</strong><br>
-V1(S7) = R(S7,A0) + gamma*(0.2*V0(S0) + 0.8*V0(S7)) = 1 + 0.9*(0.2*0 + 0.8*0) = <strong>1.0</strong><br><br>
+V1(S0) = 8 + 0.9*(0.9*0 + 0.1*0) = <strong>8.0</strong><br>
+V1(S7) = 1 + 0.9*(0.2*0 + 0.8*0) = <strong>1.0</strong><br><br>
 Iteracja 2:<br>
-V2(S0) = 8 + 0.9*(0.9*8 + 0.1*1) = 8 + 0.9*7.3 = 8 + 6.57 = <strong>14.57</strong><br>
-V2(S7) = 1 + 0.9*(0.2*8 + 0.8*1) = 1 + 0.9*2.4 = 1 + 2.16 = <strong>3.16</strong>
+V2(S0) = 8 + 0.9*(0.9*8 + 0.1*1) = 8 + 6.57 = <strong>14.57</strong><br>
+V2(S7) = 1 + 0.9*(0.2*8 + 0.8*1) = 1 + 2.16 = <strong>3.16</strong>
 </div>
 </details>
+</div>
 
-<details>
-<summary>Zadanie 2 &#x2014; Wyznacz optymaln&#x105; polityk&#x119;</summary>
-<div class="answer">
-<strong>Tre&#x15B;&#x107;:</strong> Dla stanu S1 masz V*(S0)=50, V*(S7)=10. Macierz przej&#x15B;&#x107; dla S1:<br>
+<div class="card blue">
+<h3>Zadanie 2 &#x2014; Wyznacz optymaln&#x105; polityk&#x119;</h3>
+Dla stanu S1 masz V*(S0)=50, V*(S7)=10. Macierz przej&#x15B;&#x107; dla S1:<br>
 A0: P(S0|S1,A0)=0.6, P(S7|S1,A0)=0.4, R(S1,A0)=6<br>
 A1: P(S0|S1,A1)=0.8, P(S7|S1,A1)=0.2, R(S1,A1)=9<br>
-gamma=0.95. Kt&#xF3;ra akcja jest optymalna?<br><br>
-<strong>Odpowied&#x17A;:</strong><br>
-Q(S1,A0) = 6 + 0.95*(0.6*50 + 0.4*10) = 6 + 0.95*34 = 6 + 32.3 = <strong>38.3</strong><br>
-Q(S1,A1) = 9 + 0.95*(0.8*50 + 0.2*10) = 9 + 0.95*42 = 9 + 39.9 = <strong>48.9</strong><br>
-Optymalna akcja: <strong>A1</strong> (Q(S1,A1) &gt; Q(S1,A0))
+gamma=0.95. Kt&#xF3;ra akcja jest optymalna?
+<details>
+<summary>&#x1F4A1; Poka&#x17C; odpowied&#x17A;</summary>
+<div class="answer">
+Q(S1,A0) = 6 + 0.95*(0.6*50 + 0.4*10) = 6 + 32.3 = <strong>38.3</strong><br>
+Q(S1,A1) = 9 + 0.95*(0.8*50 + 0.2*10) = 9 + 39.9 = <strong>48.9</strong><br>
+Optymalna akcja: <strong>A1</strong>
 </div>
 </details>
+</div>
 
-<details>
-<summary>Zadanie 3 &#x2014; Wp&#x142;yw gamma na polityk&#x119;</summary>
-<div class="answer">
-<strong>Tre&#x15B;&#x107;:</strong> Dla stanu S4 masz dwie akcje:<br>
+<div class="card orange">
+<h3>Zadanie 3 &#x2014; Wp&#x142;yw gamma na polityk&#x119;</h3>
+Dla stanu S4 masz dwie akcje:<br>
 A0: R=3, prowadzi do S2 (V*=40) z p=0.7 i S5 (V*=15) z p=0.3<br>
 A2: R=4, prowadzi do S3 (V*=35) z p=0.9 i S6 (V*=8) z p=0.1<br>
-Oblicz Q(S4,A0) i Q(S4,A2) dla gamma=0.99 i gamma=0.5. Czy polityka si&#x119; zmienia?<br><br>
-<strong>Odpowied&#x17A;:</strong><br>
-gamma=0.99:<br>
-Q(S4,A0) = 3 + 0.99*(0.7*40 + 0.3*15) = 3 + 0.99*32.5 = 3 + 32.175 = <strong>35.175</strong><br>
-Q(S4,A2) = 4 + 0.99*(0.9*35 + 0.1*8) = 4 + 0.99*32.3 = 4 + 31.977 = <strong>35.977</strong><br>
-Optymalna: A2<br><br>
-gamma=0.5:<br>
-Q(S4,A0) = 3 + 0.5*32.5 = 3 + 16.25 = <strong>19.25</strong><br>
-Q(S4,A2) = 4 + 0.5*32.3 = 4 + 16.15 = <strong>20.15</strong><br>
-Optymalna: A2 (ta sama, ale r&#xF3;&#x17C;nica mniejsza)
+Oblicz Q(S4,A0) i Q(S4,A2) dla gamma=0.99 i gamma=0.5. Czy polityka si&#x119; zmienia?
+<details>
+<summary>&#x1F4A1; Poka&#x17C; odpowied&#x17A;</summary>
+<div class="answer">
+gamma=0.99: Q(S4,A0)=<strong>35.175</strong>, Q(S4,A2)=<strong>35.977</strong> &#x2192; Optymalna: A2<br>
+gamma=0.5: Q(S4,A0)=<strong>19.25</strong>, Q(S4,A2)=<strong>20.15</strong> &#x2192; Optymalna: A2<br>
+Polityka si&#x119; nie zmienia, ale r&#xF3;&#x17C;nica mi&#x119;dzy akcjami maleje przy ni&#x17C;szym gamma.
 </div>
 </details>
+</div>
 
-<details>
-<summary>Zadanie 4 &#x2014; Weryfikacja kontrakcji</summary>
-<div class="answer">
-<strong>Tre&#x15B;&#x107;:</strong> W Glass-Box widzisz:<br>
+<div class="card green">
+<h3>Zadanie 4 &#x2014; Weryfikacja kontrakcji</h3>
+W Glass-Box widzisz:<br>
 Iteracja 1: max delta V = 8.0<br>
 Iteracja 2: max delta V = 7.2<br>
 Iteracja 3: max delta V = 6.48<br>
-Jaka jest warto&#x15B;&#x107; gamma? Czy twierdzenie o kontrakcji jest spe&#x142;nione?<br><br>
-<strong>Odpowied&#x17A;:</strong><br>
-gamma = delta_2 / delta_1 = 7.2 / 8.0 = <strong>0.9</strong><br>
-Weryfikacja: delta_3 / delta_2 = 6.48 / 7.2 = 0.9 &#x2714;<br>
-Twierdzenie o kontrakcji jest spe&#x142;nione: ka&#x17C;da iteracja redukuje b&#x142;&#x105;d o czynnik gamma=0.9.
-</div>
-</details>
-
+Jaka jest warto&#x15B;&#x107; gamma? Czy twierdzenie o kontrakcji jest spe&#x142;nione?
 <details>
-<summary>Zadanie 5 &#x2014; Kiedy u&#x17C;y&#x107; LU zamiast VI?</summary>
+<summary>&#x1F4A1; Poka&#x17C; odpowied&#x17A;</summary>
 <div class="answer">
-<strong>Tre&#x15B;&#x107;:</strong> Masz system ASP z 50 stanami i 10 akcjami. Szacujesz &#x17C;e VI potrzebuje 500 iteracji do zbie&#x17C;no&#x15B;ci. Por&#xF3;wnaj koszt obliczeniowy VI vs LU.<br><br>
-<strong>Odpowied&#x17A;:</strong><br>
-VI: O(|S|^2 * |A| * iteracje) = O(50^2 * 10 * 500) = O(12,500,000) operacji<br>
-LU: O(|S|^3) = O(50^3) = O(125,000) operacji<br><br>
-<strong>Wniosek:</strong> Dla 50 stan&#xF3;w LU jest ~100x szybsze. U&#x17C;yj LU gdy |S| &le; 1000.<br>
-Dla |S| = 10,000: LU = O(10^12) &#x2014; zbyt wolne. U&#x17C;yj VI.
+gamma = 7.2 / 8.0 = <strong>0.9</strong><br>
+Weryfikacja: 6.48 / 7.2 = 0.9 &#x2714;<br>
+Twierdzenie o kontrakcji spe&#x142;nione: ka&#x17C;da iteracja redukuje b&#x142;&#x105;d o czynnik gamma=0.9.
 </div>
 </details>
+</div>
+
+<div class="card purple">
+<h3>Zadanie 5 &#x2014; Kiedy u&#x17C;y&#x107; LU zamiast VI?</h3>
+Masz system ASP z 50 stanami i 10 akcjami. Szacujesz &#x17C;e VI potrzebuje 500 iteracji do zbie&#x17C;no&#x15B;ci. Por&#xF3;wnaj koszt obliczeniowy VI vs LU i zdecyduj kt&#xF3;ry algorytm u&#x17C;y&#x107;.
+<details>
+<summary>&#x1F4A1; Poka&#x17C; odpowied&#x17A;</summary>
+<div class="answer">
+VI: O(50^2 * 10 * 500) = O(12,500,000) operacji<br>
+LU: O(50^3) = O(125,000) operacji<br><br>
+<strong>Wniosek:</strong> LU jest ~100x szybsze. U&#x17C;yj LU gdy |S| &le; 1000.<br>
+Dla |S| = 10,000: LU = O(10^12) &#x2014; zbyt wolne, u&#x17C;yj VI.
+</div>
+</details>
+</div>
 </div>
 
 <!-- QUIZ -->
