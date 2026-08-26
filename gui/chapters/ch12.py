@@ -116,8 +116,6 @@ def render():
     zero_sum = st.sidebar.checkbox(tx["zerosum"],value=False)
     seed     = st.sidebar.number_input(tx["seed"],0,9999,42)
 
-    with st.expander(tx["guide_title"],expanded=False):
-        st.markdown(tx["guide"])
     if False: st.markdown(
             "Nash Q: converges to Nash equilibrium - neither player can improve unilaterally.\n\n"
             "Correlated Q: broader than Nash - agents coordinate via joint distribution.\n\n"
@@ -135,7 +133,6 @@ def render():
 
     if "ch12_result" not in st.session_state:
         st.info("Configure settings and click Run.")
-        _theory()
         return
 
     res   = st.session_state["ch12_result"]
@@ -192,7 +189,6 @@ def render():
     _glass(res, tx)
     st.subheader(tx["summary"])
     _summary(res, tx)
-    _theory()
 
 def _glass(res, tx=None):
     opts={LABELS[k]:k for k in ALGOS}
@@ -221,16 +217,3 @@ def _summary(res, tx=None):
         rows.append({"Algorithm":LABELS[k],"Avg return (last 100)":f"{avg:.3f}","Steps":str(r["total_steps"]),"Avg Nash gap":f"{ng:.4f}","V*(S0)":f"{r['values'][0]:.3f}","V*(S7)":f"{r['values'][7]:.3f}"})
     st.dataframe(rows,hide_index=True)
 
-def _theory():
-    st.markdown("---")
-    st.subheader("Theory - Chapter 12")
-    with st.expander("12.1 Nash Equilibrium",expanded=False):
-        st.markdown("V_i(s, pi_i*, pi_j*) >= V_i(s, pi_i, pi_j*) for all pi_i")
-    with st.expander("12.2 Nash Q-Learning",expanded=False):
-        st.markdown("Q_i(s,a0,a1) += alpha * [r_i + gamma * V_i^Nash(s') - Q_i(s,a0,a1)]")
-    with st.expander("12.3 Correlated Q-Learning",expanded=False):
-        st.markdown("Joint distribution sigma(a0,a1|s) updated via regret matching.")
-    with st.expander("12.4 Minimax Q-Learning",expanded=False):
-        st.markdown("Zero-sum: max_{pi_0} min_{pi_1} V_0(s, pi_0, pi_1)")
-    with st.expander("12.5 Fictitious Play",expanded=False):
-        st.markdown("Best response to empirical average: pi_j(a|s) = N_j(s,a) / sum N_j(s,a)")
