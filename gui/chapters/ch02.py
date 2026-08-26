@@ -149,11 +149,13 @@ details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d315
 .btn.secondary{background:#252840;color:#9ca3af}
 .btn.secondary:hover{background:#2d3154;color:#e8eaf6}
 
-.katex{color:#FFD700 !important}
-.katex-display .katex{color:#FFD700 !important}
 .formula{background:#252840;border-radius:8px;padding:1.5rem 2rem;margin:.75rem 0;text-align:center}
 .formula .katex{font-size:1.6em !important}
 .formula .katex-display .katex{font-size:1.6em !important}
+
+.katex-display{color:#FFD700;transform:scale(1.3);transform-origin:center;display:block;margin:1.5rem 0}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem;margin:1rem 0;text-align:center}
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -696,11 +698,13 @@ details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d315
 .btn.secondary{background:#252840;color:#9ca3af}
 .btn.secondary:hover{background:#2d3154;color:#e8eaf6}
 
-.katex{color:#FFD700 !important}
-.katex-display .katex{color:#FFD700 !important}
 .formula{background:#252840;border-radius:8px;padding:1.5rem 2rem;margin:.75rem 0;text-align:center}
 .formula .katex{font-size:1.6em !important}
 .formula .katex-display .katex{font-size:1.6em !important}
+
+.katex-display{color:#FFD700;transform:scale(1.3);transform-origin:center;display:block;margin:1.5rem 0}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem;margin:1rem 0;text-align:center}
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
