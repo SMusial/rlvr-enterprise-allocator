@@ -801,7 +801,7 @@ Value Iteration answers this by solving the Bellman equation iteratively &mdash;
 <!-- RL THEORY -->
 <div id="theory" class="tab-content">
 <h2>&#x1F9EE; Bellman Optimality Equation</h2>
-<div class="formula">$$V^*(s) = \max_{a} \sum_{s'} P(s'|s,a)\,\bigl[R(s,a) + \gamma \cdot V^*(s')\bigr]$$</div>
+<div class="formula">$$V^*(s) = \max_{a} \sum_{s'} P(s'|s,a)\,\left[R(s,a) + \gamma \cdot V^*(s')\right]$$</div>
 <div class="card"><strong>What each term means:</strong>
 <ul>
 <li><strong>V*(s)</strong> &mdash; optimal long-term value of being in state s</li>
