@@ -300,7 +300,7 @@ function showTab(id){
 def _render_handbook_pl():
     _plcol1, _plcol2 = st.columns([8, 1])
     with _plcol1:
-        st.subheader("Hands-On Guide — Rozdział 02 (PL)")
+        st.subheader("Hands-On Guide — Chapter 02 (PL)")
     with _plcol2:
         import re as _re2
         _src2 = open(__file__, encoding="utf-8").read()
@@ -332,6 +332,7 @@ h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
 .card.blue{border-left-color:#0082F0}
 .card.orange{border-left-color:#FF8C0A}
 .card.red{border-left-color:#FF4B4B}
+.card.purple{border-left-color:#8B5CF6}
 table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
 th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
 td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
@@ -346,12 +347,32 @@ code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;fon
 .kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
 @media(max-width:600px){.grid2{grid-template-columns:1fr}}
+details{background:#1e2235;border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0;border-left:4px solid #FF8C0A}
+details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.95rem;user-select:none}
+details summary:hover{color:#FFB347}
+details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154;color:#e8eaf6}
+.quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
+.quiz-question p{font-weight:600;margin-bottom:.75rem;color:#e8eaf6}
+.quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0;transition:background .15s}
+.quiz-option:hover{background:#252840}
+.quiz-option input{accent-color:#8B5CF6;width:1rem;height:1rem;flex-shrink:0}
+.quiz-option label{cursor:pointer;color:#9ca3af;font-size:.9rem}
+.quiz-option.correct label{color:#0FC373;font-weight:600}
+.quiz-option.wrong label{color:#FF4B4B}
+#quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:600;display:none}
+#quiz-result.pass{background:#0FC37322;border:2px solid #0FC373;color:#0FC373}
+#quiz-result.fail{background:#FF4B4B22;border:2px solid #FF4B4B;color:#FF4B4B}
+.btn{background:#8B5CF6;color:white;border:none;padding:.6rem 1.5rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;margin-top:1rem;transition:background .2s}
+.btn:hover{background:#7C3AED}
+.btn.secondary{background:#252840;color:#9ca3af}
+.btn.secondary:hover{background:#2d3154;color:#e8eaf6}
 </style>
 </head>
 <body>
 <div class="container">
 <h1>&#x1F4D8; Podr&#x119;cznik &#x2014; Rozdzia&#x142; 02</h1>
 <p style="color:#9ca3af;margin-bottom:1.5rem"><em>R&#xF3;wnanie Bellmana i Iteracja Warto&#x15B;ci &middot; ASP Warszawa &middot; Silnik Rust</em></p>
+
 <div class="tabs">
   <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Wprowadzenie</button>
   <button class="tab-btn" onclick="showTab('what')">&#x2753; Czym jest Ch02?</button>
@@ -360,8 +381,12 @@ code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;fon
   <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; Jak u&#x17C;ywa&#x107; UI</button>
   <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretacja</button>
   <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; &#x106;wiczenia</button>
+  <button class="tab-btn" onclick="showTab('tasks')">&#x1F4DD; Zadania</button>
+  <button class="tab-btn" onclick="showTab('quiz')">&#x1F3AF; Quiz</button>
   <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Podsumowanie</button>
 </div>
+
+<!-- WPROWADZENIE -->
 <div id="intro" class="tab-content active">
 <h2>&#x1F3AF; Cele nauki</h2>
 <div class="card green">Po uko&#x144;czeniu tego rozdzia&#x142;u b&#x119;dziesz potrafi&#x142;:
@@ -369,15 +394,15 @@ code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;fon
 <li>Zapisa&#x107; r&#xF3;wnanie optymalnosci Bellmana i wyja&#x15B;ni&#x107; ka&#x17C;dy sk&#x142;adnik</li>
 <li>Zaimplementowa&#x107; Iteracj&#x119; Warto&#x15B;ci i wiedzie&#x107; kiedy zbie&#x17C;y</li>
 <li>Odczyta&#x107; wykres V*(s) i wyja&#x15B;ni&#x107; dlaczego V*(S0) &gt; V*(S7)</li>
-<li>Wyodr&#x119;bni&#x107; optymaln&#x105; polityk&#x119; &#x3C0;* z V*</li>
-<li>Wyja&#x15B;ni&#x107; twierdzenie o odwzorowaniu zwi&#x119;&#x17C;aj&#x105;cym</li>
-<li>Wiedzie&#x107; kiedy u&#x17C;ywa&#x107; dok&#x142;adnego LU vs iteracyjnego VI</li>
+<li>Wyodr&#x119;bni&#x107; optymaln&#x105; polityk&#x119; &#x3C0;* z V* operatorem zachlannym</li>
+<li>Wyja&#x15B;ni&#x107; twierdzenie o odwzorowaniu zwi&#x119;&#x17C;aj&#x105;cym prostym j&#x119;zykiem</li>
+<li>Wiedzie&#x107; kiedy u&#x17C;ywa&#x107; dok&#x142;adnego rozkadu LU vs iteracyjnego VI</li>
 </ul>
 </div>
 <h2>&#x1F3E2; Problem biznesowy</h2>
 <div class="card blue"><strong>Centrum Dyspozycji ASP Warszawa</strong> &#x2014; 8 stan&#xF3;w operacyjnych, 4 akcje dyspozycji.<br><br>
-Pytanie: <em>jaka jest d&#x142;ugoterminowa warto&#x15B;&#x107; przebywania w ka&#x17C;dym stanie?</em><br><br>
-Iteracja Warto&#x15B;ci odpowiada przez iteracyjne rozwi&#x105;zanie r&#xF3;wnania Bellmana.</div>
+Pytanie: <em>jaka jest d&#x142;ugoterminowa warto&#x15B;&#x107; przebywania w ka&#x17C;dym stanie operacyjnym?</em><br><br>
+Iteracja Warto&#x15B;ci odpowiada przez iteracyjne rozwi&#x105;zanie r&#xF3;wnania Bellmana &#x2014; bez symulacji, tylko P(s'|s,a) i R(s,a).</div>
 <div class="kpi">
 <div class="kpi-card"><div class="kpi-val">8</div><div class="kpi-label">Stan&#xF3;w operacyjnych</div></div>
 <div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Akcji dyspozycji</div></div>
@@ -385,35 +410,62 @@ Iteracja Warto&#x15B;ci odpowiada przez iteracyjne rozwi&#x105;zanie r&#xF3;wnan
 <div class="kpi-card"><div class="kpi-val">&#x3B8;</div><div class="kpi-label">Pr&#xF3;g zbie&#x17C;no&#x15B;ci</div></div>
 </div>
 </div>
+
+<!-- CZYM JEST CH02 -->
 <div id="what" class="tab-content">
 <h2>&#x2753; Czym jest Rozdzia&#x142; 02?</h2>
-<div class="card blue">Ch02 wprowadza <strong>planowanie oparte na modelu</strong>. Znamy P(s'|s,a) i R(s,a) &#x2014; budujemy je analitycznie dla ASP.</div>
+<div class="card blue">Ch02 wprowadza <strong>planowanie oparte na modelu</strong>. Znamy P(s'|s,a) i R(s,a) &#x2014; budujemy je analitycznie dla ASP. Iteracja Warto&#x15B;ci rozwi&#x105;zuje r&#xF3;wnanie Bellmana bez symulacji.</div>
 <h2>Stany operacyjne z <code>STATE_NAMES</code></h2>
-<table><tr><th>Stan</th><th>Nazwa</th></tr>
-<tr><td><code>S0</code></td><td>Wszyscy dost&#x119;pni, brak pilnych</td></tr>
-<tr><td><code>S1</code></td><td>Wszyscy dost&#x119;pni, pilne oczekuje</td></tr>
-<tr><td><code>S2</code></td><td>Cz&#x119;&#x15B;ciowa dost&#x119;pno&#x15B;&#x107;, niskie obci&#x105;&#x17C;enie</td></tr>
-<tr><td><code>S3</code></td><td>Cz&#x119;&#x15B;ciowa dost&#x119;pno&#x15B;&#x107;, wysokie obci&#x105;&#x17C;enie</td></tr>
-<tr><td><code>S4</code></td><td>Niska dost&#x119;pno&#x15B;&#x107;, znos&#x105;ce obci&#x105;&#x17C;enie</td></tr>
-<tr><td><code>S5</code></td><td>Niska dost&#x119;pno&#x15B;&#x107;, wysokie obci&#x105;&#x17C;enie</td></tr>
-<tr><td><code>S6</code></td><td>Krytyczna, wi&#x119;kszo&#x15B;&#x107; technik&#xF3;w zaj&#x119;ta</td></tr>
-<tr><td><code>S7</code></td><td>Wszyscy zaj&#x119;ci, naruszenie SLA bliskie</td></tr></table>
+<table><tr><th>Stan</th><th>Nazwa</th><th>Opis</th></tr>
+<tr><td><code>S0</code></td><td>All available, no urgent</td><td>Najlepsza sytuacja &#x2014; wszyscy dost&#x119;pni</td></tr>
+<tr><td><code>S1</code></td><td>All available, urgent pending</td><td>Dost&#x119;pni ale pilne zlecenie czeka</td></tr>
+<tr><td><code>S2</code></td><td>Partial availability, low load</td><td>Cz&#x119;&#x15B;&#x107; technik&#xF3;w zaj&#x119;ta, niskie obci&#x105;&#x17C;enie</td></tr>
+<tr><td><code>S3</code></td><td>Partial availability, high load</td><td>Cz&#x119;&#x15B;&#x107; zaj&#x119;ta, wysokie obci&#x105;&#x17C;enie</td></tr>
+<tr><td><code>S4</code></td><td>Low availability, manageable</td><td>Wi&#x119;kszo&#x15B;&#x107; zaj&#x119;ta, znos&#x105;ce obci&#x105;&#x17C;enie</td></tr>
+<tr><td><code>S5</code></td><td>Low availability, high load</td><td>Wi&#x119;kszo&#x15B;&#x107; zaj&#x119;ta, krytyczne obci&#x105;&#x17C;enie</td></tr>
+<tr><td><code>S6</code></td><td>Critical, most techs busy</td><td>Prawie wszyscy zaj&#x119;ci, ryzyko SLA</td></tr>
+<tr><td><code>S7</code></td><td>All busy, SLA breach imminent</td><td>Najgorsza sytuacja &#x2014; naruszenie SLA bliskie</td></tr>
+</table>
+<h2>Akcje dyspozycji z <code>ACTION_NAMES</code></h2>
+<table><tr><th>Akcja</th><th>Opis</th><th>Kiedy u&#x17C;ywa&#x107;</th></tr>
+<tr><td><code>A0</code></td><td>Wy&#x15B;lij najbli&#x17C;szego technika</td><td>Zlecenia krytyczne czasowo</td></tr>
+<tr><td><code>A1</code></td><td>Wy&#x15B;lij technika z dopasowanym skillem</td><td>Z&#x142;o&#x17C;one zlecenia techniczne</td></tr>
+<tr><td><code>A2</code></td><td>Wy&#x15B;lij najbardziej do&#x15B;wiadczonego</td><td>Wysokie ryzyko naruszenia SLA</td></tr>
+<tr><td><code>A3</code></td><td>Czekaj na lepszego technika</td><td>Nigdy w S6/S7 (kara &#x2212;3 do &#x2212;10)</td></tr>
+</table>
 </div>
+
+<!-- TEORIA -->
 <div id="theory" class="tab-content">
 <h2>&#x1F9EE; R&#xF3;wnanie Bellmana</h2>
-<div class="formula">V*(s) = max_a SUM P(s'|s,a) [ R(s,a) + gamma * V*(s') ]</div>
+<div class="formula">V*(s) = max_a SUM_s' P(s'|s,a) [ R(s,a) + gamma * V*(s') ]</div>
+<div class="card"><strong>Co oznacza ka&#x17C;dy sk&#x142;adnik:</strong>
+<ul>
+<li><strong>V*(s)</strong> &#x2014; optymalna d&#x142;ugoterminowa warto&#x15B;&#x107; stanu s</li>
+<li><strong>max_a</strong> &#x2014; wybierz akcj&#x119; maksymalizuj&#x105;c&#x105; warto&#x15B;&#x107;</li>
+<li><strong>P(s'|s,a)</strong> &#x2014; prawdopodobie&#x144;stwo przej&#x15B;cia do s' z (s,a)</li>
+<li><strong>R(s,a)</strong> &#x2014; natychmiastowa nagroda za akcj&#x119; a w stanie s</li>
+<li><strong>gamma * V*(s')</strong> &#x2014; zdyskontowana przysz&#x142;a warto&#x15B;&#x107; nast&#x119;pnego stanu</li>
+</ul>
+</div>
 <h2>Algorytm Iteracji Warto&#x15B;ci</h2>
 <div class="step"><div class="step-num">1</div><div>Inicjalizuj V(s) = 0 dla wszystkich stan&#xF3;w</div></div>
 <div class="step"><div class="step-num">2</div><div>Dla ka&#x17C;dego s: V_new(s) = max_a SUM P(s'|s,a)[R(s,a) + gamma*V(s')]</div></div>
 <div class="step"><div class="step-num">3</div><div>Oblicz delta = max_s |V_new(s) - V(s)|</div></div>
-<div class="step"><div class="step-num">4</div><div>Aktualizuj V &lt;- V_new</div></div>
-<div class="step"><div class="step-num">5</div><div>Je&#x15B;li delta &lt; theta &#x2192; STOP</div></div>
-<div class="step"><div class="step-num">6</div><div>Wyod&#x119;bnij polityk&#x119;: pi*(s) = argmax_a ...</div></div>
+<div class="step"><div class="step-num">4</div><div>Aktualizuj V &larr; V_new</div></div>
+<div class="step"><div class="step-num">5</div><div>Je&#x15B;li delta &lt; theta &#x2192; STOP. W przeciwnym razie id&#x17A; do kroku 2.</div></div>
+<div class="step"><div class="step-num">6</div><div>Wyod&#x119;bnij polityk&#x119;: pi*(s) = argmax_a SUM P(s'|s,a)[R(s,a) + gamma*V*(s')]</div></div>
+<h2>Twierdzenie o kontrakcji</h2>
+<div class="card purple">Operator Bellmana T jest gamma-kontrakcj&#x105;:<br>
+<div class="formula">||TV - TV'||_inf &lt;= gamma * ||V - V'||_inf</div>
+Dlatego VI zbiega do jedynego punktu sta&#x142;ego V*. Krzywa zbie&#x17C;no&#x15B;ci w UI pokazuje t&#x119; kontrakcj&#x119; w dzia&#x142;aniu.</div>
 <h2>solve_exact() &#x2014; Rozk&#x142;ad LU</h2>
-<div class="card green">V^pi = (I - gamma * P^pi)^-1 * r^pi<br>
+<div class="card green">Dla ustalonej polityki pi: V^pi = (I - gamma * P^pi)^-1 * r^pi<br>
 Zaimplementowane w <code>solve_exact()</code> przez <strong>nalgebra LU</strong>.<br>
-U&#x17C;yj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10000.</div>
+U&#x17C;yj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10000 (koszt O(|S|^3)).</div>
 </div>
+
+<!-- ŚRODOWISKO -->
 <div id="env" class="tab-content">
 <h2>&#x1F5FA; Macierz nagr&#xF3;d R(s,a) z <code>build_asp_rewards()</code></h2>
 <table><tr><th>Stan</th><th>A0: Najbli&#x17C;szy</th><th>A1: Skill</th><th>A2: Senior</th><th>A3: Czekaj</th></tr>
@@ -424,63 +476,348 @@ U&#x17C;yj gdy |S| &le; 1000. Unikaj gdy |S| &gt; 10000.</div>
 <tr><td>S4</td><td>3.0</td><td><strong>6.0</strong></td><td>4.0</td><td>-1.0</td></tr>
 <tr><td>S5</td><td>4.0</td><td><strong>7.0</strong></td><td>5.0</td><td>-3.0</td></tr>
 <tr><td>S6</td><td>2.0</td><td><strong>5.0</strong></td><td>3.0</td><td>-8.0</td></tr>
-<tr><td>S7</td><td>1.0</td><td><strong>4.0</strong></td><td>2.0</td><td>-10.0</td></tr></table>
+<tr><td>S7</td><td>1.0</td><td><strong>4.0</strong></td><td>2.0</td><td>-10.0</td></tr>
+</table>
+<p><em>Pogrubienie = optymalna akcja per stan. A3 zawsze karana w stanach pilnych.</em></p>
 </div>
+
+<!-- JAK UŻYWAĆ UI -->
 <div id="ui" class="tab-content">
 <h2>&#x1F3AE; Jak u&#x17C;ywa&#x107; interfejsu Ch02</h2>
-<div class="step"><div class="step-num">1</div><div><strong>Ustaw &#x3B3;</strong> &#x2014; zacznij od 0.95</div></div>
-<div class="step"><div class="step-num">2</div><div><strong>Ustaw &#x3B8;</strong> &#x2014; zacznij od 1e-6</div></div>
-<div class="step"><div class="step-num">3</div><div><strong>Kliknij &#x25B6; Uruchom Iteracj&#x119; Warto&#x15B;ci</strong></div></div>
-<div class="step"><div class="step-num">4</div><div><strong>Odczytaj wykres V*(s)</strong> &#x2014; S0 najwy&#x17C;szy, S7 najni&#x17C;szy</div></div>
-<div class="step"><div class="step-num">5</div><div><strong>Odczytaj tabel&#x119; polityki</strong> &#x2014; optymalna akcja per stan</div></div>
-<div class="step"><div class="step-num">6</div><div><strong>Odczytaj krzyw&#x105; zbie&#x17C;no&#x15B;ci</strong> &#x2014; eksponencjalny zanik</div></div>
-<div class="step"><div class="step-num">7</div><div><strong>Odczytaj Glass-Box</strong> &#x2014; dok&#x142;adna aktualizacja Bellmana</div></div>
+<div class="step"><div class="step-num">1</div><div><strong>Ustaw gamma (wsp&#xF3;&#x142;czynnik dyskonta)</strong><br>gamma=0.99 = dalekowzroczny agent. gamma=0.5 = kr&#xF3;tkowzroczny. Zacznij od 0.95.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Ustaw theta (pr&#xF3;g zbie&#x17C;no&#x15B;ci)</strong><br>Mniejsze theta = dok&#x142;adniejsze ale wolniejsze. Zacznij od 1e-6.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Kliknij &#x25B6; Uruchom Iteracj&#x119; Warto&#x15B;ci</strong><br>Silnik Rust buduje macierz przej&#x15B;&#x107; ASP i wykonuje iteracje Bellmana.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Odczytaj wykres V*(s)</strong><br>S0 powinien by&#x107; najwy&#x17C;szy, S7 najni&#x17C;szy. Je&#x15B;li nie &#x2014; sprawd&#x17A; gamma.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Odczytaj tabel&#x119; optymalnej polityki</strong><br>Kt&#xF3;ra strategia dyspozycji maksymalizuje warto&#x15B;&#x107; d&#x142;ugoterminow&#x105; dla ka&#x17C;dego stanu?</div></div>
+<div class="step"><div class="step-num">6</div><div><strong>Odczytaj krzyw&#x105; zbie&#x17C;no&#x15B;ci</strong><br>Obserwuj eksponencjalny zanik ||delta V||_inf do zera.</div></div>
+<div class="step"><div class="step-num">7</div><div><strong>Odczytaj Glass-Box</strong><br>Dok&#x142;adna aktualizacja Bellmana dla ka&#x17C;dego stanu w pierwszych 3 iteracjach.</div></div>
 </div>
+
+<!-- INTERPRETACJA -->
 <div id="interp" class="tab-content">
 <h2>&#x1F4CA; Interpretacja wynik&#xF3;w</h2>
-<div class="card"><strong>Wykres V*(s):</strong> S0 najwy&#x17C;szy, S7 najni&#x17C;szy.</div>
-<div class="card blue"><strong>Krzywa zbie&#x17C;no&#x15B;ci:</strong> Eksponencjalny zanik. P&#x142;aska = zbie&#x17C;na.</div>
-<div class="card orange"><strong>Mapa ciep&#x142;a:</strong> Kolumna A1 najja&#x15B;niejsza. A3 najciemniejsza w S6/S7.</div>
-<div class="card green"><strong>Glass-Box:</strong> DeltaV maleje &#x2014; twierdzenie o kontrakcji w dzia&#x142;aniu.</div>
-<h2>8 Test&#xF3;w Rust</h2>
-<table><tr><th>#</th><th>Test</th><th>Weryfikuje</th></tr>
-<tr><td>1</td><td><code>test_build_rewards</code></td><td>R(S1,A1)=9.0, R(S7,A3)=-10.0</td></tr>
-<tr><td>2</td><td><code>test_build_transitions</code></td><td>Ka&#x17C;dy wiersz P sumuje si&#x119; do 1.0</td></tr>
-<tr><td>3</td><td><code>test_bellman_update</code></td><td>V(s) ro&#x15B;nie monotonicznie</td></tr>
-<tr><td>4</td><td><code>test_value_iteration_converges</code></td><td>||DeltaV|| &lt; theta=1e-6</td></tr>
-<tr><td>5</td><td><code>test_optimal_policy</code></td><td>pi*(S0)=A1, pi*(S7)!=A3</td></tr>
-<tr><td>6</td><td><code>test_value_ordering</code></td><td>V*(S0) &gt; V*(S7)</td></tr>
-<tr><td>7</td><td><code>test_solve_exact</code></td><td>||V_VI - V_LU|| &lt; 1e-4</td></tr>
-<tr><td>8</td><td><code>test_contraction</code></td><td>delta_{k+1} &le; gamma * delta_k</td></tr></table>
+
+<h3>&#x1F4CA; Wykres funkcji warto&#x15B;ci V*(s)</h3>
+<div class="card blue">
+<strong>Co jest na osiach:</strong><br>
+&#x2022; O&#x15B; X: stany operacyjne S0&#x2013;S7 (od najlepszego do najgorszego)<br>
+&#x2022; O&#x15B; Y: optymalna d&#x142;ugoterminowa warto&#x15B;&#x107; V*(s) &#x2014; im wy&#x17C;sza tym lepiej<br><br>
+<strong>Cel wykresu:</strong> Pokazuje jak "cenny" jest ka&#x17C;dy stan operacyjny z perspektywy d&#x142;ugoterminowej. Agent d&#x105;&#x17C;y do stan&#xF3;w o wysokim V*(s).<br><br>
+<strong>Na co zwr&#xF3;ci&#x107; uwag&#x119;:</strong><br>
+&#x2022; S0 powinien mie&#x107; najwy&#x17C;sz&#x105; warto&#x15B;&#x107; &#x2014; to najlepsza sytuacja operacyjna<br>
+&#x2022; S7 powinien mie&#x107; najni&#x17C;sz&#x105; warto&#x15B;&#x107; &#x2014; naruszenie SLA bliskie<br>
+&#x2022; R&#xF3;&#x17C;nica V*(S0) - V*(S7) ro&#x15B;nie z gamma &#x2014; wy&#x17C;sze gamma = agent bardziej "ceni" dobre stany
 </div>
+
+<h3>&#x1F3AF; Tabela optymalnej polityki pi*(s)</h3>
+<div class="card">
+<strong>Kolumny tabeli:</strong>
+<table><tr><th>Kolumna</th><th>Znaczenie</th></tr>
+<tr><td>State</td><td>Stan operacyjny S0&#x2013;S7</td></tr>
+<tr><td>Optimal Action</td><td>Akcja dyspozycji kt&#xF3;ra maksymalizuje V*(s)</td></tr>
+<tr><td>V*(s)</td><td>Optymalna warto&#x15B;&#x107; tego stanu po konwergencji</td></tr>
+</table>
+<strong>Cel tabeli:</strong> Pokazuje co agent powinien robi&#x107; w ka&#x17C;dym stanie aby maksymalizowa&#x107; d&#x142;ugoterminow&#x105; warto&#x15B;&#x107;.<br><br>
+<strong>Na co zwr&#xF3;ci&#x107; uwag&#x119;:</strong><br>
+&#x2022; A1 (skill-matched) powinien dominowa&#x107; &#x2014; dopasowanie umiej&#x119;tno&#x15B;ci daje najwy&#x17C;sz&#x105; nagrod&#x119;<br>
+&#x2022; A3 (Hold) nigdy nie powinien pojawia&#x107; si&#x119; w S6/S7 &#x2014; kara jest zbyt wysoka<br>
+&#x2022; Zmiana gamma mo&#x17C;e zmieni&#x107; polityk&#x119; w stanach po&#x15B;rednich
+</div>
+
+<h3>&#x1F4C9; Krzywa zbie&#x17C;no&#x15B;ci ||delta V||_inf</h3>
+<div class="card green">
+<strong>Co jest na osiach:</strong><br>
+&#x2022; O&#x15B; X: numer iteracji Bellmana (0, 1, 2, ...)<br>
+&#x2022; O&#x15B; Y: maksymalna zmiana warto&#x15B;ci ||V^(k+1) - V^(k)||_inf (skala logarytmiczna)<br><br>
+<strong>Cel wykresu:</strong> Pokazuje jak szybko algorytm zbiega do V*. Ka&#x17C;da iteracja redukuje b&#x142;&#x105;d o czynnik gamma.<br><br>
+<strong>Na co zwr&#xF3;ci&#x107; uwag&#x119;:</strong><br>
+&#x2022; Krzywa powinna by&#x107; monotonicznie malej&#x105;ca &#x2014; je&#x15B;li nie, b&#x142;&#x105;d w implementacji<br>
+&#x2022; Nachylenie = log(gamma) &#x2014; wy&#x17C;sze gamma = wolniejsza zbie&#x17C;no&#x15B;&#x107;<br>
+&#x2022; Krzywa p&#x142;aska = konwergencja osi&#x105;gni&#x119;ta &#x2014; delta &lt; theta
+</div>
+
+<h3>&#x1F525; Mapa ciep&#x142;a nagr&#xF3;d R(s,a)</h3>
+<div class="card orange">
+<strong>Co jest na osiach:</strong><br>
+&#x2022; O&#x15B; X: akcje dyspozycji A0&#x2013;A3<br>
+&#x2022; O&#x15B; Y: stany operacyjne S0&#x2013;S7<br>
+&#x2022; Kolor kom&#xF3;rki: warto&#x15B;&#x107; nagrody R(s,a) &#x2014; zielony = wysoka, czerwony = niska<br><br>
+<strong>Cel wykresu:</strong> Wizualizuje macierz nagr&#xF3;d &#x2014; kt&#xF3;re kombinacje (stan, akcja) s&#x105; op&#x142;acalne.<br><br>
+<strong>Na co zwr&#xF3;ci&#x107; uwag&#x119;:</strong><br>
+&#x2022; Kolumna A1 powinna by&#x107; najja&#x15B;niejsza &#x2014; skill-match daje najwy&#x17C;sz&#x105; nagrod&#x119;<br>
+&#x2022; Kolumna A3 w S6/S7 powinna by&#x107; najciemniejsza &#x2014; kara -8 i -10<br>
+&#x2022; Wiersz S1 powinien by&#x107; ja&#x15B;niejszy ni&#x17C; S0 &#x2014; pilno&#x15B;&#x107; zwi&#x119;ksza nagrod&#x119; za szybk&#x105; reakcj&#x119;
+</div>
+
+<h3>&#x1F52C; Glass-Box &#x2014; &#x15A;lad aktualizacji Bellmana</h3>
+<div class="card">
+<strong>Kolumny tabeli Glass-Box:</strong>
+<table><tr><th>Kolumna</th><th>Znaczenie</th><th>Przyk&#x142;ad</th></tr>
+<tr><td>Iteration</td><td>Numer iteracji Bellmana (1, 2, 3)</td><td>1</td></tr>
+<tr><td>State</td><td>Stan operacyjny kt&#xF3;ry jest aktualizowany</td><td>S0</td></tr>
+<tr><td>Old V(s)</td><td>Warto&#x15B;&#x107; stanu przed aktualizacj&#x105;</td><td>0.0000</td></tr>
+<tr><td>New V(s)</td><td>Warto&#x15B;&#x107; stanu po aktualizacji Bellmana</td><td>8.0000</td></tr>
+<tr><td>delta V</td><td>Zmiana warto&#x15B;ci = |New - Old|</td><td>8.0000</td></tr>
+<tr><td>Best Action</td><td>Akcja kt&#xF3;ra da&#x142;a najwy&#x17C;sz&#x105; warto&#x15B;&#x107;</td><td>A1</td></tr>
+</table>
+<strong>Cel tabeli:</strong> Pokazuje dok&#x142;adnie jak Bellman aktualizuje ka&#x17C;dy stan krok po kroku.<br><br>
+<strong>Na co zwr&#xF3;ci&#x107; uwag&#x119;:</strong><br>
+&#x2022; delta V w iteracji k+1 powinno by&#x107; ~= gamma * delta V w iteracji k (twierdzenie o kontrakcji)<br>
+&#x2022; Best Action powinno stabilizowa&#x107; si&#x119; po kilku iteracjach &#x2014; to jest polityka pi*<br>
+&#x2022; Old V(s) w iteracji 1 = 0 dla wszystkich stan&#xF3;w (inicjalizacja)
+</div>
+
+<h3>&#x1F4CB; Tabela podsumowania wynik&#xF3;w</h3>
+<div class="card purple">
+<strong>Kolumny tabeli:</strong>
+<table><tr><th>Kolumna</th><th>Znaczenie</th></tr>
+<tr><td>Iterations to converge</td><td>Liczba iteracji Bellmana do osi&#x105;gni&#x119;cia delta &lt; theta</td></tr>
+<tr><td>Best operational state</td><td>Stan z najwy&#x17C;szym V*(s) &#x2014; powinien by&#x107; S0</td></tr>
+<tr><td>Worst operational state</td><td>Stan z najni&#x17C;szym V*(s) &#x2014; powinien by&#x107; S7</td></tr>
+<tr><td>V*(s) range</td><td>Rozpi&#x119;to&#x15B;&#x107; warto&#x15B;ci od min do max</td></tr>
+<tr><td>Contraction verified</td><td>Czy twierdzenie o kontrakcji zosta&#x142;o potwierdzone</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ĆWICZENIA -->
 <div id="exercises" class="tab-content">
-<h2>&#x1F9EA; &#x106;wiczenia</h2>
-<div class="card"><h3>&#x106;wiczenie 1 &#x2014; Wra&#x17C;liwo&#x15B;&#x107; na &#x3B3;</h3>Uruchom &#x3B3;=0.99 i &#x3B3;=0.5. Jak zmienia si&#x119; zakres warto&#x15B;ci?</div>
-<div class="card blue"><h3>&#x106;wiczenie 2 &#x2014; Precyzja &#x3B8;</h3>Por&#xF3;wnaj &#x3B8;=1e-3 vs &#x3B8;=1e-7. Wi&#x119;cej iteracji? Ta sama polityka?</div>
-<div class="card orange"><h3>&#x106;wiczenie 3 &#x2014; Weryfikacja polityki</h3>Czy optymalna polityka zawsze wybiera A1?</div>
-<div class="card green"><h3>&#x106;wiczenie 4 &#x2014; Kontrakcja</h3>Zweryfikuj DeltaV_{k+1} ~= gamma x DeltaV_k w Glass-Box.</div>
+<h2>&#x1F9EA; &#x106;wiczenia Hands-On</h2>
+<div class="card"><h3>&#x106;wiczenie 1 &#x2014; Wra&#x17C;liwo&#x15B;&#x107; na gamma</h3>Uruchom z gamma=0.99 i gamma=0.5. Jak zmienia si&#x119; zakres V*(s)? Dlaczego S7 staje si&#x119; gorszy przy wy&#x17C;szym gamma?</div>
+<div class="card blue"><h3>&#x106;wiczenie 2 &#x2014; Precyzja theta</h3>Por&#xF3;wnaj theta=1e-3 vs theta=1e-7. Wi&#x119;cej iteracji? Ta sama polityka?</div>
+<div class="card orange"><h3>&#x106;wiczenie 3 &#x2014; Weryfikacja polityki</h3>Czy optymalna polityka zawsze wybiera A1? Znajd&#x17A; stan gdzie A0 lub A2 mo&#x17C;e by&#x107; preferowane.</div>
+<div class="card green"><h3>&#x106;wiczenie 4 &#x2014; Kontrakcja</h3>W Glass-Box zweryfikuj &#x17C;e delta V_{k+1} ~= gamma * delta V_k. To twierdzenie o kontrakcji w dzia&#x142;aniu.</div>
+<div class="card purple"><h3>&#x106;wiczenie 5 &#x2014; LU vs VI</h3>Uruchom z gamma=0.95 i theta=1e-6. Sprawd&#x17A; w kodzie Rust czy wyniki VI i LU r&#xF3;&#x17C;ni&#x105; si&#x119; o mniej ni&#x17C; 1e-4.</div>
 </div>
+
+<!-- ZADANIA -->
+<div id="tasks" class="tab-content">
+<h2>&#x1F4DD; Zadania praktyczne</h2>
+<p style="color:#9ca3af;margin-bottom:1rem">Kliknij "Poka&#x17C; odpowied&#x17A;" aby sprawdzi&#x107; swoje rozwi&#x105;zanie.</p>
+
+<details>
+<summary>Zadanie 1 &#x2014; R&#x119;czna iteracja Bellmana</summary>
+<div class="answer">
+<strong>Tre&#x15B;&#x107;:</strong> Masz 2 stany (S0, S7) i 1 akcj&#x119;. R(S0,A0)=8, R(S7,A0)=1. P(S0|S0,A0)=0.9, P(S7|S0,A0)=0.1. P(S0|S7,A0)=0.2, P(S7|S7,A0)=0.8. gamma=0.9. Wykonaj 2 iteracje Bellmana r&#x119;cznie zaczynaj&#x105;c od V(S0)=V(S7)=0.<br><br>
+<strong>Odpowied&#x17A;:</strong><br>
+Iteracja 1:<br>
+V1(S0) = R(S0,A0) + gamma*(0.9*V0(S0) + 0.1*V0(S7)) = 8 + 0.9*(0.9*0 + 0.1*0) = <strong>8.0</strong><br>
+V1(S7) = R(S7,A0) + gamma*(0.2*V0(S0) + 0.8*V0(S7)) = 1 + 0.9*(0.2*0 + 0.8*0) = <strong>1.0</strong><br><br>
+Iteracja 2:<br>
+V2(S0) = 8 + 0.9*(0.9*8 + 0.1*1) = 8 + 0.9*7.3 = 8 + 6.57 = <strong>14.57</strong><br>
+V2(S7) = 1 + 0.9*(0.2*8 + 0.8*1) = 1 + 0.9*2.4 = 1 + 2.16 = <strong>3.16</strong>
+</div>
+</details>
+
+<details>
+<summary>Zadanie 2 &#x2014; Wyznacz optymaln&#x105; polityk&#x119;</summary>
+<div class="answer">
+<strong>Tre&#x15B;&#x107;:</strong> Dla stanu S1 masz V*(S0)=50, V*(S7)=10. Macierz przej&#x15B;&#x107; dla S1:<br>
+A0: P(S0|S1,A0)=0.6, P(S7|S1,A0)=0.4, R(S1,A0)=6<br>
+A1: P(S0|S1,A1)=0.8, P(S7|S1,A1)=0.2, R(S1,A1)=9<br>
+gamma=0.95. Kt&#xF3;ra akcja jest optymalna?<br><br>
+<strong>Odpowied&#x17A;:</strong><br>
+Q(S1,A0) = 6 + 0.95*(0.6*50 + 0.4*10) = 6 + 0.95*34 = 6 + 32.3 = <strong>38.3</strong><br>
+Q(S1,A1) = 9 + 0.95*(0.8*50 + 0.2*10) = 9 + 0.95*42 = 9 + 39.9 = <strong>48.9</strong><br>
+Optymalna akcja: <strong>A1</strong> (Q(S1,A1) &gt; Q(S1,A0))
+</div>
+</details>
+
+<details>
+<summary>Zadanie 3 &#x2014; Wp&#x142;yw gamma na polityk&#x119;</summary>
+<div class="answer">
+<strong>Tre&#x15B;&#x107;:</strong> Dla stanu S4 masz dwie akcje:<br>
+A0: R=3, prowadzi do S2 (V*=40) z p=0.7 i S5 (V*=15) z p=0.3<br>
+A2: R=4, prowadzi do S3 (V*=35) z p=0.9 i S6 (V*=8) z p=0.1<br>
+Oblicz Q(S4,A0) i Q(S4,A2) dla gamma=0.99 i gamma=0.5. Czy polityka si&#x119; zmienia?<br><br>
+<strong>Odpowied&#x17A;:</strong><br>
+gamma=0.99:<br>
+Q(S4,A0) = 3 + 0.99*(0.7*40 + 0.3*15) = 3 + 0.99*32.5 = 3 + 32.175 = <strong>35.175</strong><br>
+Q(S4,A2) = 4 + 0.99*(0.9*35 + 0.1*8) = 4 + 0.99*32.3 = 4 + 31.977 = <strong>35.977</strong><br>
+Optymalna: A2<br><br>
+gamma=0.5:<br>
+Q(S4,A0) = 3 + 0.5*32.5 = 3 + 16.25 = <strong>19.25</strong><br>
+Q(S4,A2) = 4 + 0.5*32.3 = 4 + 16.15 = <strong>20.15</strong><br>
+Optymalna: A2 (ta sama, ale r&#xF3;&#x17C;nica mniejsza)
+</div>
+</details>
+
+<details>
+<summary>Zadanie 4 &#x2014; Weryfikacja kontrakcji</summary>
+<div class="answer">
+<strong>Tre&#x15B;&#x107;:</strong> W Glass-Box widzisz:<br>
+Iteracja 1: max delta V = 8.0<br>
+Iteracja 2: max delta V = 7.2<br>
+Iteracja 3: max delta V = 6.48<br>
+Jaka jest warto&#x15B;&#x107; gamma? Czy twierdzenie o kontrakcji jest spe&#x142;nione?<br><br>
+<strong>Odpowied&#x17A;:</strong><br>
+gamma = delta_2 / delta_1 = 7.2 / 8.0 = <strong>0.9</strong><br>
+Weryfikacja: delta_3 / delta_2 = 6.48 / 7.2 = 0.9 &#x2714;<br>
+Twierdzenie o kontrakcji jest spe&#x142;nione: ka&#x17C;da iteracja redukuje b&#x142;&#x105;d o czynnik gamma=0.9.
+</div>
+</details>
+
+<details>
+<summary>Zadanie 5 &#x2014; Kiedy u&#x17C;y&#x107; LU zamiast VI?</summary>
+<div class="answer">
+<strong>Tre&#x15B;&#x107;:</strong> Masz system ASP z 50 stanami i 10 akcjami. Szacujesz &#x17C;e VI potrzebuje 500 iteracji do zbie&#x17C;no&#x15B;ci. Por&#xF3;wnaj koszt obliczeniowy VI vs LU.<br><br>
+<strong>Odpowied&#x17A;:</strong><br>
+VI: O(|S|^2 * |A| * iteracje) = O(50^2 * 10 * 500) = O(12,500,000) operacji<br>
+LU: O(|S|^3) = O(50^3) = O(125,000) operacji<br><br>
+<strong>Wniosek:</strong> Dla 50 stan&#xF3;w LU jest ~100x szybsze. U&#x17C;yj LU gdy |S| &le; 1000.<br>
+Dla |S| = 10,000: LU = O(10^12) &#x2014; zbyt wolne. U&#x17C;yj VI.
+</div>
+</details>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="tab-content">
+<h2>&#x1F3AF; Quiz &#x2014; Sprawd&#x17A; swoj&#x105; wiedz&#x119;</h2>
+<p style="color:#9ca3af;margin-bottom:1.5rem">Odpowiedz na wszystkie 10 pyta&#x144; i kliknij "Sprawd&#x17A; wyniki". Pr&#xF3;g zaliczenia: <strong>90% (9/10)</strong>.</p>
+
+<div class="quiz-question" id="q1">
+<p>1. Co oznacza V*(s) w r&#xF3;wnaniu Bellmana?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">Natychmiastowa nagroda za akcj&#x119; a w stanie s</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">Optymalna d&#x142;ugoterminowa warto&#x15B;&#x107; stanu s</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">Prawdopodobie&#x144;stwo przej&#x15B;cia do stanu s</label></div>
+</div>
+
+<div class="quiz-question" id="q2">
+<p>2. Jaki jest warunek zatrzymania Iteracji Warto&#x15B;ci?</p>
+<div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">Po sta&#x142;ej liczbie iteracji (np. 1000)</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">Gdy max_s |V^(k+1)(s) - V^(k)(s)| &lt; theta</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">Gdy polityka si&#x119; nie zmienia przez 10 iteracji</label></div>
+</div>
+
+<div class="quiz-question" id="q3">
+<p>3. Dlaczego V*(S0) &gt; V*(S7) w ASP?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">Bo S0 ma wi&#x119;cej technik&#xF3;w ni&#x17C; S7</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">Bo z S0 agent mo&#x17C;e osi&#x105;ga&#x107; wy&#x17C;sze nagrody d&#x142;ugoterminowo ni&#x17C; z S7</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">Bo S0 ma wy&#x17C;sz&#x105; natychmiastow&#x105; nagrod&#x119; ni&#x17C; S7</label></div>
+</div>
+
+<div class="quiz-question" id="q4">
+<p>4. Co oznacza gamma = 0.99 vs gamma = 0.5?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">gamma=0.99 = agent kr&#xF3;tkowzroczny, gamma=0.5 = dalekowzroczny</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">gamma=0.99 = agent dalekowzroczny, gamma=0.5 = kr&#xF3;tkowzroczny</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">gamma nie wp&#x142;ywa na zachowanie agenta</label></div>
+</div>
+
+<div class="quiz-question" id="q5">
+<p>5. Co m&#xF3;wi twierdzenie o kontrakcji Bellmana?</p>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">Operator Bellmana zawsze zwi&#x119;ksza r&#xF3;&#x17C;nic&#x119; mi&#x119;dzy V i V'</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">||TV - TV'||_inf &lt;= gamma * ||V - V'||_inf &#x2014; b&#x142;&#x105;d maleje o czynnik gamma</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">VI zbiega tylko gdy gamma = 1</label></div>
+</div>
+
+<div class="quiz-question" id="q6">
+<p>6. Kiedy nale&#x17C;y u&#x17C;y&#x107; solve_exact() (LU) zamiast VI?</p>
+<div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">Zawsze &#x2014; LU jest zawsze szybsze</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">Gdy |S| &le; 1000 &#x2014; LU ma koszt O(|S|^3) wi&#x119;c op&#x142;aca si&#x119; dla ma&#x142;ych przestrzeni</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">Gdy gamma &gt; 0.99</label></div>
+</div>
+
+<div class="quiz-question" id="q7">
+<p>7. Dlaczego akcja A3 (Hold) jest karana w stanach S6 i S7?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">Bo A3 jest zawsze z&#x142;&#x105; akcj&#x105; niezale&#x17C;nie od stanu</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">Bo w S6/S7 czekanie na lepszego technika zwi&#x119;ksza ryzyko naruszenia SLA &#x2014; kara -8 i -10</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">Bo A3 nie istnieje w stanach S6 i S7</label></div>
+</div>
+
+<div class="quiz-question" id="q8">
+<p>8. Co pokazuje kolumna "delta V" w Glass-Box?</p>
+<div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">R&#xF3;&#x17C;nic&#x119; mi&#x119;dzy nagrod&#x105; a warto&#x15B;ci&#x105; stanu</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">Zmian&#x119; warto&#x15B;ci stanu w danej iteracji: |V^(k+1)(s) - V^(k)(s)|</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">R&#xF3;&#x17C;nic&#x119; mi&#x119;dzy najlepsz&#x105; a najgorsz&#x105; akcj&#x105;</label></div>
+</div>
+
+<div class="quiz-question" id="q9">
+<p>9. Jakie s&#x105; wymagania wst&#x119;pne dla Iteracji Warto&#x15B;ci?</p>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">Tylko funkcja nagrody R(s,a)</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">Pe&#x142;ny model: macierz przej&#x15B;&#x107; P(s'|s,a) i funkcja nagrody R(s,a)</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">Tylko pr&#xF3;bki z symulacji &#x2014; model nie jest potrzebny</label></div>
+</div>
+
+<div class="quiz-question" id="q10">
+<p>10. Co si&#x119; stanie z krzyw&#x105; zbie&#x17C;no&#x15B;ci gdy zmniejszysz theta z 1e-3 do 1e-7?</p>
+<div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">Krzywa b&#x119;dzie kr&#xF3;tsza &#x2014; mniej iteracji potrzeba</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">Krzywa b&#x119;dzie d&#x142;u&#x17C;sza &#x2014; wi&#x119;cej iteracji potrzeba do osi&#x105;gni&#x119;cia mniejszego progu</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">Krzywa si&#x119; nie zmieni &#x2014; theta nie wp&#x142;ywa na liczb&#x119; iteracji</label></div>
+</div>
+
+<button class="btn" onclick="checkQuiz()">&#x2705; Sprawd&#x17A; wyniki</button>
+<button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
+
+<div id="quiz-result"></div>
+</div>
+
+<!-- PODSUMOWANIE -->
 <div id="summary" class="tab-content">
 <h2>&#x1F4CB; Podsumowanie</h2>
 <div class="kpi">
-<div class="kpi-card"><div class="kpi-val">8</div><div class="kpi-label">Stan&#xF3;w</div></div>
-<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Akcji</div></div>
+<div class="kpi-card"><div class="kpi-val">8</div><div class="kpi-label">Stan&#xF3;w operacyjnych</div></div>
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Akcji dyspozycji</div></div>
 <div class="kpi-card"><div class="kpi-val">&#x3B3;</div><div class="kpi-label">Dalekowzroczno&#x15B;&#x107;</div></div>
 <div class="kpi-card"><div class="kpi-val">&#x3B8;</div><div class="kpi-label">Precyzja</div></div>
 </div>
 <div class="grid2">
-<div class="card green"><strong>&#x2705; Zalety</strong><ul><li>Gwarantowana zbie&#x17C;no&#x15B;&#x107;</li><li>Dok&#x142;adne rozwi&#x105;zanie</li><li>Interpretowalny</li></ul></div>
+<div class="card green"><strong>&#x2705; Zalety</strong><ul><li>Gwarantowana zbie&#x17C;no&#x15B;&#x107;</li><li>Dok&#x142;adne rozwi&#x105;zanie</li><li>Interpretowalny</li><li>LU dla ma&#x142;ych S</li></ul></div>
 <div class="card red"><strong>&#x274C; Wady</strong><ul><li>Wymaga P(s'|s,a)</li><li>Dyskretna przestrze&#x144;</li><li>Przekle&#x144;stwo wymiarowo&#x15B;ci</li></ul></div>
 </div>
-<div class="card green">Iteracja Warto&#x15B;ci to <strong>fundament ca&#x142;ego RL opartego na modelu</strong>.</div>
+<div class="card green">Iteracja Warto&#x15B;ci to <strong>fundament ca&#x142;ego RL opartego na modelu</strong>. Ka&#x17C;dy algorytm od Ch03 albo u&#x17C;ywa VI bezpo&#x15B;rednio albo go aproksymuje.</div>
 </div>
+
 </div>
+
 <script>
 function showTab(id){
   document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
   document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
   document.getElementById(id).classList.add('active');
   event.target.classList.add('active');
+}
+
+var ANSWERS = {q1:'b', q2:'b', q3:'b', q4:'b', q5:'b', q6:'b', q7:'b', q8:'b', q9:'b', q10:'b'};
+
+function checkQuiz(){
+  var score = 0;
+  var total = Object.keys(ANSWERS).length;
+  for(var q in ANSWERS){
+    var selected = document.querySelector('input[name="'+q+'"]:checked');
+    var opts = document.querySelectorAll('#'+q+' .quiz-option');
+    opts.forEach(function(opt){opt.classList.remove('correct','wrong')});
+    if(selected){
+      var parentOpt = selected.closest('.quiz-option');
+      if(selected.value === ANSWERS[q]){
+        score++;
+        parentOpt.classList.add('correct');
+      } else {
+        parentOpt.classList.add('wrong');
+        // Show correct answer
+        document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+      }
+    } else {
+      document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+    }
+  }
+  var pct = Math.round(score/total*100);
+  var result = document.getElementById('quiz-result');
+  result.style.display = 'block';
+  if(score >= 9){
+    result.className = 'pass';
+    result.innerHTML = '&#x1F389; Wynik: '+score+'/'+total+' ('+pct+'%) &#x2014; Gratulacje! Mo&#x17C;esz przej&#x15B;&#x107; do Rozdzia&#x142;u 03!';
+  } else {
+    result.className = 'fail';
+    result.innerHTML = '&#x274C; Wynik: '+score+'/'+total+' ('+pct+'%) &#x2014; Pr&#xF3;g zaliczenia to 90% (9/10). Powtórz materia&#x142; i spr&#xF3;buj ponownie.';
+  }
+}
+
+function resetQuiz(){
+  document.querySelectorAll('.quiz-option input').forEach(function(i){i.checked=false});
+  document.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+  var result = document.getElementById('quiz-result');
+  result.style.display = 'none';
+  result.className = '';
 }
 </script>
 </body>
