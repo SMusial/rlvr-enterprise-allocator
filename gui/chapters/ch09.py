@@ -54,87 +54,93 @@ def _render_handbook():
 def render():
     lang = "EN"; tx = _tx(lang)
     st.title(tx["title"]); st.caption(tx["subtitle"])
-    try: import rlvr_py
-    except ImportError: st.error(tx["engine_missing"]); return
-    st.sidebar.header(tx["sidebar_title"])
-    n_ep  = st.sidebar.slider(tx["n_episodes"],    50, 3000, 500, 50)
-    gamma = st.sidebar.slider(tx["gamma"],         0.5, 0.999, 0.95, 0.005)
-    alpha = st.sidebar.slider(tx["alpha"],         0.001, 0.1, 0.01, 0.001, format="%.3f")
-    ab    = st.sidebar.slider(tx["alpha_baseline"],0.01, 0.5, 0.1, 0.01)
-    tau   = st.sidebar.slider(tx["temperature"],   0.1, 3.0, 1.0, 0.1)
-    seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-    if st.button(tx["run_btn"], type="primary"):
-        with st.spinner("Running..."):
-            res = rlvr_py.run_ch09_policy_gradient(int(seed), int(n_ep), float(gamma), float(alpha), float(ab), float(tau))
-        st.session_state["ch09_result"] = res
-    if "ch09_result" not in st.session_state:
-        st.info("Click ▶ to run."); return
-    res = st.session_state["ch09_result"]
-    short = [f"S{i}" for i in range(res["n_states"])]
-    cols = st.columns(4)
-    for i, k in enumerate(ALGOS):
-        avg = sum(res[k]["returns_curve"][-50:]) / min(50, len(res[k]["returns_curve"]))
-        aen = sum(res[k]["entropy_curve"][-50:]) / max(1, min(50, len(res[k]["entropy_curve"])))
-        cols[i].metric(tx["algo_labels"][k], f"Avg:{avg:.2f}", f"H:{aen:.2f}")
-    st.subheader(tx["returns_title"])
-    fig = go.Figure()
-    for k in ALGOS: fig.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["returns_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
-    fig.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Return (MA-30)", legend=dict(orientation="h"))
-    st.plotly_chart(fig, width='stretch'); st.caption(tx["returns_caption"])
-    c1, c2 = st.columns(2)
-    with c1:
-        st.subheader(tx["pg_loss_title"])
-        f2 = go.Figure()
-        for k in ALGOS: f2.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["pg_loss_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
-        f2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Mean |Δθ|", legend=dict(orientation="h"))
-        st.plotly_chart(f2, width='stretch'); st.caption(tx["pg_loss_caption"])
-    with c2:
-        st.subheader(tx["entropy_title"])
-        f3 = go.Figure()
-        for k in ALGOS: f3.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["entropy_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
-        f3.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="H(π(·|s))", legend=dict(orientation="h"))
-        st.plotly_chart(f3, width='stretch'); st.caption(tx["entropy_caption"])
-    st.subheader(tx["value_title"])
-    f4 = go.Figure()
-    for k in ALGOS: f4.add_trace(go.Bar(x=short, y=res[k]["values"], name=tx["algo_labels"][k], marker_color=COLORS[k], opacity=0.8))
-    f4.update_layout(height=260, barmode="group", margin=dict(l=40,r=20,t=20,b=40), legend=dict(orientation="h"))
-    st.plotly_chart(f4, width='stretch'); st.caption(tx["value_caption"])
-    st.subheader(tx["theta_title"])
-    sel  = st.selectbox("Algorithm", [tx["algo_labels"][k] for k in ALGOS])
-    ks   = {tx["algo_labels"][k]: k for k in ALGOS}.get(sel, "reinforce")
-    th   = res[ks]["theta"]; ash = [f"A{i}" for i in range(res["n_actions"])]
-    f5   = go.Figure(go.Heatmap(z=th, x=ash, y=short, colorscale="Purples", text=[[f"{th[s][a]:.3f}" for a in range(res["n_actions"])] for s in range(res["n_states"])], texttemplate="%{text}"))
-    f5.update_layout(height=280, margin=dict(l=60,r=20,t=20,b=40)); st.plotly_chart(f5, width='stretch')
-    st.subheader(tx["glass_title"]); _glass(res, tx)
-    st.subheader(tx["summary_title"]); _summary(res, tx)
+
+    _tab_main, _tab_handbook = st.tabs(["\U0001f52c Interactive Lab", "\U0001f4d8 Hands-On Guide EN"])
+    with _tab_handbook:
+        _render_handbook()
+    with _tab_main:
+
+        try: import rlvr_py
+        except ImportError: st.error(tx["engine_missing"]); return
+        st.sidebar.header(tx["sidebar_title"])
+        n_ep  = st.sidebar.slider(tx["n_episodes"],    50, 3000, 500, 50)
+        gamma = st.sidebar.slider(tx["gamma"],         0.5, 0.999, 0.95, 0.005)
+        alpha = st.sidebar.slider(tx["alpha"],         0.001, 0.1, 0.01, 0.001, format="%.3f")
+        ab    = st.sidebar.slider(tx["alpha_baseline"],0.01, 0.5, 0.1, 0.01)
+        tau   = st.sidebar.slider(tx["temperature"],   0.1, 3.0, 1.0, 0.1)
+        seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
+        if st.button(tx["run_btn"], type="primary"):
+            with st.spinner("Running..."):
+                res = rlvr_py.run_ch09_policy_gradient(int(seed), int(n_ep), float(gamma), float(alpha), float(ab), float(tau))
+            st.session_state["ch09_result"] = res
+        if "ch09_result" not in st.session_state:
+            st.info("Click ▶ to run."); return
+        res = st.session_state["ch09_result"]
+        short = [f"S{i}" for i in range(res["n_states"])]
+        cols = st.columns(4)
+        for i, k in enumerate(ALGOS):
+            avg = sum(res[k]["returns_curve"][-50:]) / min(50, len(res[k]["returns_curve"]))
+            aen = sum(res[k]["entropy_curve"][-50:]) / max(1, min(50, len(res[k]["entropy_curve"])))
+            cols[i].metric(tx["algo_labels"][k], f"Avg:{avg:.2f}", f"H:{aen:.2f}")
+        st.subheader(tx["returns_title"])
+        fig = go.Figure()
+        for k in ALGOS: fig.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["returns_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
+        fig.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Return (MA-30)", legend=dict(orientation="h"))
+        st.plotly_chart(fig, width='stretch'); st.caption(tx["returns_caption"])
+        c1, c2 = st.columns(2)
+        with c1:
+            st.subheader(tx["pg_loss_title"])
+            f2 = go.Figure()
+            for k in ALGOS: f2.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["pg_loss_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
+            f2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Mean |Δθ|", legend=dict(orientation="h"))
+            st.plotly_chart(f2, width='stretch'); st.caption(tx["pg_loss_caption"])
+        with c2:
+            st.subheader(tx["entropy_title"])
+            f3 = go.Figure()
+            for k in ALGOS: f3.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["entropy_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
+            f3.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="H(π(·|s))", legend=dict(orientation="h"))
+            st.plotly_chart(f3, width='stretch'); st.caption(tx["entropy_caption"])
+        st.subheader(tx["value_title"])
+        f4 = go.Figure()
+        for k in ALGOS: f4.add_trace(go.Bar(x=short, y=res[k]["values"], name=tx["algo_labels"][k], marker_color=COLORS[k], opacity=0.8))
+        f4.update_layout(height=260, barmode="group", margin=dict(l=40,r=20,t=20,b=40), legend=dict(orientation="h"))
+        st.plotly_chart(f4, width='stretch'); st.caption(tx["value_caption"])
+        st.subheader(tx["theta_title"])
+        sel  = st.selectbox("Algorithm", [tx["algo_labels"][k] for k in ALGOS])
+        ks   = {tx["algo_labels"][k]: k for k in ALGOS}.get(sel, "reinforce")
+        th   = res[ks]["theta"]; ash = [f"A{i}" for i in range(res["n_actions"])]
+        f5   = go.Figure(go.Heatmap(z=th, x=ash, y=short, colorscale="Purples", text=[[f"{th[s][a]:.3f}" for a in range(res["n_actions"])] for s in range(res["n_states"])], texttemplate="%{text}"))
+        f5.update_layout(height=280, margin=dict(l=60,r=20,t=20,b=40)); st.plotly_chart(f5, width='stretch')
+        st.subheader(tx["glass_title"]); _glass(res, tx)
+        st.subheader(tx["summary_title"]); _summary(res, tx)
 
 def _glass(res, tx):
-    opts = {tx["algo_labels"][k]: k for k in ALGOS}
-    sel  = st.selectbox("Algorithm", list(opts.keys()), key="gb9")
-    k    = opts[sel]; r = res[k]
-    ep   = st.slider("Episode", 0, max(len(r["returns_curve"])-1,0), max(len(r["returns_curve"])-1,0), key="gb9ep")
-    c1,c2,c3 = st.columns(3)
-    c1.metric("Return", f"{r['returns_curve'][ep]:.3f}")
-    c2.metric("|Δθ|",   f"{r['pg_loss_curve'][ep]:.4f}")
-    c3.metric("H(π)",   f"{r['entropy_curve'][ep]:.4f}")
-    if "actor_critic" in k:
-        st.latex(r"\delta_t=R_{t+1}+\gamma V(S')-V(S)")
-        st.latex(r"V(S)\leftarrow V(S)+\alpha_v\delta_t")
-        st.latex(r"\theta\leftarrow\theta+\alpha\gamma^t\delta_t\nabla\log\pi(A_t|S_t,\theta)")
-    else:
-        st.latex(r"G_t=\sum_{k=t}^T\gamma^{k-t}R_{k+1}")
-        st.latex(r"\theta\leftarrow\theta+\alpha\gamma^t G_t\nabla\log\pi(A_t|S_t,\theta)")
-        st.latex(r"\nabla\log\pi(a|s)=\mathbf{1}[a=A_t]-\pi(a|s,\theta)")
+        opts = {tx["algo_labels"][k]: k for k in ALGOS}
+        sel  = st.selectbox("Algorithm", list(opts.keys()), key="gb9")
+        k    = opts[sel]; r = res[k]
+        ep   = st.slider("Episode", 0, max(len(r["returns_curve"])-1,0), max(len(r["returns_curve"])-1,0), key="gb9ep")
+        c1,c2,c3 = st.columns(3)
+        c1.metric("Return", f"{r['returns_curve'][ep]:.3f}")
+        c2.metric("|Δθ|",   f"{r['pg_loss_curve'][ep]:.4f}")
+        c3.metric("H(π)",   f"{r['entropy_curve'][ep]:.4f}")
+        if "actor_critic" in k:
+            st.latex(r"\delta_t=R_{t+1}+\gamma V(S')-V(S)")
+            st.latex(r"V(S)\leftarrow V(S)+\alpha_v\delta_t")
+            st.latex(r"\theta\leftarrow\theta+\alpha\gamma^t\delta_t\nabla\log\pi(A_t|S_t,\theta)")
+        else:
+            st.latex(r"G_t=\sum_{k=t}^T\gamma^{k-t}R_{k+1}")
+            st.latex(r"\theta\leftarrow\theta+\alpha\gamma^t G_t\nabla\log\pi(A_t|S_t,\theta)")
+            st.latex(r"\nabla\log\pi(a|s)=\mathbf{1}[a=A_t]-\pi(a|s,\theta)")
 
 def _summary(res, tx):
-    rows = []
-    for k in ALGOS:
-        r = res[k]; avg = sum(r["returns_curve"][-100:])/min(100,len(r["returns_curve"]))
-        aen = sum(r["entropy_curve"])/max(1,len(r["entropy_curve"]))
-        rows.append({"Algorithm": tx["algo_labels"][k], "Avg return (last 100)": f"{avg:.3f}", "Steps": str(r["total_steps"]), "Avg H": f"{aen:.3f}", "V*(S0)": f"{r['values'][0]:.3f}", "V*(S7)": f"{r['values'][7]:.3f}"})
-    st.dataframe(rows, hide_index=True)
-    for k in ALGOS:
-        label = tx["algo_labels"][k]; c1,c2 = st.columns(2)
-        with c1: st.markdown(f"**{label} — {tx['pros']}**"); [st.markdown(f"- {p}") for p in tx["pros_list"][k]]
-        with c2: st.markdown(f"**{label} — {tx['cons']}**"); [st.markdown(f"- {c}") for c in tx["cons_list"][k]]
-        st.markdown("---")
+        rows = []
+        for k in ALGOS:
+            r = res[k]; avg = sum(r["returns_curve"][-100:])/min(100,len(r["returns_curve"]))
+            aen = sum(r["entropy_curve"])/max(1,len(r["entropy_curve"]))
+            rows.append({"Algorithm": tx["algo_labels"][k], "Avg return (last 100)": f"{avg:.3f}", "Steps": str(r["total_steps"]), "Avg H": f"{aen:.3f}", "V*(S0)": f"{r['values'][0]:.3f}", "V*(S7)": f"{r['values'][7]:.3f}"})
+        st.dataframe(rows, hide_index=True)
+        for k in ALGOS:
+            label = tx["algo_labels"][k]; c1,c2 = st.columns(2)
+            with c1: st.markdown(f"**{label} — {tx['pros']}**"); [st.markdown(f"- {p}") for p in tx["pros_list"][k]]
+            with c2: st.markdown(f"**{label} — {tx['cons']}**"); [st.markdown(f"- {c}") for c in tx["cons_list"][k]]
+            st.markdown("---")

@@ -62,124 +62,130 @@ def render():
     tx   = _tx(lang)
     lb   = tx["labels"]
     st.title(tx["title"]); st.caption(tx["subtitle"])
-    try: import rlvr_py
-    except ImportError: st.error("Run: cd rlvr-py && maturin develop"); return
 
-    st.sidebar.header("Settings")
-    n_ep  = st.sidebar.slider(tx["episodes"],  50, 3000, 500, 50)
-    gamma = st.sidebar.slider(tx["gamma"],     0.5, 0.999, 0.95, 0.005)
-    alpha = st.sidebar.slider(tx["alpha"],     0.01, 1.0, 0.1, 0.01)
-    eps   = st.sidebar.slider(tx["epsilon"],   0.0, 1.0, 0.3, 0.05)
-    edec  = st.sidebar.slider(tx["edecay"],    0.0, 0.1, 0.01, 0.001, format="%.3f")
-    mh    = st.sidebar.slider(tx["mhidden"],   4, 32, 8, 4)
-    seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
+    _tab_main, _tab_handbook = st.tabs(["\U0001f52c Interactive Lab", "\U0001f4d8 Hands-On Guide EN"])
+    with _tab_handbook:
+        _render_handbook()
+    with _tab_main:
+
+        try: import rlvr_py
+        except ImportError: st.error("Run: cd rlvr-py && maturin develop"); return
+
+        st.sidebar.header("Settings")
+        n_ep  = st.sidebar.slider(tx["episodes"],  50, 3000, 500, 50)
+        gamma = st.sidebar.slider(tx["gamma"],     0.5, 0.999, 0.95, 0.005)
+        alpha = st.sidebar.slider(tx["alpha"],     0.01, 1.0, 0.1, 0.01)
+        eps   = st.sidebar.slider(tx["epsilon"],   0.0, 1.0, 0.3, 0.05)
+        edec  = st.sidebar.slider(tx["edecay"],    0.0, 0.1, 0.01, 0.001, format="%.3f")
+        mh    = st.sidebar.slider(tx["mhidden"],   4, 32, 8, 4)
+        seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
 
-    if st.button(tx["run"], type="primary"):
-        with st.spinner("Running Rust cooperative MARL engine..."):
-            res = rlvr_py.run_ch13_coop_marl(int(seed),int(n_ep),float(gamma),float(alpha),float(eps),float(edec),int(mh))
-        st.session_state["ch13_result"] = res
+        if st.button(tx["run"], type="primary"):
+            with st.spinner("Running Rust cooperative MARL engine..."):
+                res = rlvr_py.run_ch13_coop_marl(int(seed),int(n_ep),float(gamma),float(alpha),float(eps),float(edec),int(mh))
+            st.session_state["ch13_result"] = res
 
-    if "ch13_result" not in st.session_state:
-        st.info("Click Run."); return
+        if "ch13_result" not in st.session_state:
+            st.info("Click Run."); return
 
-    res   = st.session_state["ch13_result"]
-    short = [f"S{i}" for i in range(res["n_states"])]
+        res   = st.session_state["ch13_result"]
+        short = [f"S{i}" for i in range(res["n_states"])]
 
-    # KPI
-    cols = st.columns(4)
-    for i,k in enumerate(ALGOS):
-        avg = sum(res[k]["returns_curve"][-50:])/min(50,len(res[k]["returns_curve"]))
-        mw  = sum(res[k]["mixing_weights"][-50:])/max(1,min(50,len(res[k]["mixing_weights"])))
-        cols[i].metric(lb[k], f"Avg:{avg:.2f}", f"W:{mw:.2f}")
+        # KPI
+        cols = st.columns(4)
+        for i,k in enumerate(ALGOS):
+            avg = sum(res[k]["returns_curve"][-50:])/min(50,len(res[k]["returns_curve"]))
+            mw  = sum(res[k]["mixing_weights"][-50:])/max(1,min(50,len(res[k]["mixing_weights"])))
+            cols[i].metric(lb[k], f"Avg:{avg:.2f}", f"W:{mw:.2f}")
 
-    # Returns
-    st.subheader(tx["ret"])
-    fig = go.Figure()
-    for k in ALGOS:
-        fig.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["returns_curve"]),
-            mode="lines",name=lb[k],line=dict(color=COLORS[k],width=2)))
-    fig.update_layout(height=280,margin=dict(l=40,r=20,t=20,b=40),
-                      xaxis_title="Episode",yaxis_title="Return (MA-30)",legend=dict(orientation="h"))
-    st.plotly_chart(fig,width='stretch')
-
-    # Mixing weights + Joint Q
-    c1,c2 = st.columns(2)
-    with c1:
-        st.subheader(tx["mix"])
-        f2 = go.Figure()
-        for k in ["qmix","qmix_cg"]:
-            f2.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["mixing_weights"]),
-                mode="lines",name=lb[k],line=dict(color=COLORS[k],width=2)))
-        f2.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),
-                         xaxis_title="Episode",yaxis_title="Mean |w|",legend=dict(orientation="h"))
-        st.plotly_chart(f2,width='stretch')
-    with c2:
-        st.subheader(tx["jq"])
-        f3 = go.Figure()
+        # Returns
+        st.subheader(tx["ret"])
+        fig = go.Figure()
         for k in ALGOS:
-            f3.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["joint_q_curve"]),
+            fig.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["returns_curve"]),
                 mode="lines",name=lb[k],line=dict(color=COLORS[k],width=2)))
-        f3.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),
-                         xaxis_title="Episode",yaxis_title="Q_tot",legend=dict(orientation="h"))
-        st.plotly_chart(f3,width='stretch')
+        fig.update_layout(height=280,margin=dict(l=40,r=20,t=20,b=40),
+                          xaxis_title="Episode",yaxis_title="Return (MA-30)",legend=dict(orientation="h"))
+        st.plotly_chart(fig,width='stretch')
 
-    # Value function
-    st.subheader(tx["val"])
-    f4 = go.Figure()
-    for k in ALGOS:
-        f4.add_trace(go.Bar(x=short,y=res[k]["values"],name=lb[k],marker_color=COLORS[k],opacity=0.8))
-    f4.update_layout(height=260,barmode="group",margin=dict(l=40,r=20,t=20,b=40),legend=dict(orientation="h"))
-    st.plotly_chart(f4,width='stretch')
+        # Mixing weights + Joint Q
+        c1,c2 = st.columns(2)
+        with c1:
+            st.subheader(tx["mix"])
+            f2 = go.Figure()
+            for k in ["qmix","qmix_cg"]:
+                f2.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["mixing_weights"]),
+                    mode="lines",name=lb[k],line=dict(color=COLORS[k],width=2)))
+            f2.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),
+                             xaxis_title="Episode",yaxis_title="Mean |w|",legend=dict(orientation="h"))
+            st.plotly_chart(f2,width='stretch')
+        with c2:
+            st.subheader(tx["jq"])
+            f3 = go.Figure()
+            for k in ALGOS:
+                f3.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["joint_q_curve"]),
+                    mode="lines",name=lb[k],line=dict(color=COLORS[k],width=2)))
+            f3.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),
+                             xaxis_title="Episode",yaxis_title="Q_tot",legend=dict(orientation="h"))
+            st.plotly_chart(f3,width='stretch')
 
-    # Q-table heatmaps per agent
-    st.subheader("Q-Table Heatmap")
-    sel = st.selectbox("Algorithm",[lb[k] for k in ALGOS])
-    ks  = {lb[k]:k for k in ALGOS}.get(sel,"vdn")
-    ash = [f"A{i}" for i in range(res["n_actions"])]
-    c1,c2 = st.columns(2)
-    for agent_idx,col in enumerate([c1,c2]):
-        with col:
-            st.markdown(f"**Agent {agent_idx}**")
-            qt = res[ks]["q_tables"][agent_idx]
-            f5 = go.Figure(go.Heatmap(z=qt,x=ash,y=short,colorscale="Purples",
-                text=[[f"{qt[s][a]:.2f}" for a in range(res["n_actions"])] for s in range(res["n_states"])],
-                texttemplate="%{text}"))
-            f5.update_layout(height=260,margin=dict(l=60,r=10,t=20,b=40))
-            st.plotly_chart(f5,width='stretch')
+        # Value function
+        st.subheader(tx["val"])
+        f4 = go.Figure()
+        for k in ALGOS:
+            f4.add_trace(go.Bar(x=short,y=res[k]["values"],name=lb[k],marker_color=COLORS[k],opacity=0.8))
+        f4.update_layout(height=260,barmode="group",margin=dict(l=40,r=20,t=20,b=40),legend=dict(orientation="h"))
+        st.plotly_chart(f4,width='stretch')
 
-    st.subheader(tx["glass"]); _glass(res,lb)
-    st.subheader(tx["summary"]); _summary(res,lb)
+        # Q-table heatmaps per agent
+        st.subheader("Q-Table Heatmap")
+        sel = st.selectbox("Algorithm",[lb[k] for k in ALGOS])
+        ks  = {lb[k]:k for k in ALGOS}.get(sel,"vdn")
+        ash = [f"A{i}" for i in range(res["n_actions"])]
+        c1,c2 = st.columns(2)
+        for agent_idx,col in enumerate([c1,c2]):
+            with col:
+                st.markdown(f"**Agent {agent_idx}**")
+                qt = res[ks]["q_tables"][agent_idx]
+                f5 = go.Figure(go.Heatmap(z=qt,x=ash,y=short,colorscale="Purples",
+                    text=[[f"{qt[s][a]:.2f}" for a in range(res["n_actions"])] for s in range(res["n_states"])],
+                    texttemplate="%{text}"))
+                f5.update_layout(height=260,margin=dict(l=60,r=10,t=20,b=40))
+                st.plotly_chart(f5,width='stretch')
+
+        st.subheader(tx["glass"]); _glass(res,lb)
+        st.subheader(tx["summary"]); _summary(res,lb)
 
 def _glass(res,lb):
-    opts = {lb[k]:k for k in ALGOS}
-    sel  = st.selectbox("Algorithm",list(opts.keys()),key="gb13")
-    k    = opts[sel]; r = res[k]
-    ep   = st.slider("Episode",0,max(len(r["returns_curve"])-1,0),max(len(r["returns_curve"])-1,0),key="gb13ep")
-    c1,c2,c3 = st.columns(3)
-    c1.metric("Joint return",  f"{r['returns_curve'][ep]:.3f}")
-    c2.metric("TD error",      f"{r['td_error_curve'][ep]:.4f}")
-    c3.metric("Mixing weight", f"{r['mixing_weights'][ep]:.3f}")
-    if k=="iql":
-        st.latex(r"Q_i(s,a) \leftarrow Q_i + \alpha[r_{joint} + \gamma \max Q_i(s') - Q_i(s,a)]")
-        st.markdown("No coordination. Joint reward used but agents act independently.")
-    elif k=="vdn":
-        st.latex(r"Q_{tot} = Q_0(s_0,a_0) + Q_1(s_1,a_1)")
-        st.latex(r"\frac{\partial Q_{tot}}{\partial Q_i} = 1")
-    elif k=="qmix":
-        st.latex(r"Q_{tot} = w_0(s)Q_0 + w_1(s)Q_1 + b(s),\quad w_i \geq 0")
-        st.latex(r"\frac{\partial Q_{tot}}{\partial Q_i} = w_i(s)")
-    else:
-        st.latex(r"A_i = Q_{tot}(s,\mathbf{a}) - Q_{tot}(s, \mathbf{a}_{-i}, \arg\max Q_i)")
-        st.markdown("Counterfactual baseline isolates each agent's contribution.")
+        opts = {lb[k]:k for k in ALGOS}
+        sel  = st.selectbox("Algorithm",list(opts.keys()),key="gb13")
+        k    = opts[sel]; r = res[k]
+        ep   = st.slider("Episode",0,max(len(r["returns_curve"])-1,0),max(len(r["returns_curve"])-1,0),key="gb13ep")
+        c1,c2,c3 = st.columns(3)
+        c1.metric("Joint return",  f"{r['returns_curve'][ep]:.3f}")
+        c2.metric("TD error",      f"{r['td_error_curve'][ep]:.4f}")
+        c3.metric("Mixing weight", f"{r['mixing_weights'][ep]:.3f}")
+        if k=="iql":
+            st.latex(r"Q_i(s,a) \leftarrow Q_i + \alpha[r_{joint} + \gamma \max Q_i(s') - Q_i(s,a)]")
+            st.markdown("No coordination. Joint reward used but agents act independently.")
+        elif k=="vdn":
+            st.latex(r"Q_{tot} = Q_0(s_0,a_0) + Q_1(s_1,a_1)")
+            st.latex(r"\frac{\partial Q_{tot}}{\partial Q_i} = 1")
+        elif k=="qmix":
+            st.latex(r"Q_{tot} = w_0(s)Q_0 + w_1(s)Q_1 + b(s),\quad w_i \geq 0")
+            st.latex(r"\frac{\partial Q_{tot}}{\partial Q_i} = w_i(s)")
+        else:
+            st.latex(r"A_i = Q_{tot}(s,\mathbf{a}) - Q_{tot}(s, \mathbf{a}_{-i}, \arg\max Q_i)")
+            st.markdown("Counterfactual baseline isolates each agent's contribution.")
 
 def _summary(res,lb):
-    rows = []
-    for k in ALGOS:
-        r   = res[k]
-        avg = sum(r["returns_curve"][-100:])/min(100,len(r["returns_curve"]))
-        mw  = sum(r["mixing_weights"])/max(1,len(r["mixing_weights"]))
-        rows.append({"Algorithm":lb[k],"Avg return (last 100)":f"{avg:.3f}",
-                     "Steps":str(r["total_steps"]),"Avg mixing w":f"{mw:.3f}",
-                     "V*(S0)":f"{r['values'][0]:.3f}","V*(S7)":f"{r['values'][7]:.3f}"})
-    st.dataframe(rows,hide_index=True)
+        rows = []
+        for k in ALGOS:
+            r   = res[k]
+            avg = sum(r["returns_curve"][-100:])/min(100,len(r["returns_curve"]))
+            mw  = sum(r["mixing_weights"])/max(1,len(r["mixing_weights"]))
+            rows.append({"Algorithm":lb[k],"Avg return (last 100)":f"{avg:.3f}",
+                         "Steps":str(r["total_steps"]),"Avg mixing w":f"{mw:.3f}",
+                         "V*(S0)":f"{r['values'][0]:.3f}","V*(S7)":f"{r['values'][7]:.3f}"})
+        st.dataframe(rows,hide_index=True)
