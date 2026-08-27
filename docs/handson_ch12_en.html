@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide &mdash; Chapter 12</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+.card.red{border-left-color:#FF4B4B}
+.card.purple{border-left-color:#8B5CF6}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0;overflow-x:auto}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem 1rem;margin:1rem 0;text-align:center;overflow-x:auto}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.task-card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #0082F0}
+.task-card h3{color:#0082F0;margin-bottom:.5rem}
+details{background:#252840;border-radius:6px;padding:.75rem 1rem;margin-top:.75rem;border-left:3px solid #FF8C0A}
+details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.9rem;user-select:none}
+details summary:hover{color:#FFB347}
+details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154;color:#e8eaf6}
+.quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
+.quiz-question p{font-weight:600;margin-bottom:.75rem;color:#e8eaf6}
+.quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0;transition:background .15s}
+.quiz-option:hover{background:#252840}
+.quiz-option input{accent-color:#8B5CF6;width:1rem;height:1rem;flex-shrink:0}
+.quiz-option label{cursor:pointer;color:#9ca3af;font-size:.9rem}
+.quiz-option.correct label{color:#0FC373;font-weight:600}
+.quiz-option.wrong label{color:#FF4B4B}
+#quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:600;display:none}
+#quiz-result.pass{background:#0FC37322;border:2px solid #0FC373;color:#0FC373}
+#quiz-result.fail{background:#FF4B4B22;border:2px solid #FF4B4B;color:#FF4B4B}
+.btn{background:#8B5CF6;color:white;border:none;padding:.6rem 1.5rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;margin-top:1rem;transition:background .2s}
+.btn:hover{background:#7C3AED}
+.btn.secondary{background:#252840;color:#9ca3af}
+.btn.secondary:hover{background:#2d3154;color:#e8eaf6}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Hands-On Guide &mdash; Chapter 12</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>Game Theory and Nash Equilibrium &middot; Nash Q &middot; Correlated Q &middot; Minimax Q &middot; Warsaw ASP</em></p>
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Introduction</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; What is Ch12?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; RL Theory</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; Environment</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; How to use UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretation</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; Exercises</button>
+  <button class="tab-btn" onclick="showTab('tasks')">&#x1F4DD; Tasks</button>
+  <button class="tab-btn" onclick="showTab('quiz')">&#x1F3AF; Quiz</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Summary</button>
+</div>
+<div id="intro" class="tab-content active">
+
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card green">After completing this chapter you will be able to:
+<ul>
+<li>Define Nash Equilibrium and explain why neither player can improve unilaterally</li>
+<li>Implement Nash Q-Learning and explain how it converges to Nash equilibrium</li>
+<li>Explain Correlated Q-Learning and how it broadens Nash via joint distributions</li>
+<li>Explain Minimax Q-Learning for zero-sum games</li>
+<li>Explain Fictitious Play as best response to opponent's empirical average strategy</li>
+<li>Read the Nash Gap chart and explain what exploitability measures</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue"><strong>Warsaw ASP &mdash; Game-Theoretic Dispatch</strong><br><br>
+Two dispatchers interact strategically. Nash Q-Learning finds the equilibrium where neither dispatcher can improve their outcome by changing strategy unilaterally &mdash; the stable operating point.</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">Nash</div><div class="kpi-label">Equilibrium concept</div></div>
+<div class="kpi-card"><div class="kpi-val">Gap</div><div class="kpi-label">Key metric</div></div>
+<div class="kpi-card"><div class="kpi-val">Zero-sum</div><div class="kpi-label">Minimax mode</div></div>
+</div>
+</div>
+<div id="what" class="tab-content">
+
+<h2>&#x2753; What is Chapter 12?</h2>
+<div class="card purple">Ch12 applies <strong>Game Theory</strong> to MARL. Instead of just learning Q-values, agents compute equilibrium strategies that are stable against rational opponents.</div>
+<h2>Four algorithms</h2>
+<div class="card">
+<table><tr><th>Algorithm</th><th>Equilibrium concept</th></tr>
+<tr><td><strong>Nash Q-Learning</strong></td><td>Nash equilibrium &mdash; neither player can improve unilaterally</td></tr>
+<tr><td><strong>Correlated Q-Learning</strong></td><td>Correlated equilibrium &mdash; broader than Nash, via joint distribution</td></tr>
+<tr><td><strong>Minimax Q-Learning</strong></td><td>Zero-sum: maximise worst-case payoff</td></tr>
+<tr><td><strong>Fictitious Play</strong></td><td>Best response to opponent's empirical average strategy</td></tr>
+</table>
+</div>
+</div>
+<div id="theory" class="tab-content">
+
+<h2>&#x1F9EE; Nash Equilibrium</h2>
+<div class="formula">$$V_i(s, \pi_i^*, \pi_j^*) \geq V_i(s, \pi_i, \pi_j^*) \quad \forall \pi_i$$</div>
+<div class="card">Neither player can improve their value by deviating unilaterally. The stable operating point of the game.</div>
+
+<h2>Nash Q-Learning</h2>
+<div class="formula">$$Q_i(s,a_0,a_1) \leftarrow Q_i + \alpha \left[ r_i + \gamma V_i^{\text{Nash}}(s') - Q_i(s,a_0,a_1) \right]$$</div>
+<div class="card blue">$V_i^{\text{Nash}}(s)$ = Nash equilibrium value. Converges to Nash equilibrium in self-play.</div>
+
+<h2>Correlated Q-Learning</h2>
+<div class="formula">$$\sigma(a_0,a_1|s) \text{ updated via regret matching}$$</div>
+<div class="card orange">Joint distribution $\sigma$ over action pairs. Broader than Nash &mdash; agents can coordinate via correlated signals. Updated via regret matching.</div>
+
+<h2>Minimax Q-Learning</h2>
+<div class="formula">$$V_0^{mm}(s) = \max_{\pi_0} \min_{\pi_1} \sum_{a_0,a_1} \pi_0(a_0) \pi_1(a_1) Q_0(s,a_0,a_1)$$</div>
+<div class="card green">Zero-sum game: Player 0 maximises worst-case payoff. Optimal for adversarial settings.</div>
+
+<h2>Fictitious Play</h2>
+<div class="formula">$$\hat{\pi}_j(a|s) = \frac{N_j(s,a)}{\sum_{a'} N_j(s,a')}$$</div>
+<div class="card">Best response to opponent's empirical average strategy. Converges to Nash in two-player zero-sum games.</div>
+</div>
+<div id="env" class="tab-content">
+
+<h2>&#x1F5FA; Game Theory Environment</h2>
+<div class="card">Two players share the 8-state Warsaw ASP MDP. Each has a joint Q-table $Q_i(s,a_0,a_1)$. The Nash Gap measures how far the current strategy is from equilibrium.</div>
+<table><tr><th>Parameter</th><th>Value</th><th>Effect</th></tr>
+<tr><td>Episodes</td><td>50&ndash;3000</td><td>More = closer to equilibrium</td></tr>
+<tr><td>Zero-sum mode</td><td>True/False</td><td>True = Minimax mode (adversarial)</td></tr>
+</table>
+<div class="card blue"><strong>Nash Gap (Exploitability):</strong> How much a player could gain by deviating from the current strategy. Lower = closer to Nash equilibrium.</div>
+</div>
+<div id="ui" class="tab-content">
+
+<h2>&#x1F3AE; How to use the Ch12 interface</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Set Zero-sum mode</strong><br>False = cooperative/general-sum. True = adversarial (Minimax mode).</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Click &#x25B6; Run All Four Algorithms</strong><br>All four run simultaneously. Watch the Nash Gap chart.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Read the Nash Gap chart</strong><br>Lower = closer to equilibrium. Should decrease over episodes.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Read the Mixed Strategy Profile</strong><br>Shows the probability distribution over actions for each player in a selected state.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Read the Glass-Box</strong><br>Shows joint return, Nash gap, and exploitability per episode.</div></div>
+</div>
+<div id="interp" class="tab-content">
+
+<h2>&#x1F4CA; Interpreting the results</h2>
+<h3>&#x1F4C9; Nash Gap Chart</h3>
+<div class="card blue">
+<strong>Axes:</strong> X = episode, Y = Nash gap (exploitability)<br>
+<strong>Purpose:</strong> Shows how close each algorithm is to Nash equilibrium.<br>
+<strong>What to watch:</strong><br>
+&bull; Should decrease toward 0 as algorithms converge<br>
+&bull; Nash Q-Learning should have the lowest gap<br>
+&bull; Fictitious Play converges slowly but steadily
+</div>
+<h3>&#x1F3B2; Mixed Strategy Profile</h3>
+<div class="card">
+<strong>Purpose:</strong> Shows the probability distribution over actions for each player in a selected state.<br>
+<strong>What to watch:</strong><br>
+&bull; Nash equilibrium: neither player can improve by changing their distribution<br>
+&bull; Minimax: Player 0 maximises worst-case, Player 1 minimises Player 0's payoff
+</div>
+<h3>&#x1F52C; Glass-Box</h3>
+<div class="card">
+<strong>Metrics per episode:</strong>
+<table><tr><th>Metric</th><th>Meaning</th></tr>
+<tr><td>Joint return</td><td>Mean return across both players</td></tr>
+<tr><td>Nash gap</td><td>Exploitability of current strategy</td></tr>
+<tr><td>Exploitability</td><td>Max gain from unilateral deviation</td></tr>
+</table>
+</div>
+</div>
+<div id="exercises" class="tab-content">
+
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card"><h3>Exercise 1 &mdash; Nash Gap convergence</h3>Run for 1000 episodes. Which algorithm achieves the lowest Nash Gap? Does it reach 0?</div>
+<div class="card blue"><h3>Exercise 2 &mdash; Zero-sum vs general-sum</h3>Toggle Zero-sum mode. How does the Mixed Strategy Profile change? Does Minimax Q-Learning perform better in zero-sum mode?</div>
+<div class="card orange"><h3>Exercise 3 &mdash; Fictitious Play convergence</h3>Run Fictitious Play for 2000 episodes. Does it converge to Nash? How does it compare to Nash Q-Learning?</div>
+<div class="card green"><h3>Exercise 4 &mdash; Correlated vs Nash</h3>Compare Correlated Q-Learning vs Nash Q-Learning joint returns. Does coordination via joint distribution improve returns?</div>
+<div class="card purple"><h3>Exercise 5 &mdash; Mixed strategy analysis</h3>Select state S7 (worst state). What mixed strategy does Nash Q-Learning recommend? Is it different from S0?</div>
+</div>
+<div id="tasks" class="tab-content">
+
+<h2>&#x1F4DD; Practical Tasks</h2>
+<p style="color:#9ca3af;margin-bottom:1rem">Click "Show answer" to check your solution.</p>
+<div class="task-card">
+<h3>Task 1 &mdash; Nash Equilibrium definition</h3>
+<p>Player 0 has strategy $\pi_0^*$, Player 1 has $\pi_1^*$. Is this a Nash Equilibrium if Player 0 can gain +2 by switching to $\pi_0'$?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<strong>No</strong> &mdash; this is NOT a Nash Equilibrium.<br><br>
+Nash Equilibrium requires: $V_i(s, \pi_i^*, \pi_j^*) \geq V_i(s, \pi_i, \pi_j^*)$ for ALL $\pi_i$.<br><br>
+If Player 0 can gain +2 by switching to $\pi_0'$, then $V_0(s, \pi_0', \pi_1^*) > V_0(s, \pi_0^*, \pi_1^*)$, which violates the Nash condition.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 2 &mdash; Nash Q update</h3>
+<p>$Q_0(S3,A0,A1)=8$. Joint reward $r_0=5$. $V_0^{\text{Nash}}(S5)=12$. &alpha;=0.1, &gamma;=0.95. Compute new $Q_0(S3,A0,A1)$.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\delta = r_0 + \gamma V_0^{\text{Nash}}(S5) - Q_0(S3,A0,A1) = 5 + 0.95 \cdot 12 - 8 = 5 + 11.4 - 8 = 8.4$$</div>
+<div class="formula">$$Q_0(S3,A0,A1) \leftarrow 8 + 0.1 \cdot 8.4 = \mathbf{8.84}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 3 &mdash; Minimax value</h3>
+<p>Zero-sum game, state S2. Player 0 has two actions, Player 1 has two actions. Payoff matrix for Player 0: [[3, -1], [1, 2]]. What is the Minimax value for Player 0?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+Player 0 maximises, Player 1 minimises Player 0's payoff:<br><br>
+If Player 0 plays A0: Player 1 minimises &rarr; min(3, -1) = -1<br>
+If Player 0 plays A1: Player 1 minimises &rarr; min(1, 2) = 1<br><br>
+Player 0 maximises over these: max(-1, 1) = <strong>1</strong><br><br>
+Minimax value = <strong>1</strong>. Player 0 should play A1 (guarantees at least 1 regardless of Player 1's action).
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 4 &mdash; Fictitious Play update</h3>
+<p>Player 1 has played in state S4: A0 (4 times), A1 (6 times). Player 0's best response to $\hat{\pi}_1$: Q(S4,A0)=8 vs Q(S4,A1)=10 (against A0), Q(S4,A0)=12 vs Q(S4,A1)=7 (against A1). What is Player 0's best response?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+$\hat{\pi}_1(A0|S4) = 4/10 = 0.4$, $\hat{\pi}_1(A1|S4) = 6/10 = 0.6$<br><br>
+Expected value for Player 0:<br>
+$\mathbb{E}[Q(S4,A0)] = 0.4 \cdot 8 + 0.6 \cdot 12 = 3.2 + 7.2 = 10.4$<br>
+$\mathbb{E}[Q(S4,A1)] = 0.4 \cdot 10 + 0.6 \cdot 7 = 4.0 + 4.2 = 8.2$<br><br>
+Best response: <strong>A0</strong> (expected value 10.4 &gt; 8.2).
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 5 &mdash; Nash vs Correlated equilibrium</h3>
+<p>Explain the difference between Nash Equilibrium and Correlated Equilibrium. When is Correlated Equilibrium more useful?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<strong>Nash Equilibrium:</strong> Each player's strategy is a best response to the other's strategy. Players act independently &mdash; no coordination signal needed.<br><br>
+<strong>Correlated Equilibrium:</strong> A joint distribution $\sigma(a_0,a_1|s)$ over action pairs. A mediator (or public signal) recommends actions. Each player's recommended action is a best response given the other follows the recommendation.<br><br>
+<strong>Key difference:</strong> Correlated equilibrium is broader &mdash; every Nash equilibrium is a correlated equilibrium, but not vice versa.<br><br>
+<strong>More useful when:</strong> Agents can observe a common signal (e.g., traffic light, shared sensor). Correlated equilibrium can achieve higher joint payoffs than Nash in coordination games.
+</div></details>
+</div>
+</div>
+<div id="quiz" class="tab-content">
+<h2>&#x1F3AF; Quiz &mdash; Test Your Knowledge</h2>
+<p style="color:#9ca3af;margin-bottom:1.5rem">Answer all 10 questions and click "Check results". Pass threshold: <strong>90% (9/10)</strong>.</p>
+<div class="quiz-question" id="q1"><p>1. What defines a Nash Equilibrium?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">Both players have the same strategy</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">Neither player can improve their payoff by unilaterally changing their strategy</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">The joint payoff is maximised</label></div>
+</div>
+<div class="quiz-question" id="q2"><p>2. What does the Nash Gap (exploitability) measure?</p>
+<div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">The difference in returns between the two players</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">How much a player could gain by deviating from the current strategy — lower = closer to Nash</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">The cooperation rate</label></div>
+</div>
+<div class="quiz-question" id="q3"><p>3. What is the key difference between Nash Q-Learning and IQL (Ch11)?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">Nash Q-Learning uses a joint Q-table $Q_i(s,a_0,a_1)$ and computes Nash equilibrium values</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">Nash Q-Learning is simpler than IQL</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">Nash Q-Learning does not require a Q-table</label></div>
+</div>
+<div class="quiz-question" id="q4"><p>4. What does Minimax Q-Learning optimise?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">The joint return of both players</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">Player 0's worst-case payoff: $\max_{\pi_0} \min_{\pi_1} V_0$</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">The Nash Gap</label></div>
+</div>
+<div class="quiz-question" id="q5"><p>5. How does Fictitious Play update its strategy?</p>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">By computing the Nash equilibrium directly</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">By playing the best response to the opponent's empirical average strategy $\hat{\pi}_j$</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">By using regret matching</label></div>
+</div>
+<div class="quiz-question" id="q6"><p>6. What is the Mixed Strategy Profile showing?</p>
+<div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">The Q-table values</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">The probability distribution over actions for each player in a selected state</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">The Nash Gap per state</label></div>
+</div>
+<div class="quiz-question" id="q7"><p>7. When is Minimax Q-Learning most appropriate?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">In cooperative settings where agents share rewards</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">In zero-sum adversarial settings where one player's gain is the other's loss</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">In settings with more than 2 agents</label></div>
+</div>
+<div class="quiz-question" id="q8"><p>8. What is Correlated Q-Learning updating?</p>
+<div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">Individual Q-tables for each agent</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">A joint distribution $\sigma(a_0,a_1|s)$ over action pairs via regret matching</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">The Nash equilibrium directly</label></div>
+</div>
+<div class="quiz-question" id="q9"><p>9. Does every Nash Equilibrium correspond to a Correlated Equilibrium?</p>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">No — they are completely different concepts</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">Yes — every Nash Equilibrium is a special case of Correlated Equilibrium</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">Only in zero-sum games</label></div>
+</div>
+<div class="quiz-question" id="q10"><p>10. What does the Glass-Box exploitability metric show?</p>
+<div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">The TD error</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">The maximum gain a player could achieve by deviating from the current strategy</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">The cooperation rate</label></div>
+</div>
+<button class="btn" onclick="checkQuiz()">&#x2705; Check results</button>
+<button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
+<div id="quiz-result"></div>
+<script>var ANSWERS={'q1':'b','q2':'b','q3':'a','q4':'b','q5':'b','q6':'b','q7':'b','q8':'b','q9':'b','q10':'b'};</script>
+
+</div>
+<div id="summary" class="tab-content">
+
+<h2>&#x1F4CB; Summary</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">Nash</div><div class="kpi-label">Equilibrium</div></div>
+<div class="kpi-card"><div class="kpi-val">Gap</div><div class="kpi-label">Key metric</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch13</div><div class="kpi-label">Next: Cooperative MARL</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; Game theory insights</strong><ul>
+<li>Nash Q: converges to stable equilibrium</li>
+<li>Correlated Q: broader than Nash</li>
+<li>Minimax: optimal for adversarial settings</li>
+<li>Fictitious Play: simple, converges in zero-sum</li>
+</ul></div>
+<div class="card red"><strong>&#x274C; Limitations</strong><ul>
+<li>Joint Q-table: $O(|S||A|^N)$ memory</li>
+<li>Nash computation is NP-hard in general</li>
+<li>Multiple Nash equilibria may exist</li>
+<li>Assumes rational opponents</li>
+</ul></div>
+</div>
+<div class="card blue" style="margin-top:1rem"><strong>&#x27A1; Next: Chapter 13</strong> &mdash; Cooperative MARL: VDN and QMIX. We move to fully cooperative settings where agents share the same joint reward and use value decomposition.</div>
+</div>
+</div>
+<script>
+
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if(typeof renderMathInElement!=='undefined'){
+    renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  }
+}
+function checkQuiz(){
+  var score=0,total=Object.keys(ANSWERS).length;
+  for(var q in ANSWERS){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    document.querySelectorAll('#'+q+' .quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+    if(sel){
+      if(sel.value===ANSWERS[q]){score++;sel.closest('.quiz-option').classList.add('correct');}
+      else{sel.closest('.quiz-option').classList.add('wrong');document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');}
+    } else {
+      document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+    }
+  }
+  var pct=Math.round(score/total*100),res=document.getElementById('quiz-result');
+  res.style.display='block';
+  if(score>=9){res.className='pass';res.innerHTML='&#x1F389; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Congratulations! You can move on to the next chapter!';}
+  else{res.className='fail';res.innerHTML='&#x274C; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Pass threshold is 90% (9/10). Review the material and try again.';}
+}
+function resetQuiz(){
+  document.querySelectorAll('.quiz-option input').forEach(function(i){i.checked=false});
+  document.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+  var res=document.getElementById('quiz-result');res.style.display='none';res.className='';
+}
+
+</script>
+</body>
+</html>

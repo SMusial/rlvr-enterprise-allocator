@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide &mdash; Chapter 11</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+.card.red{border-left-color:#FF4B4B}
+.card.purple{border-left-color:#8B5CF6}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0;overflow-x:auto}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem 1rem;margin:1rem 0;text-align:center;overflow-x:auto}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.task-card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #0082F0}
+.task-card h3{color:#0082F0;margin-bottom:.5rem}
+details{background:#252840;border-radius:6px;padding:.75rem 1rem;margin-top:.75rem;border-left:3px solid #FF8C0A}
+details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.9rem;user-select:none}
+details summary:hover{color:#FFB347}
+details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154;color:#e8eaf6}
+.quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
+.quiz-question p{font-weight:600;margin-bottom:.75rem;color:#e8eaf6}
+.quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0;transition:background .15s}
+.quiz-option:hover{background:#252840}
+.quiz-option input{accent-color:#8B5CF6;width:1rem;height:1rem;flex-shrink:0}
+.quiz-option label{cursor:pointer;color:#9ca3af;font-size:.9rem}
+.quiz-option.correct label{color:#0FC373;font-weight:600}
+.quiz-option.wrong label{color:#FF4B4B}
+#quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:600;display:none}
+#quiz-result.pass{background:#0FC37322;border:2px solid #0FC373;color:#0FC373}
+#quiz-result.fail{background:#FF4B4B22;border:2px solid #FF4B4B;color:#FF4B4B}
+.btn{background:#8B5CF6;color:white;border:none;padding:.6rem 1.5rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;margin-top:1rem;transition:background .2s}
+.btn:hover{background:#7C3AED}
+.btn.secondary{background:#252840;color:#9ca3af}
+.btn.secondary:hover{background:#2d3154;color:#e8eaf6}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Hands-On Guide &mdash; Chapter 11</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>Multi-Agent RL &middot; IQL &middot; JAL &middot; Lenient Q &middot; Mean Field Q &middot; Warsaw ASP</em></p>
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Introduction</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; What is Ch11?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; RL Theory</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; Environment</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; How to use UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretation</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; Exercises</button>
+  <button class="tab-btn" onclick="showTab('tasks')">&#x1F4DD; Tasks</button>
+  <button class="tab-btn" onclick="showTab('quiz')">&#x1F3AF; Quiz</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Summary</button>
+</div>
+<div id="intro" class="tab-content active">
+
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card green">After completing this chapter you will be able to:
+<ul>
+<li>Explain the Multi-Agent RL setting and why it differs from single-agent RL</li>
+<li>Implement IQL (Independent Q-Learning) and explain its non-stationarity problem</li>
+<li>Implement JAL (Joint Action Learning) and explain how it models the partner's policy</li>
+<li>Explain Lenient Q-Learning and the role of the leniency parameter &mu;</li>
+<li>Explain Mean Field Q-Learning and why it scales to many agents</li>
+<li>Read the Cooperation Rate chart and explain what it measures</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue"><strong>Warsaw ASP &mdash; 2 Dispatchers</strong><br><br>
+Two dispatchers share the same 8-state MDP. Each acts independently but their rewards interact. The challenge: how to coordinate without explicit communication?</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">2</div><div class="kpi-label">Agents</div></div>
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">MARL algorithms</div></div>
+<div class="kpi-card"><div class="kpi-label">Cooperation</div><div class="kpi-val">Key metric</div></div>
+<div class="kpi-card"><div class="kpi-val">IQL</div><div class="kpi-label">Baseline</div></div>
+</div>
+</div>
+<div id="what" class="tab-content">
+
+<h2>&#x2753; What is Chapter 11?</h2>
+<div class="card purple">Ch11 introduces <strong>Multi-Agent Reinforcement Learning (MARL)</strong>. Two dispatchers share the Warsaw ASP MDP. Each agent has its own Q-table but their actions affect each other's rewards.</div>
+<h2>Four MARL algorithms</h2>
+<div class="card">
+<table><tr><th>Algorithm</th><th>Key property</th></tr>
+<tr><td><strong>IQL</strong></td><td>Each agent runs Q-Learning independently. Simplest MARL.</td></tr>
+<tr><td><strong>JAL</strong></td><td>Each agent models the partner's action frequency $\hat{\pi}_j(a|s)$</td></tr>
+<tr><td><strong>Lenient Q</strong></td><td>Negative TD errors ignored with probability &mu;</td></tr>
+<tr><td><strong>Mean Field Q</strong></td><td>Approximate joint action by mean action of neighbours</td></tr>
+</table>
+</div>
+</div>
+<div id="theory" class="tab-content">
+
+<h2>&#x1F9EE; IQL (Independent Q-Learning)</h2>
+<div class="formula">$$Q_i(s,a) \leftarrow Q_i(s,a) + \alpha \left[ r + \gamma \max_{a'} Q_i(s',a') - Q_i(s,a) \right]$$</div>
+<div class="card">Each agent treats the other as part of the environment. Simple but non-stationary: the environment changes as the other agent learns.</div>
+
+<h2>JAL (Joint Action Learning)</h2>
+<div class="formula">$$\hat{\pi}_j(a|s) = \frac{N_j(s,a)}{\sum_{a'} N_j(s,a')}$$</div>
+<div class="formula">$$Q_i(s,a) \leftarrow Q_i(s,a) + \alpha \left[ r + \gamma \mathbb{E}_{\hat{\pi}_j}[\max Q_i(s')] - Q_i(s,a) \right]$$</div>
+<div class="card blue">Agent $i$ models partner $j$'s policy from action frequencies. Q update uses expected value over estimated partner policy.</div>
+
+<h2>Lenient Q-Learning</h2>
+<div class="formula">$$\delta = r + \gamma \max Q_i(s') - Q_i(s,a)$$</div>
+<div class="card orange">Apply update only if $\delta \geq 0$, or with probability $(1-\mu)$ if $\delta < 0$. $\mu=0$ &rarr; IQL. $\mu=1$ &rarr; never penalise. Prevents penalising good actions due to partner's mistakes.</div>
+
+<h2>Mean Field Q-Learning</h2>
+<div class="formula">$$\bar{a}_j(s) = \frac{1}{N} \sum_t a_j^{(t)}(s)$$</div>
+<div class="formula">$$Q_i(s,a) \leftarrow Q_i(s,a) + \alpha \left[ r + \beta \bar{a}_j/|A| + \gamma \max Q_i(s') - Q_i(s,a) \right]$$</div>
+<div class="card green">Approximate joint action by mean action of neighbours. Scales to large N. Foundation for large MARL.</div>
+</div>
+<div id="env" class="tab-content">
+
+<h2>&#x1F5FA; MARL Environment</h2>
+<div class="card">Two agents share the 8-state Warsaw ASP MDP. Each agent has its own Q-table. Rewards interact: both agents' actions affect the joint reward.</div>
+<table><tr><th>Parameter</th><th>Value</th><th>Effect</th></tr>
+<tr><td>Episodes</td><td>50&ndash;3000</td><td>More = better coordination</td></tr>
+<tr><td>&mu; (leniency)</td><td>0.0&ndash;1.0</td><td>0=IQL, 1=never penalise. Start with 0.5.</td></tr>
+<tr><td>&beta; (mean field)</td><td>0.0&ndash;2.0</td><td>Mean field influence weight. Start with 0.5.</td></tr>
+</table>
+</div>
+<div id="ui" class="tab-content">
+
+<h2>&#x1F3AE; How to use the Ch11 interface</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Set &mu; (leniency)</strong><br>Start with &mu;=0.5. &mu;=0 = IQL (baseline). &mu;=1 = never penalise.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Set &beta; (mean field influence)</strong><br>Start with &beta;=0.5. Higher = more influence from partner's mean action.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Click &#x25B6; Run All Four Algorithms</strong><br>All four run simultaneously. Watch the Cooperation Rate chart.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Read the Cooperation Rate chart</strong><br>Fraction of steps both agents chose the same action. Higher = more coordinated.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Read the Q-Table Heatmaps</strong><br>Two heatmaps per algorithm &mdash; one per agent. Do they converge to the same policy?</div></div>
+</div>
+<div id="interp" class="tab-content">
+
+<h2>&#x1F4CA; Interpreting the results</h2>
+<h3>&#x1F91D; Cooperation Rate Chart</h3>
+<div class="card blue">
+<strong>Axes:</strong> X = episode, Y = fraction of steps both agents chose same action<br>
+<strong>Purpose:</strong> Measures how well the two agents coordinate.<br>
+<strong>What to watch:</strong><br>
+&bull; JAL should have highest cooperation (models partner explicitly)<br>
+&bull; IQL may have low cooperation (non-stationary environment)<br>
+&bull; Lenient Q avoids miscoordination from partner mistakes
+</div>
+<h3>&#x1F4CA; Joint Value Function V(s)</h3>
+<div class="card">
+<strong>Purpose:</strong> Mean V(s) across both agents.<br>
+<strong>What to watch:</strong><br>
+&bull; S7 (SLA breach) should be lowest<br>
+&bull; JAL and Lenient Q should have higher V(S0) than IQL
+</div>
+<h3>&#x1F52C; Glass-Box</h3>
+<div class="card">
+<strong>Metrics per episode:</strong>
+<table><tr><th>Metric</th><th>Meaning</th></tr>
+<tr><td>Joint return</td><td>Mean return across both agents</td></tr>
+<tr><td>TD error</td><td>Mean $|\delta_t|$</td></tr>
+<tr><td>Cooperation</td><td>Fraction of steps with same action</td></tr>
+</table>
+</div>
+</div>
+<div id="exercises" class="tab-content">
+
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card"><h3>Exercise 1 &mdash; IQL non-stationarity</h3>Run IQL for 1000 episodes. Does the cooperation rate stabilise? Why does IQL struggle with non-stationarity?</div>
+<div class="card blue"><h3>Exercise 2 &mdash; JAL coordination</h3>Compare JAL vs IQL cooperation rates. How much does modelling the partner improve coordination?</div>
+<div class="card orange"><h3>Exercise 3 &mdash; Leniency effect</h3>Run Lenient Q with &mu;=0, 0.5, 1.0. How does &mu; affect the returns curve? Is there an optimal &mu;?</div>
+<div class="card green"><h3>Exercise 4 &mdash; Mean Field scaling</h3>Mean Field Q is designed to scale to many agents. Why does it work with just 2 agents? What would change with 10 agents?</div>
+<div class="card purple"><h3>Exercise 5 &mdash; Q-table comparison</h3>Compare Agent 0 and Agent 1 Q-tables for JAL. Do they converge to the same policy? Should they?</div>
+</div>
+<div id="tasks" class="tab-content">
+
+<h2>&#x1F4DD; Practical Tasks</h2>
+<p style="color:#9ca3af;margin-bottom:1rem">Click "Show answer" to check your solution.</p>
+<div class="task-card">
+<h3>Task 1 &mdash; IQL update</h3>
+<p>Agent 0, state S3, action A1: $Q_0(S3,A1)=8$. Joint reward r=5. Next state S5: $\max_{a'} Q_0(S5,a')=12$. &alpha;=0.1, &gamma;=0.95. Compute new $Q_0(S3,A1)$.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\delta = r + \gamma \max_{a'} Q_0(S5,a') - Q_0(S3,A1) = 5 + 0.95 \cdot 12 - 8 = 5 + 11.4 - 8 = 8.4$$</div>
+<div class="formula">$$Q_0(S3,A1) \leftarrow 8 + 0.1 \cdot 8.4 = \mathbf{8.84}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 2 &mdash; JAL partner model</h3>
+<p>Agent 1 has taken actions in state S2: A0 (3 times), A1 (5 times), A2 (2 times). Compute $\hat{\pi}_1(A1|S2)$.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\hat{\pi}_1(A1|S2) = \frac{N_1(S2,A1)}{\sum_{a'} N_1(S2,a')} = \frac{5}{3+5+2} = \frac{5}{10} = \mathbf{0.5}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 3 &mdash; Lenient Q update</h3>
+<p>$\delta = -2.5$ (negative TD error). &mu;=0.6. Should the update be applied? With what probability?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+Since $\delta < 0$, Lenient Q applies the update with probability $(1-\mu) = 1 - 0.6 = \mathbf{0.4}$.<br><br>
+With probability 0.6, the negative update is <strong>ignored</strong> &mdash; this prevents penalising good actions due to partner's mistakes.<br><br>
+If $\delta \geq 0$, the update is always applied (probability 1.0).
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 4 &mdash; Mean Field update</h3>
+<p>Agent 0, state S4, action A1: $Q_0(S4,A1)=10$. Joint reward r=4. $\bar{a}_1(S4)=1.5$ (mean partner action), $|A|=4$. $\max Q_0(S5)=15$. &alpha;=0.1, &gamma;=0.9, &beta;=0.5. Compute new $Q_0(S4,A1)$.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\delta = r + \beta \bar{a}_1/|A| + \gamma \max Q_0(S5) - Q_0(S4,A1)$$</div>
+<div class="formula">$$= 4 + 0.5 \cdot 1.5/4 + 0.9 \cdot 15 - 10 = 4 + 0.1875 + 13.5 - 10 = 7.6875$$</div>
+<div class="formula">$$Q_0(S4,A1) \leftarrow 10 + 0.1 \cdot 7.6875 = \mathbf{10.769}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 5 &mdash; Why IQL struggles</h3>
+<p>Explain the non-stationarity problem in IQL and why it can prevent convergence.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+In IQL, each agent treats the other as part of the environment. But the other agent is <strong>also learning</strong> &mdash; its policy changes over time.<br><br>
+From Agent 0's perspective: the "environment" (Agent 1's behaviour) is non-stationary. Q-Learning convergence requires a stationary environment.<br><br>
+<strong>Consequence:</strong> Agent 0's Q-values may never converge because Agent 1 keeps changing. The agents may cycle between policies without reaching equilibrium.<br><br>
+<strong>Solution:</strong> JAL (model partner explicitly), Lenient Q (ignore partner mistakes), or centralised training (Ch12&ndash;Ch13).
+</div></details>
+</div>
+</div>
+<div id="quiz" class="tab-content">
+<h2>&#x1F3AF; Quiz &mdash; Test Your Knowledge</h2>
+<p style="color:#9ca3af;margin-bottom:1.5rem">Answer all 10 questions and click "Check results". Pass threshold: <strong>90% (9/10)</strong>.</p>
+<div class="quiz-question" id="q1"><p>1. What is the non-stationarity problem in IQL?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">IQL uses too high a learning rate</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">Each agent's environment is non-stationary because the other agent is also learning and changing its policy</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">IQL cannot handle more than 2 agents</label></div>
+</div>
+<div class="quiz-question" id="q2"><p>2. What does JAL model that IQL does not?</p>
+<div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">The transition probabilities P(s'|s,a)</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">The partner agent's policy $\hat{\pi}_j(a|s)$ estimated from action frequencies</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">The joint reward function</label></div>
+</div>
+<div class="quiz-question" id="q3"><p>3. What does the leniency parameter &mu; control in Lenient Q?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">The learning rate</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">The probability of ignoring negative TD errors — &mu;=0 is IQL, &mu;=1 never penalises</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">The exploration rate</label></div>
+</div>
+<div class="quiz-question" id="q4"><p>4. What does the Cooperation Rate chart measure?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">The joint return</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">The fraction of steps where both agents chose the same action</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">The model accuracy</label></div>
+</div>
+<div class="quiz-question" id="q5"><p>5. Why does Mean Field Q scale to many agents?</p>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">Because it uses a neural network</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">Because it approximates the joint action by the mean action of neighbours — $O(1)$ instead of $O(|A|^N)$</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">Because it ignores other agents</label></div>
+</div>
+<div class="quiz-question" id="q6"><p>6. What is the key advantage of JAL over IQL?</p>
+<div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">JAL is simpler to implement</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">JAL explicitly models the partner's policy, leading to better coordination</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">JAL has lower variance</label></div>
+</div>
+<div class="quiz-question" id="q7"><p>7. When does Lenient Q apply a negative TD error update?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">Never</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">With probability $(1-\mu)$ — higher &mu; = more lenient = fewer negative updates applied</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">Always, regardless of &mu;</label></div>
+</div>
+<div class="quiz-question" id="q8"><p>8. What does the Q-Table Heatmap show in Ch11?</p>
+<div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">One heatmap for the joint policy</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">Two heatmaps — one per agent — showing each agent's Q(s,a) values</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">The cooperation rate per state</label></div>
+</div>
+<div class="quiz-question" id="q9"><p>9. What is the Mean Field approximation?</p>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">Approximate the joint action by the maximum action of all agents</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">Approximate the joint action by the mean action of neighbours $\bar{a}_j(s)$</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">Approximate the reward by the mean reward</label></div>
+</div>
+<div class="quiz-question" id="q10"><p>10. What is the main limitation of JAL?</p>
+<div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">JAL cannot handle more than 2 agents</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">JAL requires observing partner actions and has $O(|A|^N)$ joint action space</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">JAL has higher variance than IQL</label></div>
+</div>
+<button class="btn" onclick="checkQuiz()">&#x2705; Check results</button>
+<button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
+<div id="quiz-result"></div>
+<script>var ANSWERS={'q1':'b','q2':'b','q3':'b','q4':'b','q5':'b','q6':'b','q7':'b','q8':'b','q9':'b','q10':'b'};</script>
+
+</div>
+<div id="summary" class="tab-content">
+
+<h2>&#x1F4CB; Summary</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">2</div><div class="kpi-label">Agents</div></div>
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">MARL algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">Coop</div><div class="kpi-label">Key metric</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch12</div><div class="kpi-label">Next: Game Theory</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; MARL insights</strong><ul>
+<li>IQL: simplest baseline, non-stationary</li>
+<li>JAL: explicit partner modelling</li>
+<li>Lenient Q: robust to partner mistakes</li>
+<li>Mean Field: scales to large N</li>
+</ul></div>
+<div class="card red"><strong>&#x274C; MARL challenges</strong><ul>
+<li>Non-stationarity (IQL)</li>
+<li>$O(|A|^N)$ joint space (JAL)</li>
+<li>Hyperparameter tuning (&mu;, &beta;)</li>
+<li>Coordination without communication</li>
+</ul></div>
+</div>
+<div class="card blue" style="margin-top:1rem"><strong>&#x27A1; Next: Chapter 12</strong> &mdash; Game Theory and Nash Equilibrium. We formalise multi-agent interaction using game theory and solve for Nash equilibria.</div>
+</div>
+</div>
+<script>
+
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if(typeof renderMathInElement!=='undefined'){
+    renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  }
+}
+function checkQuiz(){
+  var score=0,total=Object.keys(ANSWERS).length;
+  for(var q in ANSWERS){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    document.querySelectorAll('#'+q+' .quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+    if(sel){
+      if(sel.value===ANSWERS[q]){score++;sel.closest('.quiz-option').classList.add('correct');}
+      else{sel.closest('.quiz-option').classList.add('wrong');document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');}
+    } else {
+      document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+    }
+  }
+  var pct=Math.round(score/total*100),res=document.getElementById('quiz-result');
+  res.style.display='block';
+  if(score>=9){res.className='pass';res.innerHTML='&#x1F389; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Congratulations! You can move on to the next chapter!';}
+  else{res.className='fail';res.innerHTML='&#x274C; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Pass threshold is 90% (9/10). Review the material and try again.';}
+}
+function resetQuiz(){
+  document.querySelectorAll('.quiz-option input').forEach(function(i){i.checked=false});
+  document.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+  var res=document.getElementById('quiz-result');res.style.display='none';res.className='';
+}
+
+</script>
+</body>
+</html>

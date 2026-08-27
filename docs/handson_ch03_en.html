@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide &mdash; Chapter 03</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+.card.red{border-left-color:#FF4B4B}
+.card.purple{border-left-color:#8B5CF6}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0;overflow-x:auto}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem 1rem;margin:1rem 0;text-align:center;overflow-x:auto}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.task-card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #0082F0}
+.task-card h3{color:#0082F0;margin-bottom:.5rem}
+details{background:#252840;border-radius:6px;padding:.75rem 1rem;margin-top:.75rem;border-left:3px solid #FF8C0A}
+details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.9rem;user-select:none}
+details summary:hover{color:#FFB347}
+details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154;color:#e8eaf6}
+.quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
+.quiz-question p{font-weight:600;margin-bottom:.75rem;color:#e8eaf6}
+.quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0;transition:background .15s}
+.quiz-option:hover{background:#252840}
+.quiz-option input{accent-color:#8B5CF6;width:1rem;height:1rem;flex-shrink:0}
+.quiz-option label{cursor:pointer;color:#9ca3af;font-size:.9rem}
+.quiz-option.correct label{color:#0FC373;font-weight:600}
+.quiz-option.wrong label{color:#FF4B4B}
+#quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:600;display:none}
+#quiz-result.pass{background:#0FC37322;border:2px solid #0FC373;color:#0FC373}
+#quiz-result.fail{background:#FF4B4B22;border:2px solid #FF4B4B;color:#FF4B4B}
+.btn{background:#8B5CF6;color:white;border:none;padding:.6rem 1.5rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;margin-top:1rem;transition:background .2s}
+.btn:hover{background:#7C3AED}
+.btn.secondary{background:#252840;color:#9ca3af}
+.btn.secondary:hover{background:#2d3154;color:#e8eaf6}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Hands-On Guide &mdash; Chapter 03</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>Multi-Armed Bandit &amp; Exploration Strategies &middot; ASP Skill-Slot Optimisation &middot; Warsaw Region</em></p>
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Introduction</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; What is Ch03?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; RL Theory</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; Environment</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; How to use UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretation</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; Exercises</button>
+  <button class="tab-btn" onclick="showTab('tasks')">&#x1F4DD; Tasks</button>
+  <button class="tab-btn" onclick="showTab('quiz')">&#x1F3AF; Quiz</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Summary</button>
+</div>
+<div id="intro" class="tab-content active">
+
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card green">After completing this chapter you will be able to:
+<ul>
+<li>Define the Multi-Armed Bandit problem and map it to ASP skill-slot optimisation</li>
+<li>Implement &epsilon;-Greedy with annealing and explain the exploration-exploitation trade-off</li>
+<li>Explain UCB1 and why it achieves sublinear regret $O(\sqrt{KT \ln T})$</li>
+<li>Explain Thompson Sampling and its Beta posterior update rule</li>
+<li>Read the Cumulative Regret chart and identify which algorithm learns fastest</li>
+<li>Compute regret manually for a given sequence of arm pulls</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue"><strong>Warsaw ASP Skill-Slot Optimisation</strong> &mdash; 5 skill slots (arms): HVAC, Electrical, Plumbing, Network, Mechanical.<br><br>
+Each slot has an unknown true SLA success rate. The agent must learn which skill slot produces the best SLA outcomes through repeated dispatch decisions.<br><br>
+<strong>No state transitions</strong> &mdash; this is the simplest RL setting. The bandit is the foundation for exploration strategies used in all later chapters.</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">Skill slots (arms)</div></div>
+<div class="kpi-card"><div class="kpi-val">3</div><div class="kpi-label">Algorithms compared</div></div>
+<div class="kpi-card"><div class="kpi-val">88%</div><div class="kpi-label">Best arm SLA rate</div></div>
+<div class="kpi-card"><div class="kpi-val">Regret</div><div class="kpi-label">Key metric</div></div>
+</div>
+</div>
+<div id="what" class="tab-content">
+
+<h2>&#x2753; What is Chapter 03?</h2>
+<div class="card purple">Ch03 introduces the <strong>Multi-Armed Bandit</strong> &mdash; the simplest RL problem. No states, no transitions, just repeated action selection with stochastic rewards.</div>
+<h2>What happens in the Rust engine?</h2>
+<div class="card">The function <code>run_ch03_bandits()</code> in <code>ch03_bandit.rs</code>:
+<ol>
+<li>Creates 5 arms with fixed true SLA rates (unknown to agent)</li>
+<li>Runs &epsilon;-Greedy, UCB1, and Thompson Sampling simultaneously</li>
+<li>Each algorithm pulls an arm, observes reward (1=SLA met, 0=breached)</li>
+<li>Updates Q-values / posteriors after each pull</li>
+<li>Returns full trace: arm pulled, reward, regret, cumulative regret, &epsilon;, mode</li>
+</ol>
+</div>
+<div class="card green"><strong>True SLA rates (hidden from agent):</strong>
+<table><tr><th>Arm</th><th>Skill</th><th>True SLA rate</th></tr>
+<tr><td>0</td><td>HVAC</td><td>72%</td></tr>
+<tr><td>1</td><td>Electrical</td><td>65%</td></tr>
+<tr><td>2</td><td>Plumbing</td><td><strong>88% &#x2B50; optimal</strong></td></tr>
+<tr><td>3</td><td>Network</td><td>78%</td></tr>
+<tr><td>4</td><td>Mechanical</td><td>70%</td></tr>
+</table>
+</div>
+</div>
+<div id="theory" class="tab-content">
+
+<h2>&#x1F9EE; Regret</h2>
+<div class="formula">$$\text{Regret}(T) = \sum_{t=1}^{T} \left[ \mu^* - \mu_{a_t} \right]$$</div>
+<div class="card">$\mu^* = \max_a \mu_a$ = optimal arm true SLA rate. Regret measures the cost of not always picking the best arm.</div>
+
+<h2>&epsilon;-Greedy with Annealing</h2>
+<div class="formula">$$\varepsilon_t = \max\left(\varepsilon_{\min},\ \frac{\varepsilon_0}{1 + \alpha t}\right)$$</div>
+<div class="formula">$$Q(a) \leftarrow Q(a) + \frac{1}{N(a)} \left[ R - Q(a) \right]$$</div>
+<div class="card orange">Incremental mean update. Starts with high exploration, gradually shifts to exploitation. Implemented in <code>epsilon_greedy_select()</code> in <code>ch03_bandit.rs</code>.</div>
+
+<h2>UCB1 (Upper Confidence Bound)</h2>
+<div class="formula">$$\text{UCB}(a) = Q(a) + c \sqrt{\frac{\ln t}{N(a)}}$$</div>
+<div class="card blue">$Q(a)$ = exploitation term. $c\sqrt{\ln t / N(a)}$ = uncertainty bonus. Arms pulled rarely have high uncertainty &rarr; get explored more. Regret bound: $O(\sqrt{KT \ln T})$. Implemented in <code>ucb_select()</code>.</div>
+
+<h2>Thompson Sampling</h2>
+<div class="formula">$$\theta_a \sim \text{Beta}(\alpha_a, \beta_a)$$</div>
+<div class="card green">Prior: Beta(1,1) = uniform. After each pull: if reward=1 &rarr; $\alpha_a += 1$, if reward=0 &rarr; $\beta_a += 1$. At each step: sample $\theta_a$ from each posterior, pick $\arg\max_a \theta_a$. Implemented in <code>thompson_select()</code>.</div>
+
+<h2>Regret Bounds Comparison</h2>
+<table><tr><th>Algorithm</th><th>Regret bound</th><th>Type</th></tr>
+<tr><td>Random</td><td>$O(T)$</td><td>Linear — never learns</td></tr>
+<tr><td>&epsilon;-Greedy (fixed)</td><td>$O(T^{2/3})$</td><td>Sublinear</td></tr>
+<tr><td>&epsilon;-Greedy (annealing)</td><td>$O(\sqrt{T \ln T})$</td><td>Near-optimal</td></tr>
+<tr><td>UCB1</td><td>$O(\sqrt{KT \ln T})$</td><td>Near-optimal, deterministic</td></tr>
+<tr><td>Thompson Sampling</td><td>$O(\sqrt{KT \ln T})$</td><td>Near-optimal, Bayesian</td></tr>
+</table>
+</div>
+<div id="env" class="tab-content">
+
+<h2>&#x1F5FA; Bandit Environment</h2>
+<div class="card">The bandit has <strong>no state transitions</strong>. Each pull is independent. The only feedback is the binary reward (SLA met or breached).</div>
+<table><tr><th>Parameter</th><th>Value</th><th>Effect</th></tr>
+<tr><td>Steps (pulls)</td><td>50&ndash;2000</td><td>More steps = better convergence</td></tr>
+<tr><td>&epsilon; (initial)</td><td>0.0&ndash;1.0</td><td>Higher = more random exploration</td></tr>
+<tr><td>&epsilon; decay &alpha;</td><td>0.0&ndash;0.1</td><td>How fast &epsilon; shrinks over time</td></tr>
+<tr><td>c (UCB constant)</td><td>0.1&ndash;5.0</td><td>Higher = UCB explores more aggressively</td></tr>
+<tr><td>Seed</td><td>0&ndash;9999</td><td>Reproducibility</td></tr>
+</table>
+</div>
+<div id="ui" class="tab-content">
+
+<h2>&#x1F3AE; How to use the Ch03 interface</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Set number of steps</strong><br>Try 200 first, then 1000 to see convergence. More steps = better arm identification.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Set &epsilon; and decay rate</strong><br>Higher &epsilon; = more random exploration. Decay rate controls how fast &epsilon; shrinks.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Set c (UCB constant)</strong><br>Try c=2.0 (standard) vs c=0.5 (conservative). Higher c = more aggressive exploration.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Click &#x25B6; Run All Three Algorithms</strong><br>All three run simultaneously on the same problem for fair comparison.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Read the Cumulative Regret chart</strong><br>Lower regret = better algorithm. Watch Thompson Sampling pull ahead over time.</div></div>
+<div class="step"><div class="step-num">6</div><div><strong>Read the Arm Pull Distribution</strong><br>Which skill slots did each algorithm favour? Did they find the true best arm (Plumbing)?</div></div>
+<div class="step"><div class="step-num">7</div><div><strong>Read the Q-value convergence</strong><br>Watch estimated Q(a) values converge toward the true SLA rates (dashed lines).</div></div>
+<div class="step"><div class="step-num">8</div><div><strong>Read the Glass-Box</strong><br>Per-step trace: arm pulled, reward, regret, &epsilon;, mode (Explore/Exploit).</div></div>
+</div>
+<div id="interp" class="tab-content">
+
+<h2>&#x1F4CA; Interpreting the results</h2>
+<h3>&#x1F4C8; Cumulative Regret Chart</h3>
+<div class="card blue">
+<strong>Axes:</strong> X = step number, Y = cumulative regret<br>
+<strong>Purpose:</strong> Shows how much value each algorithm lost by not always picking the best arm.<br>
+<strong>What to watch:</strong><br>
+&bull; Thompson Sampling should have the lowest regret after many steps<br>
+&bull; UCB1 is deterministic &mdash; same result every run with same seed<br>
+&bull; &epsilon;-Greedy regret grows faster if &epsilon; stays high
+</div>
+<h3>&#x1F3B0; Arm Pull Distribution</h3>
+<div class="card">
+<strong>Purpose:</strong> Shows how many times each skill slot was selected.<br>
+<strong>What to watch:</strong><br>
+&bull; Plumbing (arm 2) should dominate after convergence<br>
+&bull; UCB1 explores all arms early, then concentrates on best<br>
+&bull; Thompson Sampling concentrates fastest on the best arm
+</div>
+<h3>&#x1F4CA; Q-value Convergence</h3>
+<div class="card green">
+<strong>Purpose:</strong> Shows how well each algorithm estimates the true SLA rates.<br>
+<strong>What to watch:</strong><br>
+&bull; Dashed lines = true SLA rates (hidden from agent)<br>
+&bull; Solid bars = learned Q(a) estimates<br>
+&bull; Good convergence = bars close to dashed lines
+</div>
+<h3>&#x1F52C; Glass-Box Inspector</h3>
+<div class="card">
+<strong>Columns:</strong>
+<table><tr><th>Column</th><th>Meaning</th></tr>
+<tr><td>Step</td><td>Pull number</td></tr>
+<tr><td>Arm</td><td>Arm index pulled</td></tr>
+<tr><td>Skill</td><td>Skill slot name</td></tr>
+<tr><td>Reward</td><td>1 = SLA met, 0 = breached</td></tr>
+<tr><td>Regret</td><td>$\mu^* - \mu_{a_t}$ for this step</td></tr>
+<tr><td>Cum. Regret</td><td>Total regret so far</td></tr>
+<tr><td>&epsilon;</td><td>Current exploration rate</td></tr>
+<tr><td>Mode</td><td>Explore (random) or Exploit (greedy)</td></tr>
+</table>
+</div>
+</div>
+<div id="exercises" class="tab-content">
+
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card"><h3>Exercise 1 &mdash; Identify the best arm</h3>Run with 1000 steps. Which algorithm identifies Plumbing (arm 2) as the best arm first? Check the Arm Pull Distribution.</div>
+<div class="card blue"><h3>Exercise 2 &mdash; UCB constant sensitivity</h3>Run with c=0.5 vs c=3.0. How does the regret curve change? Which c gives better long-term performance?</div>
+<div class="card orange"><h3>Exercise 3 &mdash; &epsilon; decay effect</h3>Run with decay=0.0 (fixed &epsilon;) vs decay=0.05. Does annealing improve final regret? Why?</div>
+<div class="card green"><h3>Exercise 4 &mdash; Manual regret calculation</h3>In 5 steps, the agent pulled arms [2, 0, 2, 1, 2] with rewards [1, 0, 1, 1, 1]. True rates: arm0=0.72, arm1=0.65, arm2=0.88. Compute total regret.</div>
+<div class="card purple"><h3>Exercise 5 &mdash; Thompson vs UCB</h3>Run 10 times with different seeds. Which algorithm has lower average regret? Is Thompson always better?</div>
+</div>
+<div id="tasks" class="tab-content">
+
+<h2>&#x1F4DD; Practical Tasks</h2>
+<p style="color:#9ca3af;margin-bottom:1rem">Click "Show answer" to check your solution.</p>
+<div class="task-card">
+<h3>Task 1 &mdash; Regret calculation</h3>
+<p>In 3 steps, the agent pulled: arm0 (HVAC, $\mu$=0.72), arm2 (Plumbing, $\mu$=0.88), arm1 (Electrical, $\mu$=0.65). Compute regret for each step and total regret.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\text{Regret}_1 = 0.88 - 0.72 = 0.16$$</div>
+<div class="formula">$$\text{Regret}_2 = 0.88 - 0.88 = 0.00$$</div>
+<div class="formula">$$\text{Regret}_3 = 0.88 - 0.65 = 0.23$$</div>
+<div class="formula">$$\text{Total Regret} = 0.16 + 0.00 + 0.23 = \mathbf{0.39}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 2 &mdash; UCB value calculation</h3>
+<p>At step t=100: Q(arm2)=0.85, N(arm2)=60, c=2.0. Compute UCB(arm2).</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\text{UCB}(arm2) = 0.85 + 2.0 \cdot \sqrt{\frac{\ln 100}{60}} = 0.85 + 2.0 \cdot \sqrt{\frac{4.605}{60}} = 0.85 + 2.0 \cdot 0.277 = \mathbf{1.404}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 3 &mdash; Thompson Sampling posterior</h3>
+<p>Arm 2 (Plumbing) has been pulled 10 times: 8 successes, 2 failures. What is the posterior distribution? What is the mean of the posterior?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+Prior: Beta(1,1). After 8 successes and 2 failures:<br>
+<div class="formula">$$\theta_{arm2} \sim \text{Beta}(1+8,\ 1+2) = \text{Beta}(9, 3)$$</div>
+<div class="formula">$$\mathbb{E}[\theta_{arm2}] = \frac{9}{9+3} = \frac{9}{12} = \mathbf{0.75}$$</div>
+The true rate is 0.88 &mdash; more pulls will shift the posterior closer to the true value.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 4 &mdash; &epsilon;-Greedy annealing</h3>
+<p>Initial &epsilon;=0.5, decay &alpha;=0.01. What is &epsilon; at step t=50? At t=200?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\varepsilon_{50} = \frac{0.5}{1 + 0.01 \cdot 50} = \frac{0.5}{1.5} = \mathbf{0.333}$$</div>
+<div class="formula">$$\varepsilon_{200} = \frac{0.5}{1 + 0.01 \cdot 200} = \frac{0.5}{3.0} = \mathbf{0.167}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 5 &mdash; Why Thompson beats UCB on Bernoulli bandits</h3>
+<p>Both UCB1 and Thompson Sampling achieve $O(\sqrt{KT \ln T})$ regret. Why does Thompson Sampling often outperform UCB1 in practice on Bernoulli bandits?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+Thompson Sampling naturally incorporates <strong>uncertainty via the Beta posterior</strong>:<br><br>
+&bull; Arms with few pulls have wide posteriors &rarr; high variance &rarr; get sampled more<br>
+&bull; As evidence accumulates, the best arm's posterior concentrates near its true rate<br>
+&bull; UCB1 uses a fixed formula $c\sqrt{\ln t / N(a)}$ which can over-explore in early steps<br>
+&bull; Thompson's Bayesian approach adapts more naturally to the Bernoulli reward structure<br><br>
+In practice: Thompson Sampling has lower regret on Bernoulli bandits, UCB1 is more predictable (deterministic).
+</div></details>
+</div>
+</div>
+<div id="quiz" class="tab-content">
+<h2>&#x1F3AF; Quiz &mdash; Test Your Knowledge</h2>
+<p style="color:#9ca3af;margin-bottom:1.5rem">Answer all 10 questions and click "Check results". Pass threshold: <strong>90% (9/10)</strong>.</p>
+<div class="quiz-question" id="q1"><p>1. What is the key difference between the Multi-Armed Bandit and a full MDP?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">Bandit has no reward function</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">Bandit has no state transitions — each pull is independent</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">Bandit requires a model P(s'|s,a)</label></div>
+</div>
+<div class="quiz-question" id="q2"><p>2. What does 'regret' measure in the bandit setting?</p>
+<div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">The number of times the agent explored</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">The cumulative gap between optimal arm and chosen arm rewards</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">The variance of the reward distribution</label></div>
+</div>
+<div class="quiz-question" id="q3"><p>3. In UCB1, what happens to the uncertainty bonus $c\sqrt{\ln t / N(a)}$ as arm $a$ is pulled more?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">It increases — more pulls = more uncertainty</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">It stays constant</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">It decreases — more pulls = less uncertainty</label></div>
+</div>
+<div class="quiz-question" id="q4"><p>4. What prior does Thompson Sampling use for Bernoulli rewards?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">Gaussian prior</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">Beta(1,1) = uniform prior</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">Dirichlet prior</label></div>
+</div>
+<div class="quiz-question" id="q5"><p>5. After 5 successes and 3 failures on arm 2, what is the Thompson Sampling posterior?</p>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">Beta(5, 3)</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">Beta(6, 4)</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">Beta(5, 8)</label></div>
+</div>
+<div class="quiz-question" id="q6"><p>6. What is the regret bound for UCB1?</p>
+<div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">$O(T)$ — linear</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">$O(\sqrt{KT \ln T})$ — near-optimal</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">$O(\log T)$ — logarithmic</label></div>
+</div>
+<div class="quiz-question" id="q7"><p>7. Why does &epsilon;-Greedy with fixed &epsilon; have worse regret than UCB1?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">Because it never exploits</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">Because it wastes pulls on clearly inferior arms even after identifying the best</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">Because it requires more memory</label></div>
+</div>
+<div class="quiz-question" id="q8"><p>8. In the Glass-Box, what does 'Mode = Exploit' mean for &epsilon;-Greedy?</p>
+<div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">The agent pulled a random arm</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">The agent pulled the arm with the highest Q(a) value</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">The agent used UCB formula</label></div>
+</div>
+<div class="quiz-question" id="q9"><p>9. What is the true best arm (highest SLA rate) in the Warsaw ASP bandit?</p>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">HVAC (arm 0)</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">Network (arm 3)</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">Plumbing (arm 2) with 88% SLA rate</label></div>
+</div>
+<div class="quiz-question" id="q10"><p>10. What is the key advantage of Thompson Sampling over UCB1?</p>
+<div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">Thompson Sampling is deterministic</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">Thompson Sampling naturally incorporates uncertainty via Bayesian posteriors</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">Thompson Sampling requires no hyperparameters</label></div>
+</div>
+<button class="btn" onclick="checkQuiz()">&#x2705; Check results</button>
+<button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
+<div id="quiz-result"></div>
+<script>var ANSWERS={'q1':'b','q2':'b','q3':'c','q4':'b','q5':'b','q6':'b','q7':'b','q8':'b','q9':'c','q10':'b'};</script>
+
+</div>
+<div id="summary" class="tab-content">
+
+<h2>&#x1F4CB; Summary</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">5</div><div class="kpi-label">Arms (skill slots)</div></div>
+<div class="kpi-card"><div class="kpi-val">3</div><div class="kpi-label">Algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">$O(\sqrt{KT})$</div><div class="kpi-label">Best regret bound</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch04</div><div class="kpi-label">Next: DP</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; Pros of Bandit algorithms</strong><ul>
+<li>No model needed &mdash; learn from raw pulls</li>
+<li>Principled exploration-exploitation trade-off</li>
+<li>Thompson Sampling: near-optimal Bayesian approach</li>
+<li>UCB1: deterministic, provable regret bound</li>
+</ul></div>
+<div class="card red"><strong>&#x274C; Limitations</strong><ul>
+<li>No state transitions &mdash; cannot model sequential decisions</li>
+<li>Bernoulli rewards only for Thompson (as implemented)</li>
+<li>&epsilon; and c must be tuned manually</li>
+<li>Stationary assumption &mdash; true rates don't change</li>
+</ul></div>
+</div>
+<div class="card blue" style="margin-top:1rem"><strong>&#x27A1; Next: Chapter 04</strong> &mdash; Dynamic Programming. We move from stateless bandits to full MDPs with state transitions, and solve them exactly using Policy Iteration and Value Iteration.</div>
+</div>
+</div>
+<script>
+
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if(typeof renderMathInElement!=='undefined'){
+    renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  }
+}
+function checkQuiz(){
+  var score=0,total=Object.keys(ANSWERS).length;
+  for(var q in ANSWERS){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    document.querySelectorAll('#'+q+' .quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+    if(sel){
+      if(sel.value===ANSWERS[q]){score++;sel.closest('.quiz-option').classList.add('correct');}
+      else{sel.closest('.quiz-option').classList.add('wrong');document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');}
+    } else {
+      document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+    }
+  }
+  var pct=Math.round(score/total*100),res=document.getElementById('quiz-result');
+  res.style.display='block';
+  if(score>=9){res.className='pass';res.innerHTML='&#x1F389; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Congratulations! You can move on to the next chapter!';}
+  else{res.className='fail';res.innerHTML='&#x274C; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Pass threshold is 90% (9/10). Review the material and try again.';}
+}
+function resetQuiz(){
+  document.querySelectorAll('.quiz-option input').forEach(function(i){i.checked=false});
+  document.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+  var res=document.getElementById('quiz-result');res.style.display='none';res.className='';
+}
+
+</script>
+</body>
+</html>

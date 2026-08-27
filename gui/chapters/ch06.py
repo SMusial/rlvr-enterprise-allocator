@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import plotly.graph_objects as go
 
@@ -136,6 +137,19 @@ def _moving_avg(data, window=20):
 def _tx(lang=None):
     import copy
     return copy.deepcopy(T.get("EN", {}))
+
+def _render_handbook():
+    import os as _os
+    _col1, _col2 = st.columns([8, 1])
+    with _col1:
+        st.subheader("Hands-On Guide \u2014 Chapter 06 (EN)")
+    _base = _os.path.dirname(_os.path.abspath(__file__))
+    _path = _os.path.join(_base, "..", "..", "docs", "handson_ch06_en.html")
+    with open(_path, encoding="utf-8") as _f:
+        _html = _f.read()
+    with _col2:
+        st.download_button("\U0001f4be Save", data=_html, file_name="handson_ch06_en.html", mime="text/html")
+    st.iframe(_html, height=4000)
 
 def render():
     lang = "EN"

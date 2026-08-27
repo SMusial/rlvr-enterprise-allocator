@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide &mdash; Chapter 08</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+.card.red{border-left-color:#FF4B4B}
+.card.purple{border-left-color:#8B5CF6}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0;overflow-x:auto}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem 1rem;margin:1rem 0;text-align:center;overflow-x:auto}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.task-card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #0082F0}
+.task-card h3{color:#0082F0;margin-bottom:.5rem}
+details{background:#252840;border-radius:6px;padding:.75rem 1rem;margin-top:.75rem;border-left:3px solid #FF8C0A}
+details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.9rem;user-select:none}
+details summary:hover{color:#FFB347}
+details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154;color:#e8eaf6}
+.quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
+.quiz-question p{font-weight:600;margin-bottom:.75rem;color:#e8eaf6}
+.quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0;transition:background .15s}
+.quiz-option:hover{background:#252840}
+.quiz-option input{accent-color:#8B5CF6;width:1rem;height:1rem;flex-shrink:0}
+.quiz-option label{cursor:pointer;color:#9ca3af;font-size:.9rem}
+.quiz-option.correct label{color:#0FC373;font-weight:600}
+.quiz-option.wrong label{color:#FF4B4B}
+#quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:600;display:none}
+#quiz-result.pass{background:#0FC37322;border:2px solid #0FC373;color:#0FC373}
+#quiz-result.fail{background:#FF4B4B22;border:2px solid #FF4B4B;color:#FF4B4B}
+.btn{background:#8B5CF6;color:white;border:none;padding:.6rem 1.5rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;margin-top:1rem;transition:background .2s}
+.btn:hover{background:#7C3AED}
+.btn.secondary{background:#252840;color:#9ca3af}
+.btn.secondary:hover{background:#2d3154;color:#e8eaf6}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Hands-On Guide &mdash; Chapter 08</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>Eligibility Traces &amp; TD(&lambda;) &middot; SARSA(&lambda;) &middot; Q(&lambda;) Watkins &middot; Warsaw ASP</em></p>
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Introduction</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; What is Ch08?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; RL Theory</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; Environment</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; How to use UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretation</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; Exercises</button>
+  <button class="tab-btn" onclick="showTab('tasks')">&#x1F4DD; Tasks</button>
+  <button class="tab-btn" onclick="showTab('quiz')">&#x1F3AF; Quiz</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Summary</button>
+</div>
+<div id="intro" class="tab-content active">
+
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card green">After completing this chapter you will be able to:
+<ul>
+<li>Explain eligibility traces $e_t(s,a)$ and their role in backward credit assignment</li>
+<li>Implement SARSA(&lambda;) and explain how &lambda; controls the bias-variance trade-off</li>
+<li>Explain Q(&lambda;) Watkins and why traces are cut on non-greedy actions</li>
+<li>Identify the sweet spot &lambda;=0.7 and explain why it outperforms &lambda;=0 and &lambda;=0.99</li>
+<li>Read the Active Traces chart and explain what it shows</li>
+<li>Compare all four algorithms on convergence speed</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue"><strong>Warsaw ASP &mdash; Backward Credit Assignment</strong><br><br>
+Eligibility traces allow the agent to assign credit to <strong>all recently visited (s,a) pairs</strong> simultaneously, not just the current one. This propagates reward signals faster through the state space.</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">&lambda;=0.7</div><div class="kpi-label">Sweet spot</div></div>
+<div class="kpi-card"><div class="kpi-val">$e_t(s,a)$</div><div class="kpi-label">Eligibility trace</div></div>
+<div class="kpi-card"><div class="kpi-val">Watkins</div><div class="kpi-label">Q(&lambda;) cut</div></div>
+</div>
+</div>
+<div id="what" class="tab-content">
+
+<h2>&#x2753; What is Chapter 08?</h2>
+<div class="card purple">Ch08 introduces <strong>Eligibility Traces</strong> &mdash; a more elegant alternative to n-Step TD. Instead of waiting n steps, traces decay all past (s,a) pairs simultaneously.</div>
+<h2>Four algorithms</h2>
+<div class="card">
+<table><tr><th>Algorithm</th><th>&lambda;</th><th>Key property</th></tr>
+<tr><td><strong>SARSA(&lambda;)</strong></td><td>0.7 (tunable)</td><td>On-policy, backward credit assignment</td></tr>
+<tr><td><strong>Q(&lambda;) Watkins</strong></td><td>0.7 (tunable)</td><td>Off-policy, traces cut on non-greedy action</td></tr>
+<tr><td><strong>SARSA &lambda;=0 (TD0)</strong></td><td>0</td><td>Baseline reference = TD(0)</td></tr>
+<tr><td><strong>SARSA &lambda;=0.99 (&asymp;MC)</strong></td><td>0.99</td><td>Near-Monte Carlo upper bound</td></tr>
+</table>
+</div>
+</div>
+<div id="theory" class="tab-content">
+
+<h2>&#x1F9EE; Eligibility Trace</h2>
+<div class="formula">$$e_t(s,a) = \gamma\lambda \cdot e_{t-1}(s,a) + \mathbf{1}[s=S_t, a=A_t]$$</div>
+<div class="card">Replacing traces: set to 1 on visit (instead of accumulating). Decay factor $\gamma\lambda = 0.665$ for $\gamma=0.95, \lambda=0.7$. Pruned at 1e-8. Implemented in <code>ch08_eligibility.rs</code>.</div>
+
+<h2>SARSA(&lambda;) Update</h2>
+<div class="formula">$$\delta_t = R_{t+1} + \gamma Q(S', A') - Q(S, A)$$</div>
+<div class="formula">$$Q(s,a) \leftarrow Q(s,a) + \alpha \delta_t e_t(s,a) \quad \forall(s,a)$$</div>
+<div class="card blue">Updates <strong>all</strong> (s,a) pairs simultaneously, weighted by their eligibility. High trace = recently visited = gets more credit. Implemented in <code>sarsa_lambda()</code>.</div>
+
+<h2>Q(&lambda;) Watkins</h2>
+<div class="formula">$$\delta_t = R_{t+1} + \gamma \max_{a'} Q(S', a') - Q(S, A)$$</div>
+<div class="card orange">TD target uses greedy max (off-policy). <strong>Watkins cut:</strong> traces set to 0 on non-greedy action. This prevents divergence but reduces propagation. Implemented in <code>q_lambda()</code>.</div>
+
+<h2>Choosing &lambda;</h2>
+<table><tr><th>&lambda;</th><th>Behaviour</th><th>Bias/Variance</th></tr>
+<tr><td>0</td><td>TD(0) &mdash; only current (s,a) updated</td><td>High bias, low variance</td></tr>
+<tr><td>0.7</td><td>Sweet spot &mdash; fast backward credit</td><td>Balanced</td></tr>
+<tr><td>0.99</td><td>&asymp;MC &mdash; all recent (s,a) updated</td><td>Low bias, high variance</td></tr>
+</table>
+</div>
+<div id="env" class="tab-content">
+
+<h2>&#x1F5FA; Environment</h2>
+<table><tr><th>Parameter</th><th>Value</th><th>Effect</th></tr>
+<tr><td>Episodes</td><td>50&ndash;3000</td><td>More = better convergence</td></tr>
+<tr><td>&lambda; (trace decay)</td><td>0.0&ndash;1.0</td><td>0=TD(0), 0.7=sweet spot, 0.99=&asymp;MC</td></tr>
+<tr><td>Replacing traces</td><td>True/False</td><td>True = set to 1 on visit (recommended)</td></tr>
+<tr><td>&alpha;</td><td>0.01&ndash;1.0</td><td>Reduce if unstable with high &lambda;</td></tr>
+</table>
+</div>
+<div id="ui" class="tab-content">
+
+<h2>&#x1F3AE; How to use the Ch08 interface</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Set &lambda; (trace decay)</strong><br>Start with &lambda;=0.7. Compare with &lambda;=0 (TD0) and &lambda;=0.99 (&asymp;MC).</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Enable/disable Replacing traces</strong><br>Replacing traces (set to 1 on visit) is recommended. Accumulating traces can cause instability.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Click &#x25B6; Run All Four Algorithms</strong><br>All four run simultaneously. SARSA(&lambda;=0.7) should converge faster than TD0.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Read the Active Traces chart</strong><br>Higher &lambda; = more active traces = more (s,a) pairs updated per step.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Read the Glass-Box</strong><br>Shows return, TD error, and max active traces per episode.</div></div>
+</div>
+<div id="interp" class="tab-content">
+
+<h2>&#x1F4CA; Interpreting the results</h2>
+<h3>&#x1F4C8; Episode Returns Chart</h3>
+<div class="card blue">
+<strong>Purpose:</strong> Shows convergence speed for all four algorithms.<br>
+<strong>What to watch:</strong><br>
+&bull; SARSA(&lambda;=0.7) should converge faster than SARSA(&lambda;=0)<br>
+&bull; SARSA(&lambda;=0.99) may be unstable &mdash; high variance<br>
+&bull; Q(&lambda;) Watkins may converge slower due to trace cuts
+</div>
+<h3>&#x1F50D; Active Traces Chart</h3>
+<div class="card">
+<strong>Purpose:</strong> Shows how many (s,a) pairs have active traces per episode.<br>
+<strong>What to watch:</strong><br>
+&bull; Higher &lambda; = more active traces = more backward credit<br>
+&bull; Q(&lambda;) has fewer active traces (cut on non-greedy actions)<br>
+&bull; Traces decay to 0 between episodes (episode boundary)
+</div>
+<h3>&#x1F52C; Glass-Box</h3>
+<div class="card">
+<strong>Metrics per episode:</strong>
+<table><tr><th>Metric</th><th>Meaning</th></tr>
+<tr><td>Return</td><td>Total discounted return for this episode</td></tr>
+<tr><td>TD error</td><td>Mean $|\delta_t|$ across all steps</td></tr>
+<tr><td>Max traces</td><td>Maximum number of active traces in this episode</td></tr>
+</table>
+</div>
+</div>
+<div id="exercises" class="tab-content">
+
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card"><h3>Exercise 1 &mdash; &lambda; sweet spot</h3>Run with &lambda;=0, 0.3, 0.7, 0.9, 0.99. Plot returns curves. Which &lambda; converges fastest? Is the sweet spot always 0.7?</div>
+<div class="card blue"><h3>Exercise 2 &mdash; Replacing vs accumulating traces</h3>Toggle Replacing traces on/off. Does it affect stability? Which is recommended for high &lambda;?</div>
+<div class="card orange"><h3>Exercise 3 &mdash; Q(&lambda;) Watkins cut</h3>Compare SARSA(&lambda;) vs Q(&lambda;) active traces. Why does Q(&lambda;) have fewer active traces? When does the Watkins cut happen?</div>
+<div class="card green"><h3>Exercise 4 &mdash; &alpha; sensitivity with high &lambda;</h3>Run SARSA(&lambda;=0.99) with &alpha;=0.1 vs &alpha;=0.01. Does lower &alpha; stabilise the high-&lambda; case?</div>
+<div class="card purple"><h3>Exercise 5 &mdash; Trace decay calculation</h3>For &gamma;=0.95, &lambda;=0.7: what is the trace value for a state visited 3 steps ago? 5 steps ago?</div>
+</div>
+<div id="tasks" class="tab-content">
+
+<h2>&#x1F4DD; Practical Tasks</h2>
+<p style="color:#9ca3af;margin-bottom:1rem">Click "Show answer" to check your solution.</p>
+<div class="task-card">
+<h3>Task 1 &mdash; Eligibility trace decay</h3>
+<p>State S3, action A1 was visited at step t=0. &gamma;=0.95, &lambda;=0.7. What is the trace value $e_t(S3,A1)$ at steps t=1, t=2, t=3 (assuming no revisit)?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+Decay factor: $\gamma\lambda = 0.95 \times 0.7 = 0.665$<br>
+<div class="formula">$$e_1(S3,A1) = 0.665 \cdot 1.0 = \mathbf{0.665}$$</div>
+<div class="formula">$$e_2(S3,A1) = 0.665 \cdot 0.665 = \mathbf{0.442}$$</div>
+<div class="formula">$$e_3(S3,A1) = 0.665 \cdot 0.442 = \mathbf{0.294}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 2 &mdash; SARSA(&lambda;) update</h3>
+<p>$\delta_t = 3.5$. Two (s,a) pairs have active traces: $e(S2,A1)=0.8$, $e(S5,A0)=0.3$. &alpha;=0.1. Compute the Q-value updates for both pairs.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\Delta Q(S2,A1) = \alpha \cdot \delta_t \cdot e(S2,A1) = 0.1 \cdot 3.5 \cdot 0.8 = \mathbf{0.28}$$</div>
+<div class="formula">$$\Delta Q(S5,A0) = \alpha \cdot \delta_t \cdot e(S5,A0) = 0.1 \cdot 3.5 \cdot 0.3 = \mathbf{0.105}$$</div>
+Both pairs are updated simultaneously &mdash; this is the key advantage of eligibility traces.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 3 &mdash; Watkins cut</h3>
+<p>Q(&lambda;) agent is in state S3. The greedy action is A1, but &epsilon;-greedy chooses A0 (exploration). What happens to all eligibility traces?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+When a <strong>non-greedy action</strong> is taken (A0 instead of greedy A1):<br>
+&bull; All eligibility traces are <strong>set to 0</strong> (Watkins cut)<br>
+&bull; Only the current (S3,A0) gets a new trace of 1<br>
+&bull; This prevents the off-policy update from propagating through on-policy traces<br><br>
+This is why Q(&lambda;) has fewer active traces than SARSA(&lambda;) &mdash; exploration steps cut all traces.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 4 &mdash; Why &lambda;=0.7 is the sweet spot</h3>
+<p>Explain why &lambda;=0 (TD0) and &lambda;=0.99 (&asymp;MC) are both suboptimal, and why &lambda;=0.7 typically performs best.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<strong>&lambda;=0 (TD0):</strong> Only the current (s,a) is updated. Slow credit assignment &mdash; reward signal propagates one step at a time. Many episodes needed.<br><br>
+<strong>&lambda;=0.99 (&asymp;MC):</strong> All recent (s,a) pairs get nearly equal credit. High variance &mdash; noisy updates. Requires small &alpha; for stability.<br><br>
+<strong>&lambda;=0.7 sweet spot:</strong> Recent (s,a) pairs get significant credit (fast propagation) while distant ones get little (low variance). The decay $0.665^k$ drops to &lt;0.1 after ~6 steps &mdash; a natural horizon.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 5 &mdash; Eligibility traces vs n-Step TD</h3>
+<p>Both eligibility traces and n-Step TD bridge TD(0) and MC. What is the key computational advantage of eligibility traces?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<strong>n-Step TD:</strong> Must store the last n transitions and wait n steps before updating. Memory: $O(n)$ per state. Update: one (s,a) pair per step.<br><br>
+<strong>Eligibility traces:</strong> Update <strong>all</strong> (s,a) pairs simultaneously in one pass. Memory: $O(|S||A|)$ for the trace table. No waiting &mdash; updates happen every step.<br><br>
+Key advantage: eligibility traces are <strong>online</strong> (update every step) and <strong>backward</strong> (credit all recent states). n-Step TD is forward-looking and requires buffering.
+</div></details>
+</div>
+</div>
+<div id="quiz" class="tab-content">
+<h2>&#x1F3AF; Quiz &mdash; Test Your Knowledge</h2>
+<p style="color:#9ca3af;margin-bottom:1.5rem">Answer all 10 questions and click "Check results". Pass threshold: <strong>90% (9/10)</strong>.</p>
+<div class="quiz-question" id="q1"><p>1. What does the eligibility trace $e_t(s,a)$ represent?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">The Q-value of state-action pair (s,a)</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">How recently and frequently (s,a) was visited — determines how much credit it receives</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">The TD error for state-action pair (s,a)</label></div>
+</div>
+<div class="quiz-question" id="q2"><p>2. What is the decay factor for eligibility traces?</p>
+<div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">$\alpha\lambda$</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">$\gamma\lambda$</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">$\gamma / \lambda$</label></div>
+</div>
+<div class="quiz-question" id="q3"><p>3. What is the Watkins cut in Q(&lambda;)?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">Cutting the learning rate when &lambda; is high</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">Setting all eligibility traces to 0 when a non-greedy action is taken</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">Cutting the episode when Q-values converge</label></div>
+</div>
+<div class="quiz-question" id="q4"><p>4. What does &lambda;=0 correspond to?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">Monte Carlo</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">TD(0) — only the current (s,a) is updated</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">Dyna-Q</label></div>
+</div>
+<div class="quiz-question" id="q5"><p>5. Why does SARSA(&lambda;=0.7) converge faster than SARSA(&lambda;=0)?</p>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">Because it uses a higher learning rate</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">Because it assigns credit to all recently visited (s,a) pairs simultaneously, propagating reward signals faster</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">Because it uses more episodes</label></div>
+</div>
+<div class="quiz-question" id="q6"><p>6. What does the Active Traces chart show?</p>
+<div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">The Q-table values</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">How many (s,a) pairs have active eligibility traces per episode</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">The TD error per episode</label></div>
+</div>
+<div class="quiz-question" id="q7"><p>7. Why should you reduce &alpha; when using high &lambda; (e.g., &lambda;=0.99)?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">Because high &lambda; increases the learning rate automatically</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">Because high &lambda; causes many (s,a) pairs to be updated simultaneously, which can cause instability with large &alpha;</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">Because high &lambda; requires more episodes</label></div>
+</div>
+<div class="quiz-question" id="q8"><p>8. What is the replacing trace rule?</p>
+<div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">Replace the trace with 0 on each visit</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">Set the trace to 1 on visit (instead of accumulating), preventing traces from exceeding 1</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">Replace the Q-value with the trace value</label></div>
+</div>
+<div class="quiz-question" id="q9"><p>9. Why does Q(&lambda;) have fewer active traces than SARSA(&lambda;)?</p>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">Because Q(&lambda;) uses a smaller &lambda;</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">Because Q(&lambda;) cuts all traces to 0 on non-greedy (exploration) actions</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">Because Q(&lambda;) uses replacing traces</label></div>
+</div>
+<div class="quiz-question" id="q10"><p>10. What is the key advantage of eligibility traces over n-Step TD?</p>
+<div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">Eligibility traces require less memory</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">Eligibility traces update all recent (s,a) pairs simultaneously every step — online and backward</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">Eligibility traces have lower variance</label></div>
+</div>
+<button class="btn" onclick="checkQuiz()">&#x2705; Check results</button>
+<button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
+<div id="quiz-result"></div>
+<script>var ANSWERS={'q1':'b','q2':'b','q3':'b','q4':'b','q5':'b','q6':'b','q7':'b','q8':'b','q9':'b','q10':'b'};</script>
+
+</div>
+<div id="summary" class="tab-content">
+
+<h2>&#x1F4CB; Summary</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">&lambda;=0.7</div><div class="kpi-label">Sweet spot</div></div>
+<div class="kpi-card"><div class="kpi-val">$\gamma\lambda$</div><div class="kpi-label">Decay factor</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch09</div><div class="kpi-label">Next: Policy Gradient</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; Eligibility trace advantages</strong><ul>
+<li>Backward credit assignment &mdash; all recent (s,a) updated</li>
+<li>Online &mdash; updates every step</li>
+<li>&lambda; tunes bias-variance continuously</li>
+<li>SARSA(&lambda;) is the standard on-policy algorithm</li>
+</ul></div>
+<div class="card red"><strong>&#x274C; Limitations</strong><ul>
+<li>$O(|S||A|)$ memory for trace table</li>
+<li>&lambda; must be tuned</li>
+<li>Q(&lambda;) traces cut on exploration</li>
+<li>Unstable with high &lambda; and large &alpha;</li>
+</ul></div>
+</div>
+<div class="card blue" style="margin-top:1rem"><strong>&#x27A1; Next: Chapter 09</strong> &mdash; Policy Gradient: REINFORCE &amp; Softmax. We move from value-based methods to directly optimising the policy $\pi(a|s,\theta)$.</div>
+</div>
+</div>
+<script>
+
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if(typeof renderMathInElement!=='undefined'){
+    renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  }
+}
+function checkQuiz(){
+  var score=0,total=Object.keys(ANSWERS).length;
+  for(var q in ANSWERS){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    document.querySelectorAll('#'+q+' .quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+    if(sel){
+      if(sel.value===ANSWERS[q]){score++;sel.closest('.quiz-option').classList.add('correct');}
+      else{sel.closest('.quiz-option').classList.add('wrong');document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');}
+    } else {
+      document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+    }
+  }
+  var pct=Math.round(score/total*100),res=document.getElementById('quiz-result');
+  res.style.display='block';
+  if(score>=9){res.className='pass';res.innerHTML='&#x1F389; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Congratulations! You can move on to the next chapter!';}
+  else{res.className='fail';res.innerHTML='&#x274C; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Pass threshold is 90% (9/10). Review the material and try again.';}
+}
+function resetQuiz(){
+  document.querySelectorAll('.quiz-option input').forEach(function(i){i.checked=false});
+  document.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+  var res=document.getElementById('quiz-result');res.style.display='none';res.className='';
+}
+
+</script>
+</body>
+</html>

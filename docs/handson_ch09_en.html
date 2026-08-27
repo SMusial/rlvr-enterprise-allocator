@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide &mdash; Chapter 09</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+.card.red{border-left-color:#FF4B4B}
+.card.purple{border-left-color:#8B5CF6}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0;overflow-x:auto}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem 1rem;margin:1rem 0;text-align:center;overflow-x:auto}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.task-card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #0082F0}
+.task-card h3{color:#0082F0;margin-bottom:.5rem}
+details{background:#252840;border-radius:6px;padding:.75rem 1rem;margin-top:.75rem;border-left:3px solid #FF8C0A}
+details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.9rem;user-select:none}
+details summary:hover{color:#FFB347}
+details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154;color:#e8eaf6}
+.quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
+.quiz-question p{font-weight:600;margin-bottom:.75rem;color:#e8eaf6}
+.quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0;transition:background .15s}
+.quiz-option:hover{background:#252840}
+.quiz-option input{accent-color:#8B5CF6;width:1rem;height:1rem;flex-shrink:0}
+.quiz-option label{cursor:pointer;color:#9ca3af;font-size:.9rem}
+.quiz-option.correct label{color:#0FC373;font-weight:600}
+.quiz-option.wrong label{color:#FF4B4B}
+#quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:600;display:none}
+#quiz-result.pass{background:#0FC37322;border:2px solid #0FC373;color:#0FC373}
+#quiz-result.fail{background:#FF4B4B22;border:2px solid #FF4B4B;color:#FF4B4B}
+.btn{background:#8B5CF6;color:white;border:none;padding:.6rem 1.5rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;margin-top:1rem;transition:background .2s}
+.btn:hover{background:#7C3AED}
+.btn.secondary{background:#252840;color:#9ca3af}
+.btn.secondary:hover{background:#2d3154;color:#e8eaf6}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Hands-On Guide &mdash; Chapter 09</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>Policy Gradient: REINFORCE &amp; Softmax &middot; Actor-Critic TD(0) &middot; Warsaw ASP</em></p>
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Introduction</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; What is Ch09?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; RL Theory</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; Environment</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; How to use UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretation</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; Exercises</button>
+  <button class="tab-btn" onclick="showTab('tasks')">&#x1F4DD; Tasks</button>
+  <button class="tab-btn" onclick="showTab('quiz')">&#x1F3AF; Quiz</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Summary</button>
+</div>
+<div id="intro" class="tab-content active">
+
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card green">After completing this chapter you will be able to:
+<ul>
+<li>Explain the Policy Gradient Theorem and why it enables direct policy optimisation</li>
+<li>Implement REINFORCE and explain why it is unbiased but high variance</li>
+<li>Explain how a baseline $b(s)$ reduces variance without introducing bias</li>
+<li>Implement Actor-Critic TD(0) and explain the critic's role</li>
+<li>Explain the temperature parameter &tau; and its effect on policy sharpness</li>
+<li>Read the Policy Entropy chart and explain what healthy entropy decay looks like</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue"><strong>Warsaw ASP &mdash; Direct Policy Optimisation</strong><br><br>
+Instead of learning a Q-table and deriving a policy, Policy Gradient methods <strong>directly optimise</strong> $\pi(a|s,\theta) = \text{softmax}(\theta[s][a])$. No Q-table needed. This is the foundation for modern deep RL (A2C, PPO).</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">$\nabla J(\theta)$</div><div class="kpi-label">Policy gradient</div></div>
+<div class="kpi-card"><div class="kpi-val">Softmax</div><div class="kpi-label">Policy parameterisation</div></div>
+<div class="kpi-card"><div class="kpi-val">A2C/PPO</div><div class="kpi-label">Foundation</div></div>
+</div>
+</div>
+<div id="what" class="tab-content">
+
+<h2>&#x2753; What is Chapter 09?</h2>
+<div class="card purple">Ch09 introduces <strong>Policy Gradient methods</strong> &mdash; a fundamentally different approach from value-based methods. The policy is parameterised directly and optimised via gradient ascent.</div>
+<h2>Four algorithms</h2>
+<div class="card">
+<table><tr><th>Algorithm</th><th>Type</th><th>Key property</th></tr>
+<tr><td><strong>REINFORCE</strong></td><td>MC policy gradient</td><td>Unbiased, high variance, full episode</td></tr>
+<tr><td><strong>REINFORCE+Baseline</strong></td><td>MC + baseline</td><td>Lower variance, still unbiased</td></tr>
+<tr><td><strong>Actor-Critic TD(0)</strong></td><td>Online PG</td><td>TD critic, lower variance, biased</td></tr>
+<tr><td><strong>REINFORCE &tau;=0.5</strong></td><td>Sharp policy</td><td>Temperature &lt;1 = sharper policy</td></tr>
+</table>
+</div>
+</div>
+<div id="theory" class="tab-content">
+
+<h2>&#x1F9EE; Policy Gradient Theorem</h2>
+<div class="formula">$$\nabla J(\theta) \propto \sum_s \mu(s) \sum_a Q^\pi(s,a) \nabla \pi(a|s,\theta)$$</div>
+<div class="card">Gradient of expected return w.r.t. policy parameters. $\nabla \log \pi(a|s) = (\mathbf{1}[a=A_t] - \pi(a|s)) / \tau$</div>
+
+<h2>REINFORCE</h2>
+<div class="formula">$$G_t = \sum_{k=t}^{T} \gamma^{k-t} R_{k+1}$$</div>
+<div class="formula">$$\theta \leftarrow \theta + \alpha \gamma^t G_t \nabla \log \pi(A_t|S_t,\theta)$$</div>
+<div class="card blue">Monte Carlo: waits for full episode. Unbiased (uses actual return). High variance. Implemented in <code>reinforce()</code>.</div>
+
+<h2>REINFORCE with Baseline</h2>
+<div class="formula">$$\theta \leftarrow \theta + \alpha \gamma^t (G_t - b(S_t)) \nabla \log \pi(A_t|S_t,\theta)$$</div>
+<div class="card orange">$b(s)$ does not introduce bias (baseline is state-dependent, not action-dependent). Reduces variance significantly. Recommended in practice.</div>
+
+<h2>Actor-Critic TD(0)</h2>
+<div class="formula">$$\delta_t = R_{t+1} + \gamma V(S') - V(S)$$</div>
+<div class="formula">$$V(S) \leftarrow V(S) + \alpha_v \delta_t$$</div>
+<div class="formula">$$\theta \leftarrow \theta + \alpha \gamma^t \delta_t \nabla \log \pi(A_t|S_t,\theta)$$</div>
+<div class="card green">Online updates per step. TD critic reduces variance but introduces bias. Foundation for A2C and PPO. Implemented in <code>actor_critic_td0()</code>.</div>
+
+<h2>Temperature &tau;</h2>
+<div class="formula">$$\pi(a|s,\theta) = \frac{\exp(\theta[s][a] / \tau)}{\sum_{a'} \exp(\theta[s][a'] / \tau)}$$</div>
+<div class="card">&tau;=1.0: standard. &tau;&lt;1: sharper policy (more deterministic). &tau;&gt;1: more uniform (more exploration).</div>
+</div>
+<div id="env" class="tab-content">
+
+<h2>&#x1F5FA; Environment</h2>
+<table><tr><th>Parameter</th><th>Value</th><th>Effect</th></tr>
+<tr><td>Episodes</td><td>50&ndash;3000</td><td>More = better convergence</td></tr>
+<tr><td>&alpha; (policy LR)</td><td>0.001&ndash;0.1</td><td>Policy learning rate. Start with 0.01.</td></tr>
+<tr><td>&alpha;_v (baseline LR)</td><td>0.01&ndash;0.5</td><td>Critic/baseline learning rate. Start with 0.1.</td></tr>
+<tr><td>&tau; (temperature)</td><td>0.1&ndash;3.0</td><td>Policy sharpness. 1.0=standard, 0.5=sharper.</td></tr>
+</table>
+<div class="card blue"><strong>Key insight:</strong> Policy gradient methods are more sensitive to hyperparameters than value-based methods. Start with small &alpha; (0.01) and increase carefully.</div>
+</div>
+<div id="ui" class="tab-content">
+
+<h2>&#x1F3AE; How to use the Ch09 interface</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Set &alpha; (policy learning rate)</strong><br>Start with 0.01. Policy gradient is sensitive &mdash; too high = unstable, too low = slow.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Click &#x25B6; Run All Four Algorithms</strong><br>All four run simultaneously. REINFORCE+Baseline should be most stable.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Read the Policy Entropy chart</strong><br>High entropy = exploring. Low entropy = exploiting. Healthy: entropy decreases gradually.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Read the &theta;[s][a] Heatmap</strong><br>Softmax logits. Higher = more likely action. Watch them diverge as policy sharpens.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Read the PG Magnitude chart</strong><br>Mean $|\Delta\theta|$ per episode. Should decrease as policy converges.</div></div>
+</div>
+<div id="interp" class="tab-content">
+
+<h2>&#x1F4CA; Interpreting the results</h2>
+<h3>&#x1F321;&#xFE0F; Policy Entropy Chart</h3>
+<div class="card blue">
+<strong>Axes:</strong> X = episode, Y = $H(\pi(\cdot|s))$ = policy entropy<br>
+<strong>Purpose:</strong> Shows how deterministic the policy becomes over time.<br>
+<strong>What to watch:</strong><br>
+&bull; High entropy = uniform policy (exploring)<br>
+&bull; Low entropy = deterministic policy (exploiting)<br>
+&bull; Healthy: gradual decrease. Sudden drop = policy collapsed.
+</div>
+<h3>&#x1F5FA; &theta;[s][a] Heatmap</h3>
+<div class="card">
+<strong>Purpose:</strong> Shows the softmax logits for each state-action pair.<br>
+<strong>What to watch:</strong><br>
+&bull; Bright cells = preferred actions<br>
+&bull; Should match the optimal policy from Ch04<br>
+&bull; REINFORCE+Baseline should have cleaner separation
+</div>
+<h3>&#x1F52C; Glass-Box</h3>
+<div class="card">
+<strong>Metrics per episode:</strong>
+<table><tr><th>Metric</th><th>Meaning</th></tr>
+<tr><td>Return</td><td>Total discounted return</td></tr>
+<tr><td>$|\Delta\theta|$</td><td>Mean policy gradient magnitude</td></tr>
+<tr><td>$H(\pi)$</td><td>Policy entropy</td></tr>
+</table>
+</div>
+</div>
+<div id="exercises" class="tab-content">
+
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card"><h3>Exercise 1 &mdash; REINFORCE vs Actor-Critic stability</h3>Compare returns curves for REINFORCE and Actor-Critic TD(0). Which is more stable? Why does Actor-Critic have lower variance?</div>
+<div class="card blue"><h3>Exercise 2 &mdash; Baseline effect</h3>Compare REINFORCE vs REINFORCE+Baseline. How much does the baseline reduce variance? Check the returns curve stability.</div>
+<div class="card orange"><h3>Exercise 3 &mdash; Temperature effect</h3>Compare REINFORCE (&tau;=1.0) vs REINFORCE (&tau;=0.5). How does the entropy chart change? Does sharper policy converge faster?</div>
+<div class="card green"><h3>Exercise 4 &mdash; &alpha; sensitivity</h3>Run with &alpha;=0.001 vs &alpha;=0.05. How does the PG magnitude chart change? Which &alpha; gives stable convergence?</div>
+<div class="card purple"><h3>Exercise 5 &mdash; Policy entropy analysis</h3>Find the episode where entropy drops below 0.5. What does this mean for the policy? Is the policy still exploring?</div>
+</div>
+<div id="tasks" class="tab-content">
+
+<h2>&#x1F4DD; Practical Tasks</h2>
+<p style="color:#9ca3af;margin-bottom:1rem">Click "Show answer" to check your solution.</p>
+<div class="task-card">
+<h3>Task 1 &mdash; Softmax policy</h3>
+<p>State S2, logits: $\theta[S2] = [2.0, 3.5, 1.0, 0.5]$, &tau;=1.0. Compute $\pi(A1|S2)$.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\pi(A1|S2) = \frac{e^{3.5}}{e^{2.0} + e^{3.5} + e^{1.0} + e^{0.5}} = \frac{33.11}{7.39 + 33.11 + 2.72 + 1.65} = \frac{33.11}{44.87} \approx \mathbf{0.738}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 2 &mdash; REINFORCE gradient update</h3>
+<p>At step t=2 in an episode: $G_2=12$, $\pi(A1|S3)=0.6$, $\gamma=0.95$, $\alpha=0.01$. Compute $\Delta\theta[S3][A1]$ (the gradient update for the chosen action A1).</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+$\nabla \log \pi(A1|S3) = 1 - \pi(A1|S3) = 1 - 0.6 = 0.4$ (for the chosen action)<br>
+<div class="formula">$$\Delta\theta[S3][A1] = \alpha \cdot \gamma^t \cdot G_t \cdot \nabla \log \pi = 0.01 \cdot 0.95^2 \cdot 12 \cdot 0.4$$</div>
+<div class="formula">$$= 0.01 \cdot 0.9025 \cdot 12 \cdot 0.4 = \mathbf{0.0433}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 3 &mdash; Baseline variance reduction</h3>
+<p>REINFORCE returns over 5 episodes: [5, 15, 8, 20, 12]. Baseline b(s)=12. Compute the advantage $(G_t - b)$ for each episode. Does the baseline reduce variance?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+Advantages: $[5-12, 15-12, 8-12, 20-12, 12-12] = [-7, 3, -4, 8, 0]$<br><br>
+<strong>Variance of returns:</strong> $\text{Var}([5,15,8,20,12]) = 30.0$<br>
+<strong>Variance of advantages:</strong> $\text{Var}([-7,3,-4,8,0]) = 30.0$<br><br>
+Variance is the same! The baseline reduces variance of the <strong>gradient estimator</strong>, not the returns themselves. The key is that $b(s)$ is state-dependent &mdash; it removes the "average" value, leaving only the advantage signal.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 4 &mdash; Actor-Critic vs REINFORCE</h3>
+<p>Why does Actor-Critic TD(0) have lower variance than REINFORCE, even though it is biased?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<strong>REINFORCE variance:</strong> Uses full episode return $G_t$ which depends on all future random transitions. High variance, especially for long episodes.<br><br>
+<strong>Actor-Critic variance:</strong> Uses TD error $\delta_t = R_{t+1} + \gamma V(S') - V(S)$ which only looks one step ahead. Much lower variance.<br><br>
+<strong>Bias trade-off:</strong> Actor-Critic is biased because $V(S')$ is an estimate (not the true value). But in practice, lower variance often outweighs the bias &mdash; especially early in training when the policy is far from optimal.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 5 &mdash; Why policy gradient for deep RL</h3>
+<p>Q-Learning works well for the tabular ASP. Why would you use Policy Gradient methods for a larger, continuous-state version of the same problem?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<strong>Q-Learning limitations at scale:</strong><br>
+&bull; Q-table size = $|S| \times |A|$ &mdash; infeasible for continuous states<br>
+&bull; Cannot represent stochastic policies (always greedy)<br>
+&bull; Cannot handle continuous action spaces<br><br>
+<strong>Policy Gradient advantages:</strong><br>
+&bull; Policy $\pi(a|s,\theta)$ can be a neural network &mdash; scales to any state space<br>
+&bull; Naturally represents stochastic policies<br>
+&bull; Works with continuous actions (Gaussian policy)<br>
+&bull; Foundation for A2C, PPO, SAC &mdash; state-of-the-art deep RL
+</div></details>
+</div>
+</div>
+<div id="quiz" class="tab-content">
+<h2>&#x1F3AF; Quiz &mdash; Test Your Knowledge</h2>
+<p style="color:#9ca3af;margin-bottom:1.5rem">Answer all 10 questions and click "Check results". Pass threshold: <strong>90% (9/10)</strong>.</p>
+<div class="quiz-question" id="q1"><p>1. What does the Policy Gradient Theorem tell us?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">The optimal policy is always deterministic</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">The gradient of expected return w.r.t. policy parameters can be computed from Q-values and policy gradients</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">Policy gradient methods always converge faster than Q-Learning</label></div>
+</div>
+<div class="quiz-question" id="q2"><p>2. Why is REINFORCE unbiased?</p>
+<div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">Because it uses a baseline</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">Because it uses the actual discounted return $G_t$ — the exact expected value of the policy</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">Because it uses TD bootstrapping</label></div>
+</div>
+<div class="quiz-question" id="q3"><p>3. Why does REINFORCE have high variance?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">Because the learning rate is too high</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">Because $G_t$ depends on all future random transitions — a single episode's return can be far from the mean</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">Because the policy is stochastic</label></div>
+</div>
+<div class="quiz-question" id="q4"><p>4. Does adding a baseline $b(s)$ introduce bias into REINFORCE?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">Yes — the baseline changes the expected gradient</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">No — a state-dependent baseline does not change the expected gradient (it cancels out)</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">Only if $b(s) > G_t$</label></div>
+</div>
+<div class="quiz-question" id="q5"><p>5. What is the role of the critic in Actor-Critic TD(0)?</p>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">To select actions</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">To estimate $V(s)$ and compute the TD error $\delta_t$ used as the advantage signal</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">To compute the policy gradient</label></div>
+</div>
+<div class="quiz-question" id="q6"><p>6. What does temperature &tau;&lt;1 do to the softmax policy?</p>
+<div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">Makes the policy more uniform (more exploration)</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">Makes the policy sharper (more deterministic — preferred actions get higher probability)</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">Has no effect on the policy</label></div>
+</div>
+<div class="quiz-question" id="q7"><p>7. What does high policy entropy indicate?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">The policy has converged to the optimal</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">The policy is nearly uniform — the agent is exploring broadly</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">The learning rate is too high</label></div>
+</div>
+<div class="quiz-question" id="q8"><p>8. What is the $\theta[s][a]$ heatmap showing?</p>
+<div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">The Q-values for each state-action pair</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">The softmax logits — higher = more likely action for that state</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">The eligibility traces</label></div>
+</div>
+<div class="quiz-question" id="q9"><p>9. Why is Actor-Critic the foundation for A2C and PPO?</p>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">Because it uses the same Q-table as Q-Learning</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">Because it combines online policy gradient (actor) with a value function critic — the same structure used in deep RL</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">Because it has the lowest variance of all algorithms</label></div>
+</div>
+<div class="quiz-question" id="q10"><p>10. What is the PG Magnitude chart measuring?</p>
+<div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">The policy entropy</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">Mean $|\Delta\theta|$ per episode — how much the policy parameters change each episode</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">The TD error</label></div>
+</div>
+<button class="btn" onclick="checkQuiz()">&#x2705; Check results</button>
+<button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
+<div id="quiz-result"></div>
+<script>var ANSWERS={'q1':'b','q2':'b','q3':'b','q4':'b','q5':'b','q6':'b','q7':'b','q8':'b','q9':'b','q10':'b'};</script>
+
+</div>
+<div id="summary" class="tab-content">
+
+<h2>&#x1F4CB; Summary</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">$\nabla J$</div><div class="kpi-label">Policy gradient</div></div>
+<div class="kpi-card"><div class="kpi-val">Softmax</div><div class="kpi-label">Policy type</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch10</div><div class="kpi-label">Next: World Models</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; Policy gradient advantages</strong><ul>
+<li>Directly optimises policy &mdash; no Q-table needed</li>
+<li>Naturally stochastic policies</li>
+<li>Foundation for deep RL (A2C, PPO)</li>
+<li>Works with continuous action spaces</li>
+</ul></div>
+<div class="card red"><strong>&#x274C; Limitations</strong><ul>
+<li>High variance (REINFORCE)</li>
+<li>Sensitive to learning rate &alpha;</li>
+<li>Actor-Critic is biased (TD bootstrapping)</li>
+<li>Two learning rates to tune (Actor-Critic)</li>
+</ul></div>
+</div>
+<div class="card blue" style="margin-top:1rem"><strong>&#x27A1; Next: Chapter 10</strong> &mdash; Model-Based RL: World Models. We combine model learning with policy gradient &mdash; MBPO generates synthetic rollouts for REINFORCE.</div>
+</div>
+</div>
+<script>
+
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if(typeof renderMathInElement!=='undefined'){
+    renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  }
+}
+function checkQuiz(){
+  var score=0,total=Object.keys(ANSWERS).length;
+  for(var q in ANSWERS){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    document.querySelectorAll('#'+q+' .quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+    if(sel){
+      if(sel.value===ANSWERS[q]){score++;sel.closest('.quiz-option').classList.add('correct');}
+      else{sel.closest('.quiz-option').classList.add('wrong');document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');}
+    } else {
+      document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+    }
+  }
+  var pct=Math.round(score/total*100),res=document.getElementById('quiz-result');
+  res.style.display='block';
+  if(score>=9){res.className='pass';res.innerHTML='&#x1F389; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Congratulations! You can move on to the next chapter!';}
+  else{res.className='fail';res.innerHTML='&#x274C; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Pass threshold is 90% (9/10). Review the material and try again.';}
+}
+function resetQuiz(){
+  document.querySelectorAll('.quiz-option input').forEach(function(i){i.checked=false});
+  document.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+  var res=document.getElementById('quiz-result');res.style.display='none';res.className='';
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide &mdash; Chapter 06</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+.card.red{border-left-color:#FF4B4B}
+.card.purple{border-left-color:#8B5CF6}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0;overflow-x:auto}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem 1rem;margin:1rem 0;text-align:center;overflow-x:auto}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.task-card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #0082F0}
+.task-card h3{color:#0082F0;margin-bottom:.5rem}
+details{background:#252840;border-radius:6px;padding:.75rem 1rem;margin-top:.75rem;border-left:3px solid #FF8C0A}
+details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.9rem;user-select:none}
+details summary:hover{color:#FFB347}
+details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154;color:#e8eaf6}
+.quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
+.quiz-question p{font-weight:600;margin-bottom:.75rem;color:#e8eaf6}
+.quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0;transition:background .15s}
+.quiz-option:hover{background:#252840}
+.quiz-option input{accent-color:#8B5CF6;width:1rem;height:1rem;flex-shrink:0}
+.quiz-option label{cursor:pointer;color:#9ca3af;font-size:.9rem}
+.quiz-option.correct label{color:#0FC373;font-weight:600}
+.quiz-option.wrong label{color:#FF4B4B}
+#quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:600;display:none}
+#quiz-result.pass{background:#0FC37322;border:2px solid #0FC373;color:#0FC373}
+#quiz-result.fail{background:#FF4B4B22;border:2px solid #FF4B4B;color:#FF4B4B}
+.btn{background:#8B5CF6;color:white;border:none;padding:.6rem 1.5rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;margin-top:1rem;transition:background .2s}
+.btn:hover{background:#7C3AED}
+.btn.secondary{background:#252840;color:#9ca3af}
+.btn.secondary:hover{background:#2d3154;color:#e8eaf6}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Hands-On Guide &mdash; Chapter 06</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>Temporal Difference Learning &middot; TD(0) &middot; SARSA &middot; Q-Learning &middot; Warsaw ASP</em></p>
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Introduction</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; What is Ch06?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; RL Theory</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; Environment</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; How to use UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretation</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; Exercises</button>
+  <button class="tab-btn" onclick="showTab('tasks')">&#x1F4DD; Tasks</button>
+  <button class="tab-btn" onclick="showTab('quiz')">&#x1F3AF; Quiz</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Summary</button>
+</div>
+<div id="intro" class="tab-content active">
+
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card green">After completing this chapter you will be able to:
+<ul>
+<li>Explain the TD error $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$ and its role as a learning signal</li>
+<li>Implement TD(0) prediction and explain bootstrapping</li>
+<li>Distinguish SARSA (on-policy) from Q-Learning (off-policy) &mdash; the one-line difference</li>
+<li>Explain the Cliff Walking analogy: why SARSA is safer, Q-Learning finds better final policy</li>
+<li>Compare TD estimates of V*(s) against the DP reference from Ch04</li>
+<li>Read the TD Error curve and explain why it decays toward zero</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue"><strong>Warsaw ASP Dispatch &mdash; Online Learning</strong><br><br>
+TD methods update after <strong>every step</strong>, not after episode end (unlike MC). This makes them applicable to continuing tasks and much faster in practice.</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">3</div><div class="kpi-label">TD algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">$\delta_t$</div><div class="kpi-label">TD error signal</div></div>
+<div class="kpi-card"><div class="kpi-val">Online</div><div class="kpi-label">Updates every step</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch04</div><div class="kpi-label">DP reference</div></div>
+</div>
+</div>
+<div id="what" class="tab-content">
+
+<h2>&#x2753; What is Chapter 06?</h2>
+<div class="card purple">Ch06 introduces <strong>Temporal Difference Learning</strong> &mdash; the combination of MC (model-free) and DP (bootstrapping). TD updates after every step using current estimates.</div>
+<h2>Three TD algorithms</h2>
+<div class="card">
+<table><tr><th>Algorithm</th><th>Type</th><th>Key property</th></tr>
+<tr><td><strong>TD(0)</strong></td><td>Prediction</td><td>Estimates $V^\pi$ for a fixed policy</td></tr>
+<tr><td><strong>SARSA</strong></td><td>On-policy control</td><td>Learns value of &epsilon;-soft policy (safe)</td></tr>
+<tr><td><strong>Q-Learning</strong></td><td>Off-policy control</td><td>Directly learns $Q^*$ (optimal)</td></tr>
+</table>
+</div>
+<div class="card orange"><strong>The one-line difference:</strong><br>
+SARSA: uses $Q(S', A')$ where $A'$ is chosen by &epsilon;-greedy (on-policy)<br>
+Q-Learning: uses $\max_{a'} Q(S', a')$ regardless of what action is taken (off-policy)</div>
+</div>
+<div id="theory" class="tab-content">
+
+<h2>&#x1F9EE; TD Error</h2>
+<div class="formula">$$\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$$</div>
+<div class="card">The "surprise" signal &mdash; how much better or worse than expected. Positive = better than expected, negative = worse. Implemented in <code>ch06_td.rs</code>.</div>
+
+<h2>TD(0) Prediction</h2>
+<div class="formula">$$V(S_t) \leftarrow V(S_t) + \alpha \left[ R_{t+1} + \gamma V(S_{t+1}) - V(S_t) \right]$$</div>
+<div class="card blue">Updates after every step. Converges to $V^\pi$ for any fixed policy $\pi$. Implemented in <code>td0_prediction()</code>.</div>
+
+<h2>SARSA (On-Policy)</h2>
+<div class="formula">$$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha \left[ R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t) \right]$$</div>
+<div class="card orange">$A_{t+1}$ is chosen by the <strong>same &epsilon;-greedy policy</strong>. On-policy: learns the value of the &epsilon;-soft policy. Conservative &mdash; accounts for exploration cost. Implemented in <code>sarsa()</code>.</div>
+
+<h2>Q-Learning (Off-Policy)</h2>
+<div class="formula">$$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha \left[ R_{t+1} + \gamma \max_{a'} Q(S_{t+1}, a') - Q(S_t, A_t) \right]$$</div>
+<div class="card green">Uses $\max_{a'} Q(S_{t+1}, a')$ &mdash; the <strong>greedy action</strong>, regardless of what was actually taken. Off-policy: directly learns $Q^*$. Converges to optimal regardless of behaviour policy. Implemented in <code>q_learning()</code>.</div>
+
+<h2>SARSA vs Q-Learning &mdash; Cliff Walking Analogy</h2>
+<div class="card">
+In risky environments (like S7 &mdash; SLA breach imminent):<br>
+&bull; <strong>SARSA</strong> walks safely away from the cliff (accounts for accidental falls during &epsilon;-exploration)<br>
+&bull; <strong>Q-Learning</strong> walks along the cliff edge (optimal but risky during learning)<br><br>
+In ASP: SARSA is safer during training, Q-Learning finds the better final policy.
+</div>
+</div>
+<div id="env" class="tab-content">
+
+<h2>&#x1F5FA; TD Environment</h2>
+<table><tr><th>Parameter</th><th>Value</th><th>Effect</th></tr>
+<tr><td>Episodes</td><td>50&ndash;5000</td><td>More = better convergence</td></tr>
+<tr><td>&gamma;</td><td>0.5&ndash;0.999</td><td>Discount factor</td></tr>
+<tr><td>&alpha;</td><td>0.01&ndash;1.0</td><td>Learning rate. Start with 0.1. Higher = faster but less stable.</td></tr>
+<tr><td>&epsilon;</td><td>0.0&ndash;1.0</td><td>Exploration rate</td></tr>
+<tr><td>&epsilon; decay</td><td>0.0&ndash;0.1</td><td>How fast &epsilon; shrinks</td></tr>
+</table>
+<div class="card blue"><strong>Key insight:</strong> TD methods should converge to the same policy as DP (Ch04) &mdash; without needing P(s'|s,a).</div>
+</div>
+<div id="ui" class="tab-content">
+
+<h2>&#x1F3AE; How to use the Ch06 interface</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Set &alpha; (learning rate)</strong><br>&alpha;=0.1 is a good start. Higher &alpha; = faster learning but less stable.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Click &#x25B6; Run TD(0), SARSA and Q-Learning</strong><br>All three run simultaneously. Results appear side by side.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Read the TD Error curve</strong><br>TD error = $R + \gamma V(S') - V(S)$. Watch it decay toward zero &mdash; the agent is "surprised" less over time.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Compare Q-Learning vs SARSA policies</strong><br>Q-Learning finds the optimal policy. SARSA finds the safest policy given &epsilon;-soft exploration.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Compare with DP reference (Ch04)</strong><br>TD methods should converge to the same policy as DP &mdash; without needing P(s'|s,a).</div></div>
+</div>
+<div id="interp" class="tab-content">
+
+<h2>&#x1F4CA; Interpreting the results</h2>
+<h3>&#x1F4C9; TD Error Curve</h3>
+<div class="card blue">
+<strong>Axes:</strong> X = episode, Y = average TD error magnitude<br>
+<strong>Purpose:</strong> Shows how the agent's predictions improve over time.<br>
+<strong>What to watch:</strong><br>
+&bull; Should decay toward zero as Q-values converge<br>
+&bull; Q-Learning TD error drops faster (off-policy, more aggressive)<br>
+&bull; Spikes = agent encountered unexpected transitions
+</div>
+<h3>&#x1F3AF; Policy Comparison: SARSA vs Q-Learning</h3>
+<div class="card">
+<strong>Purpose:</strong> Shows which action each algorithm chooses per state.<br>
+<strong>What to watch:</strong><br>
+&bull; Q-Learning should match the DP optimal policy (Ch04)<br>
+&bull; SARSA may differ in risky states (S5&ndash;S7) &mdash; more conservative<br>
+&bull; &#x2705; = both algorithms agree on this state
+</div>
+<h3>&#x1F52C; Glass-Box &mdash; TD Update Trace</h3>
+<div class="card">
+<strong>Columns:</strong>
+<table><tr><th>Column</th><th>Meaning</th></tr>
+<tr><td>Episode</td><td>Episode number</td></tr>
+<tr><td>Step</td><td>Step within episode</td></tr>
+<tr><td>State</td><td>Current state $S_t$</td></tr>
+<tr><td>Action</td><td>Action taken $A_t$</td></tr>
+<tr><td>Reward</td><td>Immediate reward $R_{t+1}$</td></tr>
+<tr><td>Next State</td><td>$S_{t+1}$</td></tr>
+<tr><td>TD Error</td><td>$\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$</td></tr>
+</table>
+</div>
+</div>
+<div id="exercises" class="tab-content">
+
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card"><h3>Exercise 1 &mdash; TD vs MC convergence speed</h3>Run with 1000 episodes. Compare TD(0) convergence curve with MC (Ch05). Which converges faster? Why?</div>
+<div class="card blue"><h3>Exercise 2 &mdash; SARSA vs Q-Learning policy</h3>Run with &epsilon;=0.3. Do SARSA and Q-Learning find the same policy? Check states S5&ndash;S7 specifically.</div>
+<div class="card orange"><h3>Exercise 3 &mdash; &alpha; sensitivity</h3>Run with &alpha;=0.01 vs &alpha;=0.5. How does the TD error curve change? Which &alpha; gives more stable convergence?</div>
+<div class="card green"><h3>Exercise 4 &mdash; DP comparison</h3>Compare Q-Learning's final policy with the DP optimal policy from Ch04. Do they match? If not, increase episodes and try again.</div>
+<div class="card purple"><h3>Exercise 5 &mdash; Off-policy advantage</h3>Run Q-Learning with &epsilon;=0.5 (high exploration). Does it still find the optimal policy? Why can Q-Learning learn $Q^*$ even with high &epsilon;?</div>
+</div>
+<div id="tasks" class="tab-content">
+
+<h2>&#x1F4DD; Practical Tasks</h2>
+<p style="color:#9ca3af;margin-bottom:1rem">Click "Show answer" to check your solution.</p>
+<div class="task-card">
+<h3>Task 1 &mdash; TD(0) update</h3>
+<p>Current V(S3)=10, V(S5)=6. Agent takes action A1 in S3, receives R=4, transitions to S5. &alpha;=0.1, &gamma;=0.95. Compute the TD error and new V(S3).</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t) = 4 + 0.95 \cdot 6 - 10 = 4 + 5.7 - 10 = \mathbf{-0.3}$$</div>
+<div class="formula">$$V(S3) \leftarrow 10 + 0.1 \cdot (-0.3) = 10 - 0.03 = \mathbf{9.97}$$</div>
+Negative TD error: the transition was worse than expected.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 2 &mdash; SARSA update</h3>
+<p>Q(S2,A1)=8, Q(S4,A0)=12. Agent in S2 takes A1, gets R=3, transitions to S4, then chooses A0 (&epsilon;-greedy). &alpha;=0.1, &gamma;=0.9. Compute new Q(S2,A1).</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\delta_t = R + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t) = 3 + 0.9 \cdot 12 - 8 = 3 + 10.8 - 8 = 5.8$$</div>
+<div class="formula">$$Q(S2,A1) \leftarrow 8 + 0.1 \cdot 5.8 = 8 + 0.58 = \mathbf{8.58}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 3 &mdash; Q-Learning update</h3>
+<p>Q(S2,A1)=8. Agent in S2 takes A1, gets R=3, transitions to S4. Q(S4,A0)=12, Q(S4,A1)=9, Q(S4,A2)=15. &alpha;=0.1, &gamma;=0.9. Compute new Q(S2,A1) using Q-Learning.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+Q-Learning uses $\max_{a'} Q(S4, a') = \max(12, 9, 15) = 15$<br>
+<div class="formula">$$\delta_t = R + \gamma \max_{a'} Q(S4, a') - Q(S2,A1) = 3 + 0.9 \cdot 15 - 8 = 3 + 13.5 - 8 = 8.5$$</div>
+<div class="formula">$$Q(S2,A1) \leftarrow 8 + 0.1 \cdot 8.5 = 8 + 0.85 = \mathbf{8.85}$$</div>
+Note: Q-Learning gives a higher update than SARSA (Task 2) because it uses the greedy max.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 4 &mdash; Why SARSA is safer in S7</h3>
+<p>In state S7 (SLA breach imminent), SARSA chooses A0 (dispatch nearest) while Q-Learning chooses A1 (dispatch skill-matched). Explain why SARSA is more conservative here.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+SARSA accounts for the <strong>exploration cost</strong> in its Q estimates:<br><br>
+&bull; With &epsilon;=0.3, there's a 30% chance of taking a random action in S7<br>
+&bull; SARSA's Q(S7,A1) is lower because it includes the expected cost of accidentally taking a bad action during exploration<br>
+&bull; Q-Learning's Q(S7,A1) is higher because it always uses $\max_{a'} Q$ &mdash; ignoring exploration<br><br>
+In S7, the penalty for a wrong action is very high (&minus;8 to &minus;10). SARSA's conservative estimate leads it to prefer the safer A0.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 5 &mdash; TD vs MC: key trade-off</h3>
+<p>TD(0) is biased (bootstrapping) but has lower variance than MC. Explain this bias-variance trade-off and when you would prefer TD over MC.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<strong>TD bias:</strong> TD uses $V(S_{t+1})$ as a proxy for the true future return. If $V$ is wrong (early in training), the TD target is biased.<br><br>
+<strong>MC variance:</strong> MC uses the actual return $G_t$ which depends on all future random transitions. High variance, especially for long episodes.<br><br>
+<strong>Prefer TD when:</strong><br>
+&bull; Episodes are long or continuing (MC must wait for episode end)<br>
+&bull; You need online updates (real-time dispatch decisions)<br>
+&bull; Lower variance is more important than unbiasedness<br><br>
+<strong>Prefer MC when:</strong><br>
+&bull; Episodes are short<br>
+&bull; Unbiased estimates are critical<br>
+&bull; You have historical episode data to learn from
+</div></details>
+</div>
+</div>
+<div id="quiz" class="tab-content">
+<h2>&#x1F3AF; Quiz &mdash; Test Your Knowledge</h2>
+<p style="color:#9ca3af;margin-bottom:1.5rem">Answer all 10 questions and click "Check results". Pass threshold: <strong>90% (9/10)</strong>.</p>
+<div class="quiz-question" id="q1"><p>1. What is the TD error $\delta_t$?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">$R_{t+1} - V(S_t)$</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">$R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">$\gamma V(S_{t+1}) - V(S_t)$</label></div>
+</div>
+<div class="quiz-question" id="q2"><p>2. What is the key difference between SARSA and Q-Learning?</p>
+<div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">SARSA is off-policy, Q-Learning is on-policy</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">SARSA uses $Q(S', A')$ where $A'$ is &epsilon;-greedy; Q-Learning uses $\max_{a'} Q(S', a')$</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">SARSA requires a model, Q-Learning does not</label></div>
+</div>
+<div class="quiz-question" id="q3"><p>3. Why does TD(0) have lower variance than MC?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">TD uses a smaller learning rate</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">TD bootstraps from current estimates instead of waiting for the full episode return</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">TD visits more states per episode</label></div>
+</div>
+<div class="quiz-question" id="q4"><p>4. What does a negative TD error mean?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">The agent made a mistake</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">The transition was worse than expected — actual reward + future value < current estimate</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">The learning rate is too high</label></div>
+</div>
+<div class="quiz-question" id="q5"><p>5. Why is Q-Learning called 'off-policy'?</p>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">Because it uses a different environment than SARSA</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">Because it learns $Q^*$ using the greedy max, regardless of the actual behaviour policy used</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">Because it does not use &epsilon;-greedy</label></div>
+</div>
+<div class="quiz-question" id="q6"><p>6. In the Cliff Walking analogy, why does SARSA walk away from the cliff?</p>
+<div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">Because SARSA has a lower learning rate</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">Because SARSA accounts for the risk of accidental falls during &epsilon;-exploration</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">Because SARSA uses a different reward function</label></div>
+</div>
+<div class="quiz-question" id="q7"><p>7. What should the TD error curve look like as training progresses?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">It should increase as the agent learns more</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">It should decay toward zero as Q-values converge to their true values</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">It should stay constant</label></div>
+</div>
+<div class="quiz-question" id="q8"><p>8. Can Q-Learning converge to the optimal policy with high &epsilon; (e.g., &epsilon;=0.5)?</p>
+<div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">No — high &epsilon; prevents convergence</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">Yes — Q-Learning converges to $Q^*$ regardless of behaviour policy, as long as all (s,a) are visited</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">Only if &alpha; is very small</label></div>
+</div>
+<div class="quiz-question" id="q9"><p>9. What does the Q-Table Heatmap show?</p>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">The transition probabilities P(s'|s,a)</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">The learned Q(s,a) values — brighter = higher value = more preferred action</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">The visit counts per state-action pair</label></div>
+</div>
+<div class="quiz-question" id="q10"><p>10. Which TD algorithm should you use if safety during training is the priority?</p>
+<div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">Q-Learning — it finds the optimal policy faster</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">SARSA — it accounts for exploration cost and avoids risky states during training</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">TD(0) — it has the lowest variance</label></div>
+</div>
+<button class="btn" onclick="checkQuiz()">&#x2705; Check results</button>
+<button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
+<div id="quiz-result"></div>
+<script>var ANSWERS={'q1':'b','q2':'b','q3':'b','q4':'b','q5':'b','q6':'b','q7':'b','q8':'b','q9':'b','q10':'b'};</script>
+
+</div>
+<div id="summary" class="tab-content">
+
+<h2>&#x1F4CB; Summary</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">3</div><div class="kpi-label">TD algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">$\delta_t$</div><div class="kpi-label">TD error signal</div></div>
+<div class="kpi-card"><div class="kpi-val">Online</div><div class="kpi-label">Every-step updates</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch07</div><div class="kpi-label">Next: n-Step TD</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; TD advantages</strong><ul>
+<li>Online learning &mdash; updates every step</li>
+<li>No model needed (model-free)</li>
+<li>Lower variance than MC</li>
+<li>Q-Learning directly learns $Q^*$</li>
+</ul></div>
+<div class="card red"><strong>&#x274C; TD limitations</strong><ul>
+<li>Biased (bootstrapping from estimates)</li>
+<li>Sensitive to learning rate &alpha;</li>
+<li>Q-Learning can be risky during training</li>
+<li>Maximisation bias in Q-Learning</li>
+</ul></div>
+</div>
+<div class="card blue" style="margin-top:1rem"><strong>&#x27A1; Next: Chapter 07</strong> &mdash; n-Step TD &amp; Dyna-Q. We generalise TD to n-step returns (bridging TD and MC) and add model-based planning with Dyna-Q.</div>
+</div>
+</div>
+<script>
+
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if(typeof renderMathInElement!=='undefined'){
+    renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  }
+}
+function checkQuiz(){
+  var score=0,total=Object.keys(ANSWERS).length;
+  for(var q in ANSWERS){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    document.querySelectorAll('#'+q+' .quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+    if(sel){
+      if(sel.value===ANSWERS[q]){score++;sel.closest('.quiz-option').classList.add('correct');}
+      else{sel.closest('.quiz-option').classList.add('wrong');document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');}
+    } else {
+      document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+    }
+  }
+  var pct=Math.round(score/total*100),res=document.getElementById('quiz-result');
+  res.style.display='block';
+  if(score>=9){res.className='pass';res.innerHTML='&#x1F389; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Congratulations! You can move on to the next chapter!';}
+  else{res.className='fail';res.innerHTML='&#x274C; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Pass threshold is 90% (9/10). Review the material and try again.';}
+}
+function resetQuiz(){
+  document.querySelectorAll('.quiz-option input').forEach(function(i){i.checked=false});
+  document.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+  var res=document.getElementById('quiz-result');res.style.display='none';res.className='';
+}
+
+</script>
+</body>
+</html>

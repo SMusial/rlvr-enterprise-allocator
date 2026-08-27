@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide &mdash; Chapter 05</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}
+.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}
+.card.red{border-left-color:#FF4B4B}
+.card.purple{border-left-color:#8B5CF6}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0;overflow-x:auto}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem 1rem;margin:1rem 0;text-align:center;overflow-x:auto}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.task-card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #0082F0}
+.task-card h3{color:#0082F0;margin-bottom:.5rem}
+details{background:#252840;border-radius:6px;padding:.75rem 1rem;margin-top:.75rem;border-left:3px solid #FF8C0A}
+details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.9rem;user-select:none}
+details summary:hover{color:#FFB347}
+details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154;color:#e8eaf6}
+.quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
+.quiz-question p{font-weight:600;margin-bottom:.75rem;color:#e8eaf6}
+.quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0;transition:background .15s}
+.quiz-option:hover{background:#252840}
+.quiz-option input{accent-color:#8B5CF6;width:1rem;height:1rem;flex-shrink:0}
+.quiz-option label{cursor:pointer;color:#9ca3af;font-size:.9rem}
+.quiz-option.correct label{color:#0FC373;font-weight:600}
+.quiz-option.wrong label{color:#FF4B4B}
+#quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:600;display:none}
+#quiz-result.pass{background:#0FC37322;border:2px solid #0FC373;color:#0FC373}
+#quiz-result.fail{background:#FF4B4B22;border:2px solid #FF4B4B;color:#FF4B4B}
+.btn{background:#8B5CF6;color:white;border:none;padding:.6rem 1.5rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;margin-top:1rem;transition:background .2s}
+.btn:hover{background:#7C3AED}
+.btn.secondary{background:#252840;color:#9ca3af}
+.btn.secondary:hover{background:#2d3154;color:#e8eaf6}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Hands-On Guide &mdash; Chapter 05</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>Monte Carlo Methods &middot; ASP Dispatch Learning from Episodes &middot; No Model Required &middot; Warsaw Region</em></p>
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Introduction</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; What is Ch05?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; RL Theory</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; Environment</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; How to use UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretation</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; Exercises</button>
+  <button class="tab-btn" onclick="showTab('tasks')">&#x1F4DD; Tasks</button>
+  <button class="tab-btn" onclick="showTab('quiz')">&#x1F3AF; Quiz</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Summary</button>
+</div>
+<div id="intro" class="tab-content active">
+
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card green">After completing this chapter you will be able to:
+<ul>
+<li>Explain the key difference between MC and DP: no model required</li>
+<li>Distinguish First-Visit MC from Every-Visit MC prediction</li>
+<li>Implement On-Policy MC Control with epsilon-soft policy</li>
+<li>Explain Off-Policy MC with Importance Sampling and its variance problem</li>
+<li>Read the Visit Count heatmap and explain why rarely visited states have high variance</li>
+<li>Compare MC estimates of V*(s) against the DP reference from Ch04</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue"><strong>Warsaw ASP Dispatch Learning from Episodes</strong> &mdash; no model of P(s'|s,a) available.<br><br>
+The agent generates episodes by interacting with the environment and learns $V^\pi(s)$ and $Q^*(s,a)$ from the observed returns $G_t$. This is the foundation for model-free RL.</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">MC algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">No model</div><div class="kpi-label">Key property</div></div>
+<div class="kpi-card"><div class="kpi-val">$G_t$</div><div class="kpi-label">Learning signal</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch04</div><div class="kpi-label">DP reference</div></div>
+</div>
+</div>
+<div id="what" class="tab-content">
+
+<h2>&#x2753; What is Chapter 05?</h2>
+<div class="card purple">Ch05 introduces <strong>model-free learning</strong>. Unlike DP (Ch04), MC methods learn directly from episodes without knowing P(s'|s,a).</div>
+<h2>Four MC algorithms</h2>
+<div class="card">
+<table><tr><th>Algorithm</th><th>Type</th><th>Key property</th></tr>
+<tr><td><strong>First-Visit MC</strong></td><td>Prediction</td><td>Updates V(s) only on first visit per episode</td></tr>
+<tr><td><strong>Every-Visit MC</strong></td><td>Prediction</td><td>Updates V(s) on every visit per episode</td></tr>
+<tr><td><strong>On-Policy Control</strong></td><td>Control</td><td>Learns Q*(s,a) and &pi;* simultaneously</td></tr>
+<tr><td><strong>Off-Policy (IS)</strong></td><td>Control</td><td>Learns from behaviour policy using Importance Sampling</td></tr>
+</table>
+</div>
+</div>
+<div id="theory" class="tab-content">
+
+<h2>&#x1F9EE; Monte Carlo Return</h2>
+<div class="formula">$$G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \cdots = \sum_{k=0}^{T-t-1} \gamma^k R_{t+k+1}$$</div>
+
+<h2>First-Visit MC Prediction</h2>
+<div class="card">$V(s) \leftarrow$ average of $G_t$ for all <strong>first visits</strong> to $s$ across all episodes.<br>
+Unbiased estimator. Converges to $V^\pi(s)$ as episodes $\to \infty$. Implemented in <code>mc_first_visit_prediction()</code>.</div>
+
+<h2>Every-Visit MC Prediction</h2>
+<div class="card blue">$V(s) \leftarrow$ average of $G_t$ for <strong>all visits</strong> to $s$ across all episodes.<br>
+Biased but consistent. More data per episode &rarr; lower variance. Implemented in <code>mc_every_visit_prediction()</code>.</div>
+
+<h2>On-Policy MC Control</h2>
+<div class="card orange">
+1. Generate episode using &epsilon;-soft policy<br>
+2. For each (s,a) pair (first-visit): $G \leftarrow$ discounted return<br>
+3. $Q(s,a) \leftarrow$ average($G$) — incremental update<br>
+4. $\pi(s) \leftarrow \arg\max_a Q(s,a)$ — greedy improvement<br><br>
+As $\varepsilon \to 0$, policy converges to optimal greedy policy.
+</div>
+
+<h2>Off-Policy MC with Importance Sampling</h2>
+<div class="formula">$$Q(s,a) \leftarrow Q(s,a) + \frac{W}{C(s,a)} \left[ G - Q(s,a) \right]$$</div>
+<div class="card green">$W = \pi(a|s) / b(a|s)$ = importance sampling ratio. Behaviour policy $b$ generates episodes. Target policy $\pi$ is what we optimise. Foundation for Q-Learning (Ch06).</div>
+</div>
+<div id="env" class="tab-content">
+
+<h2>&#x1F5FA; MC Environment</h2>
+<div class="card">MC methods learn from <strong>complete episodes</strong>. Each episode: start in a state, take actions, observe rewards, reach terminal state.</div>
+<table><tr><th>Parameter</th><th>Value</th><th>Effect</th></tr>
+<tr><td>Episodes</td><td>50&ndash;5000</td><td>More = better estimates, lower variance</td></tr>
+<tr><td>&gamma;</td><td>0.5&ndash;0.999</td><td>Discount factor</td></tr>
+<tr><td>&epsilon;</td><td>0.0&ndash;1.0</td><td>Exploration rate for on-policy control</td></tr>
+<tr><td>&epsilon; decay</td><td>0.0&ndash;0.1</td><td>How fast &epsilon; shrinks</td></tr>
+</table>
+<div class="card orange"><strong>Key insight:</strong> MC estimates converge toward the DP solution (Ch04) with more episodes. The convergence is noisier than DP because of the stochastic environment.</div>
+</div>
+<div id="ui" class="tab-content">
+
+<h2>&#x1F3AE; How to use the Ch05 interface</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Set number of episodes</strong><br>Try 200 first, then 2000 to see convergence toward DP reference.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Click &#x25B6; Run All Four MC Algorithms</strong><br>All four run simultaneously. Results appear side by side.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Read the Returns Curve</strong><br>Watch average episode return improve over time for on-policy control.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Read the Value Function comparison</strong><br>MC estimates of V*(s) should converge toward the DP solution from Ch04.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Read the Visit Count heatmap</strong><br>Which states were visited most? Rarely visited states have high variance estimates.</div></div>
+<div class="step"><div class="step-num">6</div><div><strong>Read the Glass-Box</strong><br>See exact returns $G_t$ for each state in a selected episode.</div></div>
+</div>
+<div id="interp" class="tab-content">
+
+<h2>&#x1F4CA; Interpreting the results</h2>
+<h3>&#x1F4C8; Episode Returns Chart</h3>
+<div class="card blue">
+<strong>Purpose:</strong> Shows how average episode return improves over time.<br>
+<strong>What to watch:</strong><br>
+&bull; On-Policy Control should show the clearest improvement<br>
+&bull; First-Visit and Every-Visit MC are prediction only &mdash; returns reflect fixed policy<br>
+&bull; High variance is normal for MC &mdash; stochastic environment
+</div>
+<h3>&#x1F4CA; Value Function V(s) vs DP Reference</h3>
+<div class="card">
+<strong>Purpose:</strong> Compares MC estimates against the exact DP solution from Ch04.<br>
+<strong>What to watch:</strong><br>
+&bull; With 200 episodes: MC estimates are noisy<br>
+&bull; With 2000 episodes: MC estimates converge toward DP values<br>
+&bull; Off-Policy IS may have higher variance due to importance sampling ratio
+</div>
+<h3>&#x1F5FA; State Visit Counts</h3>
+<div class="card green">
+<strong>Purpose:</strong> Shows how many times each state was visited across all episodes.<br>
+<strong>What to watch:</strong><br>
+&bull; States visited &lt;10 times have unreliable V(s) estimates<br>
+&bull; S0 (best state) should be visited most often<br>
+&bull; S7 (worst state) may be rarely visited if policy is good
+</div>
+<h3>&#x1F52C; Glass-Box &mdash; Episode Trace</h3>
+<div class="card">
+<strong>Columns:</strong>
+<table><tr><th>Column</th><th>Meaning</th></tr>
+<tr><td>Step</td><td>Step within episode</td></tr>
+<tr><td>State</td><td>State at this step</td></tr>
+<tr><td>Action</td><td>Action taken</td></tr>
+<tr><td>Reward</td><td>Immediate reward $R_t$</td></tr>
+<tr><td>Return $G_t$</td><td>Discounted return from this step to end</td></tr>
+</table>
+</div>
+</div>
+<div id="exercises" class="tab-content">
+
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card"><h3>Exercise 1 &mdash; MC vs DP convergence</h3>Run with 200 episodes, then 2000. How much closer do MC estimates get to the DP reference? Which algorithm converges fastest?</div>
+<div class="card blue"><h3>Exercise 2 &mdash; First-Visit vs Every-Visit</h3>Compare V(s) estimates from First-Visit and Every-Visit MC. Are they similar? Which has lower variance?</div>
+<div class="card orange"><h3>Exercise 3 &mdash; Visit count analysis</h3>Find the state with the fewest visits. Is its V(s) estimate reliable? How many episodes would you need for a reliable estimate?</div>
+<div class="card green"><h3>Exercise 4 &mdash; On-Policy control learning</h3>Watch the On-Policy Control returns curve. At what episode does it start improving? What does this tell you about the exploration-exploitation trade-off?</div>
+<div class="card purple"><h3>Exercise 5 &mdash; Off-Policy IS variance</h3>Compare Off-Policy IS returns curve with On-Policy. Is it more or less stable? Why does the IS ratio cause high variance?</div>
+</div>
+<div id="tasks" class="tab-content">
+
+<h2>&#x1F4DD; Practical Tasks</h2>
+<p style="color:#9ca3af;margin-bottom:1rem">Click "Show answer" to check your solution.</p>
+<div class="task-card">
+<h3>Task 1 &mdash; Manual MC return</h3>
+<p>An episode visits state S2 at steps t=1 and t=3. Rewards: $R_2=5, R_3=-2, R_4=8, R_5=3$. $\gamma$=0.9. Compute $G_1$ (return from first visit) and $G_3$ (return from second visit).</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$G_3 = R_4 + \gamma R_5 = 8 + 0.9 \cdot 3 = 8 + 2.7 = \mathbf{10.7}$$</div>
+<div class="formula">$$G_1 = R_2 + \gamma R_3 + \gamma^2 R_4 + \gamma^3 R_5 = 5 + 0.9(-2) + 0.81(8) + 0.729(3)$$</div>
+<div class="formula">$$= 5 - 1.8 + 6.48 + 2.187 = \mathbf{11.867}$$</div>
+First-Visit MC uses $G_1 = 11.867$. Every-Visit MC uses both $G_1$ and $G_3$.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 2 &mdash; First-Visit vs Every-Visit update</h3>
+<p>After 3 episodes, state S4 has been visited: episode 1 (first visit, G=12), episode 2 (first visit, G=8, second visit, G=5), episode 3 (first visit, G=10). Compute V(S4) for First-Visit MC and Every-Visit MC.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<strong>First-Visit MC</strong> (only first visit per episode):<br>
+Returns: [12, 8, 10] &rarr; 3 samples<br>
+<div class="formula">$$V_{FV}(S4) = \frac{12 + 8 + 10}{3} = \mathbf{10.0}$$</div>
+<strong>Every-Visit MC</strong> (all visits):<br>
+Returns: [12, 8, 5, 10] &rarr; 4 samples<br>
+<div class="formula">$$V_{EV}(S4) = \frac{12 + 8 + 5 + 10}{4} = \mathbf{8.75}$$</div>
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 3 &mdash; Why MC is unbiased but high variance</h3>
+<p>Explain why First-Visit MC is an unbiased estimator of $V^\pi(s)$ but has high variance. How does increasing the number of episodes help?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<strong>Unbiased:</strong> $G_t$ is the exact discounted return from state $s$ under policy $\pi$. Its expectation is exactly $V^\pi(s)$ by definition. No bootstrapping &rarr; no bias.<br><br>
+<strong>High variance:</strong> Each episode produces a different $G_t$ due to stochastic transitions and rewards. A single episode's return can be far from the true mean.<br><br>
+<strong>More episodes:</strong> By the Law of Large Numbers, the average of many $G_t$ samples converges to $V^\pi(s)$. Variance decreases as $O(1/\sqrt{N})$ where $N$ = number of visits.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 4 &mdash; Importance Sampling ratio</h3>
+<p>Behaviour policy $b$: uniform random, $b(A1|S3) = 0.25$. Target policy $\pi$: greedy, $\pi(A1|S3) = 1.0$. Compute the IS ratio $W = \pi(A1|S3) / b(A1|S3)$. What happens to the IS ratio if the episode has 5 steps all with the same action?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$W = \frac{\pi(A1|S3)}{b(A1|S3)} = \frac{1.0}{0.25} = \mathbf{4.0}$$</div>
+For 5 steps all with the same action:<br>
+<div class="formula">$$W_{total} = \prod_{t=1}^{5} \frac{\pi(a_t|s_t)}{b(a_t|s_t)} = 4.0^5 = \mathbf{1024}$$</div>
+This is the IS variance explosion problem &mdash; the ratio grows exponentially with episode length.
+</div></details>
+</div>
+<div class="task-card">
+<h3>Task 5 &mdash; MC vs DP: when to use each</h3>
+<p>You have a Warsaw ASP environment. When would you use MC (Ch05) instead of DP (Ch04)?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+Use <strong>MC (Ch05)</strong> when:<br>
+&bull; P(s'|s,a) is unknown &mdash; you can only observe transitions<br>
+&bull; The environment is too complex to model analytically<br>
+&bull; You want to learn from real dispatch logs (historical data)<br>
+&bull; The state space is large and you only visit a subset of states<br><br>
+Use <strong>DP (Ch04)</strong> when:<br>
+&bull; P(s'|s,a) is known exactly (as in the Warsaw ASP analytical model)<br>
+&bull; You need the exact optimal policy, not an approximation<br>
+&bull; The state space is small enough for full sweeps
+</div></details>
+</div>
+</div>
+<div id="quiz" class="tab-content">
+<h2>&#x1F3AF; Quiz &mdash; Test Your Knowledge</h2>
+<p style="color:#9ca3af;margin-bottom:1.5rem">Answer all 10 questions and click "Check results". Pass threshold: <strong>90% (9/10)</strong>.</p>
+<div class="quiz-question" id="q1"><p>1. What is the key advantage of MC methods over DP?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">MC is faster than DP</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">MC does not require a model P(s'|s,a) — learns from episodes</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">MC has lower variance than DP</label></div>
+</div>
+<div class="quiz-question" id="q2"><p>2. What is the difference between First-Visit and Every-Visit MC?</p>
+<div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">First-Visit is biased, Every-Visit is unbiased</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">First-Visit updates V(s) only on the first visit per episode; Every-Visit updates on all visits</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">They are identical in practice</label></div>
+</div>
+<div class="quiz-question" id="q3"><p>3. Why must MC methods wait until the end of the episode to update?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">Because the reward is only revealed at the end</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">Because $G_t$ requires all future rewards $R_{t+1}, R_{t+2}, \ldots$ which are only known after the episode ends</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">Because the policy changes during the episode</label></div>
+</div>
+<div class="quiz-question" id="q4"><p>4. What does the Visit Count heatmap show?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">The Q-table values</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">How many times each state was visited across all episodes — rarely visited states have unreliable V(s) estimates</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">The Bellman residual per state</label></div>
+</div>
+<div class="quiz-question" id="q5"><p>5. In On-Policy MC Control, why must &epsilon; stay > 0?</p>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">To prevent the Q-table from overflowing</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">To ensure all (s,a) pairs are visited infinitely often — required for convergence</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">To reduce variance</label></div>
+</div>
+<div class="quiz-question" id="q6"><p>6. What is the Importance Sampling ratio in Off-Policy MC?</p>
+<div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">$W = b(a|s) / \pi(a|s)$</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">$W = \pi(a|s) / b(a|s)$</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">$W = \pi(a|s) \cdot b(a|s)$</label></div>
+</div>
+<div class="quiz-question" id="q7"><p>7. Why does Off-Policy MC with IS have high variance?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">Because the behaviour policy is random</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">Because the IS ratio $W$ can grow exponentially with episode length</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">Because it uses Every-Visit instead of First-Visit</label></div>
+</div>
+<div class="quiz-question" id="q8"><p>8. With more episodes, what happens to MC estimates of V*(s)?</p>
+<div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">They diverge from the true value</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">They converge toward the DP solution (Ch04) by the Law of Large Numbers</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">They stay constant</label></div>
+</div>
+<div class="quiz-question" id="q9"><p>9. What is the convergence curve for MC measuring?</p>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">The number of episodes</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">Max $|V^{(k)} - V^{(k-1)}|$ — how much V(s) estimates change between episodes</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">The total reward per episode</label></div>
+</div>
+<div class="quiz-question" id="q10"><p>10. Which MC algorithm is the foundation for Q-Learning (Ch06)?</p>
+<div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">First-Visit MC</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">Off-Policy MC with Importance Sampling</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">On-Policy MC Control</label></div>
+</div>
+<button class="btn" onclick="checkQuiz()">&#x2705; Check results</button>
+<button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
+<div id="quiz-result"></div>
+<script>var ANSWERS={'q1':'b','q2':'b','q3':'b','q4':'b','q5':'b','q6':'b','q7':'b','q8':'b','q9':'b','q10':'b'};</script>
+
+</div>
+<div id="summary" class="tab-content">
+
+<h2>&#x1F4CB; Summary</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">MC algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">No model</div><div class="kpi-label">Model-free</div></div>
+<div class="kpi-card"><div class="kpi-val">Unbiased</div><div class="kpi-label">First-Visit property</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch06</div><div class="kpi-label">Next: TD Learning</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; MC advantages</strong><ul>
+<li>No model needed &mdash; learns from experience</li>
+<li>Unbiased estimates (First-Visit)</li>
+<li>Can learn from real historical data</li>
+<li>Foundation for modern deep RL</li>
+</ul></div>
+<div class="card red"><strong>&#x274C; MC limitations</strong><ul>
+<li>Must wait for episode end to update</li>
+<li>High variance &mdash; needs many episodes</li>
+<li>Slow for long episodes</li>
+<li>IS ratio can explode in off-policy setting</li>
+</ul></div>
+</div>
+<div class="card blue" style="margin-top:1rem"><strong>&#x27A1; Next: Chapter 06</strong> &mdash; Temporal Difference Learning. TD methods combine the best of MC (no model) and DP (bootstrapping) &mdash; updating after every step, not episode end.</div>
+</div>
+</div>
+<script>
+
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if(typeof renderMathInElement!=='undefined'){
+    renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  }
+}
+function checkQuiz(){
+  var score=0,total=Object.keys(ANSWERS).length;
+  for(var q in ANSWERS){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    document.querySelectorAll('#'+q+' .quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+    if(sel){
+      if(sel.value===ANSWERS[q]){score++;sel.closest('.quiz-option').classList.add('correct');}
+      else{sel.closest('.quiz-option').classList.add('wrong');document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');}
+    } else {
+      document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+    }
+  }
+  var pct=Math.round(score/total*100),res=document.getElementById('quiz-result');
+  res.style.display='block';
+  if(score>=9){res.className='pass';res.innerHTML='&#x1F389; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Congratulations! You can move on to the next chapter!';}
+  else{res.className='fail';res.innerHTML='&#x274C; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Pass threshold is 90% (9/10). Review the material and try again.';}
+}
+function resetQuiz(){
+  document.querySelectorAll('.quiz-option input').forEach(function(i){i.checked=false});
+  document.querySelectorAll('.quiz-option').forEach(function(o){o.classList.remove('correct','wrong')});
+  var res=document.getElementById('quiz-result');res.style.display='none';res.className='';
+}
+
+</script>
+</body>
+</html>
