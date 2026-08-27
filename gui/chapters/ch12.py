@@ -58,11 +58,12 @@ def render():
     st.title(tx["title"])
     st.caption(tx["subtitle"])
 
-
     _tab_main, _tab_handbook = st.tabs(["\U0001f52c Interactive Lab", "\U0001f4d8 Hands-On Guide EN"])
     with _tab_handbook:
         _render_handbook()
     with _tab_main:
+
+
 
         try: import rlvr_py
         except ImportError: st.error("Run: cd rlvr-py && maturin develop"); return
