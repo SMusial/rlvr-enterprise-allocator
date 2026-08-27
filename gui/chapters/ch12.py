@@ -54,93 +54,99 @@ def _render_handbook():
 def render():
     lang = "EN"
     tx = _tx(lang)
-    st.title(tx["title"])
-    st.caption(tx["subtitle"])
-    try: import rlvr_py
-    except ImportError: st.error("Run: cd rlvr-py && maturin develop"); return
 
-    st.sidebar.header(tx["settings"])
-    n_ep     = st.sidebar.slider(tx["episodes"],  50,3000,500,50)
-    gamma    = st.sidebar.slider(tx["gamma"],     0.5,0.999,0.95,0.005)
-    alpha    = st.sidebar.slider(tx["alpha"],     0.01,1.0,0.1,0.01)
-    eps      = st.sidebar.slider(tx["epsilon"],   0.0,1.0,0.3,0.05)
-    edec     = st.sidebar.slider(tx["edecay"],0.0,0.1,0.01,0.001,format="%.3f")
-    zero_sum = st.sidebar.checkbox(tx["zerosum"],value=False)
-    seed     = st.sidebar.number_input(tx["seed"],0,9999,42)
+    _tab_main, _tab_handbook = st.tabs(["\U0001f4ca Chapter", "\U0001f4d8 Hands-On Guide EN"])
+    with _tab_handbook:
+        _render_handbook()
+    with _tab_main:
 
-    if False: st.markdown(
-            "Nash Q: converges to Nash equilibrium - neither player can improve unilaterally.\n\n"
-            "Correlated Q: broader than Nash - agents coordinate via joint distribution.\n\n"
-            "Minimax Q: zero-sum game - player 0 maximises worst-case payoff.\n\n"
-            "Fictitious Play: best response to opponent empirical average strategy.\n\n"
-            "Watch Nash Gap chart: lower = closer to equilibrium."
-        )
+        st.title(tx["title"])
+        st.caption(tx["subtitle"])
+        try: import rlvr_py
+        except ImportError: st.error("Run: cd rlvr-py && maturin develop"); return
 
-    if st.button(tx["run"],type="primary"):
-        with st.spinner("Running..."):
-            res = rlvr_py.run_ch12_game_theory(
-                int(seed),int(n_ep),float(gamma),float(alpha),
-                float(eps),float(edec),bool(zero_sum))
-        st.session_state["ch12_result"] = res
+        st.sidebar.header(tx["settings"])
+        n_ep     = st.sidebar.slider(tx["episodes"],  50,3000,500,50)
+        gamma    = st.sidebar.slider(tx["gamma"],     0.5,0.999,0.95,0.005)
+        alpha    = st.sidebar.slider(tx["alpha"],     0.01,1.0,0.1,0.01)
+        eps      = st.sidebar.slider(tx["epsilon"],   0.0,1.0,0.3,0.05)
+        edec     = st.sidebar.slider(tx["edecay"],0.0,0.1,0.01,0.001,format="%.3f")
+        zero_sum = st.sidebar.checkbox(tx["zerosum"],value=False)
+        seed     = st.sidebar.number_input(tx["seed"],0,9999,42)
 
-    if "ch12_result" not in st.session_state:
-        st.info("Configure settings and click Run.")
-        return
+        if False: st.markdown(
+                "Nash Q: converges to Nash equilibrium - neither player can improve unilaterally.\n\n"
+                "Correlated Q: broader than Nash - agents coordinate via joint distribution.\n\n"
+                "Minimax Q: zero-sum game - player 0 maximises worst-case payoff.\n\n"
+                "Fictitious Play: best response to opponent empirical average strategy.\n\n"
+                "Watch Nash Gap chart: lower = closer to equilibrium."
+            )
 
-    res   = st.session_state["ch12_result"]
-    short = [f"S{i}" for i in range(res["n_states"])]
+        if st.button(tx["run"],type="primary"):
+            with st.spinner("Running..."):
+                res = rlvr_py.run_ch12_game_theory(
+                    int(seed),int(n_ep),float(gamma),float(alpha),
+                    float(eps),float(edec),bool(zero_sum))
+            st.session_state["ch12_result"] = res
 
-    cols = st.columns(4)
-    for i,k in enumerate(ALGOS):
-        lbl = tx["labels"] if tx else LABELS
-        avg = sum(res[k]["returns_curve"][-50:])/min(50,len(res[k]["returns_curve"]))
-        ng  = sum(res[k]["nash_gap_curve"][-50:])/max(1,min(50,len(res[k]["nash_gap_curve"])))
-        cols[i].metric(lbl[k],f"Avg:{avg:.2f}",f"Gap:{ng:.3f}")
+        if "ch12_result" not in st.session_state:
+            st.info("Configure settings and click Run.")
+            return
 
-    st.subheader(tx["ret"])
-    fig=go.Figure()
-    for k in ALGOS:
-        fig.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["returns_curve"]),
-            mode="lines",name=LABELS[k],line=dict(color=COLORS[k],width=2)))
-    fig.update_layout(height=280,margin=dict(l=40,r=20,t=20,b=40),
-        xaxis_title="Episode",yaxis_title="Return (MA-30)",legend=dict(orientation="h"))
-    st.plotly_chart(fig,width='stretch')
+        res   = st.session_state["ch12_result"]
+        short = [f"S{i}" for i in range(res["n_states"])]
 
-    c1,c2=st.columns(2)
-    with c1:
-        st.subheader(tx["gap"])
-        f2=go.Figure()
+        cols = st.columns(4)
+        for i,k in enumerate(ALGOS):
+            lbl = tx["labels"] if tx else LABELS
+            avg = sum(res[k]["returns_curve"][-50:])/min(50,len(res[k]["returns_curve"]))
+            ng  = sum(res[k]["nash_gap_curve"][-50:])/max(1,min(50,len(res[k]["nash_gap_curve"])))
+            cols[i].metric(lbl[k],f"Avg:{avg:.2f}",f"Gap:{ng:.3f}")
+
+        st.subheader(tx["ret"])
+        fig=go.Figure()
         for k in ALGOS:
-            f2.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["nash_gap_curve"]),
+            fig.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["returns_curve"]),
                 mode="lines",name=LABELS[k],line=dict(color=COLORS[k],width=2)))
-        f2.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),
-            xaxis_title="Episode",yaxis_title="Nash Gap",legend=dict(orientation="h"))
-        st.plotly_chart(f2,width='stretch')
-    with c2:
-        st.subheader(tx["val"])
-        f3=go.Figure()
-        for k in ALGOS:
-            f3.add_trace(go.Bar(x=short,y=res[k]["values"],name=LABELS[k],marker_color=COLORS[k],opacity=0.8))
-        f3.update_layout(height=260,barmode="group",margin=dict(l=40,r=20,t=20,b=40),legend=dict(orientation="h"))
-        st.plotly_chart(f3,width='stretch')
+        fig.update_layout(height=280,margin=dict(l=40,r=20,t=20,b=40),
+            xaxis_title="Episode",yaxis_title="Return (MA-30)",legend=dict(orientation="h"))
+        st.plotly_chart(fig,width='stretch')
 
-    st.subheader(tx["strat"])
-    col_s,state_s=st.columns(2)
-    with col_s: sel=st.selectbox("Algorithm",[LABELS[k] for k in ALGOS])
-    with state_s: sidx=st.slider("State",0,res["n_states"]-1,0)
-    ks={LABELS[k]:k for k in ALGOS}.get(sel,"nash_q")
-    ash=[f"A{i}" for i in range(res["n_actions"])]
-    sd=[[res[ks]["strategies"][p][sidx][a] for a in range(res["n_actions"])] for p in range(res["n_players"])]
-    f4=go.Figure(go.Heatmap(z=sd,x=ash,y=["P0","P1"],colorscale="Purples",
-        text=[[f"{sd[p][a]:.3f}" for a in range(res["n_actions"])] for p in range(res["n_players"])],
-        texttemplate="%{text}",zmin=0,zmax=1))
-    f4.update_layout(height=180,margin=dict(l=60,r=20,t=20,b=40))
-    st.plotly_chart(f4,width='stretch')
+        c1,c2=st.columns(2)
+        with c1:
+            st.subheader(tx["gap"])
+            f2=go.Figure()
+            for k in ALGOS:
+                f2.add_trace(go.Scatter(x=list(range(n_ep)),y=_ma(res[k]["nash_gap_curve"]),
+                    mode="lines",name=LABELS[k],line=dict(color=COLORS[k],width=2)))
+            f2.update_layout(height=260,margin=dict(l=40,r=20,t=20,b=40),
+                xaxis_title="Episode",yaxis_title="Nash Gap",legend=dict(orientation="h"))
+            st.plotly_chart(f2,width='stretch')
+        with c2:
+            st.subheader(tx["val"])
+            f3=go.Figure()
+            for k in ALGOS:
+                f3.add_trace(go.Bar(x=short,y=res[k]["values"],name=LABELS[k],marker_color=COLORS[k],opacity=0.8))
+            f3.update_layout(height=260,barmode="group",margin=dict(l=40,r=20,t=20,b=40),legend=dict(orientation="h"))
+            st.plotly_chart(f3,width='stretch')
 
-    st.subheader(tx["glass"])
-    _glass(res, tx)
-    st.subheader(tx["summary"])
-    _summary(res, tx)
+        st.subheader(tx["strat"])
+        col_s,state_s=st.columns(2)
+        with col_s: sel=st.selectbox("Algorithm",[LABELS[k] for k in ALGOS])
+        with state_s: sidx=st.slider("State",0,res["n_states"]-1,0)
+        ks={LABELS[k]:k for k in ALGOS}.get(sel,"nash_q")
+        ash=[f"A{i}" for i in range(res["n_actions"])]
+        sd=[[res[ks]["strategies"][p][sidx][a] for a in range(res["n_actions"])] for p in range(res["n_players"])]
+        f4=go.Figure(go.Heatmap(z=sd,x=ash,y=["P0","P1"],colorscale="Purples",
+            text=[[f"{sd[p][a]:.3f}" for a in range(res["n_actions"])] for p in range(res["n_players"])],
+            texttemplate="%{text}",zmin=0,zmax=1))
+        f4.update_layout(height=180,margin=dict(l=60,r=20,t=20,b=40))
+        st.plotly_chart(f4,width='stretch')
+
+        st.subheader(tx["glass"])
+        _glass(res, tx)
+        st.subheader(tx["summary"])
+        _summary(res, tx)
 
 def _glass(res, tx=None):
     opts={LABELS[k]:k for k in ALGOS}

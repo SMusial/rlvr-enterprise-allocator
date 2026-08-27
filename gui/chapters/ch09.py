@@ -53,60 +53,66 @@ def _render_handbook():
 
 def render():
     lang = "EN"; tx = _tx(lang)
-    st.title(tx["title"]); st.caption(tx["subtitle"])
-    try: import rlvr_py
-    except ImportError: st.error(tx["engine_missing"]); return
-    st.sidebar.header(tx["sidebar_title"])
-    n_ep  = st.sidebar.slider(tx["n_episodes"],    50, 3000, 500, 50)
-    gamma = st.sidebar.slider(tx["gamma"],         0.5, 0.999, 0.95, 0.005)
-    alpha = st.sidebar.slider(tx["alpha"],         0.001, 0.1, 0.01, 0.001, format="%.3f")
-    ab    = st.sidebar.slider(tx["alpha_baseline"],0.01, 0.5, 0.1, 0.01)
-    tau   = st.sidebar.slider(tx["temperature"],   0.1, 3.0, 1.0, 0.1)
-    seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-    if st.button(tx["run_btn"], type="primary"):
-        with st.spinner("Running..."):
-            res = rlvr_py.run_ch09_policy_gradient(int(seed), int(n_ep), float(gamma), float(alpha), float(ab), float(tau))
-        st.session_state["ch09_result"] = res
-    if "ch09_result" not in st.session_state:
-        st.info("Click ▶ to run."); return
-    res = st.session_state["ch09_result"]
-    short = [f"S{i}" for i in range(res["n_states"])]
-    cols = st.columns(4)
-    for i, k in enumerate(ALGOS):
-        avg = sum(res[k]["returns_curve"][-50:]) / min(50, len(res[k]["returns_curve"]))
-        aen = sum(res[k]["entropy_curve"][-50:]) / max(1, min(50, len(res[k]["entropy_curve"])))
-        cols[i].metric(tx["algo_labels"][k], f"Avg:{avg:.2f}", f"H:{aen:.2f}")
-    st.subheader(tx["returns_title"])
-    fig = go.Figure()
-    for k in ALGOS: fig.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["returns_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
-    fig.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Return (MA-30)", legend=dict(orientation="h"))
-    st.plotly_chart(fig, width='stretch'); st.caption(tx["returns_caption"])
-    c1, c2 = st.columns(2)
-    with c1:
-        st.subheader(tx["pg_loss_title"])
-        f2 = go.Figure()
-        for k in ALGOS: f2.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["pg_loss_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
-        f2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Mean |Δθ|", legend=dict(orientation="h"))
-        st.plotly_chart(f2, width='stretch'); st.caption(tx["pg_loss_caption"])
-    with c2:
-        st.subheader(tx["entropy_title"])
-        f3 = go.Figure()
-        for k in ALGOS: f3.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["entropy_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
-        f3.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="H(π(·|s))", legend=dict(orientation="h"))
-        st.plotly_chart(f3, width='stretch'); st.caption(tx["entropy_caption"])
-    st.subheader(tx["value_title"])
-    f4 = go.Figure()
-    for k in ALGOS: f4.add_trace(go.Bar(x=short, y=res[k]["values"], name=tx["algo_labels"][k], marker_color=COLORS[k], opacity=0.8))
-    f4.update_layout(height=260, barmode="group", margin=dict(l=40,r=20,t=20,b=40), legend=dict(orientation="h"))
-    st.plotly_chart(f4, width='stretch'); st.caption(tx["value_caption"])
-    st.subheader(tx["theta_title"])
-    sel  = st.selectbox("Algorithm", [tx["algo_labels"][k] for k in ALGOS])
-    ks   = {tx["algo_labels"][k]: k for k in ALGOS}.get(sel, "reinforce")
-    th   = res[ks]["theta"]; ash = [f"A{i}" for i in range(res["n_actions"])]
-    f5   = go.Figure(go.Heatmap(z=th, x=ash, y=short, colorscale="Purples", text=[[f"{th[s][a]:.3f}" for a in range(res["n_actions"])] for s in range(res["n_states"])], texttemplate="%{text}"))
-    f5.update_layout(height=280, margin=dict(l=60,r=20,t=20,b=40)); st.plotly_chart(f5, width='stretch')
-    st.subheader(tx["glass_title"]); _glass(res, tx)
-    st.subheader(tx["summary_title"]); _summary(res, tx)
+
+    _tab_main, _tab_handbook = st.tabs(["\U0001f4ca Chapter", "\U0001f4d8 Hands-On Guide EN"])
+    with _tab_handbook:
+        _render_handbook()
+    with _tab_main:
+
+        st.title(tx["title"]); st.caption(tx["subtitle"])
+        try: import rlvr_py
+        except ImportError: st.error(tx["engine_missing"]); return
+        st.sidebar.header(tx["sidebar_title"])
+        n_ep  = st.sidebar.slider(tx["n_episodes"],    50, 3000, 500, 50)
+        gamma = st.sidebar.slider(tx["gamma"],         0.5, 0.999, 0.95, 0.005)
+        alpha = st.sidebar.slider(tx["alpha"],         0.001, 0.1, 0.01, 0.001, format="%.3f")
+        ab    = st.sidebar.slider(tx["alpha_baseline"],0.01, 0.5, 0.1, 0.01)
+        tau   = st.sidebar.slider(tx["temperature"],   0.1, 3.0, 1.0, 0.1)
+        seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
+        if st.button(tx["run_btn"], type="primary"):
+            with st.spinner("Running..."):
+                res = rlvr_py.run_ch09_policy_gradient(int(seed), int(n_ep), float(gamma), float(alpha), float(ab), float(tau))
+            st.session_state["ch09_result"] = res
+        if "ch09_result" not in st.session_state:
+            st.info("Click ▶ to run."); return
+        res = st.session_state["ch09_result"]
+        short = [f"S{i}" for i in range(res["n_states"])]
+        cols = st.columns(4)
+        for i, k in enumerate(ALGOS):
+            avg = sum(res[k]["returns_curve"][-50:]) / min(50, len(res[k]["returns_curve"]))
+            aen = sum(res[k]["entropy_curve"][-50:]) / max(1, min(50, len(res[k]["entropy_curve"])))
+            cols[i].metric(tx["algo_labels"][k], f"Avg:{avg:.2f}", f"H:{aen:.2f}")
+        st.subheader(tx["returns_title"])
+        fig = go.Figure()
+        for k in ALGOS: fig.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["returns_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
+        fig.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Return (MA-30)", legend=dict(orientation="h"))
+        st.plotly_chart(fig, width='stretch'); st.caption(tx["returns_caption"])
+        c1, c2 = st.columns(2)
+        with c1:
+            st.subheader(tx["pg_loss_title"])
+            f2 = go.Figure()
+            for k in ALGOS: f2.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["pg_loss_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
+            f2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="Mean |Δθ|", legend=dict(orientation="h"))
+            st.plotly_chart(f2, width='stretch'); st.caption(tx["pg_loss_caption"])
+        with c2:
+            st.subheader(tx["entropy_title"])
+            f3 = go.Figure()
+            for k in ALGOS: f3.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["entropy_curve"]), mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
+            f3.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40), xaxis_title="Episode", yaxis_title="H(π(·|s))", legend=dict(orientation="h"))
+            st.plotly_chart(f3, width='stretch'); st.caption(tx["entropy_caption"])
+        st.subheader(tx["value_title"])
+        f4 = go.Figure()
+        for k in ALGOS: f4.add_trace(go.Bar(x=short, y=res[k]["values"], name=tx["algo_labels"][k], marker_color=COLORS[k], opacity=0.8))
+        f4.update_layout(height=260, barmode="group", margin=dict(l=40,r=20,t=20,b=40), legend=dict(orientation="h"))
+        st.plotly_chart(f4, width='stretch'); st.caption(tx["value_caption"])
+        st.subheader(tx["theta_title"])
+        sel  = st.selectbox("Algorithm", [tx["algo_labels"][k] for k in ALGOS])
+        ks   = {tx["algo_labels"][k]: k for k in ALGOS}.get(sel, "reinforce")
+        th   = res[ks]["theta"]; ash = [f"A{i}" for i in range(res["n_actions"])]
+        f5   = go.Figure(go.Heatmap(z=th, x=ash, y=short, colorscale="Purples", text=[[f"{th[s][a]:.3f}" for a in range(res["n_actions"])] for s in range(res["n_states"])], texttemplate="%{text}"))
+        f5.update_layout(height=280, margin=dict(l=60,r=20,t=20,b=40)); st.plotly_chart(f5, width='stretch')
+        st.subheader(tx["glass_title"]); _glass(res, tx)
+        st.subheader(tx["summary_title"]); _summary(res, tx)
 
 def _glass(res, tx):
     opts = {tx["algo_labels"][k]: k for k in ALGOS}
