@@ -236,6 +236,7 @@ def render():
     _render_policy_evolution(pi, state_names, action_names, tx)
     st.caption(tx["policy_evo_caption"])
 
+
     _tab_main, _tab_handbook = st.tabs(["\U0001f52c Interactive Lab", "\U0001f4d8 Hands-On Guide EN"])
     with _tab_handbook:
         _render_handbook()

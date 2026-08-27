@@ -297,6 +297,7 @@ def render():
     st.plotly_chart(fig5, width='stretch')
     st.caption(tx["qtable_caption"])
 
+
     _tab_main, _tab_handbook = st.tabs(["\U0001f52c Interactive Lab", "\U0001f4d8 Hands-On Guide EN"])
     with _tab_handbook:
         _render_handbook()

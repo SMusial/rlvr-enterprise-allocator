@@ -247,6 +247,7 @@ def render():
         _render_qvalues(results, arm_names, true_rates, tx)
         st.caption(tx["qval_caption"])
 
+
     _tab_main, _tab_handbook = st.tabs(["\U0001f52c Interactive Lab", "\U0001f4d8 Hands-On Guide EN"])
     with _tab_handbook:
         _render_handbook()
