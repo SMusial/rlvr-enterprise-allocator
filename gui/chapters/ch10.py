@@ -115,98 +115,99 @@ def render():
     lang = "EN"
     tx   = _tx(lang)
 
-    _tab_main, _tab_handbook = st.tabs(["\U0001f4ca Chapter", "\U0001f4d8 Hands-On Guide EN"])
+    st.title(tx["title"])
+    st.caption(tx["subtitle"])
+    try:
+        import rlvr_py
+    except ImportError:
+        st.error(tx["engine_missing"]); return
+
+    st.sidebar.header(tx["sidebar_title"])
+    n_ep  = st.sidebar.slider(tx["n_episodes"],         50, 3000, 500, 50)
+    gamma = st.sidebar.slider(tx["gamma"],              0.5, 0.999, 0.95, 0.005)
+    alpha = st.sidebar.slider(tx["alpha"],              0.01, 1.0, 0.1, 0.01)
+    eps   = st.sidebar.slider(tx["epsilon"],            0.0, 1.0, 0.3, 0.05)
+    edec  = st.sidebar.slider(tx["epsilon_decay"],      0.0, 0.1, 0.01, 0.001, format="%.3f")
+    kplan = st.sidebar.slider(tx["planning_steps"],     0, 50, 5, 1)
+    pthr  = st.sidebar.slider(tx["priority_threshold"], 0.001, 0.1, 0.01, 0.001, format="%.3f")
+    beta  = st.sidebar.slider(tx["uncertainty_beta"],   0.0, 5.0, 1.0, 0.1)
+    seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
+
+    if st.button(tx["run_btn"], type="primary"):
+        with st.spinner("Running Rust world-model engine..."):
+            res = rlvr_py.run_ch10_world_model(
+                int(seed), int(n_ep), float(gamma), float(alpha),
+                float(eps), float(edec), int(kplan),
+                float(pthr), float(beta),
+            )
+        st.session_state["ch10_result"] = res
+
+    if "ch10_result" not in st.session_state:
+        st.info("Configure settings and click Run."); return
+
+    res   = st.session_state["ch10_result"]
+    short = [f"S{i}" for i in range(res["n_states"])]
+
+    # KPI row
+    cols = st.columns(4)
+    for i, k in enumerate(ALGOS):
+        avg = sum(res[k]["returns_curve"][-50:]) / min(50, len(res[k]["returns_curve"]))
+        acc = sum(res[k]["model_accuracy"][-50:]) / max(1, min(50, len(res[k]["model_accuracy"])))
+        cols[i].metric(tx["algo_labels"][k], f"Avg:{avg:.2f}", f"Acc:{acc:.2f}")
+
+    # Returns
+    st.subheader(tx["returns_title"])
+    fig = go.Figure()
+    for k in ALGOS:
+        fig.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["returns_curve"]),
+            mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
+    fig.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40),
+                      xaxis_title="Episode", yaxis_title="Return (MA-30)",
+                      legend=dict(orientation="h"))
+    st.plotly_chart(fig, width='stretch')
+    st.caption(tx["returns_caption"])
+
+    # Model accuracy + Planning steps
+    c1, c2 = st.columns(2)
+    with c1:
+        st.subheader(tx["accuracy_title"])
+        f2 = go.Figure()
+        for k in ALGOS:
+            f2.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["model_accuracy"]),
+                mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
+        f2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
+                         xaxis_title="Episode", yaxis_title="Accuracy",
+                         legend=dict(orientation="h"))
+        st.plotly_chart(f2, width='stretch')
+        st.caption(tx["accuracy_caption"])
+    with c2:
+        st.subheader(tx["planning_title"])
+        f3 = go.Figure()
+        for k in ALGOS:
+            f3.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["planning_steps_used"]),
+                mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
+        f3.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
+                         xaxis_title="Episode", yaxis_title="Planning steps",
+                         legend=dict(orientation="h"))
+        st.plotly_chart(f3, width='stretch')
+        st.caption(tx["planning_caption"])
+
+    # Value function
+    st.subheader(tx["value_title"])
+    f4 = go.Figure()
+    for k in ALGOS:
+        f4.add_trace(go.Bar(x=short, y=res[k]["values"],
+            name=tx["algo_labels"][k], marker_color=COLORS[k], opacity=0.8))
+    f4.update_layout(height=260, barmode="group",
+                     margin=dict(l=40,r=20,t=20,b=40), legend=dict(orientation="h"))
+    st.plotly_chart(f4, width='stretch')
+    st.caption(tx["value_caption"])
+
+    _tab_main, _tab_handbook = st.tabs(["\U0001f52c Interactive Lab", "\U0001f4d8 Hands-On Guide EN"])
     with _tab_handbook:
         _render_handbook()
     with _tab_main:
 
-        st.title(tx["title"])
-        st.caption(tx["subtitle"])
-        try:
-            import rlvr_py
-        except ImportError:
-            st.error(tx["engine_missing"]); return
-
-        st.sidebar.header(tx["sidebar_title"])
-        n_ep  = st.sidebar.slider(tx["n_episodes"],         50, 3000, 500, 50)
-        gamma = st.sidebar.slider(tx["gamma"],              0.5, 0.999, 0.95, 0.005)
-        alpha = st.sidebar.slider(tx["alpha"],              0.01, 1.0, 0.1, 0.01)
-        eps   = st.sidebar.slider(tx["epsilon"],            0.0, 1.0, 0.3, 0.05)
-        edec  = st.sidebar.slider(tx["epsilon_decay"],      0.0, 0.1, 0.01, 0.001, format="%.3f")
-        kplan = st.sidebar.slider(tx["planning_steps"],     0, 50, 5, 1)
-        pthr  = st.sidebar.slider(tx["priority_threshold"], 0.001, 0.1, 0.01, 0.001, format="%.3f")
-        beta  = st.sidebar.slider(tx["uncertainty_beta"],   0.0, 5.0, 1.0, 0.1)
-        seed  = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-
-        if st.button(tx["run_btn"], type="primary"):
-            with st.spinner("Running Rust world-model engine..."):
-                res = rlvr_py.run_ch10_world_model(
-                    int(seed), int(n_ep), float(gamma), float(alpha),
-                    float(eps), float(edec), int(kplan),
-                    float(pthr), float(beta),
-                )
-            st.session_state["ch10_result"] = res
-
-        if "ch10_result" not in st.session_state:
-            st.info("Configure settings and click Run."); return
-
-        res   = st.session_state["ch10_result"]
-        short = [f"S{i}" for i in range(res["n_states"])]
-
-        # KPI row
-        cols = st.columns(4)
-        for i, k in enumerate(ALGOS):
-            avg = sum(res[k]["returns_curve"][-50:]) / min(50, len(res[k]["returns_curve"]))
-            acc = sum(res[k]["model_accuracy"][-50:]) / max(1, min(50, len(res[k]["model_accuracy"])))
-            cols[i].metric(tx["algo_labels"][k], f"Avg:{avg:.2f}", f"Acc:{acc:.2f}")
-
-        # Returns
-        st.subheader(tx["returns_title"])
-        fig = go.Figure()
-        for k in ALGOS:
-            fig.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["returns_curve"]),
-                mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
-        fig.update_layout(height=280, margin=dict(l=40,r=20,t=20,b=40),
-                          xaxis_title="Episode", yaxis_title="Return (MA-30)",
-                          legend=dict(orientation="h"))
-        st.plotly_chart(fig, width='stretch')
-        st.caption(tx["returns_caption"])
-
-        # Model accuracy + Planning steps
-        c1, c2 = st.columns(2)
-        with c1:
-            st.subheader(tx["accuracy_title"])
-            f2 = go.Figure()
-            for k in ALGOS:
-                f2.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["model_accuracy"]),
-                    mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
-            f2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
-                             xaxis_title="Episode", yaxis_title="Accuracy",
-                             legend=dict(orientation="h"))
-            st.plotly_chart(f2, width='stretch')
-            st.caption(tx["accuracy_caption"])
-        with c2:
-            st.subheader(tx["planning_title"])
-            f3 = go.Figure()
-            for k in ALGOS:
-                f3.add_trace(go.Scatter(x=list(range(n_ep)), y=_ma(res[k]["planning_steps_used"]),
-                    mode="lines", name=tx["algo_labels"][k], line=dict(color=COLORS[k], width=2)))
-            f3.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
-                             xaxis_title="Episode", yaxis_title="Planning steps",
-                             legend=dict(orientation="h"))
-            st.plotly_chart(f3, width='stretch')
-            st.caption(tx["planning_caption"])
-
-        # Value function
-        st.subheader(tx["value_title"])
-        f4 = go.Figure()
-        for k in ALGOS:
-            f4.add_trace(go.Bar(x=short, y=res[k]["values"],
-                name=tx["algo_labels"][k], marker_color=COLORS[k], opacity=0.8))
-        f4.update_layout(height=260, barmode="group",
-                         margin=dict(l=40,r=20,t=20,b=40), legend=dict(orientation="h"))
-        st.plotly_chart(f4, width='stretch')
-        st.caption(tx["value_caption"])
 
         # Q-table heatmap
         st.subheader(tx["qtable_title"])

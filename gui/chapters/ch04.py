@@ -164,82 +164,83 @@ def render():
     tx = _tx(lang)
 
 
-    _tab_main, _tab_handbook = st.tabs(["\U0001f4ca Chapter", "\U0001f4d8 Hands-On Guide EN"])
+    st.title(tx["title"])
+    st.caption(tx["subtitle"])
+
+    try:
+        import rlvr_py
+    except ImportError:
+        st.error(tx["engine_missing"])
+        return
+
+    st.sidebar.header(tx["sidebar_title"])
+    gamma = st.sidebar.slider(tx["gamma"], 0.50, 0.999, 0.95, 0.005)
+    theta = st.sidebar.select_slider(
+        tx["theta"],
+        options=[1e-3, 1e-4, 1e-5, 1e-6, 1e-7],
+        value=1e-6,
+        format_func=lambda x: f"{x:.0e}",
+    )
+    seed = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
+
+    run = st.button(tx["run_btn"], type="primary")
+
+    if run:
+        with st.spinner("Running Rust DP engine..."):
+            result = rlvr_py.run_ch04_dp(int(seed), float(gamma), float(theta))
+        st.session_state["ch04_result"] = result
+
+    if "ch04_result" not in st.session_state:
+        st.info("Configure settings and click **▶ Run All Three DP Algorithms**.")
+        return
+
+    result      = st.session_state["ch04_result"]
+    pi          = result["pi"]
+    vi          = result["vi"]
+    av          = result["async_vi"]
+    state_names = result["state_names"]
+    action_names = result["action_names"]
+    residuals   = result["residuals"]
+
+    policy_match = pi["policy"] == vi["policy"]
+
+    # KPI row
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric(tx["kpi_pi_iters"],    str(pi["pi_iterations"]))
+    c2.metric(tx["kpi_vi_iters"],    str(vi["iterations"]))
+    c3.metric(tx["kpi_async_iters"], str(av["iterations"]))
+    c4.metric(tx["kpi_policy_match"], "✅ Yes" if policy_match else "❌ No")
+
+    # Convergence comparison
+    st.subheader(tx["conv_title"])
+    _render_convergence(pi, vi, av, tx)
+    st.caption(tx["conv_caption"])
+
+    # Value function comparison
+    st.subheader(tx["value_title"])
+    _render_value_comparison(pi, vi, av, state_names, tx)
+    st.caption(tx["value_caption"])
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader(tx["policy_title"])
+        _render_policy_comparison(pi, vi, state_names, action_names, tx)
+        st.caption(tx["policy_caption"])
+    with col2:
+        st.subheader(tx["residual_title"])
+        _render_residuals(residuals, state_names, tx)
+        st.caption(tx["residual_caption"])
+
+    # Policy evolution
+    st.subheader(tx["policy_evo_title"])
+    _render_policy_evolution(pi, state_names, action_names, tx)
+    st.caption(tx["policy_evo_caption"])
+
+    _tab_main, _tab_handbook = st.tabs(["\U0001f52c Interactive Lab", "\U0001f4d8 Hands-On Guide EN"])
     with _tab_handbook:
         _render_handbook()
     with _tab_main:
 
-        st.title(tx["title"])
-        st.caption(tx["subtitle"])
-
-        try:
-            import rlvr_py
-        except ImportError:
-            st.error(tx["engine_missing"])
-            return
-
-        st.sidebar.header(tx["sidebar_title"])
-        gamma = st.sidebar.slider(tx["gamma"], 0.50, 0.999, 0.95, 0.005)
-        theta = st.sidebar.select_slider(
-            tx["theta"],
-            options=[1e-3, 1e-4, 1e-5, 1e-6, 1e-7],
-            value=1e-6,
-            format_func=lambda x: f"{x:.0e}",
-        )
-        seed = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-
-        run = st.button(tx["run_btn"], type="primary")
-
-        if run:
-            with st.spinner("Running Rust DP engine..."):
-                result = rlvr_py.run_ch04_dp(int(seed), float(gamma), float(theta))
-            st.session_state["ch04_result"] = result
-
-        if "ch04_result" not in st.session_state:
-            st.info("Configure settings and click **▶ Run All Three DP Algorithms**.")
-            return
-
-        result      = st.session_state["ch04_result"]
-        pi          = result["pi"]
-        vi          = result["vi"]
-        av          = result["async_vi"]
-        state_names = result["state_names"]
-        action_names = result["action_names"]
-        residuals   = result["residuals"]
-
-        policy_match = pi["policy"] == vi["policy"]
-
-        # KPI row
-        c1, c2, c3, c4 = st.columns(4)
-        c1.metric(tx["kpi_pi_iters"],    str(pi["pi_iterations"]))
-        c2.metric(tx["kpi_vi_iters"],    str(vi["iterations"]))
-        c3.metric(tx["kpi_async_iters"], str(av["iterations"]))
-        c4.metric(tx["kpi_policy_match"], "✅ Yes" if policy_match else "❌ No")
-
-        # Convergence comparison
-        st.subheader(tx["conv_title"])
-        _render_convergence(pi, vi, av, tx)
-        st.caption(tx["conv_caption"])
-
-        # Value function comparison
-        st.subheader(tx["value_title"])
-        _render_value_comparison(pi, vi, av, state_names, tx)
-        st.caption(tx["value_caption"])
-
-        col1, col2 = st.columns(2)
-        with col1:
-            st.subheader(tx["policy_title"])
-            _render_policy_comparison(pi, vi, state_names, action_names, tx)
-            st.caption(tx["policy_caption"])
-        with col2:
-            st.subheader(tx["residual_title"])
-            _render_residuals(residuals, state_names, tx)
-            st.caption(tx["residual_caption"])
-
-        # Policy evolution
-        st.subheader(tx["policy_evo_title"])
-        _render_policy_evolution(pi, state_names, action_names, tx)
-        st.caption(tx["policy_evo_caption"])
 
         # Glass-Box
         st.subheader(tx["glass_title"])
@@ -252,9 +253,9 @@ def render():
         # Theory
 
 
-    # ---------------------------------------------------------------------------
-    # Convergence comparison
-    # ---------------------------------------------------------------------------
+        # ---------------------------------------------------------------------------
+        # Convergence comparison
+        # ---------------------------------------------------------------------------
 def _render_convergence(pi, vi, av, tx):
     fig = go.Figure()
     for key, label, data in [

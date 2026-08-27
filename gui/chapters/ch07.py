@@ -165,130 +165,131 @@ def render():
     lang = "EN"
     tx = _tx(lang)
 
-    _tab_main, _tab_handbook = st.tabs(["\U0001f4ca Chapter", "\U0001f4d8 Hands-On Guide EN"])
+    st.title(tx["title"])
+    st.caption(tx["subtitle"])
+    try:
+        import rlvr_py
+    except ImportError:
+        st.error(tx["engine_missing"])
+        return
+
+    st.sidebar.header(tx["sidebar_title"])
+    n_episodes     = st.sidebar.slider(tx["n_episodes"],     50, 3000, 500, 50)
+    gamma          = st.sidebar.slider(tx["gamma"],          0.5, 0.999, 0.95, 0.005)
+    alpha          = st.sidebar.slider(tx["alpha"],          0.01, 1.0, 0.1, 0.01)
+    epsilon        = st.sidebar.slider(tx["epsilon"],        0.0, 1.0, 0.3, 0.05)
+    epsilon_decay  = st.sidebar.slider(tx["epsilon_decay"],  0.0, 0.1, 0.01, 0.001, format="%.3f")
+    n_step         = st.sidebar.slider(tx["n_step"],         1, 20, 3, 1)
+    planning_steps = st.sidebar.slider(tx["planning_steps"], 0, 50, 5, 1)
+    kappa          = st.sidebar.slider(tx["kappa"],          0.0, 0.01, 0.001, 0.0001, format="%.4f")
+    seed           = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
+
+    if st.button(tx["run_btn"], type="primary"):
+        with st.spinner("Running Rust n-step/Dyna engine..."):
+            result = rlvr_py.run_ch07_nstep(
+                int(seed), int(n_episodes), float(gamma), float(alpha),
+                float(epsilon), float(epsilon_decay),
+                int(n_step), int(planning_steps), float(kappa)
+            )
+        st.session_state["ch07_result"] = result
+
+    if "ch07_result" not in st.session_state:
+        st.info("Configure settings and click **▶ Run All Four Algorithms**.")
+        return
+
+    result       = st.session_state["ch07_result"]
+    state_names  = result["state_names"]
+    action_names = result["action_names"]
+    algos        = ["nstep_td", "nstep_sarsa", "dyna_q", "dyna_q_plus"]
+
+    # KPI
+    cols = st.columns(4)
+    for i, key in enumerate(algos):
+        r = result[key]
+        avg = sum(r["returns_curve"][-50:]) / min(50, len(r["returns_curve"]))
+        extra = f"Model: {r['model_size']}" if r["model_size"] > 0 else f"Steps: {r['total_steps']:,}"
+        cols[i].metric(tx["algo_labels"][key], f"Avg: {avg:.2f}", extra)
+
+    # Returns
+    st.subheader(tx["returns_title"])
+    fig = go.Figure()
+    for key in algos:
+        ma = _moving_avg(result[key]["returns_curve"], 30)
+        fig.add_trace(go.Scatter(x=list(range(len(ma))), y=ma,
+            mode="lines", name=tx["algo_labels"][key],
+            line=dict(color=COLORS[key], width=2)))
+    fig.update_layout(height=300, margin=dict(l=40,r=20,t=20,b=40),
+                      xaxis_title="Episode", yaxis_title="Return (MA-30)",
+                      legend=dict(orientation="h"))
+    st.plotly_chart(fig, width='stretch')
+    st.caption(tx["returns_caption"])
+
+    # TD Error
+    st.subheader(tx["td_error_title"])
+    fig2 = go.Figure()
+    for key in ["nstep_sarsa", "dyna_q", "dyna_q_plus"]:
+        ma = _moving_avg(result[key]["td_error_curve"], 30)
+        fig2.add_trace(go.Scatter(x=list(range(len(ma))), y=ma,
+            mode="lines", name=tx["algo_labels"][key],
+            line=dict(color=COLORS[key], width=2)))
+    fig2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
+                       xaxis_title="Episode", yaxis_title="Avg TD Error",
+                       legend=dict(orientation="h"))
+    st.plotly_chart(fig2, width='stretch')
+    st.caption(tx["td_error_caption"])
+
+    # Value function
+    st.subheader(tx["value_title"])
+    short = [f"S{i}" for i in range(result["n_states"])]
+    fig3 = go.Figure()
+    for key in algos:
+        fig3.add_trace(go.Bar(x=short, y=result[key]["values"],
+            name=tx["algo_labels"][key], marker_color=COLORS[key], opacity=0.8))
+    fig3.update_layout(height=280, barmode="group",
+                       margin=dict(l=40,r=20,t=20,b=40),
+                       legend=dict(orientation="h"))
+    st.plotly_chart(fig3, width='stretch')
+    st.caption(tx["value_caption"])
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader(tx["model_title"])
+        model_sizes = {tx["algo_labels"][k]: result[k]["model_size"] for k in ["dyna_q","dyna_q_plus"]}
+        max_model = result["n_states"] * result["n_actions"]
+        fig4 = go.Figure()
+        for label, size in model_sizes.items():
+            fig4.add_trace(go.Bar(x=[label], y=[size],
+                marker_color="#0082F0" if "Plus" not in label and "+" not in label else "#0FC373"))
+        fig4.add_hline(y=max_model, line_dash="dash", line_color="grey",
+                       annotation_text=f"Max={max_model}")
+        fig4.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
+                           yaxis_title="(s,a) pairs learned")
+        st.plotly_chart(fig4, width='stretch')
+        st.caption(tx["model_caption"])
+
+    with col2:
+        st.subheader(tx["qtable_title"])
+        algo_sel = st.selectbox("Algorithm",
+            [tx["algo_labels"][k] for k in ["nstep_sarsa","dyna_q","dyna_q_plus"]])
+        key_map = {tx["algo_labels"][k]: k for k in ["nstep_sarsa","dyna_q","dyna_q_plus"]}
+        key_sel = key_map.get(algo_sel, "dyna_q")
+        qt = result[key_sel]["q_table"]
+        action_short = [f"A{i}" for i in range(result["n_actions"])]
+        fig5 = go.Figure(go.Heatmap(
+            z=qt, x=action_short, y=short, colorscale="Blues",
+            text=[[f"{qt[s][a]:.2f}" for a in range(result["n_actions"])]
+                  for s in range(result["n_states"])],
+            texttemplate="%{text}",
+        ))
+        fig5.update_layout(height=300, margin=dict(l=60,r=20,t=20,b=40))
+        st.plotly_chart(fig5, width='stretch')
+        st.caption(tx["qtable_caption"])
+
+    _tab_main, _tab_handbook = st.tabs(["\U0001f52c Interactive Lab", "\U0001f4d8 Hands-On Guide EN"])
     with _tab_handbook:
         _render_handbook()
     with _tab_main:
 
-        st.title(tx["title"])
-        st.caption(tx["subtitle"])
-        try:
-            import rlvr_py
-        except ImportError:
-            st.error(tx["engine_missing"])
-            return
-
-        st.sidebar.header(tx["sidebar_title"])
-        n_episodes     = st.sidebar.slider(tx["n_episodes"],     50, 3000, 500, 50)
-        gamma          = st.sidebar.slider(tx["gamma"],          0.5, 0.999, 0.95, 0.005)
-        alpha          = st.sidebar.slider(tx["alpha"],          0.01, 1.0, 0.1, 0.01)
-        epsilon        = st.sidebar.slider(tx["epsilon"],        0.0, 1.0, 0.3, 0.05)
-        epsilon_decay  = st.sidebar.slider(tx["epsilon_decay"],  0.0, 0.1, 0.01, 0.001, format="%.3f")
-        n_step         = st.sidebar.slider(tx["n_step"],         1, 20, 3, 1)
-        planning_steps = st.sidebar.slider(tx["planning_steps"], 0, 50, 5, 1)
-        kappa          = st.sidebar.slider(tx["kappa"],          0.0, 0.01, 0.001, 0.0001, format="%.4f")
-        seed           = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-
-        if st.button(tx["run_btn"], type="primary"):
-            with st.spinner("Running Rust n-step/Dyna engine..."):
-                result = rlvr_py.run_ch07_nstep(
-                    int(seed), int(n_episodes), float(gamma), float(alpha),
-                    float(epsilon), float(epsilon_decay),
-                    int(n_step), int(planning_steps), float(kappa)
-                )
-            st.session_state["ch07_result"] = result
-
-        if "ch07_result" not in st.session_state:
-            st.info("Configure settings and click **▶ Run All Four Algorithms**.")
-            return
-
-        result       = st.session_state["ch07_result"]
-        state_names  = result["state_names"]
-        action_names = result["action_names"]
-        algos        = ["nstep_td", "nstep_sarsa", "dyna_q", "dyna_q_plus"]
-
-        # KPI
-        cols = st.columns(4)
-        for i, key in enumerate(algos):
-            r = result[key]
-            avg = sum(r["returns_curve"][-50:]) / min(50, len(r["returns_curve"]))
-            extra = f"Model: {r['model_size']}" if r["model_size"] > 0 else f"Steps: {r['total_steps']:,}"
-            cols[i].metric(tx["algo_labels"][key], f"Avg: {avg:.2f}", extra)
-
-        # Returns
-        st.subheader(tx["returns_title"])
-        fig = go.Figure()
-        for key in algos:
-            ma = _moving_avg(result[key]["returns_curve"], 30)
-            fig.add_trace(go.Scatter(x=list(range(len(ma))), y=ma,
-                mode="lines", name=tx["algo_labels"][key],
-                line=dict(color=COLORS[key], width=2)))
-        fig.update_layout(height=300, margin=dict(l=40,r=20,t=20,b=40),
-                          xaxis_title="Episode", yaxis_title="Return (MA-30)",
-                          legend=dict(orientation="h"))
-        st.plotly_chart(fig, width='stretch')
-        st.caption(tx["returns_caption"])
-
-        # TD Error
-        st.subheader(tx["td_error_title"])
-        fig2 = go.Figure()
-        for key in ["nstep_sarsa", "dyna_q", "dyna_q_plus"]:
-            ma = _moving_avg(result[key]["td_error_curve"], 30)
-            fig2.add_trace(go.Scatter(x=list(range(len(ma))), y=ma,
-                mode="lines", name=tx["algo_labels"][key],
-                line=dict(color=COLORS[key], width=2)))
-        fig2.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
-                           xaxis_title="Episode", yaxis_title="Avg TD Error",
-                           legend=dict(orientation="h"))
-        st.plotly_chart(fig2, width='stretch')
-        st.caption(tx["td_error_caption"])
-
-        # Value function
-        st.subheader(tx["value_title"])
-        short = [f"S{i}" for i in range(result["n_states"])]
-        fig3 = go.Figure()
-        for key in algos:
-            fig3.add_trace(go.Bar(x=short, y=result[key]["values"],
-                name=tx["algo_labels"][key], marker_color=COLORS[key], opacity=0.8))
-        fig3.update_layout(height=280, barmode="group",
-                           margin=dict(l=40,r=20,t=20,b=40),
-                           legend=dict(orientation="h"))
-        st.plotly_chart(fig3, width='stretch')
-        st.caption(tx["value_caption"])
-
-        col1, col2 = st.columns(2)
-        with col1:
-            st.subheader(tx["model_title"])
-            model_sizes = {tx["algo_labels"][k]: result[k]["model_size"] for k in ["dyna_q","dyna_q_plus"]}
-            max_model = result["n_states"] * result["n_actions"]
-            fig4 = go.Figure()
-            for label, size in model_sizes.items():
-                fig4.add_trace(go.Bar(x=[label], y=[size],
-                    marker_color="#0082F0" if "Plus" not in label and "+" not in label else "#0FC373"))
-            fig4.add_hline(y=max_model, line_dash="dash", line_color="grey",
-                           annotation_text=f"Max={max_model}")
-            fig4.update_layout(height=260, margin=dict(l=40,r=20,t=20,b=40),
-                               yaxis_title="(s,a) pairs learned")
-            st.plotly_chart(fig4, width='stretch')
-            st.caption(tx["model_caption"])
-
-        with col2:
-            st.subheader(tx["qtable_title"])
-            algo_sel = st.selectbox("Algorithm",
-                [tx["algo_labels"][k] for k in ["nstep_sarsa","dyna_q","dyna_q_plus"]])
-            key_map = {tx["algo_labels"][k]: k for k in ["nstep_sarsa","dyna_q","dyna_q_plus"]}
-            key_sel = key_map.get(algo_sel, "dyna_q")
-            qt = result[key_sel]["q_table"]
-            action_short = [f"A{i}" for i in range(result["n_actions"])]
-            fig5 = go.Figure(go.Heatmap(
-                z=qt, x=action_short, y=short, colorscale="Blues",
-                text=[[f"{qt[s][a]:.2f}" for a in range(result["n_actions"])]
-                      for s in range(result["n_states"])],
-                texttemplate="%{text}",
-            ))
-            fig5.update_layout(height=300, margin=dict(l=60,r=20,t=20,b=40))
-            st.plotly_chart(fig5, width='stretch')
-            st.caption(tx["qtable_caption"])
 
         # Glass-Box
         st.subheader(tx["glass_title"])

@@ -181,76 +181,77 @@ def render():
     tx = _tx(lang)
 
 
-    _tab_main, _tab_handbook = st.tabs(["\U0001f4ca Chapter", "\U0001f4d8 Hands-On Guide EN"])
+    st.title(tx["title"])
+    st.caption(tx["subtitle"])
+
+    try:
+        import rlvr_py
+    except ImportError:
+        st.error(tx["engine_missing"])
+        return
+
+    st.sidebar.header(tx["sidebar_title"])
+    n_steps       = st.sidebar.slider(tx["n_steps"],       50, 2000, 500, 50)
+    epsilon       = st.sidebar.slider(tx["epsilon"],       0.0, 1.0, 0.3, 0.05)
+    epsilon_decay = st.sidebar.slider(tx["epsilon_decay"], 0.0, 0.1, 0.01, 0.001,
+                                      format="%.3f")
+    ucb_c         = st.sidebar.slider(tx["ucb_c"],         0.1, 5.0, 2.0, 0.1)
+    seed          = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
+
+    run = st.button(tx["run_btn"], type="primary")
+
+    if run:
+        with st.spinner("Running Rust bandit engine..."):
+            raw = rlvr_py.run_ch03_bandits(
+                int(seed), int(n_steps),
+                float(epsilon), float(epsilon_decay), float(ucb_c)
+            )
+        st.session_state["ch03_raw"] = raw
+
+    if "ch03_raw" not in st.session_state:
+        st.info("Configure settings and click **▶ Run All Three Algorithms**.")
+        return
+
+    raw       = st.session_state["ch03_raw"]
+    results   = raw["results"]
+    arm_names = raw["arm_names"]
+    true_rates = raw["true_rates"]
+
+    # KPI row
+    cols = st.columns(3)
+    for i, res in enumerate(results):
+        algo = res["algorithm"]
+        label = tx["algo_labels"][algo]
+        cols[i].metric(
+            label,
+            f"Regret: {res['total_regret']:.1f}",
+            f"Reward: {res['total_reward']:.0f}",
+        )
+
+    # Cumulative regret
+    st.subheader(tx["regret_title"])
+    _render_regret(results, tx, arm_names)
+    st.caption(tx["regret_caption"])
+
+    # Cumulative reward
+    st.subheader(tx["reward_title"])
+    _render_reward(results, tx)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader(tx["pulls_title"])
+        _render_pulls(results, arm_names, true_rates, tx)
+        st.caption(tx["pulls_caption"])
+    with col2:
+        st.subheader(tx["qval_title"])
+        _render_qvalues(results, arm_names, true_rates, tx)
+        st.caption(tx["qval_caption"])
+
+    _tab_main, _tab_handbook = st.tabs(["\U0001f52c Interactive Lab", "\U0001f4d8 Hands-On Guide EN"])
     with _tab_handbook:
         _render_handbook()
     with _tab_main:
 
-        st.title(tx["title"])
-        st.caption(tx["subtitle"])
-
-        try:
-            import rlvr_py
-        except ImportError:
-            st.error(tx["engine_missing"])
-            return
-
-        st.sidebar.header(tx["sidebar_title"])
-        n_steps       = st.sidebar.slider(tx["n_steps"],       50, 2000, 500, 50)
-        epsilon       = st.sidebar.slider(tx["epsilon"],       0.0, 1.0, 0.3, 0.05)
-        epsilon_decay = st.sidebar.slider(tx["epsilon_decay"], 0.0, 0.1, 0.01, 0.001,
-                                          format="%.3f")
-        ucb_c         = st.sidebar.slider(tx["ucb_c"],         0.1, 5.0, 2.0, 0.1)
-        seed          = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
-
-        run = st.button(tx["run_btn"], type="primary")
-
-        if run:
-            with st.spinner("Running Rust bandit engine..."):
-                raw = rlvr_py.run_ch03_bandits(
-                    int(seed), int(n_steps),
-                    float(epsilon), float(epsilon_decay), float(ucb_c)
-                )
-            st.session_state["ch03_raw"] = raw
-
-        if "ch03_raw" not in st.session_state:
-            st.info("Configure settings and click **▶ Run All Three Algorithms**.")
-            return
-
-        raw       = st.session_state["ch03_raw"]
-        results   = raw["results"]
-        arm_names = raw["arm_names"]
-        true_rates = raw["true_rates"]
-
-        # KPI row
-        cols = st.columns(3)
-        for i, res in enumerate(results):
-            algo = res["algorithm"]
-            label = tx["algo_labels"][algo]
-            cols[i].metric(
-                label,
-                f"Regret: {res['total_regret']:.1f}",
-                f"Reward: {res['total_reward']:.0f}",
-            )
-
-        # Cumulative regret
-        st.subheader(tx["regret_title"])
-        _render_regret(results, tx, arm_names)
-        st.caption(tx["regret_caption"])
-
-        # Cumulative reward
-        st.subheader(tx["reward_title"])
-        _render_reward(results, tx)
-
-        col1, col2 = st.columns(2)
-        with col1:
-            st.subheader(tx["pulls_title"])
-            _render_pulls(results, arm_names, true_rates, tx)
-            st.caption(tx["pulls_caption"])
-        with col2:
-            st.subheader(tx["qval_title"])
-            _render_qvalues(results, arm_names, true_rates, tx)
-            st.caption(tx["qval_caption"])
 
         # Glass-Box
         st.subheader(tx["glass_title"])
@@ -263,9 +264,9 @@ def render():
         # Theory
 
 
-    # ---------------------------------------------------------------------------
-    # Cumulative regret chart
-    # ---------------------------------------------------------------------------
+        # ---------------------------------------------------------------------------
+        # Cumulative regret chart
+        # ---------------------------------------------------------------------------
 def _render_regret(results, tx, arm_names):
     fig = go.Figure()
     for res in results:
