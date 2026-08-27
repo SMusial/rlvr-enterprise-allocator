@@ -54,7 +54,6 @@ def _render_handbook():
 def render():
     lang = "EN"
     tx = _tx(lang)
-
     st.title(tx["title"])
     st.caption(tx["subtitle"])
 
@@ -62,8 +61,6 @@ def render():
     with _tab_handbook:
         _render_handbook()
     with _tab_main:
-
-
 
         try: import rlvr_py
         except ImportError: st.error("Run: cd rlvr-py && maturin develop"); return
@@ -152,29 +149,29 @@ def render():
         _summary(res, tx)
 
 def _glass(res, tx=None):
-    opts={LABELS[k]:k for k in ALGOS}
-    sel=st.selectbox("Algorithm",list(opts.keys()),key="gb12")
-    k=opts[sel]; r=res[k]
-    ep=st.slider("Episode",0,max(len(r["returns_curve"])-1,0),max(len(r["returns_curve"])-1,0),key="gb12ep")
-    c1,c2,c3=st.columns(3)
-    c1.metric("Joint return",f"{r['returns_curve'][ep]:.3f}")
-    c2.metric("Nash gap",f"{r['nash_gap_curve'][ep]:.4f}")
-    c3.metric("Exploitability",f"{r['exploitability'][ep]:.4f}")
-    if k=="nash_q":
-        st.latex(r"Q_i(s,a_0,a_1) \leftarrow Q_i + \alpha[r_i + \gamma V_i^{Nash}(s') - Q_i(s,a_0,a_1)]")
-    elif k=="correlated_q":
-        st.latex(r"\sigma(a_0,a_1|s) \text{ updated via regret matching}")
-    elif k=="minimax_q":
-        st.latex(r"V_0^{mm}(s) = \max_{\pi_0}\min_{\pi_1}\sum_{a_0,a_1}\pi_0(a_0)\pi_1(a_1)Q_0(s,a_0,a_1)")
-    else:
-        st.latex(r"\hat{\pi}_j(a|s) = N_j(s,a)/\sum_{a'}N_j(s,a')")
+        opts={LABELS[k]:k for k in ALGOS}
+        sel=st.selectbox("Algorithm",list(opts.keys()),key="gb12")
+        k=opts[sel]; r=res[k]
+        ep=st.slider("Episode",0,max(len(r["returns_curve"])-1,0),max(len(r["returns_curve"])-1,0),key="gb12ep")
+        c1,c2,c3=st.columns(3)
+        c1.metric("Joint return",f"{r['returns_curve'][ep]:.3f}")
+        c2.metric("Nash gap",f"{r['nash_gap_curve'][ep]:.4f}")
+        c3.metric("Exploitability",f"{r['exploitability'][ep]:.4f}")
+        if k=="nash_q":
+            st.latex(r"Q_i(s,a_0,a_1) \leftarrow Q_i + \alpha[r_i + \gamma V_i^{Nash}(s') - Q_i(s,a_0,a_1)]")
+        elif k=="correlated_q":
+            st.latex(r"\sigma(a_0,a_1|s) \text{ updated via regret matching}")
+        elif k=="minimax_q":
+            st.latex(r"V_0^{mm}(s) = \max_{\pi_0}\min_{\pi_1}\sum_{a_0,a_1}\pi_0(a_0)\pi_1(a_1)Q_0(s,a_0,a_1)")
+        else:
+            st.latex(r"\hat{\pi}_j(a|s) = N_j(s,a)/\sum_{a'}N_j(s,a')")
 
 def _summary(res, tx=None):
-    rows=[]
-    for k in ALGOS:
-        r=res[k]
-        avg=sum(r["returns_curve"][-100:])/min(100,len(r["returns_curve"]))
-        ng=sum(r["nash_gap_curve"])/max(1,len(r["nash_gap_curve"]))
-        rows.append({"Algorithm":LABELS[k],"Avg return (last 100)":f"{avg:.3f}","Steps":str(r["total_steps"]),"Avg Nash gap":f"{ng:.4f}","V*(S0)":f"{r['values'][0]:.3f}","V*(S7)":f"{r['values'][7]:.3f}"})
-    st.dataframe(rows,hide_index=True)
+        rows=[]
+        for k in ALGOS:
+            r=res[k]
+            avg=sum(r["returns_curve"][-100:])/min(100,len(r["returns_curve"]))
+            ng=sum(r["nash_gap_curve"])/max(1,len(r["nash_gap_curve"]))
+            rows.append({"Algorithm":LABELS[k],"Avg return (last 100)":f"{avg:.3f}","Steps":str(r["total_steps"]),"Avg Nash gap":f"{ng:.4f}","V*(S0)":f"{r['values'][0]:.3f}","V*(S7)":f"{r['values'][7]:.3f}"})
+        st.dataframe(rows,hide_index=True)
 
