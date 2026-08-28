@@ -1,7 +1,8 @@
 
 // ch14_marl.rs — Foundational MARL Algorithms
 // IQL, VDN, MAPG, MADDPG on 5x5 grid world + drone swarm navigation
-use rand::Rng;
+use rand::{Rng, SeedableRng};
+use rand::rngs::StdRng;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -51,7 +52,7 @@ struct GridWorld {
 
 impl GridWorld {
     fn new(seed: u64) -> Self {
-        let mut rng = rand::rngs::SmallRng::seed_from_u64(seed);
+        let mut rng = StdRng::seed_from_u64(seed);
         let mut grid = vec![vec![0.0f64; GRID_SIZE]; GRID_SIZE];
         for row in grid.iter_mut() {
             for cell in row.iter_mut() {
@@ -89,7 +90,7 @@ impl GridWorld {
     }
 
     fn reset(&mut self, seed: u64) {
-        let mut rng = rand::rngs::SmallRng::seed_from_u64(seed);
+        let mut rng = StdRng::seed_from_u64(seed);
         for row in self.grid.iter_mut() {
             for cell in row.iter_mut() {
                 *cell = rng.gen_range(0.0..5.0);
@@ -105,7 +106,7 @@ pub fn run_iql(episodes: usize, alpha: f64, gamma: f64, epsilon: f64, seed: u64)
     let mut q_tables: Vec<Vec<Vec<f64>>> = vec![
         vec![vec![0.0f64; NUM_ACTIONS]; num_states]; NUM_AGENTS
     ];
-    let mut rng = rand::rngs::SmallRng::seed_from_u64(seed);
+    let mut rng = StdRng::seed_from_u64(seed);
     let mut env = GridWorld::new(seed);
     let mut episode_results = Vec::new();
     let mut total_reward_all = 0.0;
@@ -200,7 +201,7 @@ pub fn run_vdn(episodes: usize, alpha: f64, gamma: f64, epsilon: f64, seed: u64)
     let mut q_tables: Vec<Vec<Vec<f64>>> = vec![
         vec![vec![0.0f64; NUM_ACTIONS]; num_states]; NUM_AGENTS
     ];
-    let mut rng = rand::rngs::SmallRng::seed_from_u64(seed);
+    let mut rng = StdRng::seed_from_u64(seed);
     let mut env = GridWorld::new(seed);
     let mut episode_results = Vec::new();
     let mut total_reward_all = 0.0;
@@ -299,7 +300,7 @@ pub fn run_mapg(episodes: usize, alpha: f64, gamma: f64, beta: f64, seed: u64) -
     let mut theta: Vec<Vec<Vec<f64>>> = vec![
         vec![vec![0.0f64; NUM_ACTIONS]; num_states]; NUM_AGENTS
     ];
-    let mut rng = rand::rngs::SmallRng::seed_from_u64(seed);
+    let mut rng = StdRng::seed_from_u64(seed);
     let mut env = GridWorld::new(seed);
     let mut episode_results = Vec::new();
     let mut total_reward_all = 0.0;
@@ -415,7 +416,7 @@ pub fn run_maddpg(episodes: usize, alpha: f64, gamma: f64, tau: f64, seed: u64) 
     let mut actors: Vec<Vec<Vec<f64>>> = vec![
         vec![vec![0.0f64; NUM_ACTIONS]; num_states]; NUM_AGENTS
     ];
-    let mut rng = rand::rngs::SmallRng::seed_from_u64(seed);
+    let mut rng = StdRng::seed_from_u64(seed);
     let mut env = GridWorld::new(seed);
     let mut episode_results = Vec::new();
     let mut total_reward_all = 0.0;
