@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide - Chapter 14</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}.card.red{border-left-color:#FF4B4B}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem 1rem;margin:1rem 0;text-align:center}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.task-card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #0082F0}
+.task-card h3{color:#0082F0;margin-bottom:.5rem}
+details{background:#252840;border-radius:6px;padding:.75rem 1rem;margin-top:.75rem;border-left:3px solid #FF8C0A}
+details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.9rem;user-select:none}
+details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154}
+.quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
+.quiz-question p{font-weight:600;margin-bottom:.75rem}
+.quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0}
+.quiz-option:hover{background:#252840}
+.quiz-option input{accent-color:#8B5CF6;width:1rem;height:1rem;flex-shrink:0}
+.quiz-option label{cursor:pointer;color:#9ca3af;font-size:.9rem}
+.quiz-option.correct label{color:#0FC373;font-weight:600}
+.quiz-option.wrong label{color:#FF4B4B}
+#quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:600;display:none}
+#quiz-result.pass{background:#0FC37322;border:2px solid #0FC373;color:#0FC373}
+#quiz-result.fail{background:#FF4B4B22;border:2px solid #FF4B4B;color:#FF4B4B}
+.btn{background:#8B5CF6;color:white;border:none;padding:.6rem 1.5rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;margin-top:1rem}
+.btn.secondary{background:#252840;color:#9ca3af}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Hands-On Guide &mdash; Chapter 14</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>Foundational MARL Algorithms &middot; IQL &middot; VDN &middot; MAPG &middot; MADDPG &middot; 5&times;5 Grid World</em></p>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Introduction</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; What is Ch14?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; RL Theory</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; Environment</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; How to use UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretation</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; Exercises</button>
+  <button class="tab-btn" onclick="showTab('tasks')">&#x1F4DD; Tasks</button>
+  <button class="tab-btn" onclick="showTab('quiz')">&#x1F3AF; Quiz</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Summary</button>
+</div>
+
+<!-- INTRODUCTION -->
+<div id="intro" class="tab-content active">
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card green">After completing this chapter you will be able to:
+<ul>
+<li>Explain the three principal MARL approaches: value-based, policy-based, and actor-critic</li>
+<li>Implement IQL and explain the non-stationarity problem</li>
+<li>Implement VDN and explain additive value decomposition $Q_{tot} = \sum_i Q_i$</li>
+<li>Implement MAPG with entropy regularisation and explain the advantage function</li>
+<li>Explain MADDPG: centralised critic + decentralised actors + soft target update</li>
+<li>Read the Cooperation Rate chart and explain what it measures</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue"><strong>5&times;5 Grid World &mdash; 2 Agents</strong><br><br>
+Two agents navigate a 5&times;5 grid collecting resources while minimising distance to a central target. Each cell has a random resource value (0&ndash;5). Agents start at opposite corners.<br><br>
+Ch14 compares four foundational MARL algorithms on the same environment for fair benchmarking.</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">5&times;5</div><div class="kpi-label">Grid world</div></div>
+<div class="kpi-card"><div class="kpi-val">2</div><div class="kpi-label">Agents</div></div>
+<div class="kpi-card"><div class="kpi-val">CTDE</div><div class="kpi-label">MADDPG paradigm</div></div>
+</div>
+</div>
+
+<!-- WHAT IS CH14 -->
+<div id="what" class="tab-content">
+<h2>&#x2753; What is Chapter 14?</h2>
+<div class="card purple">Ch14 is the <strong>capstone of the MARL curriculum</strong> (Ch11&ndash;Ch14). It unifies value-based, policy-based, and actor-critic methods in a single comparative framework.</div>
+<h2>Four algorithms</h2>
+<div class="card">
+<table><tr><th>Algorithm</th><th>Type</th><th>Key property</th></tr>
+<tr><td><strong>IQL</strong></td><td>Value-based</td><td>Independent Q-Learning &mdash; simplest MARL baseline</td></tr>
+<tr><td><strong>VDN</strong></td><td>Value-based</td><td>$Q_{tot} = Q_0 + Q_1$ &mdash; additive decomposition</td></tr>
+<tr><td><strong>MAPG</strong></td><td>Policy-based</td><td>REINFORCE + entropy bonus &mdash; softmax policy</td></tr>
+<tr><td><strong>MADDPG</strong></td><td>Actor-Critic</td><td>Centralised critic + decentralised actors + soft update</td></tr>
+</table>
+</div>
+<div class="card green"><strong>MARL evolution in this course:</strong><br>
+Ch11: IQL, JAL, Lenient Q, Mean Field &rarr; Ch12: Nash, Correlated, Minimax &rarr; Ch13: VDN, QMIX &rarr; <strong>Ch14: IQL, VDN, MAPG, MADDPG</strong></div>
+</div>
+
+<!-- RL THEORY -->
+<div id="theory" class="tab-content">
+<h2>&#x1F9EE; MARL Objective</h2>
+<div class="formula">$$J_i(\pi_i) = \mathbb{E}\left[\sum_{t=0}^\infty \gamma^t r_i^t \mid \pi, P\right]$$</div>
+<div class="card">Each agent $i$ maximises its own discounted return. The joint policy $\pi = (\pi_1, \ldots, \pi_N)$ determines the system behaviour.</div>
+
+<h2>IQL Update</h2>
+<div class="formula">$$Q_i(s_i, a_i) \leftarrow Q_i(s_i, a_i) + \alpha \left[ r_i + \gamma \max_{a'} Q_i(s_i', a') - Q_i(s_i, a_i) \right]$$</div>
+<div class="card blue">Each agent treats others as part of the environment. Non-stationary: environment changes as other agents learn. Implemented in <code>run_iql()</code>.</div>
+
+<h2>VDN Decomposition</h2>
+<div class="formula">$$Q_{tot}(s, \mathbf{a}) = \sum_{i=1}^N Q_i(s_i, a_i)$$</div>
+<div class="formula">$$\frac{\partial Q_{tot}}{\partial Q_i} = 1 \quad \text{(equal credit for all agents)}$$</div>
+<div class="card orange">Joint reward shared equally. Satisfies IGM. Implemented in <code>run_vdn()</code>.</div>
+
+<h2>MAPG Policy Gradient</h2>
+<div class="formula">$$\nabla_{\theta_i} J_i = \mathbb{E}\left[\nabla_{\theta_i} \log \pi_{\theta_i}(a_i \mid s_i) A_i(s_i, a_i)\right]$$</div>
+<div class="formula">$$J_i^{\text{entropy}}(\theta_i) = J_i(\theta_i) + \beta H(\pi_{\theta_i})$$</div>
+<div class="card green">Entropy bonus $\beta H(\pi)$ prevents premature convergence. Implemented in <code>run_mapg()</code>.</div>
+
+<h2>MADDPG &mdash; Centralised Critic</h2>
+<div class="formula">$$Q_{\phi_i}(s, \mathbf{a}) \leftarrow Q_{\phi_i} + \alpha \left[ r_i + \gamma Q_{\phi_i}(s', \mathbf{a}') - Q_{\phi_i}(s, \mathbf{a}) \right]$$</div>
+<div class="formula">$$\theta_{\text{target}} \leftarrow \tau \theta + (1-\tau) \theta_{\text{target}}$$</div>
+<div class="card">Centralised critic uses joint state $(s_0, s_1)$ and joint action $(a_0, a_1)$. Soft update $\tau$ stabilises training. Decentralised actors execute independently. Implemented in <code>run_maddpg()</code>.</div>
+
+<h2>Advantage Function</h2>
+<div class="formula">$$A_i(s_i, a_i) = Q_i(s_i, a_i) - V_i(s_i)$$</div>
+<div class="card blue">Measures how much better action $a_i$ is compared to the average. Used in MAPG and MADDPG actor updates.</div>
+</div>
+
+<!-- ENVIRONMENT -->
+<div id="env" class="tab-content">
+<h2>&#x1F5FA; 5&times;5 Grid World</h2>
+<div class="card">Two agents navigate a 5&times;5 grid. Each cell has a resource value (0&ndash;5) that depletes when collected. Agents start at (0,0) and (4,4). Target at (2,2).</div>
+<h3>Actions</h3>
+<table><tr><th>Action</th><th>Direction</th><th>Effect</th></tr>
+<tr><td>0</td><td>Up</td><td>Row &minus;1 (clamped)</td></tr>
+<tr><td>1</td><td>Down</td><td>Row +1 (clamped)</td></tr>
+<tr><td>2</td><td>Left</td><td>Col &minus;1 (clamped)</td></tr>
+<tr><td>3</td><td>Right</td><td>Col +1 (clamped)</td></tr>
+</table>
+<h3>Reward Function</h3>
+<div class="formula">$$R_t = R_{\text{cell}} - 0.1 \cdot d(s_t, \text{target})$$</div>
+<div class="card orange">$R_{\text{cell}}$ = resource value at new position (depleted after collection). $d$ = Euclidean distance to target (2,2). Encourages both resource collection and target proximity.</div>
+<h3>Parameters</h3>
+<table><tr><th>Parameter</th><th>Range</th><th>Effect</th></tr>
+<tr><td>Episodes</td><td>50&ndash;1000</td><td>More = better convergence</td></tr>
+<tr><td>&alpha;</td><td>0.01&ndash;0.5</td><td>Learning rate. Start with 0.1.</td></tr>
+<tr><td>&gamma;</td><td>0.5&ndash;0.999</td><td>Discount factor. Start with 0.95.</td></tr>
+<tr><td>&epsilon;</td><td>0.0&ndash;1.0</td><td>Exploration rate for IQL/VDN.</td></tr>
+<tr><td>&beta;</td><td>0.0&ndash;0.1</td><td>Entropy bonus for MAPG.</td></tr>
+<tr><td>&tau;</td><td>0.001&ndash;0.1</td><td>Soft update rate for MADDPG.</td></tr>
+</table>
+</div>
+
+<!-- HOW TO USE UI -->
+<div id="ui" class="tab-content">
+<h2>&#x1F3AE; How to use the Ch14 interface</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Set episodes and &alpha;</strong><br>Start with 200 episodes, &alpha;=0.1. Increase to 500+ for better convergence.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Set &epsilon; for IQL/VDN</strong><br>&epsilon;=0.3 is a good start. Higher = more exploration.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Set &beta; for MAPG</strong><br>&beta;=0.01 adds entropy bonus. Higher = more exploration in policy gradient.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Set &tau; for MADDPG</strong><br>&tau;=0.01 = slow soft update (stable). &tau;=0.1 = faster but less stable.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Click &#x25B6; Run All Four Algorithms</strong><br>All four run simultaneously on the same grid world for fair comparison.</div></div>
+<div class="step"><div class="step-num">6</div><div><strong>Read the Episode Returns chart</strong><br>MA-20 smoothed. MADDPG should converge fastest due to centralised critic.</div></div>
+<div class="step"><div class="step-num">7</div><div><strong>Read the Cooperation Rate chart</strong><br>Fraction of steps where both agents chose the same action.</div></div>
+<div class="step"><div class="step-num">8</div><div><strong>Read the Q-Table Heatmaps</strong><br>IQL/VDN show Q-values. MAPG/MADDPG show policy logits.</div></div>
+</div>
+
+<!-- INTERPRETATION -->
+<div id="interp" class="tab-content">
+<h2>&#x1F4CA; Interpreting the results</h2>
+<h3>&#x1F4C8; Episode Returns Chart</h3>
+<div class="card blue">
+<strong>Axes:</strong> X = episode, Y = total return (MA-20)<br>
+<strong>Purpose:</strong> Shows how each algorithm improves over time.<br>
+<strong>What to watch:</strong><br>
+&bull; MADDPG should converge fastest (centralised critic stabilises learning)<br>
+&bull; VDN should outperform IQL (shared reward signal)<br>
+&bull; MAPG may be noisy early (high variance policy gradient)
+</div>
+<h3>&#x1F91D; Cooperation Rate Chart</h3>
+<div class="card">
+<strong>Purpose:</strong> Fraction of steps where both agents chose the same action.<br>
+<strong>What to watch:</strong><br>
+&bull; MADDPG should have highest cooperation (centralised critic coordinates)<br>
+&bull; IQL may have low cooperation (non-stationary environment)<br>
+&bull; VDN improves over IQL due to shared reward
+</div>
+<h3>&#x1F4C9; TD Error Chart</h3>
+<div class="card green">
+<strong>Purpose:</strong> Shows how prediction errors decay over training.<br>
+<strong>What to watch:</strong><br>
+&bull; Should decrease toward zero as Q-values converge<br>
+&bull; MADDPG TD error may be higher early (joint state space is larger)<br>
+&bull; MAPG shows policy gradient magnitude instead of TD error
+</div>
+<h3>&#x1F5FA; Q-Table Heatmaps</h3>
+<div class="card">
+<strong>Purpose:</strong> Shows learned Q-values (IQL/VDN) or policy logits (MAPG/MADDPG) for Agent 0.<br>
+<strong>Axes:</strong> Y = state (row,col), X = action (Up/Down/Left/Right)<br>
+<strong>What to watch:</strong><br>
+&bull; Bright cells = preferred actions in that state<br>
+&bull; States near target (2,2) should prefer actions that move toward it<br>
+&bull; MADDPG logits should be sharpest (most deterministic policy)
+</div>
+<h3>&#x1F52C; Glass-Box &mdash; Step Trace</h3>
+<div class="card">
+<strong>Columns:</strong>
+<table><tr><th>Column</th><th>Meaning</th></tr>
+<tr><td>Step</td><td>Step within episode</td></tr>
+<tr><td>State</td><td>Agent 0 position (row, col)</td></tr>
+<tr><td>Action</td><td>Action taken (Up/Down/Left/Right)</td></tr>
+<tr><td>Reward</td><td>Immediate reward for this step</td></tr>
+<tr><td>Q-value</td><td>Q(s,a) or logit after update</td></tr>
+<tr><td>TD Error</td><td>$|\delta_t|$ for this step</td></tr>
+</table>
+</div>
+</div>
+
+<!-- EXERCISES -->
+<div id="exercises" class="tab-content">
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card"><h3>Exercise 1 &mdash; IQL non-stationarity</h3>Run IQL for 500 episodes. Does the cooperation rate stabilise? Compare with VDN &mdash; does shared reward improve cooperation?</div>
+<div class="card blue"><h3>Exercise 2 &mdash; VDN vs IQL</h3>Compare VDN and IQL returns curves. How much does additive decomposition improve performance? Check the Q-table heatmaps &mdash; are they similar?</div>
+<div class="card orange"><h3>Exercise 3 &mdash; MAPG entropy bonus</h3>Run MAPG with &beta;=0 vs &beta;=0.05. How does entropy regularisation affect convergence? Does higher &beta; prevent premature convergence?</div>
+<div class="card green"><h3>Exercise 4 &mdash; MADDPG soft update</h3>Run MADDPG with &tau;=0.001 vs &tau;=0.05. How does the soft update rate affect stability? Which &tau; gives smoother convergence?</div>
+<div class="card purple"><h3>Exercise 5 &mdash; Algorithm comparison</h3>Run all four with 500 episodes. Rank them by: (1) final return, (2) cooperation rate, (3) convergence speed. Does MADDPG always win?</div>
+</div>
+
+<!-- TASKS -->
+<div id="tasks" class="tab-content">
+<h2>&#x1F4DD; Practical Tasks</h2>
+<p style="color:#9ca3af;margin-bottom:1rem">Click "Show answer" to check your solution.</p>
+
+<div class="task-card">
+<h3>Task 1 &mdash; IQL update</h3>
+<p>Agent 0 at state (1,2), takes action Up (0), gets reward R=3, moves to (0,2). Q(1,2,Up)=5. $\max_{a'} Q(0,2,a')=8$. &alpha;=0.1, &gamma;=0.95. Compute new Q(1,2,Up).</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\delta = R + \gamma \max_{a'} Q(0,2,a') - Q(1,2,\text{Up}) = 3 + 0.95 \cdot 8 - 5 = 3 + 7.6 - 5 = 5.6$$</div>
+<div class="formula">$$Q(1,2,\text{Up}) \leftarrow 5 + 0.1 \cdot 5.6 = \mathbf{5.56}$$</div>
+</div></details>
+</div>
+
+<div class="task-card">
+<h3>Task 2 &mdash; VDN joint reward</h3>
+<p>Agent 0 gets reward 4, Agent 1 gets reward 2. Compute the VDN joint reward each agent uses for its Q update.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$R_{\text{VDN}} = \frac{R_0 + R_1}{N} = \frac{4 + 2}{2} = \mathbf{3.0}$$</div>
+Both agents use R=3.0 for their Q updates. This is the additive decomposition: $Q_{tot} = Q_0 + Q_1$, so each agent gets equal credit.
+</div></details>
+</div>
+
+<div class="task-card">
+<h3>Task 3 &mdash; MAPG softmax policy</h3>
+<p>Agent 0 at state (2,2), logits: $\theta = [1.0, 2.0, 0.5, 1.5]$. Compute $\pi(a=1|\text{Down})$.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\pi(\text{Down}) = \frac{e^{2.0}}{e^{1.0} + e^{2.0} + e^{0.5} + e^{1.5}} = \frac{7.389}{2.718 + 7.389 + 1.649 + 4.482} = \frac{7.389}{16.238} \approx \mathbf{0.455}$$</div>
+</div></details>
+</div>
+
+<div class="task-card">
+<h3>Task 4 &mdash; MADDPG soft update</h3>
+<p>Critic weight $\theta=0.8$, target weight $\theta_{\text{target}}=0.5$, &tau;=0.01. Compute new $\theta_{\text{target}}$.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\theta_{\text{target}} \leftarrow \tau \theta + (1-\tau)\theta_{\text{target}} = 0.01 \cdot 0.8 + 0.99 \cdot 0.5 = 0.008 + 0.495 = \mathbf{0.503}$$</div>
+The target network moves slowly toward the main network. This stabilises training by preventing oscillations.
+</div></details>
+</div>
+
+<div class="task-card">
+<h3>Task 5 &mdash; Why MADDPG outperforms IQL</h3>
+<p>Both IQL and MADDPG use Q-Learning. Why does MADDPG typically achieve higher returns and cooperation?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<strong>IQL limitation:</strong> Each agent treats the other as part of the environment. Non-stationarity: as Agent 1 learns, Agent 0's environment changes &rarr; Q-values may not converge.<br><br>
+<strong>MADDPG advantages:</strong><br>
+&bull; <strong>Centralised critic</strong> $Q(s_0, s_1, a_0, a_1)$ uses joint information &rarr; stable training<br>
+&bull; <strong>Soft target update</strong> $\tau$ prevents oscillations<br>
+&bull; <strong>Decentralised actors</strong> still execute independently &rarr; scalable<br>
+&bull; CTDE paradigm: train with global info, execute with local info
+</div></details>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="tab-content">
+<h2>&#x1F3AF; Quiz &mdash; Test Your Knowledge</h2>
+<p style="color:#9ca3af;margin-bottom:1.5rem">Answer all 10 questions and click "Check results". Pass threshold: <strong>90% (9/10)</strong>.</p>
+
+<div class="quiz-question" id="q1"><p>1. What are the three principal MARL approaches covered in Ch14?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">Model-based, model-free, and hybrid</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">Value-based, policy-based, and actor-critic</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">Online, offline, and batch</label></div></div>
+
+<div class="quiz-question" id="q2"><p>2. What is the VDN decomposition formula?</p>
+<div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">$Q_{tot} = \max_i Q_i$</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">$Q_{tot} = \sum_i Q_i$ &mdash; additive decomposition</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">$Q_{tot} = \prod_i Q_i$</label></div></div>
+
+<div class="quiz-question" id="q3"><p>3. What does the entropy bonus $\beta H(\pi)$ do in MAPG?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">Reduces the learning rate</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">Encourages exploration by preventing the policy from becoming too deterministic</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">Increases the discount factor</label></div></div>
+
+<div class="quiz-question" id="q4"><p>4. What does the soft update $\theta_{\text{target}} \leftarrow \tau\theta + (1-\tau)\theta_{\text{target}}$ do in MADDPG?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">Copies the main network to the target instantly</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">Slowly moves the target network toward the main network, stabilising training</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">Resets the target network every episode</label></div></div>
+
+<div class="quiz-question" id="q5"><p>5. What is the key advantage of MADDPG's centralised critic over IQL?</p>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">It uses less memory</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">It uses joint state $(s_0, s_1)$ and joint action $(a_0, a_1)$, addressing non-stationarity</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">It does not require a reward function</label></div></div>
+
+<div class="quiz-question" id="q6"><p>6. What does the Cooperation Rate chart measure?</p>
+<div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">The joint return of both agents</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">The fraction of steps where both agents chose the same action</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">The TD error</label></div></div>
+
+<div class="quiz-question" id="q7"><p>7. Why does VDN outperform IQL in cooperative settings?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">VDN uses a larger Q-table</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">VDN uses the joint reward signal, giving agents a shared learning objective</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">VDN has a higher learning rate</label></div></div>
+
+<div class="quiz-question" id="q8"><p>8. What does the Q-Table Heatmap show for MAPG?</p>
+<div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">Q-values for each state-action pair</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">Policy logits $\theta[s][a]$ &mdash; higher = more likely action</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">The TD error per state</label></div></div>
+
+<div class="quiz-question" id="q9"><p>9. What is the reward function in the 5&times;5 grid world?</p>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">$R_t = R_{\text{cell}}$ only</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">$R_t = R_{\text{cell}} - 0.1 \cdot d(s_t, \text{target})$ &mdash; resource minus distance penalty</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">$R_t = -d(s_t, \text{target})$ only</label></div></div>
+
+<div class="quiz-question" id="q10"><p>10. What does CTDE stand for and which algorithm uses it?</p>
+<div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">Cooperative Training with Distributed Execution &mdash; VDN</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">Centralised Training, Decentralised Execution &mdash; MADDPG</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">Continuous Training with Discrete Execution &mdash; MAPG</label></div></div>
+
+<button class="btn" onclick="checkQuiz()">&#x2705; Check results</button>
+<button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
+<div id="quiz-result"></div>
+</div>
+
+<!-- SUMMARY -->
+<div id="summary" class="tab-content">
+<h2>&#x1F4CB; Summary &mdash; Chapter 14 and the Full MARL Curriculum</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">CTDE</div><div class="kpi-label">MADDPG paradigm</div></div>
+<div class="kpi-card"><div class="kpi-val">IGM</div><div class="kpi-label">VDN property</div></div>
+<div class="kpi-card"><div class="kpi-val">&#x1F3C6;</div><div class="kpi-label">MARL complete!</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; Algorithm strengths</strong><ul>
+<li>IQL: simplest, scalable baseline</li>
+<li>VDN: shared reward, IGM satisfied</li>
+<li>MAPG: continuous actions, entropy exploration</li>
+<li>MADDPG: CTDE, centralised critic, soft update</li>
+</ul></div>
+<div class="card red"><strong>&#x274C; Limitations</strong><ul>
+<li>IQL: non-stationarity, may not converge</li>
+<li>VDN: assumes additive rewards</li>
+<li>MAPG: high variance, sensitive to &alpha;</li>
+<li>MADDPG: $O(|S|^N|A|^N)$ joint space</li>
+</ul></div>
+</div>
+<div class="card green" style="margin-top:1rem">
+<strong>&#x1F3C6; MARL Curriculum Complete!</strong><br><br>
+Ch11: IQL, JAL, Lenient Q, Mean Field &rarr;
+Ch12: Nash, Correlated, Minimax, Fictitious Play &rarr;
+Ch13: VDN, QMIX, QMIX+CG &rarr;
+<strong>Ch14: IQL, VDN, MAPG, MADDPG</strong><br><br>
+You now have a complete foundation in Multi-Agent Reinforcement Learning &mdash; from the simplest baseline (IQL) to state-of-the-art cooperative methods (MADDPG, QMIX).
+</div>
+<div class="card blue" style="margin-top:1rem"><strong>&#x27A1; Next: Part IV &mdash; Deep RL Models</strong> (Ch15&ndash;Ch20): DQN, A2C, PPO, SAC, TD3, and beyond.</div>
+</div>
+
+</div>
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if(typeof renderMathInElement!=='undefined')
+    renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+}
+var ANSWERS={q1:'b',q2:'b',q3:'b',q4:'b',q5:'b',q6:'b',q7:'b',q8:'b',q9:'b',q10:'b'};
+function checkQuiz(){
+  var score=0,total=Object.keys(ANSWERS).length;
+  for(var q in ANSWERS){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    document.querySelectorAll('#'+q+' .quiz-option').forEach(o=>o.classList.remove('correct','wrong'));
+    if(sel){
+      if(sel.value===ANSWERS[q]){score++;sel.closest('.quiz-option').classList.add('correct');}
+      else{sel.closest('.quiz-option').classList.add('wrong');document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');}
+    } else document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+  }
+  var pct=Math.round(score/total*100),res=document.getElementById('quiz-result');
+  res.style.display='block';
+  if(score>=9){res.className='pass';res.innerHTML='&#x1F389; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Congratulations! You have completed the MARL curriculum!';}
+  else{res.className='fail';res.innerHTML='&#x274C; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Pass threshold is 90% (9/10). Review the material and try again.';}
+}
+function resetQuiz(){
+  document.querySelectorAll('.quiz-option input').forEach(i=>i.checked=false);
+  document.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('correct','wrong'));
+  var res=document.getElementById('quiz-result');res.style.display='none';res.className='';
+}
+</script>
+</body>
+</html>
