@@ -13,6 +13,7 @@ use rlvr_core::ch10_world_model::{run_ch10, WorldModelConfig};
 use rlvr_core::ch11_multiagent::{run_ch11, MarlConfig};
 use rlvr_core::ch12_game_theory::{run_ch12, GameConfig};
 use rlvr_core::ch13_coop_marl::{run_ch13, CoopConfig};
+use rlvr_core::ch14_marl::{run_ch14, Ch14Config};
 
 
 
@@ -665,6 +666,66 @@ fn run_ch13_coop_marl(
 }
 
 
+
+#[pyfunction]
+#[pyo3(signature = (n_episodes, alpha, gamma, epsilon, beta, tau, seed))]
+fn run_ch14(
+    py: Python,
+    n_episodes: usize, alpha: f64, gamma: f64,
+    epsilon: f64, beta: f64, tau: f64, seed: u64,
+) -> PyResult<PyObject> {
+    let config = Ch14Config { n_episodes, alpha, gamma, epsilon, beta, tau, seed };
+    let results = rlvr_core::ch14_marl::run_ch14(config);
+    let out_list = PyList::empty_bound(py);
+    for res in &results {
+        let r = PyDict::new_bound(py);
+        r.set_item("algorithm",        &res.algorithm)?;
+        r.set_item("total_reward",     res.total_reward)?;
+        r.set_item("avg_cooperation",  res.avg_cooperation)?;
+        let eps_list = PyList::empty_bound(py);
+        for ep in &res.episodes {
+            let e = PyDict::new_bound(py);
+            e.set_item("episode",          ep.episode)?;
+            e.set_item("algorithm",        &ep.algorithm)?;
+            e.set_item("total_reward",     ep.total_reward)?;
+            e.set_item("cooperation_rate", ep.cooperation_rate)?;
+            e.set_item("avg_td_error",     ep.avg_td_error)?;
+            let ar = PyList::empty_bound(py);
+            for &v in &ep.agent_rewards { ar.append(v)?; }
+            e.set_item("agent_rewards", ar)?;
+            let steps_list = PyList::empty_bound(py);
+            for s in &ep.steps {
+                let d = PyDict::new_bound(py);
+                d.set_item("step",       s.step)?;
+                d.set_item("agent_id",   s.agent_id)?;
+                d.set_item("state",      (s.state.0, s.state.1))?;
+                d.set_item("action",     s.action)?;
+                d.set_item("reward",     s.reward)?;
+                d.set_item("next_state", (s.next_state.0, s.next_state.1))?;
+                d.set_item("q_value",    s.q_value)?;
+                d.set_item("td_error",   s.td_error)?;
+                steps_list.append(d)?;
+            }
+            e.set_item("steps", steps_list)?;
+            eps_list.append(e)?;
+        }
+        r.set_item("episodes", eps_list)?;
+        let fqt = PyList::empty_bound(py);
+        for agent_qt in &res.final_q_tables {
+            let aq = PyList::empty_bound(py);
+            for row in agent_qt {
+                let rr = PyList::empty_bound(py);
+                for &q in row { rr.append(q)?; }
+                aq.append(rr)?;
+            }
+            fqt.append(aq)?;
+        }
+        r.set_item("final_q_tables", fqt)?;
+        out_list.append(r)?;
+    }
+    Ok(out_list.into())
+}
+
 #[pymodule]
 fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch01_episode,         m)?)?;
@@ -680,5 +741,6 @@ fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch11_multiagent, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch12_game_theory, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch13_coop_marl, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch14, m)?)?;
     Ok(())
 }
