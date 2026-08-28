@@ -13,7 +13,7 @@ use rlvr_core::ch10_world_model::{run_ch10, WorldModelConfig};
 use rlvr_core::ch11_multiagent::{run_ch11, MarlConfig};
 use rlvr_core::ch12_game_theory::{run_ch12, GameConfig};
 use rlvr_core::ch13_coop_marl::{run_ch13, CoopConfig};
-use rlvr_core::ch14_marl::{run_ch14, Ch14Config};
+use rlvr_core::ch14_marl::Ch14Input;
 
 
 
@@ -674,8 +674,8 @@ fn run_ch14(
     n_episodes: usize, alpha: f64, gamma: f64,
     epsilon: f64, beta: f64, tau: f64, seed: u64,
 ) -> PyResult<PyObject> {
-    let config = Ch14Config { n_episodes, alpha, gamma, epsilon, beta, tau, seed };
-    let results = rlvr_core::ch14_marl::run_ch14(config);
+    let config = Ch14Input { episodes: n_episodes, alpha, gamma, epsilon, beta, tau, seed };
+    let results = rlvr_core::ch14_marl::run_ch14_all(config);
     let out_list = PyList::empty_bound(py);
     for res in &results {
         let r = PyDict::new_bound(py);

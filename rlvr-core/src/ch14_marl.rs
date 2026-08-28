@@ -543,7 +543,7 @@ pub struct Ch14Input {
     pub seed: u64,
 }
 
-pub fn run_ch14(input: Ch14Input) -> Vec<Ch14Result> {
+pub fn run_ch14_all(input: Ch14Input) -> Vec<Ch14Result> {
     vec![
         run_iql(input.episodes, input.alpha, input.gamma, input.epsilon, input.seed),
         run_vdn(input.episodes, input.alpha, input.gamma, input.epsilon, input.seed),
