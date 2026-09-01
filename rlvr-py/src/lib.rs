@@ -14,6 +14,7 @@ use rlvr_core::ch11_multiagent::{run_ch11, MarlConfig};
 use rlvr_core::ch12_game_theory::{run_ch12, GameConfig};
 use rlvr_core::ch13_coop_marl::{run_ch13, CoopConfig};
 use rlvr_core::ch14_marl::Ch14Input;
+use rlvr_core::ch15_deep_learning::{run_ch15 as run_ch15_core, Ch15Config};
 
 
 
@@ -726,6 +727,56 @@ fn run_ch14(
     Ok(out_list.into())
 }
 
+
+#[pyfunction]
+#[pyo3(signature = (n_epochs, lr, activation, l2_lambda, dropout_rate, hidden_units, n_layers, seed))]
+fn run_ch15(
+    py: Python,
+    n_epochs: usize, lr: f64, activation: String,
+    l2_lambda: f64, dropout_rate: f64,
+    hidden_units: usize, n_layers: usize, seed: u64,
+) -> PyResult<PyObject> {
+    let config = Ch15Config {
+        n_epochs, lr, activation, l2_lambda, dropout_rate,
+        hidden_units, n_layers, seed,
+        optimizer: "adam".to_string(),
+    };
+    let results = run_ch15_core(config);
+    let out_list = PyList::empty_bound(py);
+    for res in &results {
+        let r = PyDict::new_bound(py);
+        r.set_item("algorithm",    &res.algorithm)?;
+        r.set_item("activation",   &res.activation)?;
+        r.set_item("optimizer",    &res.optimizer)?;
+        r.set_item("l2_lambda",    res.l2_lambda)?;
+        r.set_item("dropout_rate", res.dropout_rate)?;
+        r.set_item("final_loss",   res.final_loss)?;
+        let fp = PyList::empty_bound(py);
+        for &v in &res.final_predictions { fp.append(v)?; }
+        r.set_item("final_predictions", fp)?;
+        let tv = PyList::empty_bound(py);
+        for &v in &res.true_values { tv.append(v)?; }
+        r.set_item("true_values", tv)?;
+        let ld = PyList::empty_bound(py);
+        for &v in &res.layer_dims { ld.append(v)?; }
+        r.set_item("layer_dims", ld)?;
+        let eps = PyList::empty_bound(py);
+        for ep in &res.epochs {
+            let e = PyDict::new_bound(py);
+            e.set_item("epoch",    ep.epoch)?;
+            e.set_item("loss",     ep.loss)?;
+            e.set_item("val_loss", ep.val_loss)?;
+            let preds = PyList::empty_bound(py);
+            for &v in &ep.predictions { preds.append(v)?; }
+            e.set_item("predictions", preds)?;
+            eps.append(e)?;
+        }
+        r.set_item("epochs", eps)?;
+        out_list.append(r)?;
+    }
+    Ok(out_list.into())
+}
+
 #[pymodule]
 fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch01_episode,         m)?)?;
@@ -742,5 +793,6 @@ fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch12_game_theory, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch13_coop_marl, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch14, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch15, m)?)?;
     Ok(())
 }
