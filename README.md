@@ -51,7 +51,8 @@ streamlit run gui/app.py --server.port 8001
 | 12 | Game Theory | Nash equilibrium | Nash Q, Correlated Q, Minimax Q, Fictitious Play | ✅ |
 | 13 | Cooperative MARL | Value decomposition | IQL baseline, VDN, QMIX, QMIX+CG | ✅ |
 | 14 | Foundational MARL | Full MARL comparison | IQL, VDN, MAPG, MADDPG | ✅ |
-| 15–20 | Deep RL | DQN, A2C, PPO, SAC, TD3… | — | 🔜 |
+| 15 | Deep Learning Foundations | FNN, activations, optimizers | ReLU/Swish/ELU, Adam/SGD/RMSProp, L2, Dropout | ✅ |
+| 16–20 | Deep RL | DQN, A2C, PPO, SAC, TD3… | — | 🔜 |
 
 ---
 
@@ -183,19 +184,29 @@ streamlit run gui/app.py --server.port 8001
 
 ---
 
+### Chapter 15 — Deep Learning Foundations
+**Key concept:** Universal Approximation Theorem (UAT) — FNNs can approximate any continuous function. Bridge from tabular RL to Deep RL.  
+**Business problem:** Approximate $V^*(s)$ from Ch02 using a FNN trained on 4 Warsaw ASP state features (SLA rate, urgency, distance, skill match) — without the exact Bellman model.  
+**Algorithms:** FNN with backpropagation, 6 activation functions (ReLU, LeakyReLU, ELU, Swish, Tanh, Sigmoid), 3 optimizers (SGD, Adam, RMSProp), L2 regularization, Dropout. He initialisation.  
+**4 configurations compared:** ReLU+SGD (baseline), User activation+Adam, Adam+L2, Adam+Dropout.  
+**Key output:** Loss curves (log scale), V*(s) predictions vs Ch02 reference, activation function comparison chart, network architecture summary.  
+**Rust function:** `run_ch15()`
+
+---
+
 ## 🗂️ Repository Structure
 
 ```
 rlvr-enterprise-allocator/
-├── rlvr-core/src/          # Rust RL algorithms (ch01–ch14)
+├── rlvr-core/src/          # Rust RL algorithms (ch01–ch15)
 ├── rlvr-py/src/lib.rs      # PyO3 Python bindings
 ├── gui/
 │   ├── app.py              # Streamlit entry point
-│   └── chapters/           # ch01.py – ch14.py (UI per chapter)
+│   └── chapters/           # ch01.py – ch15.py (UI per chapter)
 ├── docs/                   # Hands-On Guide HTML files (EN/PL)
 │   ├── handson_ch01_en.html
 │   ├── handson_ch02_pl.html
-│   └── handson_ch03_en.html … handson_ch14_en.html
+│   └── handson_ch03_en.html … handson_ch15_en.html
 └── Cargo.toml              # Rust workspace
 ```
 
@@ -225,34 +236,12 @@ Each chapter includes a self-contained HTML guide with:
 - 5 practical tasks with hidden answers
 - 10-question quiz (90% pass threshold)
 
-Available languages: **EN** (Ch01–Ch14), **PL** (Ch02)
+Available languages: **EN** (Ch01–Ch15), **PL** (Ch02)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-```
-MIT License
+MIT License — see [opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
 
 Copyright (c) 2026 Sylwester Musial
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
