@@ -14,6 +14,7 @@
 | GUI | Streamlit |
 | Math rendering | KaTeX (in-browser, HTML guides) |
 | Charts | Altair, Plotly |
+| Deep Learning (Ch15+) | `tch-rs 0.14` — Rust bindings to `libtorch 2.1.0` (CPU) |
 
 ---
 
@@ -25,6 +26,16 @@ cd rlvr-enterprise-allocator
 
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+
+# Download libtorch 2.1.0 (required for Ch15+)
+wget "https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.1.0%2Bcpu.zip" -O libtorch.zip
+unzip libtorch.zip -d ~/ && rm libtorch.zip
+
+export LIBTORCH=$HOME/libtorch
+export LIBTORCH_INCLUDE=$HOME/libtorch
+export LIBTORCH_LIB=$HOME/libtorch/lib
+export LD_LIBRARY_PATH=$HOME/libtorch/lib:$LD_LIBRARY_PATH
+export LIBTORCH_BYPASS_VERSION_CHECK=1
 
 cd rlvr-py && maturin develop --release && cd ..
 
@@ -51,7 +62,7 @@ streamlit run gui/app.py --server.port 8001
 | 12 | Game Theory | Nash equilibrium | Nash Q, Correlated Q, Minimax Q, Fictitious Play | ✅ |
 | 13 | Cooperative MARL | Value decomposition | IQL baseline, VDN, QMIX, QMIX+CG | ✅ |
 | 14 | Foundational MARL | Full MARL comparison | IQL, VDN, MAPG, MADDPG | ✅ |
-| 15 | Deep Learning Foundations | FNN, activations, optimizers | ReLU/Swish/ELU, Adam/SGD/RMSProp, L2, Dropout | ✅ |
+| 15 | Deep Learning Foundations | FNN via tch/libtorch | ReLU/Swish/ELU, Adam/SGD/RMSProp, L2, Dropout | ✅ |
 | 16–20 | Deep RL | DQN, A2C, PPO, SAC, TD3… | — | 🔜 |
 
 ---
@@ -185,11 +196,12 @@ streamlit run gui/app.py --server.port 8001
 ---
 
 ### Chapter 15 — Deep Learning Foundations
-**Key concept:** Universal Approximation Theorem (UAT) — FNNs can approximate any continuous function. Bridge from tabular RL to Deep RL.  
-**Business problem:** Approximate $V^*(s)$ from Ch02 using a FNN trained on 4 Warsaw ASP state features (SLA rate, urgency, distance, skill match) — without the exact Bellman model.  
-**Algorithms:** FNN with backpropagation, 6 activation functions (ReLU, LeakyReLU, ELU, Swish, Tanh, Sigmoid), 3 optimizers (SGD, Adam, RMSProp), L2 regularization, Dropout. He initialisation.  
+**Key concept:** Universal Approximation Theorem (UAT) — FNNs can approximate any continuous function. Bridge from tabular RL (Ch01–Ch14) to Deep RL (Ch16–Ch20).  
+**Business problem:** Approximate $V^*(s)$ from Ch02 using a real PyTorch FNN trained on 4 Warsaw ASP state features (SLA rate, urgency, distance, skill match) — without the exact Bellman model.  
+**Engine:** `tch-rs 0.14` (Rust bindings to `libtorch 2.1.0 CPU`) — real PyTorch tensors, autograd, and optimizers running natively in Rust.  
+**Algorithms:** FNN with backpropagation via autograd, 6 activation functions (ReLU, LeakyReLU, ELU, Swish, Tanh, Sigmoid), 3 optimizers (SGD, Adam, RMSProp), L2 regularization, Dropout. He initialisation.  
 **4 configurations compared:** ReLU+SGD (baseline), User activation+Adam, Adam+L2, Adam+Dropout.  
-**Key output:** Loss curves (log scale), V*(s) predictions vs Ch02 reference, activation function comparison chart, network architecture summary.  
+**Key output:** Loss curves (log scale), V*(s) predictions vs Ch02 reference, activation function comparison chart, gradient norm per epoch, network architecture summary.  
 **Rust function:** `run_ch15()`
 
 ---
@@ -215,6 +227,13 @@ rlvr-enterprise-allocator/
 ## 🛠️ Development
 
 ```bash
+# Set libtorch env vars (required for Ch15+)
+export LIBTORCH=$HOME/libtorch
+export LIBTORCH_INCLUDE=$HOME/libtorch
+export LIBTORCH_LIB=$HOME/libtorch/lib
+export LD_LIBRARY_PATH=$HOME/libtorch/lib:$LD_LIBRARY_PATH
+export LIBTORCH_BYPASS_VERSION_CHECK=1
+
 # Rebuild Rust engine after changes
 cd rlvr-py && maturin develop --release && cd ..
 
