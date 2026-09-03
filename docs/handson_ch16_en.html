@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Guide - Chapter 16</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e8eaf6;line-height:1.7;font-size:15px}
+.container{max-width:960px;margin:0 auto;padding:2rem}
+h1{color:#8B5CF6;font-size:1.8rem;border-bottom:2px solid #8B5CF6;padding-bottom:.5rem;margin-bottom:1.5rem}
+h2{color:#0082F0;font-size:1.3rem;margin:1.5rem 0 .75rem}
+h3{color:#0FC373;font-size:1.1rem;margin:1rem 0 .5rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #2d3154;padding-bottom:.75rem}
+.tab-btn{background:#1e2235;border:1px solid #2d3154;color:#9ca3af;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab-btn:hover{background:#252840;color:#e8eaf6}
+.tab-btn.active{background:#8B5CF6;border-color:#8B5CF6;color:white;font-weight:600}
+.tab-content{display:none}.tab-content.active{display:block}
+.card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #8B5CF6}
+.card.green{border-left-color:#0FC373}.card.blue{border-left-color:#0082F0}
+.card.orange{border-left-color:#FF8C0A}.card.red{border-left-color:#FF4B4B}
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem}
+th{background:#252840;color:#8B5CF6;padding:.6rem .75rem;text-align:left}
+td{padding:.5rem .75rem;border-bottom:1px solid #2d3154}
+tr:hover td{background:#252840}
+code{background:#252840;padding:.15rem .4rem;border-radius:4px;color:#0FC373;font-size:.85em;font-family:monospace}
+.katex-display{color:#FFD700;transform:scale(1.0);transform-origin:center;display:block;margin:1.5rem 0}
+.katex{color:#FFD700}
+.formula{background:#252840;border-radius:8px;padding:2rem 1rem;margin:1rem 0;text-align:center}
+.step{display:flex;gap:1rem;margin:.6rem 0;align-items:flex-start}
+.step-num{background:#8B5CF6;color:white;border-radius:50%;width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:.75rem 0}
+.kpi-card{background:#252840;border-radius:8px;padding:1rem;text-align:center}
+.kpi-val{font-size:1.6em;font-weight:bold;color:#0FC373}
+.kpi-label{color:#9ca3af;font-size:.8em;margin-top:.25rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.task-card{background:#1e2235;border-radius:8px;padding:1.25rem 1.5rem;margin:.75rem 0;border-left:4px solid #0082F0}
+.task-card h3{color:#0082F0;margin-bottom:.5rem}
+details{background:#252840;border-radius:6px;padding:.75rem 1rem;margin-top:.75rem;border-left:3px solid #FF8C0A}
+details summary{cursor:pointer;color:#FF8C0A;font-weight:600;font-size:.9rem;user-select:none}
+details .answer{margin-top:.75rem;padding-top:.75rem;border-top:1px solid #2d3154}
+.quiz-question{background:#1e2235;border-radius:8px;padding:1.25rem;margin:1rem 0;border-left:4px solid #0082F0}
+.quiz-question p{font-weight:600;margin-bottom:.75rem}
+.quiz-option{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:6px;cursor:pointer;margin:.3rem 0}
+.quiz-option:hover{background:#252840}
+.quiz-option input{accent-color:#8B5CF6;width:1rem;height:1rem;flex-shrink:0}
+.quiz-option label{cursor:pointer;color:#9ca3af;font-size:.9rem}
+.quiz-option.correct label{color:#0FC373;font-weight:600}
+.quiz-option.wrong label{color:#FF4B4B}
+#quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:600;display:none}
+#quiz-result.pass{background:#0FC37322;border:2px solid #0FC373;color:#0FC373}
+#quiz-result.fail{background:#FF4B4B22;border:2px solid #FF4B4B;color:#FF4B4B}
+.btn{background:#8B5CF6;color:white;border:none;padding:.6rem 1.5rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;margin-top:1rem}
+.btn.secondary{background:#252840;color:#9ca3af}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>&#x1F4D8; Hands-On Guide &mdash; Chapter 16</h1>
+<p style="color:#9ca3af;margin-bottom:1.5rem"><em>Deep Reinforcement Learning Models &middot; DQN &middot; Double DQN &middot; Dueling DQN &middot; PPO &middot; Warsaw ASP &middot; tch/libtorch</em></p>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('intro')">&#x1F4D6; Introduction</button>
+  <button class="tab-btn" onclick="showTab('what')">&#x2753; What is Ch16?</button>
+  <button class="tab-btn" onclick="showTab('theory')">&#x1F9EE; RL Theory</button>
+  <button class="tab-btn" onclick="showTab('env')">&#x1F5FA; Environment</button>
+  <button class="tab-btn" onclick="showTab('ui')">&#x1F3AE; How to use UI</button>
+  <button class="tab-btn" onclick="showTab('interp')">&#x1F4CA; Interpretation</button>
+  <button class="tab-btn" onclick="showTab('exercises')">&#x1F9EA; Exercises</button>
+  <button class="tab-btn" onclick="showTab('tasks')">&#x1F4DD; Tasks</button>
+  <button class="tab-btn" onclick="showTab('quiz')">&#x1F3AF; Quiz</button>
+  <button class="tab-btn" onclick="showTab('summary')">&#x1F4CB; Summary</button>
+</div>
+
+<!-- INTRODUCTION -->
+<div id="intro" class="tab-content active">
+<h2>&#x1F3AF; Learning Objectives</h2>
+<div class="card green">After completing this chapter you will be able to:
+<ul>
+<li>Explain how DQN combines Q-Learning (Ch06) with a FNN (Ch15) via experience replay and target networks</li>
+<li>Explain the overestimation bias in DQN and how Double DQN fixes it</li>
+<li>Explain the Dueling DQN architecture: $Q(s,a) = V(s) + A(s,a) - \frac{1}{|\mathcal{A}|}\sum_{a'} A(s,a')$</li>
+<li>Explain PPO clipped surrogate objective and why it stabilises training</li>
+<li>Read the Episode Returns, Loss, and Epsilon Decay charts</li>
+<li>Read the Q-Table Heatmap and explain what it shows</li>
+</ul>
+</div>
+<h2>&#x1F3E2; Business Problem</h2>
+<div class="card blue"><strong>Warsaw ASP 8-State MDP — DRL Edition</strong><br><br>
+The same 8-state Warsaw ASP MDP from Ch02/Ch06, but now solved with Deep RL. Instead of a tabular Q-table, a FNN approximates $Q^*(s,a)$. This enables generalisation to unseen states and scales to continuous state spaces.<br><br>
+Ch16 compares four DRL algorithms: DQN, Double DQN, Dueling DQN, and PPO.</div>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">8</div><div class="kpi-label">States</div></div>
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">Actions</div></div>
+<div class="kpi-card"><div class="kpi-val">tch</div><div class="kpi-label">libtorch 2.1.0</div></div>
+</div>
+</div>
+
+<!-- WHAT IS CH16 -->
+<div id="what" class="tab-content">
+<h2>&#x2753; What is Chapter 16?</h2>
+<div class="card purple">Ch16 is the <strong>first Deep RL chapter</strong>. It combines the FNN from Ch15 with Q-Learning from Ch06 to create DQN — the algorithm that achieved human-level Atari performance in 2013.</div>
+<h2>Four algorithms compared</h2>
+<div class="card">
+<table><tr><th>Algorithm</th><th>Key innovation</th><th>Fixes</th></tr>
+<tr><td><strong>DQN</strong></td><td>FNN + experience replay + target network</td><td>Tabular Q-table scalability</td></tr>
+<tr><td><strong>Double DQN</strong></td><td>Decouple action selection and evaluation</td><td>Overestimation bias in DQN</td></tr>
+<tr><td><strong>Dueling DQN</strong></td><td>$V(s)$ + $A(s,a)$ streams</td><td>Inefficient state value learning</td></tr>
+<tr><td><strong>PPO</strong></td><td>Clipped surrogate objective</td><td>Policy gradient instability</td></tr>
+</table>
+</div>
+<div class="card green"><strong>Connection to previous chapters:</strong><br>
+Ch06 Q-Learning (tabular) + Ch15 FNN (tch) = <strong>Ch16 DQN</strong><br>
+Ch09 REINFORCE + Ch15 FNN = <strong>Ch16 PPO</strong>
+</div>
+</div>
+
+<!-- RL THEORY -->
+<div id="theory" class="tab-content active">
+<h2>&#x1F9EE; DQN — Bellman + FNN</h2>
+<div class="formula">$$Q(s,a;\theta) \approx r + \gamma \max_{a'} Q(s',a';\theta^-)$$</div>
+<div class="card">$\theta$ = main network weights. $\theta^-$ = target network weights (frozen, updated every $C$ steps). Experience replay: sample $(s,a,r,s')$ from buffer $\mathcal{D}$.</div>
+
+<h2>DQN Loss</h2>
+<div class="formula">$$L(\theta) = \mathbb{E}_{(s,a,r,s') \sim \mathcal{D}} \left[ \left( y - Q(s,a;\theta) \right)^2 \right]$$</div>
+<div class="formula">$$y = r + \gamma \max_{a'} Q(s',a';\theta^-)$$</div>
+<div class="card blue">MSE between predicted Q-value and TD target $y$. Target uses frozen $\theta^-$ to stabilise training. Implemented in <code>run_dqn()</code>.</div>
+
+<h2>Double DQN — Fix Overestimation</h2>
+<div class="formula">$$y = r + \gamma Q\!\left(s',\, \arg\max_{a'} Q(s',a';\theta);\, \theta^-\right)$$</div>
+<div class="card orange">Main network $\theta$ selects the action. Target network $\theta^-$ evaluates it. Decoupling prevents overestimation. Implemented in <code>run_double_dqn()</code>.</div>
+
+<h2>Dueling DQN — V(s) + A(s,a)</h2>
+<div class="formula">$$Q(s,a) = V(s) + A(s,a) - \frac{1}{|\mathcal{A}|}\sum_{a'} A(s,a')$$</div>
+<div class="card green">$V(s)$ = value of being in state $s$ (independent of action). $A(s,a)$ = advantage of action $a$ over average. Subtracting mean advantage ensures identifiability. Implemented in <code>run_dueling_dqn()</code>.</div>
+
+<h2>PPO — Clipped Surrogate</h2>
+<div class="formula">$$r_\theta(s,a) = \frac{\pi_\theta(a|s)}{\pi_{\theta_{\text{old}}}(a|s)}$$</div>
+<div class="formula">$$L^{\text{CLIP}}(\theta) = \mathbb{E}\left[\min\left(r_\theta A,\; \text{clip}(r_\theta, 1-\epsilon, 1+\epsilon) A\right)\right]$$</div>
+<div class="card">Clipping prevents large policy updates. $\epsilon=0.2$ is standard. Combined loss: $L = L^{\text{CLIP}} - c_1 L^{\text{value}} + c_2 H(\pi)$. Implemented in <code>run_ppo()</code>.</div>
+
+<h2>Experience Replay</h2>
+<div class="formula">$$(s,a,r,s') \sim \mathcal{D} \quad \text{uniformly}$$</div>
+<div class="card blue">Breaks temporal correlations. Allows reuse of past transitions. Buffer size = 1000–5000 for this environment. Implemented in <code>ReplayBuffer</code> struct.</div>
+</div>
+
+<!-- ENVIRONMENT -->
+<div id="env" class="tab-content">
+<h2>&#x1F5FA; Warsaw ASP 8-State MDP</h2>
+<div class="card">Same 8-state MDP as Ch02/Ch06. States represent dispatch quality levels. Actions represent dispatch decisions. DRL learns $Q^*(s,a)$ without knowing $P(s'|s,a)$.</div>
+<h3>States</h3>
+<table><tr><th>State</th><th>Description</th><th>True V*(s) [Ch02]</th></tr>
+<tr><td>S0</td><td>Best — high SLA, low distance</td><td>18.5</td></tr>
+<tr><td>S1</td><td></td><td>15.2</td></tr>
+<tr><td>S2</td><td></td><td>12.8</td></tr>
+<tr><td>S3</td><td></td><td>10.1</td></tr>
+<tr><td>S4</td><td></td><td>7.4</td></tr>
+<tr><td>S5</td><td></td><td>4.9</td></tr>
+<tr><td>S6</td><td></td><td>2.3</td></tr>
+<tr><td>S7</td><td>Worst — SLA breach imminent</td><td>0.5</td></tr>
+</table>
+<h3>Actions</h3>
+<table><tr><th>Action</th><th>Effect</th></tr>
+<tr><td>Dispatch+1</td><td>Move to next state (s+1)</td></tr>
+<tr><td>Dispatch-1</td><td>Move to previous state (s-1)</td></tr>
+<tr><td>Dispatch+2</td><td>Skip two states forward (s+2)</td></tr>
+<tr><td>Dispatch-2</td><td>Skip two states back (s-2)</td></tr>
+</table>
+<h3>Key parameters</h3>
+<table><tr><th>Parameter</th><th>Range</th><th>Effect</th></tr>
+<tr><td>Episodes</td><td>50&ndash;1000</td><td>More = better convergence</td></tr>
+<tr><td>&alpha;</td><td>0.0001&ndash;0.01</td><td>Learning rate. Start with 0.001.</td></tr>
+<tr><td>&epsilon; start/end</td><td>1.0 &rarr; 0.05</td><td>Exploration schedule</td></tr>
+<tr><td>Batch size</td><td>16&ndash;128</td><td>Larger = more stable gradients</td></tr>
+<tr><td>Target update</td><td>1&ndash;20 episodes</td><td>How often to copy weights to target net</td></tr>
+<tr><td>Buffer size</td><td>500&ndash;5000</td><td>Larger = more diverse samples</td></tr>
+</table>
+</div>
+
+<!-- HOW TO USE UI -->
+<div id="ui" class="tab-content">
+<h2>&#x1F3AE; How to use the Ch16 interface</h2>
+<div class="step"><div class="step-num">1</div><div><strong>Set episodes and learning rate</strong><br>Start with 300 episodes, &alpha;=0.001. Increase to 500+ for better convergence.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Set epsilon schedule</strong><br>&epsilon; start=1.0, end=0.05, decay=0.995. This controls exploration vs exploitation.</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Set batch size and buffer</strong><br>Batch=32, buffer=1000 are good defaults. Larger buffer = more diverse replay.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>Set target update frequency</strong><br>Every 10 episodes is standard. Too frequent = unstable. Too rare = slow learning.</div></div>
+<div class="step"><div class="step-num">5</div><div><strong>Click &#x25B6; Run All Four Algorithms</strong><br>All four run simultaneously on the same MDP for fair comparison.</div></div>
+<div class="step"><div class="step-num">6</div><div><strong>Read the Episode Returns chart</strong><br>MA-20 smoothed. Dueling DQN and PPO should converge fastest.</div></div>
+<div class="step"><div class="step-num">7</div><div><strong>Read the Loss chart (log scale)</strong><br>DQN/Double DQN/Dueling DQN show MSE loss. Should decrease over time.</div></div>
+<div class="step"><div class="step-num">8</div><div><strong>Read the Q-Table Heatmaps</strong><br>Bright cells = high Q-values. S0 should have highest Q-values (best state).</div></div>
+</div>
+
+<!-- INTERPRETATION -->
+<div id="interp" class="tab-content">
+<h2>&#x1F4CA; Interpreting the results</h2>
+<h3>&#x1F4C8; Episode Returns Chart</h3>
+<div class="card blue">
+<strong>Axes:</strong> X = episode, Y = total return (MA-20)<br>
+<strong>Purpose:</strong> Shows how each algorithm improves over time.<br>
+<strong>What to watch:</strong><br>
+&bull; All algorithms should improve over episodes<br>
+&bull; Dueling DQN often converges fastest (separate V/A streams)<br>
+&bull; PPO may be noisier early (policy gradient variance)<br>
+&bull; Double DQN should outperform DQN (less overestimation)
+</div>
+<h3>&#x1F4C9; Loss Chart (log scale)</h3>
+<div class="card">
+<strong>Purpose:</strong> Shows TD error decay for DQN variants.<br>
+<strong>What to watch:</strong><br>
+&bull; Should decrease toward zero as Q-values converge<br>
+&bull; Spikes = target network update (expected)<br>
+&bull; PPO loss is excluded (different scale — policy gradient loss)
+</div>
+<h3>&#x1F4C9; Epsilon Decay Chart</h3>
+<div class="card green">
+<strong>Purpose:</strong> Shows exploration rate over training.<br>
+&bull; Starts at &epsilon;=1.0 (fully random)<br>
+&bull; Decays exponentially to &epsilon;=0.05 (mostly greedy)<br>
+&bull; PPO has no &epsilon; (uses stochastic policy for exploration)
+</div>
+<h3>&#x1F5FA; Q-Table Heatmaps</h3>
+<div class="card">
+<strong>Purpose:</strong> Shows learned Q-values for each (state, action) pair.<br>
+<strong>Axes:</strong> Y = state (S0&ndash;S7), X = action<br>
+<strong>What to watch:</strong><br>
+&bull; S0 should have highest Q-values (best dispatch state)<br>
+&bull; S7 should have lowest Q-values (worst state)<br>
+&bull; Dispatch+1 from S0 should be highest Q-value overall<br>
+&bull; PPO shows policy logits (not Q-values) — higher = more likely action
+</div>
+<h3>&#x1F52C; Glass-Box — Step Trace</h3>
+<div class="card">
+<table><tr><th>Column</th><th>Meaning</th></tr>
+<tr><td>Step</td><td>Step within episode (0&ndash;49)</td></tr>
+<tr><td>State</td><td>Current state (0&ndash;7)</td></tr>
+<tr><td>Action</td><td>Action taken</td></tr>
+<tr><td>Reward</td><td>Immediate reward</td></tr>
+<tr><td>Q-value</td><td>Max Q-value at this state</td></tr>
+<tr><td>Loss</td><td>TD error for this step</td></tr>
+<tr><td>&epsilon;</td><td>Exploration rate at this step</td></tr>
+</table>
+</div>
+</div>
+
+<!-- EXERCISES -->
+<div id="exercises" class="tab-content">
+<h2>&#x1F9EA; Hands-On Exercises</h2>
+<div class="card"><h3>Exercise 1 &mdash; DQN vs Q-Learning (Ch06)</h3>Run DQN for 300 episodes. Compare the final Q-table with the tabular Q-Learning result from Ch06. Are the Q-values similar? Which converges faster?</div>
+<div class="card blue"><h3>Exercise 2 &mdash; Overestimation bias</h3>Run DQN and Double DQN with the same settings. Compare their Q-values for S0. Does Double DQN produce lower (more accurate) Q-values?</div>
+<div class="card orange"><h3>Exercise 3 &mdash; Dueling architecture</h3>Run Dueling DQN with 300 episodes. Check the Q-table heatmap. Are the Q-values more uniform across actions for the same state (V(s) dominates)?</div>
+<div class="card green"><h3>Exercise 4 &mdash; Target update frequency</h3>Run DQN with target_update=1 vs target_update=20. How does update frequency affect loss stability? Which gives smoother convergence?</div>
+<div class="card purple"><h3>Exercise 5 &mdash; PPO vs DQN</h3>Run all four with 500 episodes. Rank by final return. Does PPO outperform DQN? When would you choose PPO over DQN in a real application?</div>
+</div>
+
+<!-- TASKS -->
+<div id="tasks" class="tab-content">
+<h2>&#x1F4DD; Practical Tasks</h2>
+<p style="color:#9ca3af;margin-bottom:1rem">Click "Show answer" to check your solution.</p>
+
+<div class="task-card">
+<h3>Task 1 &mdash; DQN TD target</h3>
+<p>Agent at S2, takes Dispatch+1, gets reward R=1.5, moves to S3. Target network: $\max_{a'} Q(S3,a';\theta^-)=8.0$. $\gamma=0.95$. Compute the TD target $y$.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$y = R + \gamma \max_{a'} Q(S3,a';\theta^-) = 1.5 + 0.95 \times 8.0 = 1.5 + 7.6 = \mathbf{9.1}$$</div>
+</div></details>
+</div>
+
+<div class="task-card">
+<h3>Task 2 &mdash; Double DQN target</h3>
+<p>At S3, main network selects $a^* = \arg\max_{a'} Q(S3,a';\theta) = \text{Dispatch+1}$. Target network: $Q(S3, \text{Dispatch+1};\theta^-)=7.5$. R=1.2, $\gamma=0.95$. Compute Double DQN target.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$y = R + \gamma Q(S3, a^*;\theta^-) = 1.2 + 0.95 \times 7.5 = 1.2 + 7.125 = \mathbf{8.325}$$</div>
+Double DQN uses the main network to SELECT the action but the TARGET network to EVALUATE it. This prevents overestimation.
+</div></details>
+</div>
+
+<div class="task-card">
+<h3>Task 3 &mdash; Dueling DQN decomposition</h3>
+<p>At S1: $V(S1)=12.0$. Advantage stream outputs: $A(S1,a_0)=2.0$, $A(S1,a_1)=1.0$, $A(S1,a_2)=-0.5$, $A(S1,a_3)=-2.5$. Compute $Q(S1,a_0)$.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$\bar{A} = \frac{2.0 + 1.0 + (-0.5) + (-2.5)}{4} = \frac{0.0}{4} = 0.0$$</div>
+<div class="formula">$$Q(S1, a_0) = V(S1) + A(S1,a_0) - \bar{A} = 12.0 + 2.0 - 0.0 = \mathbf{14.0}$$</div>
+</div></details>
+</div>
+
+<div class="task-card">
+<h3>Task 4 &mdash; PPO clipping</h3>
+<p>Old policy: $\pi_{\theta_{\text{old}}}(a|s)=0.4$. New policy: $\pi_\theta(a|s)=0.6$. Advantage $A=2.0$. $\epsilon=0.2$. Compute $L^{\text{CLIP}}$ for this sample.</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<div class="formula">$$r_\theta = \frac{0.6}{0.4} = 1.5$$</div>
+<div class="formula">$$\text{clip}(1.5, 0.8, 1.2) = 1.2$$</div>
+<div class="formula">$$L^{\text{CLIP}} = \min(1.5 \times 2.0,\; 1.2 \times 2.0) = \min(3.0, 2.4) = \mathbf{2.4}$$</div>
+The clipping prevents the policy from updating too aggressively when $r_\theta > 1+\epsilon$.
+</div></details>
+</div>
+
+<div class="task-card">
+<h3>Task 5 &mdash; Why experience replay?</h3>
+<p>Without experience replay, DQN trains on consecutive transitions $(s_t, a_t, r_t, s_{t+1})$. Why is this problematic and how does replay fix it?</p>
+<details><summary>&#x1F4A1; Show answer</summary><div class="answer">
+<strong>Problem without replay:</strong><br>
+&bull; Consecutive transitions are highly correlated (same trajectory)<br>
+&bull; Network overfits to recent experience<br>
+&bull; Catastrophic forgetting: learning S5 may overwrite S0 knowledge<br>
+&bull; Non-i.i.d. samples violate SGD assumptions &rarr; divergence<br><br>
+<strong>How replay fixes it:</strong><br>
+&bull; Stores $(s,a,r,s')$ in buffer $\mathcal{D}$<br>
+&bull; Samples random mini-batches &rarr; breaks correlations<br>
+&bull; Reuses past transitions &rarr; better sample efficiency<br>
+&bull; Diverse samples &rarr; stable gradient estimates
+</div></details>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="tab-content">
+<h2>&#x1F3AF; Quiz &mdash; Test Your Knowledge</h2>
+<p style="color:#9ca3af;margin-bottom:1.5rem">Answer all 10 questions and click "Check results". Pass threshold: <strong>90% (9/10)</strong>.</p>
+
+<div class="quiz-question" id="q1"><p>1. What are the two key innovations of DQN over tabular Q-Learning?</p>
+<div class="quiz-option"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">Convolutional layers and batch normalisation</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">Experience replay (breaks correlations) and target network (stabilises targets)</label></div>
+<div class="quiz-option"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">Entropy regularisation and advantage functions</label></div></div>
+
+<div class="quiz-question" id="q2"><p>2. What problem does Double DQN solve?</p>
+<div class="quiz-option"><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">Slow convergence due to small replay buffer</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">Overestimation bias — the max operator inflates Q-values with noisy estimates</label></div>
+<div class="quiz-option"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">High variance in policy gradient updates</label></div></div>
+
+<div class="quiz-question" id="q3"><p>3. In Dueling DQN, what does $V(s)$ represent?</p>
+<div class="quiz-option"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">The Q-value of the best action in state $s$</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">The value of being in state $s$, independent of which action is taken</label></div>
+<div class="quiz-option"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">The variance of the reward in state $s$</label></div></div>
+
+<div class="quiz-question" id="q4"><p>4. Why does the target network use frozen weights $\theta^-$?</p>
+<div class="quiz-option"><input type="radio" name="q4" value="a" id="q4a"><label for="q4a">To reduce memory usage</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="b" id="q4b"><label for="q4b">To provide stable TD targets — if both networks update simultaneously, targets shift rapidly causing oscillation or divergence</label></div>
+<div class="quiz-option"><input type="radio" name="q4" value="c" id="q4c"><label for="q4c">To enable GPU parallelism</label></div></div>
+
+<div class="quiz-question" id="q5"><p>5. What does the PPO clipping parameter $\epsilon$ control?</p>
+<div class="quiz-option"><input type="radio" name="q5" value="a" id="q5a"><label for="q5a">The exploration rate</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="b" id="q5b"><label for="q5b">The maximum allowed change in the probability ratio $r_\theta = \pi_\theta / \pi_{\theta_{\text{old}}}$ — constrains policy updates to $[1-\epsilon, 1+\epsilon]$</label></div>
+<div class="quiz-option"><input type="radio" name="q5" value="c" id="q5c"><label for="q5c">The learning rate decay</label></div></div>
+
+<div class="quiz-question" id="q6"><p>6. What is the purpose of experience replay?</p>
+<div class="quiz-option"><input type="radio" name="q6" value="a" id="q6a"><label for="q6a">To speed up the forward pass</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="b" id="q6b"><label for="q6b">To break temporal correlations between consecutive transitions and improve sample efficiency by reusing past experiences</label></div>
+<div class="quiz-option"><input type="radio" name="q6" value="c" id="q6c"><label for="q6c">To store the final policy weights</label></div></div>
+
+<div class="quiz-question" id="q7"><p>7. How does Double DQN decouple action selection and evaluation?</p>
+<div class="quiz-option"><input type="radio" name="q7" value="a" id="q7a"><label for="q7a">It uses two separate replay buffers</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="b" id="q7b"><label for="q7b">Main network $\theta$ selects $a^* = \arg\max Q(s',a';\theta)$; target network $\theta^-$ evaluates $Q(s',a^*;\theta^-)$</label></div>
+<div class="quiz-option"><input type="radio" name="q7" value="c" id="q7c"><label for="q7c">It uses a separate network for each action</label></div></div>
+
+<div class="quiz-question" id="q8"><p>8. Why does Dueling DQN subtract the mean advantage $\frac{1}{|\mathcal{A}|}\sum_{a'} A(s,a')$?</p>
+<div class="quiz-option"><input type="radio" name="q8" value="a" id="q8a"><label for="q8a">To normalise the Q-values to [0,1]</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="b" id="q8b"><label for="q8b">To ensure identifiability — without it, $V$ and $A$ are not uniquely determined from $Q$</label></div>
+<div class="quiz-option"><input type="radio" name="q8" value="c" id="q8c"><label for="q8c">To reduce the learning rate</label></div></div>
+
+<div class="quiz-question" id="q9"><p>9. What is the key difference between DQN and PPO?</p>
+<div class="quiz-option"><input type="radio" name="q9" value="a" id="q9a"><label for="q9a">DQN uses a larger neural network</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="b" id="q9b"><label for="q9b">DQN is value-based (learns $Q^*(s,a)$); PPO is policy-based (directly optimises $\pi_\theta(a|s)$ with a clipped surrogate)</label></div>
+<div class="quiz-option"><input type="radio" name="q9" value="c" id="q9c"><label for="q9c">PPO requires a replay buffer; DQN does not</label></div></div>
+
+<div class="quiz-question" id="q10"><p>10. In the Warsaw ASP context, why is DRL better than tabular Q-Learning (Ch06) for real deployment?</p>
+<div class="quiz-option"><input type="radio" name="q10" value="a" id="q10a"><label for="q10a">DRL is always faster to train</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="b" id="q10b"><label for="q10b">DRL generalises to unseen states via function approximation — real dispatch has continuous features (GPS, SLA rates, time) that cannot be tabulated</label></div>
+<div class="quiz-option"><input type="radio" name="q10" value="c" id="q10c"><label for="q10c">DRL does not require a reward function</label></div></div>
+
+<button class="btn" onclick="checkQuiz()">&#x2705; Check results</button>
+<button class="btn secondary" onclick="resetQuiz()" style="margin-left:.5rem">&#x1F504; Reset</button>
+<div id="quiz-result"></div>
+</div>
+
+<!-- SUMMARY -->
+<div id="summary" class="tab-content">
+<h2>&#x1F4CB; Summary</h2>
+<div class="kpi">
+<div class="kpi-card"><div class="kpi-val">4</div><div class="kpi-label">DRL algorithms</div></div>
+<div class="kpi-card"><div class="kpi-val">tch</div><div class="kpi-label">libtorch 2.1.0</div></div>
+<div class="kpi-card"><div class="kpi-val">ER</div><div class="kpi-label">Experience Replay</div></div>
+<div class="kpi-card"><div class="kpi-val">Ch17</div><div class="kpi-label">Next: A2C</div></div>
+</div>
+<div class="grid2">
+<div class="card green"><strong>&#x2705; Algorithm strengths</strong><ul>
+<li>DQN: simple, stable, proven baseline</li>
+<li>Double DQN: fixes overestimation, better Q-values</li>
+<li>Dueling DQN: faster convergence, better state value learning</li>
+<li>PPO: stable policy gradient, no replay buffer needed</li>
+</ul></div>
+<div class="card red"><strong>&#x274C; Limitations</strong><ul>
+<li>DQN: overestimation bias, discrete actions only</li>
+<li>Double DQN: still discrete actions</li>
+<li>Dueling DQN: more complex architecture</li>
+<li>PPO: high variance early, sensitive to clip $\epsilon$</li>
+</ul></div>
+</div>
+<div class="card blue" style="margin-top:1rem"><strong>&#x27A1; Next: Chapter 17</strong> &mdash; Advantage Actor-Critic (A2C). Combines the actor-critic framework with advantage estimation for more stable and sample-efficient Deep RL.</div>
+</div>
+
+</div>
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if(typeof renderMathInElement!=='undefined')
+    renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+}
+var ANSWERS={q1:'b',q2:'b',q3:'b',q4:'b',q5:'b',q6:'b',q7:'b',q8:'b',q9:'b',q10:'b'};
+function checkQuiz(){
+  var score=0,total=Object.keys(ANSWERS).length;
+  for(var q in ANSWERS){
+    var sel=document.querySelector('input[name="'+q+'"]:checked');
+    document.querySelectorAll('#'+q+' .quiz-option').forEach(o=>o.classList.remove('correct','wrong'));
+    if(sel){
+      if(sel.value===ANSWERS[q]){score++;sel.closest('.quiz-option').classList.add('correct');}
+      else{sel.closest('.quiz-option').classList.add('wrong');document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');}
+    } else document.querySelector('#'+q+' input[value="'+ANSWERS[q]+'"]').closest('.quiz-option').classList.add('correct');
+  }
+  var pct=Math.round(score/total*100),res=document.getElementById('quiz-result');
+  res.style.display='block';
+  if(score>=9){res.className='pass';res.innerHTML='&#x1F389; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Congratulations! You can move on to Chapter 17!';}
+  else{res.className='fail';res.innerHTML='&#x274C; Score: '+score+'/'+total+' ('+pct+'%) &mdash; Pass threshold is 90% (9/10). Review the material and try again.';}
+}
+function resetQuiz(){
+  document.querySelectorAll('.quiz-option input').forEach(i=>i.checked=false);
+  document.querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('correct','wrong'));
+  var res=document.getElementById('quiz-result');res.style.display='none';res.className='';
+}
+</script>
+</body>
+</html>

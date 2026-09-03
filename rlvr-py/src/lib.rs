@@ -15,6 +15,7 @@ use rlvr_core::ch12_game_theory::{run_ch12, GameConfig};
 use rlvr_core::ch13_coop_marl::{run_ch13, CoopConfig};
 use rlvr_core::ch14_marl::Ch14Input;
 use rlvr_core::ch15_deep_learning::{run_ch15 as run_ch15_core, Ch15Config};
+use rlvr_core::ch16_drl::{run_ch16 as run_ch16_core, Ch16Config};
 
 
 
@@ -777,6 +778,64 @@ fn run_ch15(
     Ok(out_list.into())
 }
 
+
+#[pyfunction]
+#[pyo3(signature = (n_episodes, lr, epsilon_start, epsilon_end, epsilon_decay, batch_size, target_update, buffer_size, hidden_units, seed))]
+fn run_ch16(
+    py: Python,
+    n_episodes: usize, lr: f64,
+    epsilon_start: f64, epsilon_end: f64, epsilon_decay: f64,
+    batch_size: usize, target_update: usize, buffer_size: usize,
+    hidden_units: usize, seed: u64,
+) -> PyResult<PyObject> {
+    let config = Ch16Config {
+        n_episodes, lr, gamma: 0.95,
+        epsilon_start, epsilon_end, epsilon_decay,
+        batch_size, target_update, buffer_size,
+        hidden_units, seed,
+    };
+    let results = run_ch16_core(config);
+    let out_list = PyList::empty_bound(py);
+    for res in &results {
+        let r = PyDict::new_bound(py);
+        r.set_item("algorithm",    &res.algorithm)?;
+        r.set_item("total_reward", res.total_reward)?;
+        r.set_item("avg_loss",     res.avg_loss)?;
+        let fq = PyList::empty_bound(py);
+        for row in &res.final_q_table {
+            let rr = PyList::empty_bound(py);
+            for &v in row { rr.append(v)?; }
+            fq.append(rr)?;
+        }
+        r.set_item("final_q_table", fq)?;
+        let eps_list = PyList::empty_bound(py);
+        for ep in &res.episodes {
+            let e = PyDict::new_bound(py);
+            e.set_item("episode",      ep.episode)?;
+            e.set_item("total_reward", ep.total_reward)?;
+            e.set_item("avg_loss",     ep.avg_loss)?;
+            e.set_item("epsilon",      ep.epsilon)?;
+            let steps_list = PyList::empty_bound(py);
+            for s in &ep.steps {
+                let d = PyDict::new_bound(py);
+                d.set_item("step",    s.step)?;
+                d.set_item("state",   s.state)?;
+                d.set_item("action",  s.action)?;
+                d.set_item("reward",  s.reward)?;
+                d.set_item("loss",    s.loss)?;
+                d.set_item("epsilon", s.epsilon)?;
+                d.set_item("q_value", s.q_value)?;
+                steps_list.append(d)?;
+            }
+            e.set_item("steps", steps_list)?;
+            eps_list.append(e)?;
+        }
+        r.set_item("episodes", eps_list)?;
+        out_list.append(r)?;
+    }
+    Ok(out_list.into())
+}
+
 #[pymodule]
 fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch01_episode,         m)?)?;
@@ -794,5 +853,6 @@ fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch13_coop_marl, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch14, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch15, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch16, m)?)?;
     Ok(())
 }
