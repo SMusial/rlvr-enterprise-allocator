@@ -33,7 +33,6 @@ unzip libtorch.zip -d ~/ && rm libtorch.zip
 
 export LIBTORCH=$HOME/libtorch
 export LIBTORCH_INCLUDE=$HOME/libtorch
-export LIBTORCH_LIB=$HOME/libtorch/lib
 export LD_LIBRARY_PATH=$HOME/libtorch/lib:$LD_LIBRARY_PATH
 export LIBTORCH_BYPASS_VERSION_CHECK=1
 
@@ -63,7 +62,8 @@ streamlit run gui/app.py --server.port 8001
 | 13 | Cooperative MARL | Value decomposition | IQL baseline, VDN, QMIX, QMIX+CG | ✅ |
 | 14 | Foundational MARL | Full MARL comparison | IQL, VDN, MAPG, MADDPG | ✅ |
 | 15 | Deep Learning Foundations | FNN via tch/libtorch | ReLU/Swish/ELU, Adam/SGD/RMSProp, L2, Dropout | ✅ |
-| 16–20 | Deep RL | DQN, A2C, PPO, SAC, TD3… | — | 🔜 |
+| 16 | Deep RL Models | DQN, Double DQN, Dueling DQN, PPO | Experience Replay, Target Network, V+A streams, Clipped Surrogate | ✅ |
+| 17–20 | Deep RL | A2C, PPO, SAC, TD3… | — | 🔜 |
 
 ---
 
@@ -206,19 +206,34 @@ streamlit run gui/app.py --server.port 8001
 
 ---
 
+### Chapter 16 — Deep Reinforcement Learning Models
+**Key concept:** DQN = Q-Learning (Ch06) + FNN (Ch15) + experience replay + target network. First Deep RL chapter — achieves human-level performance on discrete action spaces.  
+**Business problem:** Warsaw ASP 8-state MDP solved with Deep RL. FNN approximates $Q^*(s,a)$ enabling generalisation to unseen states and continuous feature spaces.  
+**Engine:** `tch-rs 0.14` (libtorch 2.1.0 CPU) — real PyTorch tensors, autograd, Adam optimizer.  
+**Algorithms:**
+- **DQN** — FNN + experience replay + frozen target network $\theta^-$
+- **Double DQN** — decouples action selection ($\theta$) and evaluation ($\theta^-$), fixes overestimation bias
+- **Dueling DQN** — $Q(s,a) = V(s) + A(s,a) - \frac{1}{|\mathcal{A}|}\sum_{a'} A(s,a')$, separate value and advantage streams
+- **PPO** — clipped surrogate $L^{\text{CLIP}} = \mathbb{E}[\min(r_\theta A, \text{clip}(r_\theta, 1-\epsilon, 1+\epsilon)A)]$, actor-critic with entropy bonus
+
+**Key output:** Episode returns (MA-20), MSE loss curves (log scale), epsilon decay chart, Q-table heatmaps per algorithm, Glass-Box step trace.  
+**Rust function:** `run_ch16()`
+
+---
+
 ## 🗂️ Repository Structure
 
 ```
 rlvr-enterprise-allocator/
-├── rlvr-core/src/          # Rust RL algorithms (ch01–ch15)
+├── rlvr-core/src/          # Rust RL algorithms (ch01–ch16)
 ├── rlvr-py/src/lib.rs      # PyO3 Python bindings
 ├── gui/
 │   ├── app.py              # Streamlit entry point
-│   └── chapters/           # ch01.py – ch15.py (UI per chapter)
+│   └── chapters/           # ch01.py – ch16.py (UI per chapter)
 ├── docs/                   # Hands-On Guide HTML files (EN/PL)
 │   ├── handson_ch01_en.html
 │   ├── handson_ch02_pl.html
-│   └── handson_ch03_en.html … handson_ch15_en.html
+│   └── handson_ch03_en.html … handson_ch16_en.html
 └── Cargo.toml              # Rust workspace
 ```
 
@@ -230,7 +245,6 @@ rlvr-enterprise-allocator/
 # Set libtorch env vars (required for Ch15+)
 export LIBTORCH=$HOME/libtorch
 export LIBTORCH_INCLUDE=$HOME/libtorch
-export LIBTORCH_LIB=$HOME/libtorch/lib
 export LD_LIBRARY_PATH=$HOME/libtorch/lib:$LD_LIBRARY_PATH
 export LIBTORCH_BYPASS_VERSION_CHECK=1
 
@@ -255,7 +269,7 @@ Each chapter includes a self-contained HTML guide with:
 - 5 practical tasks with hidden answers
 - 10-question quiz (90% pass threshold)
 
-Available languages: **EN** (Ch01–Ch15), **PL** (Ch02)
+Available languages: **EN** (Ch01–Ch16), **PL** (Ch02)
 
 ---
 
