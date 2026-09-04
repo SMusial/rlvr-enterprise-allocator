@@ -63,7 +63,8 @@ streamlit run gui/app.py --server.port 8001
 | 14 | Foundational MARL | Full MARL comparison | IQL, VDN, MAPG, MADDPG | ✅ |
 | 15 | Deep Learning Foundations | FNN via tch/libtorch | ReLU/Swish/ELU, Adam/SGD/RMSProp, L2, Dropout | ✅ |
 | 16 | Deep RL Models | DQN, Double DQN, Dueling DQN, PPO | Experience Replay, Target Network, V+A streams, Clipped Surrogate | ✅ |
-| 17–20 | Deep RL | A2C, PPO, SAC, TD3… | — | 🔜 |
+| 17 | Model Explainability | XAI for FNN decisions | Gradient FI, Saliency Maps, LIME, SHAP | ✅ |
+| 18–20 | Deep RL | A2C, PPO, SAC, TD3… | — | 🔜 |
 
 ---
 
@@ -80,12 +81,12 @@ streamlit run gui/app.py --server.port 8001
 
 ### Chapter 02 — Bellman Equation & Value Iteration
 **Key concept:** Bellman optimality equation — the recursive definition of optimal value.  
-**Business problem:** Find the optimal dispatch policy π\* for the 8-state Warsaw ASP MDP.  
+**Business problem:** Find the optimal dispatch policy π* for the 8-state Warsaw ASP MDP.  
 **Algorithms:** Value Iteration (VI) — iterates until convergence:
 
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a)\bigl[R + \gamma V^{(k)}(s')\bigr]$$
+$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a)\left[R + \gamma V^{(k)}(s')\right]$$
 
-**Key output:** V\*(s) for all 8 states, optimal policy π\*, convergence curve, Glass-Box Bellman trace.  
+**Key output:** V*(s) for all 8 states, optimal policy π*, convergence curve, Glass-Box Bellman trace.  
 **Rust function:** `run_ch02_value_iteration()`
 
 ---
@@ -93,7 +94,7 @@ $$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a)\bigl[R + \gamma V^{(k)}(s')\bigr]$$
 ### Chapter 03 — Multi-Armed Bandit & Exploration Strategies
 **Key concept:** Stateless RL — the simplest exploration-exploitation trade-off.  
 **Business problem:** Warsaw ASP skill-slot optimisation — 5 arms (HVAC, Electrical, Plumbing, Network, Mechanical) with unknown true SLA rates.  
-**Algorithms:** ε-Greedy with annealing, UCB1 (regret O(√(KT·ln T))), Thompson Sampling (Beta posterior).  
+**Algorithms:** ε-Greedy with annealing, UCB1 (O(√(KT ln T)) regret), Thompson Sampling (Beta posterior).  
 **Key output:** Cumulative regret curves, arm pull distribution, Q-value convergence toward true SLA rates.  
 **Rust function:** `run_ch03_bandits()`
 
@@ -101,7 +102,7 @@ $$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a)\bigl[R + \gamma V^{(k)}(s')\bigr]$$
 
 ### Chapter 04 — Dynamic Programming: PI vs VI vs Async VI
 **Key concept:** Exact model-based planning — requires full knowledge of P(s'|s,a).  
-**Business problem:** Compare three DP algorithms on the same Warsaw ASP MDP — all must find the same π\*.  
+**Business problem:** Compare three DP algorithms on the same Warsaw ASP MDP — all must find the same π*.  
 **Algorithms:** Policy Iteration (PI), Value Iteration (VI), Asynchronous VI (prioritised by Bellman residual).  
 **Key output:** Convergence comparison, Policy Evolution table (PI outer iterations), Bellman residual heatmap.  
 **Rust function:** `run_ch04_dp()`
@@ -109,8 +110,8 @@ $$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a)\bigl[R + \gamma V^{(k)}(s')\bigr]$$
 ---
 
 ### Chapter 05 — Monte Carlo Methods
-**Key concept:** Model-free learning from complete episodes — no transition model P(s'|s,a) needed.  
-**Business problem:** Learn Vπ(s) and Q\*(s,a) from observed dispatch episodes.  
+**Key concept:** Model-free learning from complete episodes — no P(s'|s,a) needed.  
+**Business problem:** Learn V^π(s) and Q*(s,a) from observed dispatch episodes.  
 **Algorithms:** First-Visit MC (unbiased), Every-Visit MC (consistent), On-Policy MC Control, Off-Policy MC with Importance Sampling.  
 **Key output:** V(s) estimates converging toward DP reference (Ch04), visit count heatmap, episode returns curve.  
 **Rust function:** `run_ch05_mc()`
@@ -200,7 +201,7 @@ $$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a)\bigl[R + \gamma V^{(k)}(s')\bigr]$$
 
 ### Chapter 15 — Deep Learning Foundations
 **Key concept:** Universal Approximation Theorem (UAT) — FNNs can approximate any continuous function. Bridge from tabular RL (Ch01–Ch14) to Deep RL (Ch16–Ch20).  
-**Business problem:** Approximate V\*(s) from Ch02 using a real PyTorch FNN trained on 4 Warsaw ASP state features (SLA rate, urgency, distance, skill match) — without the exact Bellman model.  
+**Business problem:** Approximate V*(s) from Ch02 using a real PyTorch FNN trained on 4 Warsaw ASP state features (SLA rate, urgency, distance, skill match) — without the exact Bellman model.  
 **Engine:** `tch-rs 0.14` (Rust bindings to `libtorch 2.1.0 CPU`) — real PyTorch tensors, autograd, and optimizers running natively in Rust.  
 **Algorithms:** FNN with backpropagation via autograd, 6 activation functions (ReLU, LeakyReLU, ELU, Swish, Tanh, Sigmoid), 3 optimizers (SGD, Adam, RMSProp), L2 regularization, Dropout. He initialisation.  
 **4 configurations compared:** ReLU+SGD (baseline), User activation+Adam, Adam+L2, Adam+Dropout.  
@@ -211,16 +212,31 @@ $$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a)\bigl[R + \gamma V^{(k)}(s')\bigr]$$
 
 ### Chapter 16 — Deep Reinforcement Learning Models
 **Key concept:** DQN = Q-Learning (Ch06) + FNN (Ch15) + experience replay + target network. First Deep RL chapter — achieves human-level performance on discrete action spaces.  
-**Business problem:** Warsaw ASP 8-state MDP solved with Deep RL. FNN approximates Q\*(s,a) enabling generalisation to unseen states and continuous feature spaces.  
+**Business problem:** Warsaw ASP 8-state MDP solved with Deep RL. FNN approximates Q*(s,a) enabling generalisation to unseen states and continuous feature spaces.  
 **Engine:** `tch-rs 0.14` (libtorch 2.1.0 CPU) — real PyTorch tensors, autograd, Adam optimizer.  
 **Algorithms:**
 - **DQN** — FNN + experience replay + frozen target network θ⁻
 - **Double DQN** — decouples action selection (θ) and evaluation (θ⁻), fixes overestimation bias
 - **Dueling DQN** — Q(s,a) = V(s) + A(s,a) − (1/|A|)·Σ A(s,a'), separate value and advantage streams
-- **PPO** — clipped surrogate L_CLIP = E[min(rθ·A, clip(rθ, 1−ε, 1+ε)·A)], actor-critic with entropy bonus
+- **PPO** — clipped surrogate L^CLIP = E[min(r_θ·A, clip(r_θ, 1−ε, 1+ε)·A)], actor-critic with entropy bonus
 
 **Key output:** Episode returns (MA-20), MSE loss curves (log scale), epsilon decay chart, Q-table heatmaps per algorithm, Glass-Box step trace.  
 **Rust function:** `run_ch16()`
+
+---
+
+### Chapter 17 — Model Explainability and Interpretability
+**Key concept:** XAI (Explainable AI) — understanding WHY a trained FNN makes each prediction. Required for GDPR compliance and real-world deployment of AI dispatch systems.  
+**Business problem:** Warsaw ASP manager asks: "Why did the system assign technician T3 to order O7?" — SHAP and LIME provide human-readable answers based on the 4 dispatch features.  
+**Engine:** `tch-rs 0.14` — autograd used for gradient-based methods; pure Rust for LIME and KernelSHAP.  
+**Algorithms:**
+- **Gradient Feature Importance** — FI(xⱼ) = |∂L/∂xⱼ| — how much does loss change with each feature?
+- **Saliency Maps** — S(x) = |∂f/∂x| — output sensitivity to each input feature
+- **LIME** — local linear surrogate fitted on kernel-weighted perturbed samples; R² measures local fit quality
+- **SHAP (KernelSHAP)** — Shapley values: φᵢ = fair credit assignment satisfying efficiency (Σφᵢ = f(x) − E[f(x)]), symmetry, and consistency
+
+**Key output:** Global feature importance bar chart, method comparison heatmap (all 4 methods × all 8 states), SHAP waterfall per state, LIME coefficient chart, Glass-Box detail table.  
+**Rust function:** `run_ch17()`
 
 ---
 
@@ -228,15 +244,15 @@ $$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a)\bigl[R + \gamma V^{(k)}(s')\bigr]$$
 
 ```
 rlvr-enterprise-allocator/
-├── rlvr-core/src/          # Rust RL algorithms (ch01–ch16)
+├── rlvr-core/src/          # Rust RL algorithms (ch01–ch17)
 ├── rlvr-py/src/lib.rs      # PyO3 Python bindings
 ├── gui/
 │   ├── app.py              # Streamlit entry point
-│   └── chapters/           # ch01.py – ch16.py (UI per chapter)
+│   └── chapters/           # ch01.py – ch17.py (UI per chapter)
 ├── docs/                   # Hands-On Guide HTML files (EN/PL)
 │   ├── handson_ch01_en.html
 │   ├── handson_ch02_pl.html
-│   └── handson_ch03_en.html … handson_ch16_en.html
+│   └── handson_ch03_en.html … handson_ch17_en.html
 └── Cargo.toml              # Rust workspace
 ```
 
@@ -272,7 +288,7 @@ Each chapter includes a self-contained HTML guide with:
 - 5 practical tasks with hidden answers
 - 10-question quiz (90% pass threshold)
 
-Available languages: **EN** (Ch01–Ch16), **PL** (Ch02)
+Available languages: **EN** (Ch01–Ch17), **PL** (Ch02)
 
 ---
 
