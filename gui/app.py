@@ -52,5 +52,7 @@ elif ch_num == 15:
     from chapters.ch15 import render; render()
 elif ch_num == 16:
     from chapters.ch16 import render; render()
+elif ch_num == 17:
+    from chapters.ch17 import render; render()
 else:
     st.info(f"🚧 Chapter {ch_num:02d} is not yet implemented.")

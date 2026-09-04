@@ -16,6 +16,7 @@ use rlvr_core::ch13_coop_marl::{run_ch13, CoopConfig};
 use rlvr_core::ch14_marl::Ch14Input;
 use rlvr_core::ch15_deep_learning::{run_ch15 as run_ch15_core, Ch15Config};
 use rlvr_core::ch16_drl::{run_ch16 as run_ch16_core, Ch16Config};
+use rlvr_core::ch17_explainability::{run_ch17 as run_ch17_core, Ch17Config};
 
 
 
@@ -836,6 +837,55 @@ fn run_ch16(
     Ok(out_list.into())
 }
 
+
+#[pyfunction]
+#[pyo3(signature = (n_train_epochs, lr, hidden_units, n_lime_samples, n_shap_samples, seed))]
+fn run_ch17(
+    py: Python,
+    n_train_epochs: usize, lr: f64, hidden_units: usize,
+    n_lime_samples: usize, n_shap_samples: usize, seed: u64,
+) -> PyResult<PyObject> {
+    let config = Ch17Config { n_train_epochs, lr, hidden_units, n_lime_samples, n_shap_samples, seed };
+    let res = run_ch17_core(config);
+    let r = PyDict::new_bound(py);
+    r.set_item("method",   &res.method)?;
+    r.set_item("model_r2", res.model_r2)?;
+    let fn_ = PyList::empty_bound(py);
+    for n in &res.feature_names { fn_.append(n)?; }
+    r.set_item("feature_names", fn_)?;
+    let gi = PyList::empty_bound(py);
+    for &v in &res.global_importance { gi.append(v)?; }
+    r.set_item("global_importance", gi)?;
+    let exps = PyList::empty_bound(py);
+    for exp in &res.state_explanations {
+        let e = PyDict::new_bound(py);
+        e.set_item("state_idx",      exp.state_idx)?;
+        e.set_item("prediction",     exp.prediction)?;
+        e.set_item("true_value",     exp.true_value)?;
+        e.set_item("lime_intercept", exp.lime_intercept)?;
+        e.set_item("lime_r2",        exp.lime_r2)?;
+        e.set_item("shap_base",      exp.shap_base)?;
+        let feat = PyList::empty_bound(py);
+        for &v in &exp.features { feat.append(v)?; }
+        e.set_item("features", feat)?;
+        let gfi = PyList::empty_bound(py);
+        for &v in &exp.gradient_fi { gfi.append(v)?; }
+        e.set_item("gradient_fi", gfi)?;
+        let sal = PyList::empty_bound(py);
+        for &v in &exp.saliency { sal.append(v)?; }
+        e.set_item("saliency", sal)?;
+        let lc = PyList::empty_bound(py);
+        for &v in &exp.lime_coefs { lc.append(v)?; }
+        e.set_item("lime_coefs", lc)?;
+        let sv = PyList::empty_bound(py);
+        for &v in &exp.shap_values { sv.append(v)?; }
+        e.set_item("shap_values", sv)?;
+        exps.append(e)?;
+    }
+    r.set_item("state_explanations", exps)?;
+    Ok(r.into())
+}
+
 #[pymodule]
 fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch01_episode,         m)?)?;
@@ -854,5 +904,6 @@ fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch14, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch15, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch16, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch17, m)?)?;
     Ok(())
 }

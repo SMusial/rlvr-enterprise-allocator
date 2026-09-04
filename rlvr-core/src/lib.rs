@@ -17,3 +17,4 @@ pub mod ch13_coop_marl;
 pub mod ch14_marl;
 pub mod ch15_deep_learning;
 pub mod ch16_drl;
+pub mod ch17_explainability;
