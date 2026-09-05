@@ -10,29 +10,12 @@ st.markdown("""
 <style>
 [data-testid="stSidebar"] { min-width: 20.8rem !important; max-width: 20.8rem !important; }
 
-/* Primary button - dark red */
+/* Primary button - black font */
 button[data-testid="baseButton-primary"] {
-    background-color: #8B0000 !important;
-    border-color: #8B0000 !important;
-    color: #ffffff !important;
+    color: #000000 !important;
 }
 button[data-testid="baseButton-primary"]:hover {
-    background-color: #6B0000 !important;
-    border-color: #6B0000 !important;
-}
-button[data-testid="baseButton-primary"]:active {
-    background-color: #5A0000 !important;
-}
-
-/* Slider track fill - dark red */
-[data-testid="stSliderTrackFill"] {
-    background: #8B0000 !important;
-}
-
-/* Slider thumb - dark red */
-[data-testid="stSlider"] [role="slider"] {
-    background-color: #8B0000 !important;
-    border-color: #8B0000 !important;
+    color: #000000 !important;
 }
 </style>
 """, unsafe_allow_html=True)
