@@ -10,21 +10,13 @@ st.markdown("""
 <style>
 [data-testid="stSidebar"] { min-width: 20.8rem !important; max-width: 20.8rem !important; }
 
-/* Primary button - black font, force override */
+/* Primary button - white bold font */
 button[data-testid="baseButton-primary"],
 button[data-testid="baseButton-primary"] p,
-button[data-testid="baseButton-primary"] span,
-button[data-testid="baseButton-primary"] div,
-.stButton button[kind="primary"],
-.stButton > button[data-testid="baseButton-primary"] {
-    color: #000000 !important;
-    -webkit-text-fill-color: #000000 !important;
-}
-button[data-testid="baseButton-primary"]:hover,
-button[data-testid="baseButton-primary"]:hover p,
-button[data-testid="baseButton-primary"]:hover span {
-    color: #000000 !important;
-    -webkit-text-fill-color: #000000 !important;
+button[data-testid="baseButton-primary"] span {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-weight: 700 !important;
 }
 </style>
 """, unsafe_allow_html=True)
