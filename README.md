@@ -64,7 +64,8 @@ streamlit run gui/app.py --server.port 8001
 | 15 | Deep Learning Foundations | FNN via tch/libtorch | ReLU/Swish/ELU, Adam/SGD/RMSProp, L2, Dropout | ✅ |
 | 16 | Deep RL Models | DQN, Double DQN, Dueling DQN, PPO | Experience Replay, Target Network, V+A streams, Clipped Surrogate | ✅ |
 | 17 | Model Explainability | XAI for FNN decisions | Gradient FI, Saliency Maps, LIME, SHAP | ✅ |
-| 18–20 | Deep RL | A2C, PPO, SAC, TD3… | — | 🔜 |
+| 18 | Kolmogorov-Arnold Networks | KAN vs MLP | Shallow KAN, Deep KAN, Polynomial basis, Fourier basis | ✅ |
+| 19–20 | Deep RL | SAC, TD3… | — | 🔜 |
 
 ---
 
@@ -240,19 +241,34 @@ $$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a)\left[R + \gamma V^{(k)}(s')\right]$$
 
 ---
 
+### Chapter 18 — Kolmogorov-Arnold Networks (KANs)
+**Key concept:** Kolmogorov-Arnold representation theorem — any continuous multivariate function can be decomposed into sums of univariate functions: f(x₁,...,xₙ) = Σq ψq(Σi φqi(xᵢ)). KANs encode this decomposition explicitly via basis expansion, making them more interpretable than MLPs.  
+**Business problem:** Warsaw ASP V*(s) regression — same task as Ch15, now solved with KANs. Tests whether structured basis expansion improves over plain MLP. Also benchmarked on a synthetic cubic dataset y = x³ + 0.5x² + ε where polynomial KAN has a structural advantage.  
+**Engine:** `tch-rs 0.14` (libtorch 2.1.0 CPU) — basis expansion in pure Rust, linear layers via tch.  
+**4 models compared:**
+- **Shallow KAN (Polynomial)** — expands each feature to [x, x², x³, ...] then applies 1 linear layer
+- **Shallow KAN (Fourier)** — expands each feature to [x, sin(x), cos(x), sin(2x), cos(2x), ...] then applies 1 linear layer
+- **Deep KAN (Polynomial)** — polynomial basis + multiple hidden layers for complex function approximation
+- **MLP Baseline** — standard FNN from Ch15 for direct comparison
+
+**Key output:** Loss curves (log scale), V*(s) predictions vs Ch02 reference, basis function comparison chart (polynomial vs Fourier), synthetic cubic dataset train/test MSE, architecture summary (input_dim → expanded_dim → output).  
+**Rust function:** `run_ch18()`
+
+---
+
 ## 🗂️ Repository Structure
 
 ```
 rlvr-enterprise-allocator/
-├── rlvr-core/src/          # Rust RL algorithms (ch01–ch17)
+├── rlvr-core/src/          # Rust RL algorithms (ch01–ch18)
 ├── rlvr-py/src/lib.rs      # PyO3 Python bindings
 ├── gui/
 │   ├── app.py              # Streamlit entry point
-│   └── chapters/           # ch01.py – ch17.py (UI per chapter)
+│   └── chapters/           # ch01.py – ch18.py (UI per chapter)
 ├── docs/                   # Hands-On Guide HTML files (EN/PL)
 │   ├── handson_ch01_en.html
 │   ├── handson_ch02_pl.html
-│   └── handson_ch03_en.html … handson_ch17_en.html
+│   └── handson_ch03_en.html … handson_ch18_en.html
 └── Cargo.toml              # Rust workspace
 ```
 
@@ -288,7 +304,7 @@ Each chapter includes a self-contained HTML guide with:
 - 5 practical tasks with hidden answers
 - 10-question quiz (90% pass threshold)
 
-Available languages: **EN** (Ch01–Ch17), **PL** (Ch02)
+Available languages: **EN** (Ch01–Ch18), **PL** (Ch02)
 
 ---
 
