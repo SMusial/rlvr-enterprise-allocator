@@ -14,7 +14,6 @@ rlvr_py*.so
 rlvr_py*.pyd
 
 # Streamlit
-.streamlit/
 
 # OS
 .DS_Store
