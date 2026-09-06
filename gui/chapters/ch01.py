@@ -542,10 +542,11 @@ def _render_map(steps, sel, tx):
     lon_center = (min(all_lons) + max(all_lons)) / 2
     lat_range  = max(all_lats) - min(all_lats)
     lon_range  = max(all_lons) - min(all_lons)
-    max_range  = max(lat_range, lon_range, 0.001)
-    # zoom formula: 1 degree ≈ 111km, fit to 520px height
+    # Add 30% padding and compute zoom level
+    padded = max(lat_range, lon_range, 0.001) * 1.3
     import math
-    zoom = min(14, max(10, 13 - math.log2(max_range / 0.05)))
+    zoom = round(8.0 - math.log2(padded))
+    zoom = max(9, min(14, zoom))
 
     fig.update_layout(
         mapbox=dict(
@@ -554,7 +555,7 @@ def _render_map(steps, sel, tx):
             zoom=zoom,
         ),
         margin=dict(l=0, r=0, t=0, b=0),
-        height=520,
+        height=560,
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
     st.plotly_chart(fig, width='stretch')
