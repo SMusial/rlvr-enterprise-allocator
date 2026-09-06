@@ -535,10 +535,25 @@ def _render_map(steps, sel, tx):
         showlegend=False,
     ))
 
+    # Auto-fit bounds to all technicians and work orders
+    all_lats = [v[1] for v in techs.values()] + [v[1] for v in orders.values()]
+    all_lons = [v[0] for v in techs.values()] + [v[0] for v in orders.values()]
+    lat_center = (min(all_lats) + max(all_lats)) / 2
+    lon_center = (min(all_lons) + max(all_lons)) / 2
+    lat_range  = max(all_lats) - min(all_lats)
+    lon_range  = max(all_lons) - min(all_lons)
+    max_range  = max(lat_range, lon_range, 0.01)
+    import math
+    zoom = max(1, min(14, round(8.5 - math.log2(max_range * 111))))
+
     fig.update_layout(
-        mapbox=dict(style="open-street-map", center=dict(lat=52.23, lon=21.01), zoom=10),
+        mapbox=dict(
+            style="open-street-map",
+            center=dict(lat=lat_center, lon=lon_center),
+            zoom=zoom,
+        ),
         margin=dict(l=0, r=0, t=0, b=0),
-        height=450,
+        height=520,
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
     st.plotly_chart(fig, width='stretch')
