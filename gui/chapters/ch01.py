@@ -558,7 +558,7 @@ def _render_map(steps, sel, tx):
         height=560,
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
-    st.plotly_chart(fig, width='stretch')
+    st.plotly_chart(fig, use_container_width=True)
 
 
 # ---------------------------------------------------------------------------
@@ -640,7 +640,7 @@ def _render_curve(curve, tx):
         margin=dict(l=40, r=20, t=20, b=40),
         legend=dict(orientation="h"),
     )
-    st.plotly_chart(fig, width='stretch')
+    st.plotly_chart(fig, use_container_width=True)
 
 
 # ---------------------------------------------------------------------------
