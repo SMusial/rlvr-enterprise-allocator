@@ -546,7 +546,7 @@ def _render_map(steps, sel, tx):
     padded = max(lat_range, lon_range, 0.001) * 1.3
     import math
     zoom = round(8.0 - math.log2(padded))
-    zoom = max(11, min(14, zoom))
+    zoom = max(10, min(12, zoom))
 
     fig.update_layout(
         mapbox=dict(
