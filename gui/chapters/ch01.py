@@ -542,9 +542,10 @@ def _render_map(steps, sel, tx):
     lon_center = (min(all_lons) + max(all_lons)) / 2
     lat_range  = max(all_lats) - min(all_lats)
     lon_range  = max(all_lons) - min(all_lons)
-    max_range  = max(lat_range, lon_range, 0.01)
+    max_range  = max(lat_range, lon_range, 0.001)
+    # zoom formula: 1 degree ≈ 111km, fit to 520px height
     import math
-    zoom = max(1, min(14, round(8.5 - math.log2(max_range * 111))))
+    zoom = min(14, max(10, 13 - math.log2(max_range / 0.05)))
 
     fig.update_layout(
         mapbox=dict(
