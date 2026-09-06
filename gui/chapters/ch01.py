@@ -565,6 +565,8 @@ def _render_map(steps, sel, tx):
 # Glass-Box
 # ---------------------------------------------------------------------------
 def _render_glass_box(steps, sel, tx, gamma):
+    # Episode selector info
+    st.caption(f"Showing episode step trace — {len(steps)} steps total. Use the Step slider above to highlight a specific dispatch decision.")
     rows = []
     for i, s in enumerate(steps):
         highlight = "**" if i == sel else ""
