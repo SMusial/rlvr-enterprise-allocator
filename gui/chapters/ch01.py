@@ -543,10 +543,10 @@ def _render_map(steps, sel, tx):
     lat_range  = max(all_lats) - min(all_lats)
     lon_range  = max(all_lons) - min(all_lons)
     # Add 30% padding and compute zoom level
-    padded = max(lat_range, lon_range, 0.001) * 1.3
+    padded = max(lat_range, lon_range, 0.001) * 4.0
     import math
     zoom = round(8.0 - math.log2(padded))
-    zoom = max(10, min(12, zoom))
+    zoom = max(9, min(11, zoom))
 
     fig.update_layout(
         mapbox=dict(
