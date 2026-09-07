@@ -1,5 +1,6 @@
 //! Ch01 — MDP Baseline & ε-Greedy Dispatch
 //! Warsaw ASP: technicians move to work order location after each dispatch.
+//! Each work order is dispatched exactly once per episode.
 
 use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
@@ -35,7 +36,7 @@ pub fn run_ch01_episode(
     epsilon:  f64,
     gamma:    f64,
 ) -> Ch01Result {
-    // Policy RNG — different per episode (seed varies)
+    // Policy RNG — different per episode
     let mut rng = StdRng::seed_from_u64(seed);
 
     // Environment RNG — fixed seed 42 so positions are always the same
@@ -57,9 +58,9 @@ pub fn run_ch01_episode(
         .map(|_| 52.18 + env_rng.gen::<f64>() * 0.14)
         .collect();
 
-    // Fixed skills
-    let tech_skills:  Vec<u8> = (0..n_tech).map(|_| env_rng.gen_range(0u8..4u8)).collect();
-    let order_skills: Vec<u8> = (0..n_orders).map(|_| env_rng.gen_range(0u8..4u8)).collect();
+    // Fixed skills and SLA
+    let tech_skills:  Vec<u8>  = (0..n_tech).map(|_| env_rng.gen_range(0u8..4u8)).collect();
+    let order_skills: Vec<u8>  = (0..n_orders).map(|_| env_rng.gen_range(0u8..4u8)).collect();
     let order_sla:    Vec<f64> = (0..n_orders).map(|_| 0.3 + env_rng.gen::<f64>() * 0.5).collect();
 
     // Mutable technician positions — updated after each dispatch
@@ -69,12 +70,19 @@ pub fn run_ch01_episode(
     // Q-table = all zeros (baseline — no learning)
     let q_table = vec![vec![0.0f64; n_orders]; n_tech];
 
+    // Shuffle order indices — each work order dispatched exactly once
+    let mut order_indices: Vec<usize> = (0..n_orders).collect();
+    for i in (1..n_orders).rev() {
+        let j = rng.gen_range(0..=i);
+        order_indices.swap(i, j);
+    }
+
     let mut steps = Vec::new();
 
     for step in 0..n_orders {
-        let order_idx = step % n_orders;
+        let order_idx = order_indices[step];
 
-        // ε-greedy: Q=0 everywhere → greedy = random too
+        // ε-greedy action selection
         let explored = rng.gen::<f64>() < epsilon;
         let tech_idx = if explored {
             rng.gen_range(0..n_tech)
@@ -88,7 +96,7 @@ pub fn run_ch01_episode(
                 .unwrap_or(0)
         };
 
-        // Technician position BEFORE moving (for map display)
+        // Technician position BEFORE moving
         let tx = tech_x[tech_idx];
         let ty = tech_y[tech_idx];
         let ox = orders_x[order_idx];
