@@ -229,8 +229,8 @@ def _render_glass_box(steps, sel, tx, gamma):
     rows = []
     for i, s in enumerate(steps):
         tech_skill  = s.get("tech_skill", "?")
-            order_skill = s.get("order_skill", "?")
-            rows.append({
+        order_skill = s.get("order_skill", "?")
+        rows.append({
             tx["col_step"]:   i,
             tx["col_tech"]:   f"T{s['tech_idx']}",
             tx["col_order"]:  f"W{s['order_idx']}",
