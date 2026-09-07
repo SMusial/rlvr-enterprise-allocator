@@ -228,7 +228,9 @@ def _render_gt_per_step(steps, sel):
 def _render_glass_box(steps, sel, tx, gamma):
     rows = []
     for i, s in enumerate(steps):
-        rows.append({
+        tech_skill  = s.get("tech_skill", "?")
+            order_skill = s.get("order_skill", "?")
+            rows.append({
             tx["col_step"]:   i,
             tx["col_tech"]:   f"T{s['tech_idx']}",
             tx["col_order"]:  f"W{s['order_idx']}",
@@ -236,6 +238,7 @@ def _render_glass_box(steps, sel, tx, gamma):
             tx["col_reward"]: round(s["reward"], 3),
             tx["col_gt"]:     round(s["gt"], 3),
             tx["col_sla"]:    "✅" if s.get("sla_met") else "❌",
+            "Task vs Tech Skill": f"{order_skill} vs {tech_skill}",
             tx["col_skill"]:  "✅" if s.get("skill_match") else "❌",
             tx["col_dist"]:   f"{s.get('distance_km', 0):.1f} km",
         })
