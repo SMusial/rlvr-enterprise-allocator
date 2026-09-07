@@ -261,15 +261,17 @@ pub fn run_episode(config: AspConfig) -> EpisodeRecord {
 
     let mut raw_steps: Vec<(AspAction, f64, bool, bool, bool, f64)> = Vec::new();
 
+    // Shuffle order indices — each work order dispatched exactly once
+    let mut order_indices: Vec<usize> = (0..config.n_orders).collect();
+    for i in (1..config.n_orders).rev() {
+        let j = rng.gen_range(0..=i);
+        order_indices.swap(i, j);
+    }
+
     for step in 0..config.n_orders {
         let tech_idx = step % config.n_tech;
-        let (order_idx, explored) = epsilon_greedy(
-            &q_table,
-            tech_idx,
-            config.n_orders,
-            config.epsilon,
-            &mut rng,
-        );
+        let order_idx = order_indices[step];
+        let explored = rng.gen::<f64>() < config.epsilon;
 
         let tech = &state.technicians[tech_idx];
         let order = &state.work_orders[order_idx];
