@@ -249,7 +249,7 @@ def _render_summary(steps, total_gt, tx):
     sla_rate   = sum(1 for s in steps if s.get("sla_met"))     / max(n, 1)
     skill_rate = sum(1 for s in steps if s.get("skill_match")) / max(n, 1)
     exp_rate   = sum(1 for s in steps if s.get("explored"))    / max(n, 1)
-    avg_dist   = sum(s.get("distance", 0) for s in steps)      / max(n, 1)
+    avg_dist   = sum(s.get("distance_km", 0) for s in steps)      / max(n, 1)
     avg_reward = sum(s.get("reward", 0) for s in steps)        / max(n, 1)
 
     df = pd.DataFrame([
