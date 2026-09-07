@@ -296,7 +296,7 @@ def render():
             with st.spinner(f"Running {n_ep} episodes..."):
                 for ep in range(n_ep):
                     raw = rlvr_py.run_ch01_episode(
-                        int(seed), int(n_tech), int(n_orders),
+                        int(seed) + ep, int(n_tech), int(n_orders),
                         float(epsilon), float(gamma)
                     )
                     ep_data = json.loads(raw) if isinstance(raw, str) else raw
@@ -304,6 +304,7 @@ def render():
                     curve_data.append(ep_data.get("total_gt", 0.0))
             st.session_state["ch01_all_episodes"] = all_eps
             st.session_state["ch01_curve"]        = curve_data
+            st.success(f"✅ Saved {len(all_eps)} episodes, curve length={len(curve_data)}, first Gt={curve_data[0]:.3f}")
 
         # ── Check if data available ───────────────────────────────────────
         if "ch01_all_episodes" not in st.session_state:
