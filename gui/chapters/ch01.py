@@ -443,8 +443,21 @@ def render():
         _render_map(steps, sel, tx)
         st.caption(tx["map_caption"])
 
-        # --- glass-box ---
-        st.subheader(tx["glass_title"])
+    # --- glass-box ---
+    st.subheader(tx["glass_title"])
+    if "ch01_curve" in st.session_state and len(st.session_state["ch01_curve"]) > 0:
+        import json as _json
+        n_eps = len(st.session_state["ch01_curve"])
+        ep_sel = st.slider("Select episode to inspect", 0, n_eps - 1, 0, key="gb_ep_sel")
+        ep_raw = rlvr_py.run_ch01_episode(
+            int(seed) + ep_sel, int(n_tech), int(n_orders),
+            float(epsilon), float(gamma)
+        )
+        ep_data = _json.loads(ep_raw) if isinstance(ep_raw, str) else ep_raw
+        curve_gt = st.session_state["ch01_curve"][ep_sel]
+        st.caption(f"Episode {ep_sel + 1}/{n_eps} — Total Gt = **{curve_gt:.3f}**")
+        _render_glass_box(ep_data.get("steps", []), sel, tx, gamma)
+    else:
         _render_glass_box(steps, sel, tx, gamma)
 
         # --- learning curve ---
