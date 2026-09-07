@@ -170,16 +170,20 @@ def _render_map(steps, sel, tx):
 # ---------------------------------------------------------------------------
 # Reward per Step Chart
 # ---------------------------------------------------------------------------
-def _render_reward_per_step(steps):
+def _render_reward_per_step(steps, sel):
     rewards = [s["reward"] for s in steps]
+    colors  = ["#0FC373" if r >= 0 else "#FF4B4B" for r in rewards]
+    # Highlight selected step with brighter color
+    colors[sel] = "#FFD700" if rewards[sel] >= 0 else "#FF8C00"
     fig = go.Figure()
     fig.add_trace(go.Bar(
         x=list(range(len(steps))),
         y=rewards,
-        marker_color=["#0FC373" if r >= 0 else "#FF4B4B" for r in rewards],
+        marker_color=colors,
         hovertemplate="Step %{x}<br>Reward: %{y:+.3f}<extra></extra>",
     ))
     fig.add_hline(y=0, line_dash="dash", line_color="#9ca3af")
+    fig.add_vline(x=sel, line_dash="dot", line_color="#FFD700", line_width=2)
     fig.update_layout(
         xaxis_title="Step", yaxis_title="Reward R",
         height=250, margin=dict(l=40, r=20, t=20, b=40),
@@ -187,24 +191,27 @@ def _render_reward_per_step(steps):
         font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption("Green = positive reward (SLA met) · Red = penalty (SLA breach or skill mismatch)")
+    st.caption(f"Step {sel}: R = {rewards[sel]:+.3f} · Green = SLA met · Red = SLA breach · Yellow = selected step")
 
 
 # ---------------------------------------------------------------------------
 # Discounted Return Gt per Step Chart
 # ---------------------------------------------------------------------------
-def _render_gt_per_step(steps):
-    gts = [s["gt"] for s in steps]
+def _render_gt_per_step(steps, sel):
+    gts    = [s["gt"] for s in steps]
+    colors = ["#FFD700" if i == sel else "#8B5CF6" for i in range(len(steps))]
+    sizes  = [12 if i == sel else 6 for i in range(len(steps))]
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=list(range(len(steps))),
         y=gts,
         mode="lines+markers",
         line=dict(color="#8B5CF6", width=2),
-        marker=dict(size=6, color="#8B5CF6"),
+        marker=dict(size=sizes, color=colors),
         hovertemplate="Step %{x}<br>Gₜ = %{y:.3f}<extra></extra>",
     ))
     fig.add_hline(y=0, line_dash="dash", line_color="#9ca3af")
+    fig.add_vline(x=sel, line_dash="dot", line_color="#FFD700", line_width=2)
     fig.update_layout(
         xaxis_title="Step t", yaxis_title="Discounted Return Gₜ",
         height=250, margin=dict(l=40, r=20, t=20, b=40),
@@ -212,7 +219,7 @@ def _render_gt_per_step(steps):
         font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption("Gₜ = Rₜ + γRₜ₊₁ + γ²Rₜ₊₂ + … — computed backward. Step 0 has the highest Gₜ.")
+    st.caption(f"Step {sel}: Gₜ = {gts[sel]:.3f} · G₀ = {gts[0]:.3f} · Yellow = selected step · Gₜ = Rₜ + γRₜ₊₁ + …")
 
 
 # ---------------------------------------------------------------------------
@@ -390,11 +397,11 @@ def render():
 
         # ── Reward per Step Chart ─────────────────────────────────────────
         st.subheader("📊 Reward per Step Chart")
-        _render_reward_per_step(ep_steps)
+        _render_reward_per_step(ep_steps, sel)
 
         # ── Discounted Return Gt Chart ────────────────────────────────────
         st.subheader("📈 Discounted Return Gₜ Chart")
-        _render_gt_per_step(ep_steps)
+        _render_gt_per_step(ep_steps, sel)
 
         # ── Glass-Box — MDP Trace ─────────────────────────────────────────
         st.subheader(tx["glass_title"])
