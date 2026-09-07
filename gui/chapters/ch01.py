@@ -23,7 +23,7 @@ def _tx():
         "seed":           "Random seed",
         "run_btn":        "▶ Run All Episodes",
         "map_title":      "🗺️ Warsaw Dispatch Map",
-        "map_caption":    "Blue = Technicians · Red = Work Orders · Green line = assigned dispatch",
+        "map_caption":    "Blue = Technicians · Red markers = Work Orders · Green line = SLA met · Red line = SLA breach",
         "step_slider":    "🔍 Highlight step on map",
         "glass_title":    "🔬 Glass-Box — MDP Trace",
         "curve_title":    "📈 Learning Curve — Gₜ over Episodes (MA-5)",
@@ -66,7 +66,6 @@ def _render_handbook():
 # Map
 # ---------------------------------------------------------------------------
 def _render_map(steps, sel, tx):
-
     techs  = {}
     orders = {}
     for s in steps:
@@ -96,30 +95,36 @@ def _render_map(steps, sel, tx):
             name=f"W{k}", showlegend=False,
         ))
 
-    # Highlight selected step
+    # Highlight selected step — green=SLA met, red=SLA breach
     if sel < len(steps):
         s = steps[sel]
+        line_color = "#0FC373" if s.get("sla_met") else "#FF4B4B"
+        label = "✅ SLA met" if s.get("sla_met") else "❌ SLA breach"
         fig.add_trace(go.Scattermapbox(
             lat=[s["tech_y"], s["order_y"]],
             lon=[s["tech_x"], s["order_x"]],
             mode="lines+markers",
-            line=dict(width=3, color="#0FC373"),
-            marker=dict(size=10, color="#0FC373"),
-            name=f"Step {sel}: T{s['tech_idx']}→W{s['order_idx']}",
+            line=dict(width=3, color=line_color),
+            marker=dict(size=10, color=line_color),
+            name=f"Step {sel}: T{s['tech_idx']}→W{s['order_idx']} ({label})",
         ))
 
-    # Auto-fit zoom
+    # Auto-fit zoom — 40% padding so all markers are always visible
     all_lats = [v[1] for v in techs.values()] + [v[1] for v in orders.values()]
     all_lons = [v[0] for v in techs.values()] + [v[0] for v in orders.values()]
-    lat_c = (min(all_lats) + max(all_lats)) / 2
-    lon_c = (min(all_lons) + max(all_lons)) / 2
-    span  = max(max(all_lats) - min(all_lats), max(all_lons) - min(all_lons), 0.001) * 2.5
-    zoom  = max(10, min(13, round(7.0 - math.log2(span))))
+    lat_min, lat_max = min(all_lats), max(all_lats)
+    lon_min, lon_max = min(all_lons), max(all_lons)
+    lat_c = (lat_min + lat_max) / 2
+    lon_c = (lon_min + lon_max) / 2
+    lat_span = (lat_max - lat_min) * 1.4 or 0.05
+    lon_span = (lon_max - lon_min) * 1.4 or 0.05
+    span = max(lat_span, lon_span)
+    zoom = max(10, min(14, round(8.5 - math.log2(span * 111))))
 
     fig.update_layout(
         mapbox=dict(style="open-street-map", center=dict(lat=lat_c, lon=lon_c), zoom=zoom),
         margin=dict(l=0, r=0, t=0, b=0),
-        height=520,
+        height=560,
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -145,7 +150,7 @@ def _render_reward_per_step(steps):
         font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption("Green = positive reward (SLA met, skill match) · Red = penalty (SLA breach, skill mismatch, distance)")
+    st.caption("Green = positive reward (SLA met) · Red = penalty (SLA breach or skill mismatch)")
 
 
 # ---------------------------------------------------------------------------
@@ -170,7 +175,7 @@ def _render_gt_per_step(steps):
         font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption("Gₜ = Rₜ + γRₜ₊₁ + γ²Rₜ₊₂ + … — computed backward from episode end. Step 0 has the highest Gₜ.")
+    st.caption("Gₜ = Rₜ + γRₜ₊₁ + γ²Rₜ₊₂ + … — computed backward. Step 0 has the highest Gₜ.")
 
 
 # ---------------------------------------------------------------------------
@@ -191,10 +196,12 @@ def _render_glass_box(steps, sel, tx, gamma):
             tx["col_dist"]:   f"{s.get('distance', 0):.1f} km",
         })
     df = pd.DataFrame(rows)
-    # Highlight selected step
+
     def highlight_row(row):
         return ["background-color: #252840"] * len(row) if row[tx["col_step"]] == sel else [""] * len(row)
-    st.dataframe(df.style.apply(highlight_row, axis=1), use_container_width=True, height=300)
+
+    st.dataframe(df.style.apply(highlight_row, axis=1),
+                 use_container_width=True, height=300)
 
 
 # ---------------------------------------------------------------------------
@@ -202,11 +209,11 @@ def _render_glass_box(steps, sel, tx, gamma):
 # ---------------------------------------------------------------------------
 def _render_summary(steps, total_gt, tx):
     n = len(steps)
-    sla_rate   = sum(1 for s in steps if s.get("sla_met"))    / max(n, 1)
+    sla_rate   = sum(1 for s in steps if s.get("sla_met"))     / max(n, 1)
     skill_rate = sum(1 for s in steps if s.get("skill_match")) / max(n, 1)
-    exp_rate   = sum(1 for s in steps if s.get("explored"))   / max(n, 1)
-    avg_dist   = sum(s.get("distance", 0) for s in steps)     / max(n, 1)
-    avg_reward = sum(s.get("reward", 0) for s in steps)       / max(n, 1)
+    exp_rate   = sum(1 for s in steps if s.get("explored"))    / max(n, 1)
+    avg_dist   = sum(s.get("distance", 0) for s in steps)      / max(n, 1)
+    avg_reward = sum(s.get("reward", 0) for s in steps)        / max(n, 1)
 
     df = pd.DataFrame([
         {"Metric": tx["metric_gt"],      "Value": f"{total_gt:.3f}"},
@@ -224,11 +231,9 @@ def _render_summary(steps, total_gt, tx):
 # Learning Curve (MA-5)
 # ---------------------------------------------------------------------------
 def _render_curve(curve, tx):
-
-    # Compute MA-5
     ma5 = []
     for i in range(len(curve)):
-        window = curve[max(0, i-4):i+1]
+        window = curve[max(0, i - 4):i + 1]
         ma5.append(sum(window) / len(window))
 
     mean_gt = sum(curve) / len(curve)
@@ -249,15 +254,17 @@ def _render_curve(curve, tx):
         y="MA-5:Q",
         tooltip=["Episode", alt.Tooltip("MA-5:Q", format=".3f")],
     )
-    mean_line = alt.Chart(pd.DataFrame({"mean": [mean_gt]})).mark_rule(
-        color="#FF8C0A", strokeDash=[6, 3]
-    ).encode(y="mean:Q")
+    mean_line = alt.Chart(
+        pd.DataFrame({"mean": [mean_gt]})
+    ).mark_rule(color="#FF8C0A", strokeDash=[6, 3]).encode(y="mean:Q")
 
-    st.altair_chart((raw_line + ma_line + mean_line).properties(height=280),
-                    use_container_width=True)
+    st.altair_chart(
+        (raw_line + ma_line + mean_line).properties(height=280),
+        use_container_width=True
+    )
     st.caption(
-        f"Blue = raw Gₜ per episode · Bold blue = MA-5 · "
-        f"Orange dashed = mean G₀ = {mean_gt:.3f} (Ch01 baseline for Ch02–Ch18). "
+        f"Blue = raw Gₜ · Bold blue = MA-5 · Orange dashed = mean G₀ = {mean_gt:.3f} "
+        f"(Ch01 baseline for Ch02–Ch18). "
         f"📌 **Expected: no upward trend** — Q=0, agent never learns."
     )
 
@@ -291,12 +298,13 @@ def render():
 
         # ── Run button ────────────────────────────────────────────────────
         if st.button(tx["run_btn"], type="primary"):
-            all_eps   = []
+            all_eps    = []
             curve_data = []
             with st.spinner(f"Running {n_ep} episodes..."):
                 for ep in range(n_ep):
                     raw = rlvr_py.run_ch01_episode(
-                        int(seed) + ep, int(n_tech), int(n_orders),
+                        int(seed) + ep,   # seed+ep = same env, different policy
+                        int(n_tech), int(n_orders),
                         float(epsilon), float(gamma)
                     )
                     ep_data = json.loads(raw) if isinstance(raw, str) else raw
@@ -304,7 +312,6 @@ def render():
                     curve_data.append(ep_data.get("total_gt", 0.0))
             st.session_state["ch01_all_episodes"] = all_eps
             st.session_state["ch01_curve"]        = curve_data
-            st.success(f"✅ Saved {len(all_eps)} episodes, curve length={len(curve_data)}, first Gt={curve_data[0]:.3f}")
 
         # ── Check if data available ───────────────────────────────────────
         if "ch01_all_episodes" not in st.session_state:
@@ -316,29 +323,23 @@ def render():
         n_eps        = len(all_episodes)
 
         # ── No-learning notice ────────────────────────────────────────────
+        mean_g0 = sum(curve) / len(curve)
         st.info(
             "**Ch01 — No learning across episodes.** "
             "Q=0 throughout: the agent never updates its Q-table. "
-            "Each episode is an independent random dispatch — expect **no upward trend** "
-            "in the Learning Curve. The flat curve IS the result: it proves that without "
-            f"learning, performance stays random. "
-            f"Baseline G₀ = {sum(curve)/len(curve):.2f} — reference for Ch02–Ch18."
+            "Each episode uses the same environment (fixed positions) but a different "
+            "random policy seed — expect **no upward trend** in the Learning Curve. "
+            f"Baseline G₀ = {mean_g0:.2f} — reference for Ch02–Ch18."
         )
 
         # ── Episode selector ──────────────────────────────────────────────
-        ep_sel = st.slider(
-            "🎬 Select episode to inspect",
-            0, n_eps - 1, 0, key="ep_sel"
-        )
-
-        # Read selected episode data directly from session_state
-        ep_steps = st.session_state["ch01_all_episodes"][ep_sel]
-        ep_gt    = st.session_state["ch01_curve"][ep_sel]
-
+        ep_sel   = st.slider("🎬 Select episode to inspect",
+                             0, n_eps - 1, 0, key="ep_sel")
+        ep_steps = all_episodes[ep_sel]
+        ep_gt    = curve[ep_sel]
         st.caption(
             f"Episode {ep_sel + 1}/{n_eps} — "
-            f"Total Gₜ = **{ep_gt:.3f}** · "
-            f"Mean = {sum(curve)/len(curve):.3f}"
+            f"Total Gₜ = **{ep_gt:.3f}** · Mean G₀ = {mean_g0:.3f}"
         )
 
         # ── Step selector ─────────────────────────────────────────────────

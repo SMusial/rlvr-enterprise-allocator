@@ -29,53 +29,44 @@ pub struct Ch01Result {
 }
 
 pub fn run_ch01_episode(
-    seed:      u64,
-    n_tech:    usize,
-    n_orders:  usize,
-    epsilon:   f64,
-    gamma:     f64,
+    seed:     u64,
+    n_tech:   usize,
+    n_orders: usize,
+    epsilon:  f64,
+    gamma:    f64,
 ) -> Ch01Result {
+    // Policy RNG — different per episode (seed varies)
     let mut rng = StdRng::seed_from_u64(seed);
 
-    // Fixed environment seed (same positions every episode)
+    // Environment RNG — fixed seed 42 so positions are always the same
     let mut env_rng = StdRng::seed_from_u64(42);
 
-    // Generate fixed work order positions
-    let orders_x: Vec<f64> = (0..n_orders).map(|_| {
-        20.90 + env_rng.gen::<f64>() * 0.20
-    }).collect();
-    let orders_y: Vec<f64> = (0..n_orders).map(|_| {
-        52.18 + env_rng.gen::<f64>() * 0.14
-    }).collect();
+    // Fixed work order positions
+    let orders_x: Vec<f64> = (0..n_orders)
+        .map(|_| 20.90 + env_rng.gen::<f64>() * 0.20)
+        .collect();
+    let orders_y: Vec<f64> = (0..n_orders)
+        .map(|_| 52.18 + env_rng.gen::<f64>() * 0.14)
+        .collect();
 
-    // Generate fixed initial technician positions
-    let init_tech_x: Vec<f64> = (0..n_tech).map(|_| {
-        20.90 + env_rng.gen::<f64>() * 0.20
-    }).collect();
-    let init_tech_y: Vec<f64> = (0..n_tech).map(|_| {
-        52.18 + env_rng.gen::<f64>() * 0.14
-    }).collect();
+    // Fixed initial technician positions
+    let init_tech_x: Vec<f64> = (0..n_tech)
+        .map(|_| 20.90 + env_rng.gen::<f64>() * 0.20)
+        .collect();
+    let init_tech_y: Vec<f64> = (0..n_tech)
+        .map(|_| 52.18 + env_rng.gen::<f64>() * 0.14)
+        .collect();
 
-    // Technician skills (fixed per environment)
-    let tech_skills: Vec<u8> = (0..n_tech).map(|_| {
-        env_rng.gen_range(0u8..4u8)
-    }).collect();
-
-    // Order required skills (fixed per environment)
-    let order_skills: Vec<u8> = (0..n_orders).map(|_| {
-        env_rng.gen_range(0u8..4u8)
-    }).collect();
-
-    // SLA deadlines (fixed per environment)
-    let order_sla: Vec<f64> = (0..n_orders).map(|_| {
-        0.3 + env_rng.gen::<f64>() * 0.5
-    }).collect();
+    // Fixed skills
+    let tech_skills:  Vec<u8> = (0..n_tech).map(|_| env_rng.gen_range(0u8..4u8)).collect();
+    let order_skills: Vec<u8> = (0..n_orders).map(|_| env_rng.gen_range(0u8..4u8)).collect();
+    let order_sla:    Vec<f64> = (0..n_orders).map(|_| 0.3 + env_rng.gen::<f64>() * 0.5).collect();
 
     // Mutable technician positions — updated after each dispatch
     let mut tech_x = init_tech_x.clone();
     let mut tech_y = init_tech_y.clone();
 
-    // Q-table = all zeros (baseline)
+    // Q-table = all zeros (baseline — no learning)
     let q_table = vec![vec![0.0f64; n_orders]; n_tech];
 
     let mut steps = Vec::new();
@@ -83,12 +74,11 @@ pub fn run_ch01_episode(
     for step in 0..n_orders {
         let order_idx = step % n_orders;
 
-        // ε-greedy action selection (Q=0 → always random when ε=1)
+        // ε-greedy: Q=0 everywhere → greedy = random too
         let explored = rng.gen::<f64>() < epsilon;
         let tech_idx = if explored {
             rng.gen_range(0..n_tech)
         } else {
-            // greedy: pick technician with highest Q for this order
             (0..n_tech)
                 .max_by(|&a, &b| {
                     q_table[a][order_idx]
@@ -98,25 +88,20 @@ pub fn run_ch01_episode(
                 .unwrap_or(0)
         };
 
-        // Current technician position (updated after previous dispatch)
+        // Technician position BEFORE moving (for map display)
         let tx = tech_x[tech_idx];
         let ty = tech_y[tech_idx];
         let ox = orders_x[order_idx];
         let oy = orders_y[order_idx];
 
-        // Distance in km (approx)
+        // Distance in km
         let dx = (tx - ox) * 111.0 * (52.2f64.to_radians().cos());
         let dy = (ty - oy) * 111.0;
         let distance = (dx * dx + dy * dy).sqrt();
 
-        // Skill match
         let skill_match = tech_skills[tech_idx] == order_skills[order_idx];
+        let sla_met = skill_match && distance < order_sla[order_idx] * 20.0;
 
-        // SLA met: depends on distance and skill match
-        let sla_threshold = order_sla[order_idx];
-        let sla_met = skill_match && distance < sla_threshold * 20.0;
-
-        // Reward
         let reward = if sla_met {
             2.0 - distance * 0.05
         } else if skill_match {
@@ -125,7 +110,7 @@ pub fn run_ch01_episode(
             -1.0 - distance * 0.02
         };
 
-        // After dispatch: technician moves to work order location
+        // Technician moves to work order location after dispatch
         tech_x[tech_idx] = ox;
         tech_y[tech_idx] = oy;
 
@@ -133,13 +118,13 @@ pub fn run_ch01_episode(
             step,
             tech_idx,
             order_idx,
-            tech_x: tx,   // position BEFORE moving (for map display)
+            tech_x: tx,
             tech_y: ty,
             order_x: ox,
             order_y: oy,
             distance,
             reward,
-            gt: 0.0,      // filled in below
+            gt: 0.0,
             sla_met,
             skill_match,
             explored,
@@ -155,6 +140,5 @@ pub fn run_ch01_episode(
     }
 
     let total_gt = steps.first().map(|s| s.gt).unwrap_or(0.0);
-
     Ch01Result { steps, total_gt }
 }
