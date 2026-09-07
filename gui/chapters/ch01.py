@@ -99,14 +99,32 @@ def _render_map(steps, sel, tx):
         name="Technicians",
     ))
 
-    # Work orders
+    # Work orders — color depends on completion status
+    # Build completion status up to step sel
+    completed = {}  # order_idx -> sla_met
+    for s in steps[:sel + 1]:
+        completed[s["order_idx"]] = s.get("sla_met", False)
+
     for k, v in orders.items():
+        if k not in completed:
+            # Not yet dispatched — black text
+            marker_color = "#FF4B4B"
+            text_color   = "#000000"
+        elif completed[k]:
+            # SLA met — green text
+            marker_color = "#0FC373"
+            text_color   = "#0FC373"
+        else:
+            # SLA breach — red text
+            marker_color = "#FF4B4B"
+            text_color   = "#FF4B4B"
+
         fig.add_trace(go.Scattermapbox(
             lat=[v[1]], lon=[v[0]],
             mode="markers+text",
-            marker=dict(size=10, color="#FF4B4B"),
+            marker=dict(size=10, color=marker_color),
             text=[f"W{k}"], textposition="top right",
-            textfont=dict(size=12, color="#0FC373"),
+            textfont=dict(size=12, color=text_color),
             name=f"W{k}", showlegend=False,
         ))
 
@@ -131,8 +149,8 @@ def _render_map(steps, sel, tx):
     lon_min, lon_max = min(all_lons), max(all_lons)
     lat_c = (lat_min + lat_max) / 2
     lon_c = (lon_min + lon_max) / 2
-    lat_span = (lat_max - lat_min) * 1.4 or 0.05
-    lon_span = (lon_max - lon_min) * 1.4 or 0.05
+    lat_span = (lat_max - lat_min) * 1.2 or 0.05
+    lon_span = (lon_max - lon_min) * 1.2 or 0.05
     span = max(lat_span, lon_span)
     zoom = max(9, min(13, round(8.5 - math.log2(span * 111))))
 
