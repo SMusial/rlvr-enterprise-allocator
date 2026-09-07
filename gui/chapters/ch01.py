@@ -237,7 +237,7 @@ def _render_glass_box(steps, sel, tx, gamma):
             tx["col_gt"]:     round(s["gt"], 3),
             tx["col_sla"]:    "✅" if s.get("sla_met") else "❌",
             tx["col_skill"]:  "✅" if s.get("skill_match") else "❌",
-            tx["col_dist"]:   f"{s.get('distance', 0):.1f} km",
+            tx["col_dist"]:   f"{s.get('distance_km', 0):.1f} km",
         })
     df = pd.DataFrame(rows)
 
