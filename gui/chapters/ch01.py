@@ -404,7 +404,12 @@ def render():
                 )
                 ep_res = json.loads(ep_raw) if isinstance(ep_raw, str) else ep_raw
                 curve_data.append(ep_res["total_gt"])
-            st.session_state["ch01_curve"] = curve_data
+            st.session_state["ch01_curve"]    = curve_data
+        st.session_state["ch01_seed"]     = seed
+        st.session_state["ch01_n_tech"]   = n_tech
+        st.session_state["ch01_n_orders"] = n_orders
+        st.session_state["ch01_gamma"]    = gamma
+        st.session_state["ch01_epsilon"]  = epsilon
 
         # --- render if data available ---
         if "ch01_steps" not in st.session_state:
@@ -472,6 +477,62 @@ def render():
 
         # --- theory ---
 
+
+
+# ---------------------------------------------------------------------------
+# Reward per Step Chart
+# ---------------------------------------------------------------------------
+def _render_reward_per_step(steps):
+    import plotly.graph_objects as go
+    rewards = [s["reward"] for s in steps]
+    colors  = ["#0FC373" if r >= 0 else "#FF4B4B" for r in rewards]
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        x=list(range(len(steps))),
+        y=rewards,
+        marker_color=colors,
+        hovertemplate="Step %{x}<br>Reward: %{y:+.2f}<extra></extra>",
+    ))
+    fig.add_hline(y=0, line_dash="dash", line_color="#9ca3af")
+    fig.update_layout(
+        xaxis_title="Step",
+        yaxis_title="Reward R",
+        height=250,
+        margin=dict(l=40, r=20, t=20, b=40),
+        paper_bgcolor="#0f1117",
+        plot_bgcolor="#0f1117",
+        font=dict(color="#e8eaf6"),
+    )
+    st.plotly_chart(fig, use_container_width=True)
+    st.caption("Green = positive reward (SLA met, skill match) · Red = penalty (SLA breach, skill mismatch, distance)")
+
+# ---------------------------------------------------------------------------
+# Discounted Return Gt per Step Chart
+# ---------------------------------------------------------------------------
+def _render_gt_per_step(steps, tx):
+    import plotly.graph_objects as go
+    gts = [s["gt"] for s in steps]
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=list(range(len(steps))),
+        y=gts,
+        mode="lines+markers",
+        line=dict(color="#8B5CF6", width=2),
+        marker=dict(size=6, color="#8B5CF6"),
+        hovertemplate="Step %{x}<br>Gₜ = %{y:.3f}<extra></extra>",
+    ))
+    fig.add_hline(y=0, line_dash="dash", line_color="#9ca3af")
+    fig.update_layout(
+        xaxis_title="Step t",
+        yaxis_title="Discounted Return Gₜ",
+        height=250,
+        margin=dict(l=40, r=20, t=20, b=40),
+        paper_bgcolor="#0f1117",
+        plot_bgcolor="#0f1117",
+        font=dict(color="#e8eaf6"),
+    )
+    st.plotly_chart(fig, use_container_width=True)
+    st.caption("Gₜ = Rₜ + γRₜ₊₁ + γ²Rₜ₊₂ + … — computed backward from episode end. Step 0 has the highest Gₜ (most future rewards ahead).")
 
 # ---------------------------------------------------------------------------
 # Map
