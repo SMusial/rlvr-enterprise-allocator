@@ -66,11 +66,24 @@ def _render_handbook():
 # Map
 # ---------------------------------------------------------------------------
 def _render_map(steps, sel, tx):
-    techs  = {}
+    # Orders: fixed positions (all visible)
     orders = {}
     for s in steps:
-        techs[s["tech_idx"]]   = (s["tech_x"],  s["tech_y"])
         orders[s["order_idx"]] = (s["order_x"], s["order_y"])
+
+    # Technician positions at step `sel`:
+    # - for steps 0..sel: technician is at the work order location (after dispatch)
+    # - for steps not yet dispatched: technician is at initial position (step 0)
+    # Initial positions = position at step 0 for each technician
+    techs = {}
+    for s in steps:
+        if s["tech_idx"] not in techs:
+            techs[s["tech_idx"]] = (s["tech_x"], s["tech_y"])  # initial position
+
+    # Update positions for all steps up to (but not including) sel
+    for s in steps[:sel]:
+        # After step s, technician moves to order location
+        techs[s["tech_idx"]] = (s["order_x"], s["order_y"])
 
     fig = go.Figure()
 
