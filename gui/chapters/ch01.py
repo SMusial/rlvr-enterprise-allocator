@@ -1,6 +1,10 @@
 import streamlit as st
 import json
 import os
+import math
+import pandas as pd
+import plotly.graph_objects as go
+import altair as alt
 
 # ---------------------------------------------------------------------------
 # Translations
@@ -62,7 +66,6 @@ def _render_handbook():
 # Map
 # ---------------------------------------------------------------------------
 def _render_map(steps, sel, tx):
-    import plotly.graph_objects as go
 
     techs  = {}
     orders = {}
@@ -110,9 +113,8 @@ def _render_map(steps, sel, tx):
     all_lons = [v[0] for v in techs.values()] + [v[0] for v in orders.values()]
     lat_c = (min(all_lats) + max(all_lats)) / 2
     lon_c = (min(all_lons) + max(all_lons)) / 2
-    import math as _math
     span  = max(max(all_lats) - min(all_lats), max(all_lons) - min(all_lons), 0.001) * 2.5
-    zoom  = max(10, min(13, round(7.0 - _math.log2(span))))
+    zoom  = max(10, min(13, round(7.0 - math.log2(span))))
 
     fig.update_layout(
         mapbox=dict(style="open-street-map", center=dict(lat=lat_c, lon=lon_c), zoom=zoom),
@@ -127,7 +129,6 @@ def _render_map(steps, sel, tx):
 # Reward per Step Chart
 # ---------------------------------------------------------------------------
 def _render_reward_per_step(steps):
-    import plotly.graph_objects as go
     rewards = [s["reward"] for s in steps]
     fig = go.Figure()
     fig.add_trace(go.Bar(
@@ -151,7 +152,6 @@ def _render_reward_per_step(steps):
 # Discounted Return Gt per Step Chart
 # ---------------------------------------------------------------------------
 def _render_gt_per_step(steps):
-    import plotly.graph_objects as go
     gts = [s["gt"] for s in steps]
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -177,7 +177,6 @@ def _render_gt_per_step(steps):
 # Glass-Box — MDP Trace
 # ---------------------------------------------------------------------------
 def _render_glass_box(steps, sel, tx, gamma):
-    import pandas as pd
     rows = []
     for i, s in enumerate(steps):
         rows.append({
@@ -209,7 +208,6 @@ def _render_summary(steps, total_gt, tx):
     avg_dist   = sum(s.get("distance", 0) for s in steps)     / max(n, 1)
     avg_reward = sum(s.get("reward", 0) for s in steps)       / max(n, 1)
 
-    import pandas as pd
     df = pd.DataFrame([
         {"Metric": tx["metric_gt"],      "Value": f"{total_gt:.3f}"},
         {"Metric": tx["metric_sla"],     "Value": f"{sla_rate*100:.1f}% ({int(sla_rate*n)}/{n})"},
@@ -226,8 +224,6 @@ def _render_summary(steps, total_gt, tx):
 # Learning Curve (MA-5)
 # ---------------------------------------------------------------------------
 def _render_curve(curve, tx):
-    import altair as alt
-    import pandas as pd
 
     # Compute MA-5
     ma5 = []
