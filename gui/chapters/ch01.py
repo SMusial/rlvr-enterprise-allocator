@@ -99,31 +99,35 @@ def _render_map(steps, sel, tx):
         name="Technicians",
     ))
 
-    # Work orders — color depends on completion status
-    # Build completion status up to step sel
-    completed = {}  # order_idx -> sla_met
+    # Work orders — color depends on completion status at step sel
+    completed  = {}
+    dispatched = {}
     for s in steps[:sel + 1]:
-        completed[s["order_idx"]] = s.get("sla_met", False)
+        completed[s["order_idx"]]  = s.get("sla_met", False)
+        dispatched[s["order_idx"]] = s["tech_idx"]
 
     for k, v in orders.items():
         if k not in completed:
-            # Not yet dispatched — black text
+            # Not yet dispatched — black text, red marker
             marker_color = "#FF4B4B"
             text_color   = "#000000"
+            label        = f"W{k}"
         elif completed[k]:
-            # SLA met — green text
-            marker_color = "#0FC373"
-            text_color   = "#0FC373"
+            # SLA met — dark green
+            marker_color = "#006400"
+            text_color   = "#006400"
+            label        = f"W{k} (T{dispatched[k]} ✅)"
         else:
-            # SLA breach — red text
+            # SLA breach — red
             marker_color = "#FF4B4B"
             text_color   = "#FF4B4B"
+            label        = f"W{k} (T{dispatched[k]} ❌)"
 
         fig.add_trace(go.Scattermapbox(
             lat=[v[1]], lon=[v[0]],
             mode="markers+text",
             marker=dict(size=10, color=marker_color),
-            text=[f"W{k}"], textposition="top right",
+            text=[label], textposition="top right",
             textfont=dict(size=12, color=text_color),
             name=f"W{k}", showlegend=False,
         ))
