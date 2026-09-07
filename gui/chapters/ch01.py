@@ -95,6 +95,7 @@ def _render_map(steps, sel, tx):
         marker=dict(size=14, color="#0082F0"),
         text=[f"T{k}" for k in techs.keys()],
         textposition="top right",
+        textfont=dict(size=12, color="#0082F0"),
         name="Technicians",
     ))
 
@@ -105,6 +106,7 @@ def _render_map(steps, sel, tx):
             mode="markers+text",
             marker=dict(size=10, color="#FF4B4B"),
             text=[f"W{k}"], textposition="top right",
+            textfont=dict(size=12, color="#0FC373"),
             name=f"W{k}", showlegend=False,
         ))
 
