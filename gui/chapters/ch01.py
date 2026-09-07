@@ -17,12 +17,12 @@ def _tx():
         "epsilon":        "ε (exploration rate)",
         "gamma":          "γ (discount factor)",
         "seed":           "Random seed",
-        "run_all":        "▶ Run All Episodes",
+        "run_btn":        "▶ Run All Episodes",
         "map_title":      "🗺️ Warsaw Dispatch Map",
         "map_caption":    "Blue = Technicians · Red = Work Orders · Green line = assigned dispatch",
         "step_slider":    "🔍 Highlight step on map",
         "glass_title":    "🔬 Glass-Box — MDP Trace",
-        "curve_title":    "📈 Learning Curve — Gₜ over Episodes",
+        "curve_title":    "📈 Learning Curve — Gₜ over Episodes (MA-5)",
         "summary_title":  "📋 Episode Summary Table",
         "metric_gt":      "Total Gₜ",
         "metric_sla":     "SLA Rate",
@@ -71,6 +71,8 @@ def _render_map(steps, sel, tx):
         orders[s["order_idx"]] = (s["order_x"], s["order_y"])
 
     fig = go.Figure()
+
+    # Technicians
     fig.add_trace(go.Scattermapbox(
         lat=[v[1] for v in techs.values()],
         lon=[v[0] for v in techs.values()],
@@ -81,15 +83,17 @@ def _render_map(steps, sel, tx):
         name="Technicians",
     ))
 
-    for k in orders.keys():
+    # Work orders
+    for k, v in orders.items():
         fig.add_trace(go.Scattermapbox(
-            lat=[orders[k][1]], lon=[orders[k][0]],
+            lat=[v[1]], lon=[v[0]],
             mode="markers+text",
             marker=dict(size=10, color="#FF4B4B"),
             text=[f"W{k}"], textposition="top right",
             name=f"W{k}", showlegend=False,
         ))
 
+    # Highlight selected step
     if sel < len(steps):
         s = steps[sel]
         fig.add_trace(go.Scattermapbox(
@@ -101,6 +105,7 @@ def _render_map(steps, sel, tx):
             name=f"Step {sel}: T{s['tech_idx']}→W{s['order_idx']}",
         ))
 
+    # Auto-fit zoom
     all_lats = [v[1] for v in techs.values()] + [v[1] for v in orders.values()]
     all_lons = [v[0] for v in techs.values()] + [v[0] for v in orders.values()]
     lat_c = (min(all_lats) + max(all_lats)) / 2
@@ -112,7 +117,7 @@ def _render_map(steps, sel, tx):
     fig.update_layout(
         mapbox=dict(style="open-street-map", center=dict(lat=lat_c, lon=lon_c), zoom=zoom),
         margin=dict(l=0, r=0, t=0, b=0),
-        height=560,
+        height=520,
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -150,7 +155,8 @@ def _render_gt_per_step(steps):
     gts = [s["gt"] for s in steps]
     fig = go.Figure()
     fig.add_trace(go.Scatter(
-        x=list(range(len(steps))), y=gts,
+        x=list(range(len(steps))),
+        y=gts,
         mode="lines+markers",
         line=dict(color="#8B5CF6", width=2),
         marker=dict(size=6, color="#8B5CF6"),
@@ -164,13 +170,14 @@ def _render_gt_per_step(steps):
         font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption("Gₜ = Rₜ + γRₜ₊₁ + γ²Rₜ₊₂ + … — computed backward from episode end. Step 0 has the highest Gₜ (most future rewards ahead).")
+    st.caption("Gₜ = Rₜ + γRₜ₊₁ + γ²Rₜ₊₂ + … — computed backward from episode end. Step 0 has the highest Gₜ.")
 
 
 # ---------------------------------------------------------------------------
 # Glass-Box — MDP Trace
 # ---------------------------------------------------------------------------
 def _render_glass_box(steps, sel, tx, gamma):
+    import pandas as pd
     rows = []
     for i, s in enumerate(steps):
         rows.append({
@@ -184,62 +191,64 @@ def _render_glass_box(steps, sel, tx, gamma):
             tx["col_skill"]:  "✅" if s.get("skill_match") else "❌",
             tx["col_dist"]:   f"{s.get('distance', 0):.1f} km",
         })
-    import pandas as pd
     df = pd.DataFrame(rows)
-    # highlight selected step
-    st.dataframe(
-        df.style.apply(
-            lambda x: ["background-color: #1e3a2f" if x.name == sel else "" for _ in x],
-            axis=1
-        ),
-        use_container_width=True, height=300,
-    )
+    # Highlight selected step
+    def highlight_row(row):
+        return ["background-color: #252840"] * len(row) if row[tx["col_step"]] == sel else [""] * len(row)
+    st.dataframe(df.style.apply(highlight_row, axis=1), use_container_width=True, height=300)
 
 
 # ---------------------------------------------------------------------------
 # Episode Summary Table
 # ---------------------------------------------------------------------------
 def _render_summary(steps, total_gt, tx):
-    n = max(len(steps), 1)
-    sla_rate   = sum(1 for s in steps if s.get("sla_met"))    / n
-    skill_rate = sum(1 for s in steps if s.get("skill_match")) / n
-    exp_rate   = sum(1 for s in steps if s.get("explored"))   / n
-    avg_dist   = sum(s.get("distance", 0) for s in steps)     / n
-    avg_reward = sum(s.get("reward", 0) for s in steps)       / n
-    st.markdown(f"""
-| Metric | Value |
-|--------|-------|
-| {tx['metric_gt']} | **{total_gt:.3f}** |
-| {tx['metric_sla']} | **{sla_rate*100:.1f}%** ({int(sla_rate*n)}/{n} orders) |
-| {tx['metric_skill']} | **{skill_rate*100:.1f}%** |
-| {tx['metric_explore']} | **{exp_rate*100:.1f}%** |
-| {tx['metric_dist']} | **{avg_dist:.1f} km** |
-| Avg Step Reward | **{avg_reward:.3f}** |
-""")
+    n = len(steps)
+    sla_rate   = sum(1 for s in steps if s.get("sla_met"))    / max(n, 1)
+    skill_rate = sum(1 for s in steps if s.get("skill_match")) / max(n, 1)
+    exp_rate   = sum(1 for s in steps if s.get("explored"))   / max(n, 1)
+    avg_dist   = sum(s.get("distance", 0) for s in steps)     / max(n, 1)
+    avg_reward = sum(s.get("reward", 0) for s in steps)       / max(n, 1)
+
+    import pandas as pd
+    df = pd.DataFrame([
+        {"Metric": tx["metric_gt"],      "Value": f"{total_gt:.3f}"},
+        {"Metric": tx["metric_sla"],     "Value": f"{sla_rate*100:.1f}% ({int(sla_rate*n)}/{n})"},
+        {"Metric": tx["metric_skill"],   "Value": f"{skill_rate*100:.1f}%"},
+        {"Metric": tx["metric_explore"], "Value": f"{exp_rate*100:.1f}%"},
+        {"Metric": tx["metric_dist"],    "Value": f"{avg_dist:.1f} km"},
+        {"Metric": "Avg Step Reward",    "Value": f"{avg_reward:.3f}"},
+        {"Metric": "Steps",              "Value": str(n)},
+    ])
+    st.dataframe(df, use_container_width=True, hide_index=True)
 
 
 # ---------------------------------------------------------------------------
-# Learning Curve — Gₜ over Episodes (MA-5)
+# Learning Curve (MA-5)
 # ---------------------------------------------------------------------------
 def _render_curve(curve, tx):
     import altair as alt
     import pandas as pd
-    ma5 = [
-        sum(curve[max(0, i-4):i+1]) / len(curve[max(0, i-4):i+1])
-        for i in range(len(curve))
-    ]
+
+    # Compute MA-5
+    ma5 = []
+    for i in range(len(curve)):
+        window = curve[max(0, i-4):i+1]
+        ma5.append(sum(window) / len(window))
+
     mean_gt = sum(curve) / len(curve)
+
     df = pd.DataFrame({
         "Episode": list(range(len(curve))),
         "Gₜ":      curve,
         "MA-5":    ma5,
     })
-    raw_line = alt.Chart(df).mark_line(color="#0082F0", opacity=0.4).encode(
+
+    raw_line = alt.Chart(df).mark_line(opacity=0.3, color="#0082F0").encode(
         x="Episode:Q",
         y=alt.Y("Gₜ:Q", title="Total Discounted Return Gₜ"),
         tooltip=["Episode", alt.Tooltip("Gₜ:Q", format=".3f")],
     )
-    ma_line = alt.Chart(df).mark_line(color="#0FC373", strokeWidth=2).encode(
+    ma_line = alt.Chart(df).mark_line(color="#0082F0", strokeWidth=2).encode(
         x="Episode:Q",
         y="MA-5:Q",
         tooltip=["Episode", alt.Tooltip("MA-5:Q", format=".3f")],
@@ -247,15 +256,13 @@ def _render_curve(curve, tx):
     mean_line = alt.Chart(pd.DataFrame({"mean": [mean_gt]})).mark_rule(
         color="#FF8C0A", strokeDash=[6, 3]
     ).encode(y="mean:Q")
-    st.altair_chart(
-        (raw_line + ma_line + mean_line).properties(height=300),
-        use_container_width=True
-    )
+
+    st.altair_chart((raw_line + ma_line + mean_line).properties(height=280),
+                    use_container_width=True)
     st.caption(
-        f"Blue = raw Gₜ per episode · Green = MA-5 (moving average last 5 episodes) · "
-        f"Orange dashed = mean Gₜ = {mean_gt:.3f} (Ch01 baseline G₀ for Ch02–Ch18). "
-        "📌 **Expected: no upward trend** — Q=0 throughout, agent never learns. "
-        "Flat curve = correct baseline behaviour."
+        f"Blue = raw Gₜ per episode · Bold blue = MA-5 · "
+        f"Orange dashed = mean G₀ = {mean_gt:.3f} (Ch01 baseline for Ch02–Ch18). "
+        f"📌 **Expected: no upward trend** — Q=0, agent never learns."
     )
 
 
@@ -286,29 +293,23 @@ def render():
         gamma    = st.sidebar.slider(tx["gamma"],      0.5, 1.0, 0.95, 0.01)
         seed     = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
-        run_all = st.button(tx["run_all"], type="primary")
-
-        # ── Run all episodes ──────────────────────────────────────────────
-        if run_all:
+        # ── Run button ────────────────────────────────────────────────────
+        if st.button(tx["run_btn"], type="primary"):
+            all_eps   = []
+            curve_data = []
             with st.spinner(f"Running {n_ep} episodes..."):
-                all_episodes = []
-                curve_data   = []
                 for ep in range(n_ep):
                     raw = rlvr_py.run_ch01_episode(
                         int(seed), int(n_tech), int(n_orders),
                         float(epsilon), float(gamma)
                     )
                     ep_data = json.loads(raw) if isinstance(raw, str) else raw
-                    all_episodes.append(ep_data)
-                    curve_data.append(ep_data["total_gt"])
-            st.session_state["ch01_all_episodes"] = all_episodes
+                    all_eps.append(ep_data.get("steps", []))
+                    curve_data.append(ep_data.get("total_gt", 0.0))
+            st.session_state["ch01_all_episodes"] = all_eps
             st.session_state["ch01_curve"]        = curve_data
-            st.session_state["ch01_seed"]         = seed
-            st.session_state["ch01_n_tech"]       = n_tech
-            st.session_state["ch01_n_orders"]     = n_orders
-            st.session_state["ch01_gamma"]        = gamma
-            st.session_state["ch01_epsilon"]      = epsilon
 
+        # ── Check if data available ───────────────────────────────────────
         if "ch01_all_episodes" not in st.session_state:
             st.info("Configure settings and click **▶ Run All Episodes**.")
             return
@@ -317,60 +318,50 @@ def render():
         curve        = st.session_state["ch01_curve"]
         n_eps        = len(all_episodes)
 
+        # ── No-learning notice ────────────────────────────────────────────
+        st.info(
+            "**Ch01 — No learning across episodes.** "
+            "Q=0 throughout: the agent never updates its Q-table. "
+            "Each episode is an independent random dispatch — expect **no upward trend** "
+            "in the Learning Curve. The flat curve IS the result: it proves that without "
+            f"learning, performance stays random. "
+            f"Baseline G₀ = {sum(curve)/len(curve):.2f} — reference for Ch02–Ch18."
+        )
+
         # ── Episode selector ──────────────────────────────────────────────
         ep_sel = st.slider(
             "🎬 Select episode to inspect",
             0, n_eps - 1, 0, key="ep_sel"
         )
-        ep_data  = all_episodes[ep_sel]
-        ep_steps = ep_data.get("steps", [])
-        ep_gt    = curve[ep_sel]
-        mean_gt  = sum(curve) / len(curve)
+
+        # Read selected episode data directly from session_state
+        ep_steps = st.session_state["ch01_all_episodes"][ep_sel]
+        ep_gt    = st.session_state["ch01_curve"][ep_sel]
 
         st.caption(
             f"Episode {ep_sel + 1}/{n_eps} — "
             f"Total Gₜ = **{ep_gt:.3f}** · "
-            f"Mean G₀ = {mean_gt:.3f}"
+            f"Mean = {sum(curve)/len(curve):.3f}"
         )
 
-        st.info(
-            "**Ch01 — No learning across episodes.** "
-            "Q=0 throughout: the agent never updates its Q-table. "
-            "Each episode is an independent random dispatch — expect **no upward trend** "
-            f"in the Learning Curve. Baseline G₀ = {mean_gt:.2f} — reference for Ch02–Ch18."
-        )
+        # ── Step selector ─────────────────────────────────────────────────
+        n_steps = len(ep_steps)
+        sel = st.slider(tx["step_slider"], 0, max(n_steps - 1, 0), 0, key="step_sel")
 
-        # ── Step slider ───────────────────────────────────────────────────
-        ep_n_steps = len(ep_steps)
-        sel = st.slider(tx["step_slider"], 0, max(ep_n_steps - 1, 0), 0, key="step_sel")
-
-        # ── KPI row ───────────────────────────────────────────────────────
-        n = max(ep_n_steps, 1)
-        sla_rate   = sum(1 for s in ep_steps if s.get("sla_met"))    / n
-        skill_rate = sum(1 for s in ep_steps if s.get("skill_match")) / n
-        exp_rate   = sum(1 for s in ep_steps if s.get("explored"))   / n
-        avg_dist   = sum(s.get("distance", 0) for s in ep_steps)     / n
-        c1, c2, c3, c4, c5 = st.columns(5)
-        c1.metric(tx["metric_gt"],      f"{ep_gt:.2f}")
-        c2.metric(tx["metric_sla"],     f"{sla_rate*100:.1f}%")
-        c3.metric(tx["metric_skill"],   f"{skill_rate*100:.1f}%")
-        c4.metric(tx["metric_explore"], f"{exp_rate*100:.1f}%")
-        c5.metric(tx["metric_dist"],    f"{avg_dist:.1f} km")
-
-        # ── Map ───────────────────────────────────────────────────────────
+        # ── Warsaw Dispatch Map ───────────────────────────────────────────
         st.subheader(tx["map_title"])
         _render_map(ep_steps, sel, tx)
         st.caption(tx["map_caption"])
 
-        # ── Reward per Step ───────────────────────────────────────────────
+        # ── Reward per Step Chart ─────────────────────────────────────────
         st.subheader("📊 Reward per Step Chart")
         _render_reward_per_step(ep_steps)
 
-        # ── Discounted Return Gt per Step ─────────────────────────────────
+        # ── Discounted Return Gt Chart ────────────────────────────────────
         st.subheader("📈 Discounted Return Gₜ Chart")
         _render_gt_per_step(ep_steps)
 
-        # ── Glass-Box ─────────────────────────────────────────────────────
+        # ── Glass-Box — MDP Trace ─────────────────────────────────────────
         st.subheader(tx["glass_title"])
         _render_glass_box(ep_steps, sel, tx, gamma)
 
@@ -378,6 +369,6 @@ def render():
         st.subheader(tx["summary_title"])
         _render_summary(ep_steps, ep_gt, tx)
 
-        # ── Learning Curve (always at the bottom) ─────────────────────────
+        # ── Learning Curve (MA-5) — always at the bottom ──────────────────
         st.subheader(tx["curve_title"])
         _render_curve(curve, tx)
