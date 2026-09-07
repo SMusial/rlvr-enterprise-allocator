@@ -108,8 +108,8 @@ def _render_map(steps, sel, tx):
 
     for k, v in orders.items():
         if k not in completed:
-            # Not yet dispatched — black text, red marker
-            marker_color = "#FF4B4B"
+            # Not yet dispatched — black circle, black text
+            marker_color = "#333333"
             text_color   = "#000000"
             label        = f"W{k}"
         elif completed[k]:
