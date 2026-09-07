@@ -336,7 +336,11 @@ def render():
         n_tech   = st.sidebar.slider(tx["n_tech"],     2, 10, 5)
         n_orders = st.sidebar.slider(tx["n_orders"],   4, 20, 10)
         n_ep     = st.sidebar.slider(tx["n_episodes"], 5, 100, 30)
-        epsilon  = st.sidebar.slider(tx["epsilon"],    0.0, 1.0, 1.0, 0.05)
+        # Ch01: ε=1.0 fixed — pure random policy, no learning
+        st.sidebar.slider(tx["epsilon"], 0.0, 1.0, 1.0, 0.05, disabled=True)
+        epsilon = 1.0
+        st.sidebar.caption("ε is fixed at 1.0 in Ch01 — pure random baseline. "
+                           "Q-table learning starts in Ch06.")
         gamma    = st.sidebar.slider(tx["gamma"],      0.5, 1.0, 0.95, 0.01)
         seed     = st.sidebar.number_input(tx["seed"], 0, 9999, 42)
 
