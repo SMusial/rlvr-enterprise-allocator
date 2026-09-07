@@ -11,7 +11,7 @@ const SLA_BREACH_PENALTY: f64 = -5.0;
 const SKILL_MISMATCH_PENALTY: f64 = -2.0;
 const DISTANCE_PENALTY_PER_KM: f64 = -0.1;
 
-const SKILLS: &[&str] = &["HVAC", "Electrical", "Network", "Mechanical"];
+const SKILLS: &[&str] = &["HVAC", "Electrical", "Network"];
 
 // Warsaw bounding box
 const LAT_MIN: f64 = 52.10;
