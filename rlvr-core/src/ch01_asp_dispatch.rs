@@ -269,9 +269,10 @@ pub fn run_episode(config: AspConfig) -> EpisodeRecord {
     }
 
     for step in 0..config.n_orders {
-        let tech_idx = step % config.n_tech;
+        // Ch01: always random tech selection (ε=1.0 fixed, no Q-table)
+        let tech_idx = rng.gen_range(0..config.n_tech);
+        let explored = true;
         let order_idx = order_indices[step];
-        let explored = rng.gen::<f64>() < config.epsilon;
 
         let tech = &state.technicians[tech_idx];
         let order = &state.work_orders[order_idx];
