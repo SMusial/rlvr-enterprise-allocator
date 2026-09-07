@@ -448,6 +448,19 @@ def render():
         _render_map(steps, sel, tx)
         st.caption(tx["map_caption"])
 
+    # --- reward per step ---
+    st.subheader("📊 Reward per Step")
+    _render_reward_per_step(steps)
+
+    # --- discounted return Gt per step ---
+    st.subheader("📈 Discounted Return Gₜ per Step")
+    _render_gt_per_step(steps, tx)
+
+    # --- learning curve ---
+    if curve:
+        st.subheader(tx["curve_title"])
+        _render_curve(curve, tx)
+
     # --- glass-box ---
     st.subheader(tx["glass_title"])
     if "ch01_curve" in st.session_state and len(st.session_state["ch01_curve"]) > 0:
