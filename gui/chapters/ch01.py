@@ -119,7 +119,7 @@ def _render_map(steps, sel, tx):
     lat_span = (lat_max - lat_min) * 1.4 or 0.05
     lon_span = (lon_max - lon_min) * 1.4 or 0.05
     span = max(lat_span, lon_span)
-    zoom = max(10, min(14, round(8.5 - math.log2(span * 111))))
+    zoom = max(9, min(13, round(8.5 - math.log2(span * 111))))
 
     fig.update_layout(
         mapbox=dict(style="open-street-map", center=dict(lat=lat_c, lon=lon_c), zoom=zoom),
