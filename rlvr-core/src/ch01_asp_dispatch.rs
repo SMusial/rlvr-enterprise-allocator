@@ -269,10 +269,18 @@ pub fn run_episode(config: AspConfig) -> EpisodeRecord {
     }
 
     for step in 0..config.n_orders {
-        // Ch01: always random tech selection (ε=1.0 fixed, no Q-table)
-        let tech_idx = rng.gen_range(0..config.n_tech);
+        // Ch01: random tech selection with 80% skill-match bias
         let explored = true;
         let order_idx = order_indices[step];
+        let order_skill = &state.work_orders[order_idx].required_skill.clone();
+        let matching_techs: Vec<usize> = (0..config.n_tech)
+            .filter(|&t| &state.technicians[t].skill == order_skill)
+            .collect();
+        let tech_idx = if !matching_techs.is_empty() && rng.gen::<f64>() < 0.80 {
+            matching_techs[rng.gen_range(0..matching_techs.len())]
+        } else {
+            rng.gen_range(0..config.n_tech)
+        };
 
         let tech = &state.technicians[tech_idx];
         let order = &state.work_orders[order_idx];
