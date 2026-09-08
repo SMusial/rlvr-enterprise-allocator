@@ -178,8 +178,9 @@ def _render_map(steps, sel, tx):
 def _render_reward_per_step(steps, sel):
     rewards = [s["reward"] for s in steps]
     colors  = ["#0FC373" if r >= 0 else "#FF4B4B" for r in rewards]
-    # Highlight selected step with brighter color
-    colors[sel] = "#FFD700" if rewards[sel] >= 0 else "#FF8C00"
+    # Highlight selected step with brighter color (clamp to valid range)
+    if sel < len(rewards):
+        colors[sel] = "#FFD700" if rewards[sel] >= 0 else "#FF8C00"
     fig = go.Figure()
     fig.add_trace(go.Bar(
         x=list(range(len(steps))),
@@ -188,7 +189,8 @@ def _render_reward_per_step(steps, sel):
         hovertemplate="Step %{x}<br>Reward: %{y:+.3f}<extra></extra>",
     ))
     fig.add_hline(y=0, line_dash="dash", line_color="#9ca3af")
-    fig.add_vline(x=sel, line_dash="dot", line_color="#FFD700", line_width=2)
+    if sel < len(rewards):
+        fig.add_vline(x=sel, line_dash="dot", line_color="#FFD700", line_width=2)
     fig.update_layout(
         xaxis_title="Step", yaxis_title="Reward R",
         height=250, margin=dict(l=40, r=20, t=20, b=40),
@@ -196,7 +198,10 @@ def _render_reward_per_step(steps, sel):
         font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption(f"Step {sel}: R = {rewards[sel]:+.3f} · Green = SLA met · Red = SLA breach · Yellow = selected step")
+    if sel < len(rewards):
+        st.caption(f"Step {sel}: R = {rewards[sel]:+.3f} · Green = SLA met · Red = SLA breach · Yellow = selected step")
+    else:
+        st.caption("All steps completed · Green = SLA met · Red = SLA breach")
 
 
 # ---------------------------------------------------------------------------
@@ -204,8 +209,9 @@ def _render_reward_per_step(steps, sel):
 # ---------------------------------------------------------------------------
 def _render_gt_per_step(steps, sel):
     gts    = [s["gt"] for s in steps]
-    colors = ["#FFD700" if i == sel else "#8B5CF6" for i in range(len(steps))]
-    sizes  = [12 if i == sel else 6 for i in range(len(steps))]
+    eff_sel = min(sel, len(steps) - 1)
+    colors = ["#FFD700" if i == eff_sel else "#8B5CF6" for i in range(len(steps))]
+    sizes  = [12 if i == eff_sel else 6 for i in range(len(steps))]
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=list(range(len(steps))),
@@ -216,7 +222,9 @@ def _render_gt_per_step(steps, sel):
         hovertemplate="Step %{x}<br>Gₜ = %{y:.3f}<extra></extra>",
     ))
     fig.add_hline(y=0, line_dash="dash", line_color="#9ca3af")
-    fig.add_vline(x=sel, line_dash="dot", line_color="#FFD700", line_width=2)
+    if sel < len(rewards):
+        if sel < len(gts):
+        fig.add_vline(x=sel, line_dash="dot", line_color="#FFD700", line_width=2)
     fig.update_layout(
         xaxis_title="Step t", yaxis_title="Discounted Return Gₜ",
         height=250, margin=dict(l=40, r=20, t=20, b=40),
@@ -224,7 +232,10 @@ def _render_gt_per_step(steps, sel):
         font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption(f"Step {sel}: Gₜ = {gts[sel]:.3f} · G₀ = {gts[0]:.3f} · Yellow = selected step · Gₜ = Rₜ + γRₜ₊₁ + …")
+    if sel < len(gts):
+        st.caption(f"Step {sel}: Gₜ = {gts[sel]:.3f} · G₀ = {gts[0]:.3f} · Yellow = selected step · Gₜ = Rₜ + γRₜ₊₁ + …")
+    else:
+        st.caption(f"All steps completed · G₀ = {gts[0]:.3f} · Gₜ = Rₜ + γRₜ₊₁ + …")
 
 
 # ---------------------------------------------------------------------------
