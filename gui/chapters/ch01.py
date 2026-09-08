@@ -191,6 +191,8 @@ def _render_reward_per_step(steps, sel):
     fig.add_hline(y=0, line_dash="dash", line_color="#9ca3af")
     if sel < len(rewards):
         fig.add_vline(x=sel, line_dash="dot", line_color="#FFD700", line_width=2)
+    else:
+        pass
     fig.update_layout(
         xaxis_title="Step", yaxis_title="Reward R",
         height=250, margin=dict(l=40, r=20, t=20, b=40),
