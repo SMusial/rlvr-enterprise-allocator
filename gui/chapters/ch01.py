@@ -92,7 +92,7 @@ def _render_map(steps, sel, tx):
         lat=[v[1] for v in techs.values()],
         lon=[v[0] for v in techs.values()],
         mode="markers+text",
-        marker=dict(size=14, color="#0082F0"),
+        marker=dict(size=17, color="#0082F0"),
         text=[f"T{k}" for k in techs.keys()],
         textposition="top right",
         textfont=dict(size=12, color="#0082F0"),
@@ -108,31 +108,36 @@ def _render_map(steps, sel, tx):
 
     for k, v in orders.items():
         if k not in completed:
-            # Not yet dispatched — black circle, black text
-            marker_color = "#333333"
+            # Not yet dispatched — white circle with black border
+            marker_color = "white"
+            border_color = "#000000"
             text_color   = "#000000"
             label        = f"W{k}"
         elif completed[k]:
-            # SLA met — dark green
+            # SLA met — dark green, no border
             marker_color = "#006400"
+            border_color = "#006400"
             text_color   = "#006400"
             label        = f"W{k} (T{dispatched[k]} ✅)"
         else:
-            # SLA breach — red
+            # SLA breach — red, no border
             marker_color = "#FF4B4B"
+            border_color = "#FF4B4B"
             text_color   = "#FF4B4B"
             label        = f"W{k} (T{dispatched[k]} ❌)"
 
         fig.add_trace(go.Scattermapbox(
             lat=[v[1]], lon=[v[0]],
             mode="markers+text",
-            marker=dict(size=10, color=marker_color),
+            marker=dict(size=12, color=marker_color,
+                       allowoverlap=True),
             text=[label], textposition="top right",
             textfont=dict(size=12, color=text_color),
             name=f"W{k}", showlegend=False,
         ))
 
     # Highlight selected step — green=SLA met, red=SLA breach
+    # sel==len(steps) means "show all delivered, no travel line"
     if sel < len(steps):
         s = steps[sel]
         line_color = "#0FC373" if s.get("sla_met") else "#FF4B4B"
@@ -142,7 +147,7 @@ def _render_map(steps, sel, tx):
             lon=[s["tech_x"], s["order_x"]],
             mode="lines+markers",
             line=dict(width=3, color=line_color),
-            marker=dict(size=10, color=line_color),
+            marker=dict(size=12, color=line_color),
             name=f"Step {sel}: T{s['tech_idx']}→W{s['order_idx']} ({label})",
         ))
 
@@ -395,7 +400,8 @@ def render():
 
         # ── Step selector ─────────────────────────────────────────────────
         n_steps = len(ep_steps)
-        sel = st.slider(tx["step_slider"], 0, max(n_steps - 1, 0), 0, key="step_sel")
+        # Extra step at end (sel==n_steps) shows all delivered, no travel line
+        sel = st.slider(tx["step_slider"], 0, n_steps, 0, key="step_sel")
 
         # ── Warsaw Dispatch Map ───────────────────────────────────────────
         st.subheader(tx["map_title"])
