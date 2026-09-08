@@ -81,19 +81,7 @@ def _render_map(steps, sel, tx):
 
     fig = go.Figure()
 
-    # Technicians — blue circles
-    fig.add_trace(go.Scattermapbox(
-        lat=[v[1] for v in techs.values()],
-        lon=[v[0] for v in techs.values()],
-        mode="markers+text",
-        marker=dict(size=17, color="#0082F0"),
-        text=[f"T{k}" for k in techs.keys()],
-        textposition="top right",
-        textfont=dict(size=12, color="#0082F0"),
-        name="Technicians",
-    ))
-
-    # Work orders — color by completion status at step sel
+    # Work orders rendered AFTER technicians so they appear on top (no blue border)
     completed  = {}
     dispatched = {}
     for s in steps[:sel + 1]:
@@ -141,6 +129,18 @@ def _render_map(steps, sel, tx):
                 textfont=dict(size=12, color="#FF4B4B"),
                 name=f"W{k}", showlegend=False,
             ))
+
+    # Technicians — blue circles rendered BEFORE work orders (underneath)
+    fig.add_trace(go.Scattermapbox(
+        lat=[v[1] for v in techs.values()],
+        lon=[v[0] for v in techs.values()],
+        mode="markers+text",
+        marker=dict(size=17, color="#0082F0"),
+        text=[f"T{k}" for k in techs.keys()],
+        textposition="top right",
+        textfont=dict(size=12, color="#0082F0"),
+        name="Technicians",
+    ))
 
     # Travel line — only when sel < n_steps (not on final "all done" step)
     if sel < len(steps):
