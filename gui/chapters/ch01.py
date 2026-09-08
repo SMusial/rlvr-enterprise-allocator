@@ -81,18 +81,6 @@ def _render_map(steps, sel, tx):
 
     fig = go.Figure()
 
-    # Technicians — blue circles
-    fig.add_trace(go.Scattermapbox(
-        lat=[v[1] for v in techs.values()],
-        lon=[v[0] for v in techs.values()],
-        mode="markers+text",
-        marker=dict(size=17, color="#0082F0"),
-        text=[f"T{k}" for k in techs.keys()],
-        textposition="top right",
-        textfont=dict(size=12, color="#0082F0"),
-        name="Technicians",
-    ))
-
     # Work orders — color by completion status at step sel
     completed  = {}
     dispatched = {}
@@ -142,18 +130,41 @@ def _render_map(steps, sel, tx):
                 name=f"W{k}", showlegend=False,
             ))
 
-    # Travel line — only when sel < n_steps (not on final "all done" step)
+    # Technicians — blue circles rendered AFTER work orders (on top)
+    fig.add_trace(go.Scattermapbox(
+        lat=[v[1] for v in techs.values()],
+        lon=[v[0] for v in techs.values()],
+        mode="markers+text",
+        marker=dict(size=17, color="#0082F0"),
+        text=[f"T{k}" for k in techs.keys()],
+        textposition="top right",
+        textfont=dict(size=12, color="#0082F0"),
+        name="Technicians",
+    ))
+
+    # Travel line with arrow — only when sel < n_steps
     if sel < len(steps):
         s = steps[sel]
         line_color = "#0FC373" if s.get("sla_met") else "#FF4B4B"
         label = "✅ SLA met" if s.get("sla_met") else "❌ SLA breach"
+        # Line from tech to order
         fig.add_trace(go.Scattermapbox(
             lat=[s["tech_y"], s["order_y"]],
             lon=[s["tech_x"], s["order_x"]],
-            mode="lines+markers",
+            mode="lines",
             line=dict(width=3, color=line_color),
-            marker=dict(size=12, color=line_color),
             name=f"Step {sel}: T{s['tech_idx']}→W{s['order_idx']} ({label})",
+            showlegend=True,
+        ))
+        # Arrowhead at destination (order location)
+        fig.add_trace(go.Scattermapbox(
+            lat=[s["order_y"]],
+            lon=[s["order_x"]],
+            mode="markers",
+            marker=dict(size=16, color=line_color, symbol="arrow",
+                       angle=0, allowoverlap=True),
+            name=f"→ W{s['order_idx']}",
+            showlegend=False,
         ))
 
     # Auto-fit zoom
