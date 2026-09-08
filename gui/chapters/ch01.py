@@ -23,7 +23,7 @@ def _tx():
         "seed":           "Random seed",
         "run_btn":        "▶ Run All Episodes",
         "map_title":      "🗺️ Warsaw Dispatch Map",
-        "map_caption":    "Blue = Technicians · Red markers = Work Orders · Green line = SLA met · Red line = SLA breach",
+        "map_caption":    "Blue = Technicians · White = Pending · Dark green = SLA met · Red = SLA breach",
         "step_slider":    "🔍 Highlight step on map",
         "glass_title":    "🔬 Glass-Box — MDP Trace",
         "curve_title":    "📈 Learning Curve — Gₜ over Episodes (MA-5)",
@@ -41,7 +41,7 @@ def _tx():
         "col_sla":        "SLA Met",
         "col_skill":      "Skill Match",
         "col_dist":       "Distance",
-        "col_action":     "Action (ε-greedy)",
+        "col_action":     "Action",
     }
 
 
@@ -66,28 +66,22 @@ def _render_handbook():
 # Map
 # ---------------------------------------------------------------------------
 def _render_map(steps, sel, tx):
-    # Orders: fixed positions (all visible)
+    # Technician positions at step sel
+    techs = {}
+    for s in steps:
+        if s["tech_idx"] not in techs:
+            techs[s["tech_idx"]] = (s["tech_x"], s["tech_y"])
+    for s in steps[:sel]:
+        techs[s["tech_idx"]] = (s["order_x"], s["order_y"])
+
+    # All order positions
     orders = {}
     for s in steps:
         orders[s["order_idx"]] = (s["order_x"], s["order_y"])
 
-    # Technician positions at step `sel`:
-    # - for steps 0..sel: technician is at the work order location (after dispatch)
-    # - for steps not yet dispatched: technician is at initial position (step 0)
-    # Initial positions = position at step 0 for each technician
-    techs = {}
-    for s in steps:
-        if s["tech_idx"] not in techs:
-            techs[s["tech_idx"]] = (s["tech_x"], s["tech_y"])  # initial position
-
-    # Update positions for all steps up to (but not including) sel
-    for s in steps[:sel]:
-        # After step s, technician moves to order location
-        techs[s["tech_idx"]] = (s["order_x"], s["order_y"])
-
     fig = go.Figure()
 
-    # Technicians
+    # Technicians — blue circles
     fig.add_trace(go.Scattermapbox(
         lat=[v[1] for v in techs.values()],
         lon=[v[0] for v in techs.values()],
@@ -99,7 +93,7 @@ def _render_map(steps, sel, tx):
         name="Technicians",
     ))
 
-    # Work orders — color depends on completion status at step sel
+    # Work orders — color by completion status at step sel
     completed  = {}
     dispatched = {}
     for s in steps[:sel + 1]:
@@ -108,36 +102,28 @@ def _render_map(steps, sel, tx):
 
     for k, v in orders.items():
         if k not in completed:
-            # Not yet dispatched — white circle with black border
             marker_color = "white"
-            border_color = "#000000"
             text_color   = "#000000"
             label        = f"W{k}"
         elif completed[k]:
-            # SLA met — dark green, no border
             marker_color = "#006400"
-            border_color = "#006400"
             text_color   = "#006400"
             label        = f"W{k} (T{dispatched[k]} ✅)"
         else:
-            # SLA breach — red, no border
             marker_color = "#FF4B4B"
-            border_color = "#FF4B4B"
             text_color   = "#FF4B4B"
             label        = f"W{k} (T{dispatched[k]} ❌)"
 
         fig.add_trace(go.Scattermapbox(
             lat=[v[1]], lon=[v[0]],
             mode="markers+text",
-            marker=dict(size=12, color=marker_color,
-                       allowoverlap=True),
+            marker=dict(size=12, color=marker_color),
             text=[label], textposition="top right",
             textfont=dict(size=12, color=text_color),
             name=f"W{k}", showlegend=False,
         ))
 
-    # Highlight selected step — green=SLA met, red=SLA breach
-    # sel==len(steps) means "show all delivered, no travel line"
+    # Travel line — only when sel < n_steps (not on final "all done" step)
     if sel < len(steps):
         s = steps[sel]
         line_color = "#0FC373" if s.get("sla_met") else "#FF4B4B"
@@ -151,7 +137,7 @@ def _render_map(steps, sel, tx):
             name=f"Step {sel}: T{s['tech_idx']}→W{s['order_idx']} ({label})",
         ))
 
-    # Auto-fit zoom — 40% padding so all markers are always visible
+    # Auto-fit zoom
     all_lats = [v[1] for v in techs.values()] + [v[1] for v in orders.values()]
     all_lons = [v[0] for v in techs.values()] + [v[0] for v in orders.values()]
     lat_min, lat_max = min(all_lats), max(all_lats)
@@ -223,8 +209,7 @@ def _render_gt_per_step(steps, sel):
         hovertemplate="Step %{x}<br>Gₜ = %{y:.3f}<extra></extra>",
     ))
     fig.add_hline(y=0, line_dash="dash", line_color="#9ca3af")
-    if sel < len(rewards):
-        if eff_sel is not None:
+    if eff_sel is not None:
         fig.add_vline(x=eff_sel, line_dash="dot", line_color="#FFD700", line_width=2)
     fig.update_layout(
         xaxis_title="Step t", yaxis_title="Discounted Return Gₜ",
@@ -248,21 +233,22 @@ def _render_glass_box(steps, sel, tx, gamma):
         tech_skill  = s.get("tech_skill", "?")
         order_skill = s.get("order_skill", "?")
         rows.append({
-            tx["col_step"]:   i,
-            tx["col_tech"]:   f"T{s['tech_idx']}",
-            tx["col_order"]:  f"W{s['order_idx']}",
-            tx["col_action"]: "explore" if s.get("explored") else "greedy",
-            tx["col_reward"]: round(s["reward"], 3),
-            tx["col_gt"]:     round(s["gt"], 3),
-            tx["col_sla"]:    "✅" if s.get("sla_met") else "❌",
-            "Task vs Tech Skill": f"{order_skill} vs {tech_skill}",
-            tx["col_skill"]:  "✅" if s.get("skill_match") else "❌",
-            tx["col_dist"]:   f"{s.get('distance_km', 0):.1f} km",
+            tx["col_step"]:        i,
+            tx["col_tech"]:        f"T{s['tech_idx']}",
+            tx["col_order"]:       f"W{s['order_idx']}",
+            tx["col_action"]:      "explore" if s.get("explored") else "greedy",
+            tx["col_reward"]:      round(s["reward"], 3),
+            tx["col_gt"]:          round(s["gt"], 3),
+            tx["col_sla"]:         "✅" if s.get("sla_met") else "❌",
+            "Task vs Tech Skill":  f"{order_skill} vs {tech_skill}",
+            tx["col_skill"]:       "✅" if s.get("skill_match") else "❌",
+            tx["col_dist"]:        f"{s.get('distance_km', 0):.1f} km",
         })
     df = pd.DataFrame(rows)
+    eff_sel = sel if sel < len(rows) else len(rows) - 1
 
     def highlight_row(row):
-        return ["background-color: #252840"] * len(row) if row[tx["col_step"]] == sel else [""] * len(row)
+        return ["background-color: #252840"] * len(row) if row[tx["col_step"]] == eff_sel else [""] * len(row)
 
     st.dataframe(df.style.apply(highlight_row, axis=1),
                  use_container_width=True, height=300)
@@ -276,7 +262,7 @@ def _render_summary(steps, total_gt, tx):
     sla_rate   = sum(1 for s in steps if s.get("sla_met"))     / max(n, 1)
     skill_rate = sum(1 for s in steps if s.get("skill_match")) / max(n, 1)
     exp_rate   = sum(1 for s in steps if s.get("explored"))    / max(n, 1)
-    avg_dist   = sum(s.get("distance_km", 0) for s in steps)      / max(n, 1)
+    avg_dist   = sum(s.get("distance_km", 0) for s in steps)   / max(n, 1)
     avg_reward = sum(s.get("reward", 0) for s in steps)        / max(n, 1)
 
     df = pd.DataFrame([
@@ -356,7 +342,7 @@ def render():
         n_tech   = st.sidebar.slider(tx["n_tech"],     2, 10, 5)
         n_orders = st.sidebar.slider(tx["n_orders"],   4, 20, 10)
         n_ep     = st.sidebar.slider(tx["n_episodes"], 5, 100, 30)
-        # Ch01: ε=1.0 fixed — pure random policy, no learning
+        # ε=1.0 fixed — pure random baseline, no learning
         st.sidebar.slider(tx["epsilon"], 0.0, 1.0, 1.0, 0.05, disabled=True)
         epsilon = 1.0
         st.sidebar.caption("ε is fixed at 1.0 in Ch01 — pure random baseline. "
@@ -371,7 +357,7 @@ def render():
             with st.spinner(f"Running {n_ep} episodes..."):
                 for ep in range(n_ep):
                     raw = rlvr_py.run_ch01_episode(
-                        int(seed) + ep,   # seed+ep = same env, different policy
+                        int(seed) + ep,
                         int(n_tech), int(n_orders),
                         float(epsilon), float(gamma)
                     )
@@ -389,9 +375,9 @@ def render():
         all_episodes = st.session_state["ch01_all_episodes"]
         curve        = st.session_state["ch01_curve"]
         n_eps        = len(all_episodes)
+        mean_g0      = sum(curve) / len(curve)
 
         # ── No-learning notice ────────────────────────────────────────────
-        mean_g0 = sum(curve) / len(curve)
         st.info(
             "**Ch01 — No learning across episodes.** "
             "Q=0 throughout: the agent never updates its Q-table. "
@@ -410,10 +396,15 @@ def render():
             f"Total Gₜ = **{ep_gt:.3f}** · Mean G₀ = {mean_g0:.3f}"
         )
 
-        # ── Step selector ─────────────────────────────────────────────────
+        # ── Step selector (extra step = all done, no line) ────────────────
         n_steps = len(ep_steps)
-        # Extra step at end (sel==n_steps) shows all delivered, no travel line
-        sel = st.slider(tx["step_slider"], 0, n_steps, 0, key="step_sel")
+        sel = st.slider(
+            tx["step_slider"],
+            0, n_steps, 0,   # max = n_steps (extra "all done" step)
+            key="step_sel"
+        )
+        if sel == n_steps:
+            st.caption("📍 All work orders dispatched — no travel line shown.")
 
         # ── Warsaw Dispatch Map ───────────────────────────────────────────
         st.subheader(tx["map_title"])
