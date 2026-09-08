@@ -208,10 +208,11 @@ def _render_reward_per_step(steps, sel):
 # Discounted Return Gt per Step Chart
 # ---------------------------------------------------------------------------
 def _render_gt_per_step(steps, sel):
-    gts    = [s["gt"] for s in steps]
-    eff_sel = min(sel, len(steps) - 1)
-    colors = ["#FFD700" if i == eff_sel else "#8B5CF6" for i in range(len(steps))]
-    sizes  = [12 if i == eff_sel else 6 for i in range(len(steps))]
+    gts     = [s["gt"] for s in steps]
+    eff_sel = sel if sel < len(gts) else None
+    hi_idx  = eff_sel if eff_sel is not None else len(gts) - 1
+    colors  = ["#FFD700" if i == hi_idx else "#8B5CF6" for i in range(len(steps))]
+    sizes   = [12 if i == hi_idx else 6 for i in range(len(steps))]
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=list(range(len(steps))),
@@ -223,8 +224,8 @@ def _render_gt_per_step(steps, sel):
     ))
     fig.add_hline(y=0, line_dash="dash", line_color="#9ca3af")
     if sel < len(rewards):
-        if sel < len(gts):
-        fig.add_vline(x=sel, line_dash="dot", line_color="#FFD700", line_width=2)
+        if eff_sel is not None:
+        fig.add_vline(x=eff_sel, line_dash="dot", line_color="#FFD700", line_width=2)
     fig.update_layout(
         xaxis_title="Step t", yaxis_title="Discounted Return Gₜ",
         height=250, margin=dict(l=40, r=20, t=20, b=40),
@@ -232,8 +233,8 @@ def _render_gt_per_step(steps, sel):
         font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    if sel < len(gts):
-        st.caption(f"Step {sel}: Gₜ = {gts[sel]:.3f} · G₀ = {gts[0]:.3f} · Yellow = selected step · Gₜ = Rₜ + γRₜ₊₁ + …")
+    if eff_sel is not None:
+        st.caption(f"Step {eff_sel}: Gₜ = {gts[eff_sel]:.3f} · G₀ = {gts[0]:.3f} · Yellow = selected step · Gₜ = Rₜ + γRₜ₊₁ + …")
     else:
         st.caption(f"All steps completed · G₀ = {gts[0]:.3f} · Gₜ = Rₜ + γRₜ₊₁ + …")
 
