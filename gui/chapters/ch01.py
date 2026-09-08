@@ -102,26 +102,45 @@ def _render_map(steps, sel, tx):
 
     for k, v in orders.items():
         if k not in completed:
-            marker_color = "white"
-            text_color   = "#000000"
-            label        = f"W{k}"
+            # Pending: black border circle + white inner circle
+            # Layer 1: black outer circle
+            fig.add_trace(go.Scattermapbox(
+                lat=[v[1]], lon=[v[0]],
+                mode="markers",
+                marker=dict(size=14, color="#000000"),
+                name=f"W{k}_border", showlegend=False,
+            ))
+            # Layer 2: white inner circle
+            fig.add_trace(go.Scattermapbox(
+                lat=[v[1]], lon=[v[0]],
+                mode="markers+text",
+                marker=dict(size=10, color="white"),
+                text=[f"W{k}"], textposition="top right",
+                textfont=dict(size=12, color="#000000"),
+                name=f"W{k}", showlegend=False,
+            ))
         elif completed[k]:
-            marker_color = "#006400"
-            text_color   = "#006400"
-            label        = f"W{k} (T{dispatched[k]} ✅)"
+            # SLA met — dark green, no border
+            fig.add_trace(go.Scattermapbox(
+                lat=[v[1]], lon=[v[0]],
+                mode="markers+text",
+                marker=dict(size=12, color="#006400"),
+                text=[f"W{k} (T{dispatched[k]} ✅)"],
+                textposition="top right",
+                textfont=dict(size=12, color="#006400"),
+                name=f"W{k}", showlegend=False,
+            ))
         else:
-            marker_color = "#FF4B4B"
-            text_color   = "#FF4B4B"
-            label        = f"W{k} (T{dispatched[k]} ❌)"
-
-        fig.add_trace(go.Scattermapbox(
-            lat=[v[1]], lon=[v[0]],
-            mode="markers+text",
-            marker=dict(size=12, color=marker_color),
-            text=[label], textposition="top right",
-            textfont=dict(size=12, color=text_color),
-            name=f"W{k}", showlegend=False,
-        ))
+            # SLA breach — red, no border
+            fig.add_trace(go.Scattermapbox(
+                lat=[v[1]], lon=[v[0]],
+                mode="markers+text",
+                marker=dict(size=12, color="#FF4B4B"),
+                text=[f"W{k} (T{dispatched[k]} ❌)"],
+                textposition="top right",
+                textfont=dict(size=12, color="#FF4B4B"),
+                name=f"W{k}", showlegend=False,
+            ))
 
     # Travel line — only when sel < n_steps (not on final "all done" step)
     if sel < len(steps):
