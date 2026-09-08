@@ -296,9 +296,20 @@ pub fn run_episode(config: AspConfig) -> EpisodeRecord {
     let rewards: Vec<f64> = raw_steps.iter().map(|(_, r, _, _, _, _)| *r).collect();
     let gt_vec = discounted_return(&rewards, config.gamma);
 
-    // Rebuild state for coordinate extraction
+    // Rebuild flat_steps with correct technician positions
+    // Track technician positions as they move after each dispatch
     let mut rng2 = StdRng::seed_from_u64(config.seed);
     let state0 = init_state(&config, &mut rng2);
+
+    // Mutable technician positions — updated after each dispatch
+    let mut tech_positions: Vec<(f64, f64)> = state0.technicians.iter()
+        .map(|t| (t.lon, t.lat))
+        .collect();
+
+    // Fixed order positions from initial state
+    let order_positions: Vec<(f64, f64)> = state0.work_orders.iter()
+        .map(|o| (o.lon, o.lat))
+        .collect();
 
     let mut flat_steps: Vec<FlatStep> = Vec::new();
     let mut sla_met_count = 0usize;
@@ -310,17 +321,21 @@ pub fn run_episode(config: AspConfig) -> EpisodeRecord {
         if *skill_match { skill_match_count += 1; }
         if *explored { explored_count += 1; }
 
-        let tech = &state0.technicians[action.tech_idx];
+        let tech  = &state0.technicians[action.tech_idx];
         let order = &state0.work_orders[action.order_idx];
+
+        // Current technician position BEFORE moving
+        let (tx, ty) = tech_positions[action.tech_idx];
+        let (ox, oy) = order_positions[action.order_idx];
 
         flat_steps.push(FlatStep {
             step: i,
             tech_idx: action.tech_idx,
             order_idx: action.order_idx,
-            tech_x: tech.lon,
-            tech_y: tech.lat,
-            order_x: order.lon,
-            order_y: order.lat,
+            tech_x: tx,
+            tech_y: ty,
+            order_x: ox,
+            order_y: oy,
             reward: *r,
             gt: gt_vec[i],
             sla_met: *sla_met,
@@ -332,6 +347,9 @@ pub fn run_episode(config: AspConfig) -> EpisodeRecord {
             order_skill: order.required_skill.clone(),
             urgency: order.urgency,
         });
+
+        // Update technician position to order location after dispatch
+        tech_positions[action.tech_idx] = (ox, oy);
     }
 
     let total_gt = gt_vec.first().copied().unwrap_or(0.0);
