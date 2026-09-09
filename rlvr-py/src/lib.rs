@@ -17,6 +17,7 @@ use rlvr_core::ch14_marl::Ch14Input;
 use rlvr_core::ch15_deep_learning::{run_ch15 as run_ch15_core, Ch15Config};
 use rlvr_core::ch16_drl::{run_ch16 as run_ch16_core, Ch16Config};
 use rlvr_core::ch17_explainability::{run_ch17 as run_ch17_core, Ch17Config};
+use rlvr_core::ch18_kan::{run_ch18 as run_ch18_core, Ch18Config};
 
 
 
@@ -886,6 +887,58 @@ fn run_ch17(
     Ok(r.into())
 }
 
+
+#[pyfunction]
+#[pyo3(signature = (n_epochs, lr, hidden_units, poly_degree, n_fourier_freqs, deep_layers, dropout_rate, seed))]
+fn run_ch18(
+    py: Python,
+    n_epochs: usize, lr: f64, hidden_units: usize,
+    poly_degree: usize, n_fourier_freqs: usize, deep_layers: usize,
+    dropout_rate: f64, seed: u64,
+) -> PyResult<PyObject> {
+    let config = Ch18Config {
+        n_epochs, lr, hidden_units, poly_degree, n_fourier_freqs,
+        deep_layers, dropout_rate, seed,
+    };
+    let results = run_ch18_core(config);
+    let out_list = PyList::empty_bound(py);
+    for res in &results {
+        let r = PyDict::new_bound(py);
+        r.set_item("model_name",       &res.model_name)?;
+        r.set_item("basis",            &res.basis)?;
+        r.set_item("depth",            res.depth)?;
+        r.set_item("input_dim",        res.input_dim)?;
+        r.set_item("expanded_dim",     res.expanded_dim)?;
+        r.set_item("total_params",     res.total_params)?;
+        r.set_item("final_train_loss", res.final_train_loss)?;
+        r.set_item("final_test_loss",  res.final_test_loss)?;
+        r.set_item("train_r2",         res.train_r2)?;
+        r.set_item("test_r2",          res.test_r2)?;
+        r.set_item("synth_train_loss", res.synth_train_loss)?;
+        r.set_item("synth_test_loss",  res.synth_test_loss)?;
+        let fp = PyList::empty_bound(py);
+        for &v in &res.final_predictions { fp.append(v)?; }
+        r.set_item("final_predictions", fp)?;
+        let tv = PyList::empty_bound(py);
+        for &v in &res.true_values { tv.append(v)?; }
+        r.set_item("true_values", tv)?;
+        let eps = PyList::empty_bound(py);
+        for ep in &res.epochs {
+            let e = PyDict::new_bound(py);
+            e.set_item("epoch",      ep.epoch)?;
+            e.set_item("train_loss", ep.train_loss)?;
+            e.set_item("test_loss",  ep.test_loss)?;
+            let preds = PyList::empty_bound(py);
+            for &v in &ep.predictions { preds.append(v)?; }
+            e.set_item("predictions", preds)?;
+            eps.append(e)?;
+        }
+        r.set_item("epochs", eps)?;
+        out_list.append(r)?;
+    }
+    Ok(out_list.into())
+}
+
 #[pymodule]
 fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch01_episode,         m)?)?;
@@ -905,5 +958,6 @@ fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch15, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch16, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch17, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch18, m)?)?;
     Ok(())
 }
