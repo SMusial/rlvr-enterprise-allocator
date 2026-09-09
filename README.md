@@ -1,315 +1,165 @@
-# 🦀 RLVR Enterprise Allocator
+# RLVR Enterprise Allocator
 
-> **Reinforcement Learning via Rust** — A complete, interactive RL curriculum built on a high-performance Rust engine with a Streamlit GUI.  
-> Business context: Warsaw ASP (After-Sales Point) dispatch optimisation — 5 technicians, up to 20 orders per shift.
+**Reinforcement Learning via Rust** — A 20-chapter, end-to-end framework for learning and demonstrating RL algorithms through a real enterprise field-service optimisation use case.
 
----
-
-## 📦 Tech Stack
-
-| Layer | Technology |
-|---|---|
-| RL Engine | Rust (`rlvr-core`) — compiled to native Python extension via `maturin` |
-| Python Bindings | `rlvr-py` (PyO3) |
-| GUI | Streamlit |
-| Math rendering | KaTeX (in-browser, HTML guides) |
-| Charts | Altair, Plotly |
-| Deep Learning (Ch15+) | `tch-rs 0.14` — Rust bindings to `libtorch 2.1.0` (CPU) |
+> **Warsaw ASP (After-Sales Point):** 5 technicians · up to 20 work orders per shift · 3 skills (HVAC, Electrical, Network) · SLA constraints · real Warsaw map coordinates · technicians move after each dispatch
 
 ---
 
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/SMusial/rlvr-enterprise-allocator.git
-cd rlvr-enterprise-allocator
-
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-
-# Download libtorch 2.1.0 (required for Ch15+)
-wget "https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.1.0%2Bcpu.zip" -O libtorch.zip
-unzip libtorch.zip -d ~/ && rm libtorch.zip
-
-export LIBTORCH=$HOME/libtorch
-export LIBTORCH_INCLUDE=$HOME/libtorch
-export LD_LIBRARY_PATH=$HOME/libtorch/lib:$LD_LIBRARY_PATH
-export LIBTORCH_BYPASS_VERSION_CHECK=1
-
+# Build Rust engine
 cd rlvr-py && maturin develop --release && cd ..
 
+# Run Streamlit app
 streamlit run gui/app.py --server.port 8001
 ```
 
 ---
 
-## ✅ Chapter Progress
+## 📚 Chapter Progress
 
-| # | Chapter | Topic | Algorithms | Status |
-|---|---|---|---|---|
-| 01 | MDP Baseline | ε-Greedy Dispatch | ε-greedy, Q=0 | ✅ |
-| 02 | Bellman / Value Iteration | Optimal dispatch policy | Value Iteration, Bellman equation | ✅ |
-| 03 | Multi-Armed Bandit | Skill-slot optimisation | ε-Greedy, UCB1, Thompson Sampling | ✅ |
-| 04 | Dynamic Programming | Policy & Value Iteration | PI, VI, Async VI | ✅ |
-| 05 | Monte Carlo | Model-free learning from episodes | First-Visit MC, Every-Visit MC, On-Policy, Off-Policy IS | ✅ |
-| 06 | Temporal Difference | Online learning | TD(0), SARSA, Q-Learning | ✅ |
-| 07 | n-Step TD & Planning | Sample efficiency | n-Step TD, n-Step SARSA, Dyna-Q, Dyna-Q+ | ✅ |
-| 08 | Eligibility Traces | Backward credit assignment | SARSA(λ), Q(λ) Watkins | ✅ |
-| 09 | Policy Gradient | Direct policy optimisation | REINFORCE, REINFORCE+Baseline, Actor-Critic TD(0) | ✅ |
-| 10 | World Models | Model-based RL | WM Q-Learning, Prioritised Sweeping, MBPO, Uncertainty Bonus | ✅ |
-| 11 | Multi-Agent RL | 2-agent dispatch | IQL, JAL, Lenient Q, Mean Field Q | ✅ |
-| 12 | Game Theory | Nash equilibrium | Nash Q, Correlated Q, Minimax Q, Fictitious Play | ✅ |
-| 13 | Cooperative MARL | Value decomposition | IQL baseline, VDN, QMIX, QMIX+CG | ✅ |
-| 14 | Foundational MARL | Full MARL comparison | IQL, VDN, MAPG, MADDPG | ✅ |
-| 15 | Deep Learning Foundations | FNN via tch/libtorch | ReLU/Swish/ELU, Adam/SGD/RMSProp, L2, Dropout | ✅ |
-| 16 | Deep RL Models | DQN, Double DQN, Dueling DQN, PPO | Experience Replay, Target Network, V+A streams, Clipped Surrogate | ✅ |
-| 17 | Model Explainability | XAI for FNN decisions | Gradient FI, Saliency Maps, LIME, SHAP | ✅ |
-| 18 | Kolmogorov-Arnold Networks | KAN vs MLP | Shallow KAN, Deep KAN, Polynomial basis, Fourier basis | ✅ |
-| 19–20 | Deep RL | SAC, TD3… | — | 🔜 |
-
----
-
-## 📚 Chapter Summaries
-
-### Chapter 01 — MDP Baseline & ε-Greedy Dispatch
-**Key concept:** Markov Decision Process (MDP) — the formal foundation of all RL.  
-**Business problem:** Warsaw ASP dispatch with 5 technicians and up to 20 orders. Q-table is all zeros — this is the random baseline.  
-**Algorithms:** ε-greedy policy (Q=0 → always random).  
-**Key output:** Baseline G₀ (discounted return) to compare all future chapters against.  
-**Rust function:** `run_ch01_episode()`
+| Ch | Topic | Algorithm | Status |
+|----|-------|-----------|--------|
+| 01 | MDP Baseline & Random Policy | ε-greedy (ε=1), Gₜ, Monte Carlo return, Q=0 | ✅ Complete |
+| 02 | Bellman Equation & Value Iteration | Value Iteration, nalgebra LU solver | ✅ Complete |
+| 03 | Multi-Armed Bandit | UCB1, Thompson Sampling, ε-greedy | ✅ Complete |
+| 04 | Dynamic Programming | Policy Iteration, Async Value Iteration | ✅ Complete |
+| 05 | Monte Carlo Methods | First-Visit MC, Every-Visit MC, On/Off-Policy | ✅ Complete |
+| 06 | Temporal Difference | TD(0), SARSA, Q-Learning | ✅ Complete |
+| 07 | n-Step TD & Planning | n-Step TD, n-Step SARSA, Dyna-Q, Dyna-Q+ | ✅ Complete |
+| 08 | Eligibility Traces | TD(λ), SARSA(λ), Replacing & Accumulating traces | ✅ Complete |
+| 09 | Policy Gradient | REINFORCE, Softmax policy, Baseline | ✅ Complete |
+| 10 | Model-Based RL | World Models, Dyna architecture | ✅ Complete |
+| 11 | Multi-Agent RL (intro) | Independent Q-Learning (legacy) | ✅ Complete |
+| 12 | Game Theory & Nash | Nash Equilibrium, Zero-sum games | ✅ Complete |
+| 13 | Cooperative MARL | VDN, QMIX, Centralised training | ✅ Complete |
+| 14 | Learning Dynamics | ELO rating, Fictitious Play | ✅ Complete |
+| 15 | Deep RL — DQN | DQN, Experience Replay, Target Network (burn) | ✅ Complete |
+| 16 | Actor-Critic | A2C, PPO, Advantage estimation | ✅ Complete |
+| **17** | **MARL: Independent Q-Learning** | **IQL — 5 independent agents, individual rewards, no communication** | ✅ **Complete** |
+| 18 | QMIX Deep MARL | Monotonic mixing network, centralised critic | 🔄 Planned |
+| 19 | Scalable Deep RL | Distributed training, Federated RL | 🔄 Planned |
+| 20 | PyO3 Interop & Safety | FFI safety invariants, Rust↔Python bridge | 🔄 Planned |
 
 ---
 
-### Chapter 02 — Bellman Equation & Value Iteration
-**Key concept:** Bellman optimality equation — the recursive definition of optimal value.  
-**Business problem:** Find the optimal dispatch policy π* for the 8-state Warsaw ASP MDP.  
-**Algorithms:** Value Iteration (VI) — iterates until convergence:
+## 🤖 Chapter 17 — MARL: Independent Q-Learning (IQL)
 
-$$V^{(k+1)}(s) = \max_a \sum_{s'} P(s'|s,a)\left[R + \gamma V^{(k)}(s')\right]$$
+Multi-Agent Reinforcement Learning applied to Warsaw ASP dispatch optimisation.
 
-**Key output:** V*(s) for all 8 states, optimal policy π*, convergence curve, Glass-Box Bellman trace.  
-**Rust function:** `run_ch02_value_iteration()`
+### Design
 
----
+| Property | Value |
+|----------|-------|
+| Agents | 5 technicians — each is an independent RL agent |
+| Q-table | One per agent: `Q[tech][order]` |
+| Reward | Individual — each agent learns only from its own dispatches |
+| Communication | None — agents do not observe each other |
+| Policy | ε-greedy with linear decay: ε_start → ε_end |
+| Update | IQL: `Q(t,o) ← Q(t,o) + α[R + γ·max Q(t,o') − Q(t,o)]` |
+| Environment | Fixed (seed=42) — same positions every episode |
+| Skill bias | 80% probability of selecting a skill-matching technician |
 
-### Chapter 03 — Multi-Armed Bandit & Exploration Strategies
-**Key concept:** Stateless RL — the simplest exploration-exploitation trade-off.  
-**Business problem:** Warsaw ASP skill-slot optimisation — 5 arms (HVAC, Electrical, Plumbing, Network, Mechanical) with unknown true SLA rates.  
-**Algorithms:** ε-Greedy with annealing, UCB1 (O(√(KT ln T)) regret), Thompson Sampling (Beta posterior).  
-**Key output:** Cumulative regret curves, arm pull distribution, Q-value convergence toward true SLA rates.  
-**Rust function:** `run_ch03_bandits()`
+### IQL Update Rule
 
----
+```
+δ = R + γ · max_{o'} Q(tech, o') − Q(tech, order)
+Q(tech, order) ← Q(tech, order) + α · δ
+```
 
-### Chapter 04 — Dynamic Programming: PI vs VI vs Async VI
-**Key concept:** Exact model-based planning — requires full knowledge of P(s'|s,a).  
-**Business problem:** Compare three DP algorithms on the same Warsaw ASP MDP — all must find the same π*.  
-**Algorithms:** Policy Iteration (PI), Value Iteration (VI), Asynchronous VI (prioritised by Bellman residual).  
-**Key output:** Convergence comparison, Policy Evolution table (PI outer iterations), Bellman residual heatmap.  
-**Rust function:** `run_ch04_dp()`
+### Interactive Lab Features
 
----
-
-### Chapter 05 — Monte Carlo Methods
-**Key concept:** Model-free learning from complete episodes — no P(s'|s,a) needed.  
-**Business problem:** Learn V^π(s) and Q*(s,a) from observed dispatch episodes.  
-**Algorithms:** First-Visit MC (unbiased), Every-Visit MC (consistent), On-Policy MC Control, Off-Policy MC with Importance Sampling.  
-**Key output:** V(s) estimates converging toward DP reference (Ch04), visit count heatmap, episode returns curve.  
-**Rust function:** `run_ch05_mc()`
-
----
-
-### Chapter 06 — Temporal Difference Learning
-**Key concept:** Online learning — updates after every step, not episode end. Combines MC (model-free) and DP (bootstrapping).  
-**Business problem:** Real-time dispatch learning — update Q-values after each dispatch decision.  
-**Algorithms:** TD(0) prediction, SARSA (on-policy, safe), Q-Learning (off-policy, optimal).  
-**Key output:** TD error curve decaying toward zero, SARSA vs Q-Learning policy comparison, Q-table heatmap.  
-**Rust function:** `run_ch06_td()`
+- 🎬 **Episode selector** — all charts update for selected episode
+- 🔍 **Step slider** — map, reward chart, TD error, glass-box all update
+- 🗺️ **Warsaw Dispatch Map** — each agent has its own color
+- 📊 **Reward per Step Chart** — per-step rewards with selected step highlighted
+- 📉 **TD Error per Step** — convergence indicator (→ 0 as agent learns)
+- 🔬 **Glass-Box MDP Trace** — Q before/after, TD error, skill match per step
+- 📋 **Episode Summary** — team SLA rate, skill match %, avg distance
+- 🤖 **Agent Stats Table** — per-agent SLA rate, skill match, orders served
+- 📊 **Per-Agent Learning Curves (MA-5)** — each agent's independent learning progress
+- 📈 **Team Learning Curve (MA-5)** — overall team performance
+- 🧮 **Q-Table Heatmap** — final Q-values: agents × work orders
 
 ---
 
-### Chapter 07 — n-Step TD & Dyna-Q Planning
-**Key concept:** Bridging TD(0) and MC with n-step returns; model-based planning for sample efficiency.  
-**Business problem:** Reduce real dispatch interactions needed to learn a good policy.  
-**Algorithms:** n-Step TD (n=1=TD0, n=∞=MC, sweet spot n=3–5), n-Step SARSA, Dyna-Q (k planning steps), Dyna-Q+ (exploration bonus κ√τ).  
-**Key output:** ~5× sample efficiency gain with Dyna-Q k=5, model coverage chart growing toward 32 (|S|×|A|).  
-**Rust function:** `run_ch07_nstep()`
-
----
-
-### Chapter 08 — Eligibility Traces & TD(λ)
-**Key concept:** Backward credit assignment — update all recently visited (s,a) pairs simultaneously.  
-**Business problem:** Faster reward propagation through the Warsaw ASP state space.  
-**Algorithms:** SARSA(λ) (on-policy), Q(λ) Watkins (off-policy, traces cut on non-greedy), SARSA λ=0 (TD0 baseline), SARSA λ=0.99 (≈MC).  
-**Key output:** Active traces chart, λ=0.7 sweet spot, Watkins cut effect on trace count.  
-**Rust function:** `run_ch08_eligibility()`
-
----
-
-### Chapter 09 — Policy Gradient: REINFORCE & Softmax
-**Key concept:** Direct policy optimisation — no Q-table, parameterise π(a|s,θ) directly.  
-**Business problem:** Foundation for deep RL (A2C, PPO) — scales to continuous state spaces.  
-**Algorithms:** REINFORCE (unbiased, high variance), REINFORCE+Baseline (lower variance), Actor-Critic TD(0) (online, biased), REINFORCE τ=0.5 (sharp policy).  
-**Key output:** Policy entropy chart (healthy decay), θ[s][a] heatmap, PG magnitude curve.  
-**Rust function:** `run_ch09_policy_gradient()`
-
----
-
-### Chapter 10 — Model-Based RL: World Models
-**Key concept:** Learn the transition model T̂(s,a,s') from experience, then plan with it.  
-**Business problem:** Bridge between model-free (Ch06) and model-based (Ch04) — no analytical model available.  
-**Algorithms:** WM Q-Learning (Dyna-Q with explicit model), Prioritised Sweeping (plan from highest Bellman residual), MBPO (synthetic rollouts for REINFORCE), Uncertainty Bonus (Q + β/√(N+1)).  
-**Key output:** Model accuracy chart growing toward 1.0, planning steps chart, Prioritised Sweeping convergence advantage.  
-**Rust function:** `run_ch10_world_model()`
-
----
-
-### Chapter 11 — Multi-Agent RL
-**Key concept:** Two agents share the Warsaw ASP MDP — non-stationarity, coordination without communication.  
-**Business problem:** Two Warsaw ASP dispatchers acting independently but with interacting rewards.  
-**Algorithms:** IQL (independent Q-Learning, non-stationary baseline), JAL (models partner policy π̂ⱼ), Lenient Q (ignores negative TD errors with probability μ), Mean Field Q (scales to N agents via mean action).  
-**Key output:** Cooperation rate chart, joint V(s) comparison, Q-table heatmaps per agent.  
-**Rust function:** `run_ch11_multiagent()`
-
----
-
-### Chapter 12 — Game Theory & Nash Equilibrium
-**Key concept:** Formalise multi-agent interaction — find stable equilibria where no agent can improve unilaterally.  
-**Business problem:** Strategic dispatch coordination — find the Nash equilibrium operating point.  
-**Algorithms:** Nash Q-Learning (converges to Nash equilibrium), Correlated Q (joint distribution via regret matching), Minimax Q (zero-sum adversarial), Fictitious Play (best response to empirical average).  
-**Key output:** Nash Gap (exploitability) chart decaying toward 0, Mixed Strategy Profile per state.  
-**Rust function:** `run_ch12_game_theory()`
-
----
-
-### Chapter 13 — Cooperative MARL: VDN & QMIX
-**Key concept:** Value decomposition — agents share joint reward, centralised training with decentralised execution (CTDE).  
-**Business problem:** Two dispatchers maximise joint SLA performance — cooperative, not competitive.  
-**Algorithms:** IQL baseline, VDN (Q_tot = Q₀ + Q₁, additive, IGM), QMIX (monotone mixing wᵢ(s) ≥ 0, state-dependent weights), QMIX+CG (counterfactual baseline for credit assignment).  
-**Key output:** Mixing weights chart, joint Q_tot curve, IGM verification across all states.  
-**Rust function:** `run_ch13_coop_marl()`
-
----
-
-### Chapter 14 — Foundational MARL Algorithms
-**Key concept:** Capstone of the MARL curriculum — unified comparison of value-based, policy-based, and actor-critic MARL methods.  
-**Business problem:** 5×5 grid world with 2 agents collecting resources while minimising distance to target.  
-**Algorithms:** IQL (independent Q-Learning baseline), VDN (additive decomposition), MAPG (Multi-Agent Policy Gradient with entropy bonus β·H(π)), MADDPG (centralised critic + decentralised actors + soft target update τ).  
-**Key output:** Episode returns comparison (MA-20), cooperation rate, TD error curves, Q-table/logit heatmaps per agent.  
-**Rust function:** `run_ch14()`
-
----
-
-### Chapter 15 — Deep Learning Foundations
-**Key concept:** Universal Approximation Theorem (UAT) — FNNs can approximate any continuous function. Bridge from tabular RL (Ch01–Ch14) to Deep RL (Ch16–Ch20).  
-**Business problem:** Approximate V*(s) from Ch02 using a real PyTorch FNN trained on 4 Warsaw ASP state features (SLA rate, urgency, distance, skill match) — without the exact Bellman model.  
-**Engine:** `tch-rs 0.14` (Rust bindings to `libtorch 2.1.0 CPU`) — real PyTorch tensors, autograd, and optimizers running natively in Rust.  
-**Algorithms:** FNN with backpropagation via autograd, 6 activation functions (ReLU, LeakyReLU, ELU, Swish, Tanh, Sigmoid), 3 optimizers (SGD, Adam, RMSProp), L2 regularization, Dropout. He initialisation.  
-**4 configurations compared:** ReLU+SGD (baseline), User activation+Adam, Adam+L2, Adam+Dropout.  
-**Key output:** Loss curves (log scale), V*(s) predictions vs Ch02 reference, activation function comparison chart, gradient norm per epoch, network architecture summary.  
-**Rust function:** `run_ch15()`
-
----
-
-### Chapter 16 — Deep Reinforcement Learning Models
-**Key concept:** DQN = Q-Learning (Ch06) + FNN (Ch15) + experience replay + target network. First Deep RL chapter — achieves human-level performance on discrete action spaces.  
-**Business problem:** Warsaw ASP 8-state MDP solved with Deep RL. FNN approximates Q*(s,a) enabling generalisation to unseen states and continuous feature spaces.  
-**Engine:** `tch-rs 0.14` (libtorch 2.1.0 CPU) — real PyTorch tensors, autograd, Adam optimizer.  
-**Algorithms:**
-- **DQN** — FNN + experience replay + frozen target network θ⁻
-- **Double DQN** — decouples action selection (θ) and evaluation (θ⁻), fixes overestimation bias
-- **Dueling DQN** — Q(s,a) = V(s) + A(s,a) − (1/|A|)·Σ A(s,a'), separate value and advantage streams
-- **PPO** — clipped surrogate L^CLIP = E[min(r_θ·A, clip(r_θ, 1−ε, 1+ε)·A)], actor-critic with entropy bonus
-
-**Key output:** Episode returns (MA-20), MSE loss curves (log scale), epsilon decay chart, Q-table heatmaps per algorithm, Glass-Box step trace.  
-**Rust function:** `run_ch16()`
-
----
-
-### Chapter 17 — Model Explainability and Interpretability
-**Key concept:** XAI (Explainable AI) — understanding WHY a trained FNN makes each prediction. Required for GDPR compliance and real-world deployment of AI dispatch systems.  
-**Business problem:** Warsaw ASP manager asks: "Why did the system assign technician T3 to order O7?" — SHAP and LIME provide human-readable answers based on the 4 dispatch features.  
-**Engine:** `tch-rs 0.14` — autograd used for gradient-based methods; pure Rust for LIME and KernelSHAP.  
-**Algorithms:**
-- **Gradient Feature Importance** — FI(xⱼ) = |∂L/∂xⱼ| — how much does loss change with each feature?
-- **Saliency Maps** — S(x) = |∂f/∂x| — output sensitivity to each input feature
-- **LIME** — local linear surrogate fitted on kernel-weighted perturbed samples; R² measures local fit quality
-- **SHAP (KernelSHAP)** — Shapley values: φᵢ = fair credit assignment satisfying efficiency (Σφᵢ = f(x) − E[f(x)]), symmetry, and consistency
-
-**Key output:** Global feature importance bar chart, method comparison heatmap (all 4 methods × all 8 states), SHAP waterfall per state, LIME coefficient chart, Glass-Box detail table.  
-**Rust function:** `run_ch17()`
-
----
-
-### Chapter 18 — Kolmogorov-Arnold Networks (KANs)
-**Key concept:** Kolmogorov-Arnold representation theorem — any continuous multivariate function can be decomposed into sums of univariate functions: f(x₁,...,xₙ) = Σq ψq(Σi φqi(xᵢ)). KANs encode this decomposition explicitly via basis expansion, making them more interpretable than MLPs.  
-**Business problem:** Warsaw ASP V*(s) regression — same task as Ch15, now solved with KANs. Tests whether structured basis expansion improves over plain MLP. Also benchmarked on a synthetic cubic dataset y = x³ + 0.5x² + ε where polynomial KAN has a structural advantage.  
-**Engine:** `tch-rs 0.14` (libtorch 2.1.0 CPU) — basis expansion in pure Rust, linear layers via tch.  
-**4 models compared:**
-- **Shallow KAN (Polynomial)** — expands each feature to [x, x², x³, ...] then applies 1 linear layer
-- **Shallow KAN (Fourier)** — expands each feature to [x, sin(x), cos(x), sin(2x), cos(2x), ...] then applies 1 linear layer
-- **Deep KAN (Polynomial)** — polynomial basis + multiple hidden layers for complex function approximation
-- **MLP Baseline** — standard FNN from Ch15 for direct comparison
-
-**Key output:** Loss curves (log scale), V*(s) predictions vs Ch02 reference, basis function comparison chart (polynomial vs Fourier), synthetic cubic dataset train/test MSE, architecture summary (input_dim → expanded_dim → output).  
-**Rust function:** `run_ch18()`
-
----
-
-## 🗂️ Repository Structure
+## 🏗️ Architecture
 
 ```
 rlvr-enterprise-allocator/
-├── rlvr-core/src/          # Rust RL algorithms (ch01–ch18)
-├── rlvr-py/src/lib.rs      # PyO3 Python bindings
+├── rlvr-core/src/
+│   ├── ch01_asp_dispatch.rs    ← Ch01 MDP baseline (random policy)
+│   ├── ch02_*.rs               ← Value Iteration
+│   ├── ch03_*.rs               ← Multi-Armed Bandit
+│   ├── ch04_*.rs               ← Dynamic Programming
+│   ├── ch05_*.rs               ← Monte Carlo
+│   ├── ch06_*.rs               ← Temporal Difference
+│   ├── ch07_*.rs               ← n-Step TD & Dyna
+│   ├── ch08_*.rs               ← Eligibility Traces
+│   ├── ch09_*.rs               ← Policy Gradient
+│   ├── ch10_*.rs               ← World Models
+│   ├── ch11_*.rs               ← Multi-Agent (intro)
+│   ├── ch12_*.rs               ← Game Theory
+│   ├── ch13_*.rs               ← Cooperative MARL
+│   ├── ch14_*.rs               ← Learning Dynamics
+│   ├── ch15_*.rs               ← DQN
+│   ├── ch16_*.rs               ← Actor-Critic
+│   └── ch17_marl.rs            ← Ch17 MARL IQL ← NEW
+│
+├── rlvr-py/src/lib.rs          ← PyO3 bridge (all chapters)
+│
 ├── gui/
-│   ├── app.py              # Streamlit entry point
-│   └── chapters/           # ch01.py – ch18.py (UI per chapter)
-├── docs/                   # Hands-On Guide HTML files (EN/PL)
-│   ├── handson_ch01_en.html
-│   ├── handson_ch02_pl.html
-│   └── handson_ch03_en.html … handson_ch18_en.html
-└── Cargo.toml              # Rust workspace
+│   ├── app.py                  ← Streamlit router
+│   └── chapters/
+│       ├── ch01.py             ← Ch01 Interactive Lab
+│       ├── ch02.py .. ch16.py  ← Ch02–Ch16 Interactive Labs
+│       └── ch17.py             ← Ch17 Interactive Lab ← NEW
+│
+└── docs/
+    ├── handson_ch01_en.html    ← Ch01 Hands-On Guide
+    └── handson_ch*.html        ← Per-chapter guides
 ```
 
 ---
 
-## 🛠️ Development
+## 🧪 Warsaw ASP Use Case
 
-```bash
-# Set libtorch env vars (required for Ch15+)
-export LIBTORCH=$HOME/libtorch
-export LIBTORCH_INCLUDE=$HOME/libtorch
-export LD_LIBRARY_PATH=$HOME/libtorch/lib:$LD_LIBRARY_PATH
-export LIBTORCH_BYPASS_VERSION_CHECK=1
+The same business problem runs through all 20 chapters — enabling direct comparison of algorithms:
 
-# Rebuild Rust engine after changes
-cd rlvr-py && maturin develop --release && cd ..
+```
+Environment (fixed, seed=42):
+  - 5 technicians: T0–T4, skills: HVAC / Electrical / Network
+  - 10 work orders: W0–W9, each requiring a specific skill
+  - Warsaw coordinates: lon ∈ [20.90, 21.10], lat ∈ [52.18, 52.32]
+  - Technicians move after each dispatch (realistic field service)
 
-# Run tests
-cargo test -p rlvr-core
+Reward function:
+  R = +2.0 − 0.05·d   if SLA met (skill match + within distance threshold)
+  R = +0.5 − 0.05·d   if skill match, SLA breached
+  R = −1.0 − 0.02·d   if skill mismatch
 
-# Restart GUI
-pkill -f streamlit
-streamlit run gui/app.py --server.port 8001
+Baseline (Ch01):  G₀ ≈ random, flat learning curve
+Target (Ch02+):   G₀ > baseline, upward learning curve
 ```
 
 ---
 
-## 📖 Hands-On Guides
+## 📦 Dependencies
 
-Each chapter includes a self-contained HTML guide with:
-- 10 interactive tabs (Introduction, Theory, Environment, UI, Interpretation, Exercises, Tasks, Quiz, Summary)
-- KaTeX math rendering (golden formulas)
-- 5 practical tasks with hidden answers
-- 10-question quiz (90% pass threshold)
-
-Available languages: **EN** (Ch01–Ch18), **PL** (Ch02)
+| Crate | Purpose |
+|-------|---------|
+| `rand` | Random number generation (StdRng, seeded) |
+| `serde` / `serde_json` | Serialisation to Python |
+| `pyo3` / `maturin` | Rust↔Python bridge |
+| `nalgebra` | Linear algebra (Ch02 Value Iteration) |
+| `burn` | Deep learning tensors (Ch15 DQN) |
+| `streamlit` | Interactive UI |
+| `plotly` / `altair` | Charts and visualisations |
 
 ---
 
 ## 📄 License
 
-MIT License — see [opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
-
-Copyright (c) 2026 Sylwester Musial
+MIT — see [LICENSE](LICENSE)
