@@ -255,8 +255,7 @@ pub fn run_ch17(
         });
     }
 
-    // Flatten Q-tables for serialization: [tech * n_orders + order]
-    let final_q_tables: Vec<f64> = q_tables.iter().flat_map(|qt| qt.iter().cloned()).collect();
+    let final_q_tables: Vec<Vec<f64>> = q_tables.clone();
 
     Ch17Result {
         episodes,
