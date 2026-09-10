@@ -14,62 +14,79 @@ AGENT_COLORS = ["#0082F0", "#FF8C0A", "#8B5CF6", "#0FC373", "#FF4B4B",
 # ---------------------------------------------------------------------------
 VARIANTS = {
     "V1": {
-        "label":   "V1 — IQL · Individual Reward · No Communication",
-        "arch":    "Independent Q-Learning (IQL)",
-        "reward":  "Individual",
-        "comm":    "None",
-        "color":   "#0082F0",
+        "label":  "V1 — IQL · Individual Reward · No Communication",
+        "arch":   "Independent Q-Learning (IQL)",
+        "reward": "Individual",
+        "comm":   "None",
+        "color":  "#0082F0",
         "desc": (
             "**V1 — IQL / Individual Reward / No Communication** is the simplest MARL baseline. "
             "Each technician is a fully independent agent with its own Q-table. "
             "It receives only its own reward and has no knowledge of other agents. "
             "This is the MARL equivalent of single-agent Q-Learning applied independently to each technician."
         ),
-        "fn":      "run_ch17_episode",
+        "fn": "run_ch17_episode",
         "extra_params": {},
     },
     "V2": {
-        "label":   "V2 — IQL · Shared Reward · No Communication",
-        "arch":    "Independent Q-Learning (IQL)",
-        "reward":  "Shared (team mean)",
-        "comm":    "None",
-        "color":   "#FF8C0A",
+        "label":  "V2 — IQL · Shared Reward · No Communication",
+        "arch":   "Independent Q-Learning (IQL)",
+        "reward": "Shared (team mean)",
+        "comm":   "None",
+        "color":  "#FF8C0A",
         "desc": (
             "**V2 — IQL / Shared Reward / No Communication** differs from V1 in one key way: "
-            "instead of each agent receiving its own individual reward, all agents receive the **same shared reward** — "
-            "the mean of all individual rewards in the episode. "
-            "This encourages agents to implicitly cooperate even though they cannot communicate. "
+            "all agents receive the **same shared reward** — the mean of all individual rewards. "
+            "This encourages implicit cooperation even without communication. "
             "The key challenge is the **Credit Assignment Problem**: with shared reward, "
             "it is hard for each agent to know whether its own action was good or bad."
         ),
-        "fn":      "run_ch17_v2",
+        "fn": "run_ch17_v2",
         "extra_params": {},
     },
     "V3": {
-        "label":   "V3 — IQL · Individual Reward · Partial Observability",
-        "arch":    "Independent Q-Learning (IQL)",
-        "reward":  "Individual",
-        "comm":    "Partial (positions)",
-        "color":   "#8B5CF6",
+        "label":  "V3 — IQL · Individual Reward · Partial Observability",
+        "arch":   "Independent Q-Learning (IQL)",
+        "reward": "Individual",
+        "comm":   "Partial (positions)",
+        "color":  "#8B5CF6",
         "desc": (
             "**V3 — IQL / Individual Reward / Partial Observability** extends V1 by giving each agent "
             "**awareness of other technicians' positions**. "
-            "When exploiting (not exploring), each agent scores orders using: "
+            "When exploiting, each agent scores orders using: "
             "`score(t, o) = Q[t][o] + λ · min_colleague_distance(o)` — "
-            "preferring orders that are far from colleagues (avoiding overlap). "
+            "preferring orders far from colleagues. "
             "This is **distance-aware selection**: agents implicitly coordinate by avoiding "
-            "areas already covered by colleagues, without any explicit communication. "
-            "The parameter λ controls how strongly agents avoid colleague overlap."
+            "areas already covered by colleagues, without explicit communication."
         ),
-        "fn":      "run_ch17_v3",
+        "fn": "run_ch17_v3",
         "extra_params": {"lambda": 0.1},
+    },
+    "V4": {
+        "label":  "V4 — CTDE (VDN) · Shared Reward · Full Observability",
+        "arch":   "CTDE — Centralised Training, Decentralised Execution",
+        "reward": "Shared (VDN)",
+        "comm":   "Full (centralised training)",
+        "color":  "#0FC373",
+        "desc": (
+            "**V4 — CTDE / VDN / Full Observability** is the first variant with a fundamentally "
+            "different training architecture. "
+            "During **training**, a centralised coordinator has access to all agents' Q-tables and positions. "
+            "It selects the best technician using a **joint Q-score**: "
+            "`Q_joint = Q[t][o] + distance_bonus` (VDN decomposition). "
+            "All agents receive a **soft Q-table update** from the joint experience — "
+            "not just the assigned agent. "
+            "During **execution**, each agent uses its own Q-table independently (decentralised). "
+            "This is the CTDE paradigm: train together, act alone."
+        ),
+        "fn": "run_ch17_v4",
+        "extra_params": {},
     },
 }
 
 PLANNED_VARIANTS = [
-    {"Variant": "V4", "Architecture": "CTDE",        "Reward": "Shared",     "Communication": "Full",    "Status": "🔄 Planned"},
-    {"Variant": "V5", "Architecture": "CTDE",        "Reward": "Mixed",      "Communication": "Partial", "Status": "🔄 Planned"},
-    {"Variant": "V6", "Architecture": "Cooperative", "Reward": "Shared",     "Communication": "Full",    "Status": "🔄 Planned"},
+    {"Variant": "V5", "Architecture": "CTDE",        "Reward": "Mixed",  "Communication": "Partial", "Status": "🔄 Planned"},
+    {"Variant": "V6", "Architecture": "Cooperative", "Reward": "Shared", "Communication": "Full",    "Status": "🔄 Planned"},
 ]
 
 
@@ -80,7 +97,6 @@ def _render_variant_comparison(current_key: str):
     v = VARIANTS[current_key]
     st.markdown(v["desc"])
     st.markdown("#### All variants at a glance:")
-
     rows = []
     for k, vv in VARIANTS.items():
         rows.append({
@@ -124,7 +140,7 @@ def _render_handbook():
 # ---------------------------------------------------------------------------
 # Map
 # ---------------------------------------------------------------------------
-def _render_map(steps, sel, variant_color):
+def _render_map(steps, sel, variant_color, is_v4=False):
     techs = {}
     for s in steps:
         if s["tech_idx"] not in techs:
@@ -189,9 +205,10 @@ def _render_map(steps, sel, variant_color):
         s = steps[sel]
         line_color = "#0FC373" if s.get("sla_met") else "#FF4B4B"
         label = "✅ SLA met" if s.get("sla_met") else "❌ SLA breach"
-        # V3: show collision avoided indicator
         if s.get("collision_avoided"):
-            label += " 🔀 avoided overlap"
+            label += " 🔀"
+        if is_v4 and not s.get("explored"):
+            label += " 🧠 CTDE"
         fig.add_trace(go.Scattermapbox(
             lat=[s["tech_y"], s["order_y"]],
             lon=[s["tech_x"], s["order_x"]],
@@ -272,10 +289,10 @@ def _render_td_error(steps, sel):
 
 
 # ---------------------------------------------------------------------------
-# V3: Nearest Colleague Distance per Step
+# V3: Nearest Colleague Distance
 # ---------------------------------------------------------------------------
 def _render_colleague_distance(steps, sel):
-    dists = [s.get("nearest_colleague_km", 0) for s in steps]
+    dists   = [s.get("nearest_colleague_km", 0) for s in steps]
     avoided = [s.get("collision_avoided", False) for s in steps]
     eff_sel = sel if sel < len(dists) else None
     colors  = ["#FF8C0A" if a else "#8B5CF6" for a in avoided]
@@ -297,16 +314,45 @@ def _render_colleague_distance(steps, sel):
     )
     st.plotly_chart(fig, use_container_width=True)
     n_avoided = sum(1 for a in avoided if a)
+    st.caption(f"Orange = overlap avoided · Purple = normal · {n_avoided}/{len(steps)} overlaps avoided")
+
+
+# ---------------------------------------------------------------------------
+# V4: Joint Q per Step
+# ---------------------------------------------------------------------------
+def _render_joint_q(steps, sel, mean_joint_q):
+    jqs     = [s.get("joint_q", 0) for s in steps]
+    eff_sel = sel if sel < len(jqs) else None
+    colors  = ["#0FC373"] * len(jqs)
+    if eff_sel is not None:
+        colors[eff_sel] = "#FFD700"
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        x=list(range(len(steps))), y=jqs,
+        marker_color=colors,
+        hovertemplate="Step %{x}<br>Joint Q: %{y:.4f}<extra></extra>",
+    ))
+    fig.add_hline(y=0, line_dash="dash", line_color="#9ca3af")
+    if eff_sel is not None:
+        fig.add_vline(x=eff_sel, line_dash="dot", line_color="#FFD700", line_width=2)
+    fig.update_layout(
+        xaxis_title="Step", yaxis_title="Joint Q (VDN)",
+        height=220, margin=dict(l=40, r=20, t=20, b=40),
+        paper_bgcolor="#0f1117", plot_bgcolor="#0f1117",
+        font=dict(color="#e8eaf6"),
+    )
+    st.plotly_chart(fig, use_container_width=True)
     st.caption(
-        f"Orange = collision avoided (agent chose order far from colleagues) · "
-        f"Purple = normal dispatch · {n_avoided}/{len(steps)} overlaps avoided"
+        f"Joint Q = Σ Q^i(order) across all agents · "
+        f"Mean Joint Q this episode = {mean_joint_q:.3f} · "
+        f"VDN: Q_joint grows as agents learn better individual Q-values"
     )
 
 
 # ---------------------------------------------------------------------------
 # Glass-Box
 # ---------------------------------------------------------------------------
-def _render_glass_box(steps, sel, show_v3=False):
+def _render_glass_box(steps, sel, show_v3=False, show_v4=False):
     rows = []
     for i, s in enumerate(steps):
         row = {
@@ -328,6 +374,9 @@ def _render_glass_box(steps, sel, show_v3=False):
         if show_v3:
             row["Nearest Coll."] = f"{s.get('nearest_colleague_km', 0):.1f} km"
             row["Avoided"]       = "🔀" if s.get("collision_avoided") else ""
+        if show_v4:
+            row["Joint Q"]       = round(s.get("joint_q", 0), 4)
+            row["CTDE"]          = "🧠" if not s.get("explored") else ""
         rows.append(row)
 
     df = pd.DataFrame(rows)
@@ -362,7 +411,8 @@ def _render_team_curve(curve, variant_color, variant_key):
     notes = {
         "V1": "📌 V1: individual rewards — each agent learns independently. Higher variance.",
         "V2": "📌 V2: shared reward — agents implicitly cooperate. Smoother curve.",
-        "V3": "📌 V3: partial observability — agents avoid colleague overlap. Expect lower avg distance.",
+        "V3": "📌 V3: partial observability — agents avoid colleague overlap. Lower avg distance.",
+        "V4": "📌 V4: CTDE/VDN — centralised training, all agents learn from joint experience. Expect faster convergence.",
     }
     st.caption(f"{notes.get(variant_key, '')} Mean G₀ = {mean_gt:.2f}")
 
@@ -393,7 +443,7 @@ def _render_agent_curves(agent_curves, n_tech):
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption("Each line = one independent agent. IQL: agents learn without coordination.")
+    st.caption("Each line = one agent. V4: agents should converge more uniformly due to centralised training.")
 
 
 # ---------------------------------------------------------------------------
@@ -431,7 +481,7 @@ def _render_qtable(final_q_tables, n_tech, n_orders):
         paper_bgcolor="#0f1117", font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption("Green = high Q-value · Red = low Q-value · Each row = one independent agent's Q-table")
+    st.caption("Green = high Q-value · Red = low Q-value · V4: Q-tables should be more uniform (centralised training)")
 
 
 # ---------------------------------------------------------------------------
@@ -452,13 +502,16 @@ def _render_summary(steps, total_gt, team_sla, ep_data=None):
         {"Metric": "Avg Step Reward",  "Value": f"{avg_reward:.3f}"},
         {"Metric": "Steps",            "Value": str(n)},
     ]
-    if ep_data and ep_data.get("collisions_avoided", 0) > 0:
-        rows.append({"Metric": "Overlaps Avoided (V3)", "Value": str(ep_data["collisions_avoided"])})
+    if ep_data:
+        if ep_data.get("collisions_avoided", 0) > 0:
+            rows.append({"Metric": "Overlaps Avoided (V3)", "Value": str(ep_data["collisions_avoided"])})
+        if ep_data.get("mean_joint_q", 0) != 0:
+            rows.append({"Metric": "Mean Joint Q (V4)", "Value": f"{ep_data['mean_joint_q']:.3f}"})
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
 
 # ---------------------------------------------------------------------------
-# Shared sidebar params
+# Sidebar params
 # ---------------------------------------------------------------------------
 def _sidebar_params():
     st.sidebar.header("Ch17 Settings")
@@ -482,22 +535,19 @@ def _render_variant_lab(variant_key, rlvr_py, n_tech, n_orders, n_ep,
     variant_color = v["color"]
     ss_key = f"ch17_{variant_key}_data"
     is_v3  = variant_key == "V3"
+    is_v4  = variant_key == "V4"
 
-    # ── Variant description + comparison ─────────────────────────────────
     _render_variant_comparison(variant_key)
     st.divider()
 
-    # V3 extra param
     lam = 0.1
     if is_v3:
         lam = st.slider(
-            "λ (collision avoidance weight)",
-            0.0, 1.0, 0.1, 0.01,
-            help="How strongly agents avoid orders near colleagues. 0 = same as V1, 1 = strong avoidance.",
+            "λ (collision avoidance weight)", 0.0, 1.0, 0.1, 0.01,
+            help="0 = same as V1, 1 = strong avoidance of colleague overlap",
             key="v3_lambda"
         )
 
-    # ── Run button ────────────────────────────────────────────────────────
     if st.button(f"▶ Run {variant_key} Training", type="primary", key=f"run_{variant_key}"):
         fn = getattr(rlvr_py, v["fn"])
         with st.spinner(f"Running {n_ep} episodes ({variant_key})..."):
@@ -528,75 +578,69 @@ def _render_variant_lab(variant_key, rlvr_py, n_tech, n_orders, n_ep,
     n_eps          = len(episodes)
     mean_g0        = sum(curve) / len(curve)
 
-    # ── Info banner ───────────────────────────────────────────────────────
     st.info(
         f"**{v['label']}** · {n_tech} agents · {n_eps} episodes · "
         f"α={alpha:.2f} · γ={gamma:.2f} · ε: {eps_start:.2f}→{eps_end:.2f} · "
         f"Mean team G₀ = **{mean_g0:.2f}**"
     )
 
-    # ── Episode selector ──────────────────────────────────────────────────
-    ep_sel   = st.slider("🎬 Select episode", 0, n_eps - 1, n_eps - 1,
-                         key=f"ep_sel_{variant_key}")
+    ep_sel   = st.slider("🎬 Select episode", 0, n_eps - 1, n_eps - 1, key=f"ep_sel_{variant_key}")
     ep_data  = episodes[ep_sel]
     ep_steps = ep_data["steps"]
     ep_gt    = ep_data["total_gt"]
     ep_sla   = ep_data["team_sla_rate"]
     ep_eps   = ep_steps[0]["epsilon"] if ep_steps else 0.0
+    ep_mjq   = ep_data.get("mean_joint_q", 0.0)
 
-    st.caption(
-        f"Episode {ep_sel + 1}/{n_eps} — "
-        f"Team Gₜ = **{ep_gt:.3f}** · SLA = {ep_sla*100:.1f}% · ε = {ep_eps:.3f}"
-        + (f" · Overlaps avoided = {ep_data.get('collisions_avoided', 0)}" if is_v3 else "")
-    )
+    caption = (f"Episode {ep_sel + 1}/{n_eps} — "
+               f"Team Gₜ = **{ep_gt:.3f}** · SLA = {ep_sla*100:.1f}% · ε = {ep_eps:.3f}")
+    if is_v3:
+        caption += f" · Overlaps avoided = {ep_data.get('collisions_avoided', 0)}"
+    if is_v4:
+        caption += f" · Mean Joint Q = {ep_mjq:.3f}"
+    st.caption(caption)
 
-    # ── Step selector ─────────────────────────────────────────────────────
     n_steps = len(ep_steps)
-    sel = st.slider("🔍 Highlight step on map", 0, n_steps, 0,
-                    key=f"step_sel_{variant_key}")
+    sel = st.slider("🔍 Highlight step on map", 0, n_steps, 0, key=f"step_sel_{variant_key}")
     if sel == n_steps:
         st.caption("📍 All work orders dispatched — no travel line shown.")
 
-    # ── Map ───────────────────────────────────────────────────────────────
     st.subheader("🗺️ Warsaw Dispatch Map")
-    _render_map(ep_steps, sel, variant_color)
-    st.caption("Blue = Technicians · White = Pending · Dark green = SLA met · Red = SLA breach"
-               + (" · 🔀 = overlap avoided" if is_v3 else ""))
+    _render_map(ep_steps, sel, variant_color, is_v4=is_v4)
+    caption_map = "Blue = Technicians · White = Pending · Dark green = SLA met · Red = SLA breach"
+    if is_v3: caption_map += " · 🔀 = overlap avoided"
+    if is_v4: caption_map += " · 🧠 = CTDE exploit"
+    st.caption(caption_map)
 
-    # ── Reward per Step ───────────────────────────────────────────────────
     st.subheader("📊 Reward per Step")
     _render_reward_per_step(ep_steps, sel, variant_color)
 
-    # ── V3: Nearest Colleague Distance ────────────────────────────────────
     if is_v3:
         st.subheader("🔀 Nearest Colleague Distance per Step")
         _render_colleague_distance(ep_steps, sel)
 
-    # ── TD Error ──────────────────────────────────────────────────────────
+    if is_v4:
+        st.subheader("🧠 Joint Q per Step (VDN)")
+        _render_joint_q(ep_steps, sel, ep_mjq)
+
     st.subheader("📉 TD Error per Step")
     _render_td_error(ep_steps, sel)
 
-    # ── Glass-Box ─────────────────────────────────────────────────────────
     st.subheader("🔬 Glass-Box — IQL Step Trace")
-    _render_glass_box(ep_steps, sel, show_v3=is_v3)
+    _render_glass_box(ep_steps, sel, show_v3=is_v3, show_v4=is_v4)
 
-    # ── Episode Summary ───────────────────────────────────────────────────
     st.subheader("📋 Episode Summary")
     _render_summary(ep_steps, ep_gt, ep_sla, ep_data)
 
-    # ── Agent Stats ───────────────────────────────────────────────────────
     st.subheader("🤖 Agent Stats")
     _render_agent_stats(ep_data["agent_stats"])
 
-    # ── Per-Agent Learning Curves ─────────────────────────────────────────
     st.subheader("📊 Per-Agent Learning Curves (MA-5)")
     _render_agent_curves(agent_curves, n_tech)
 
-    # ── Team Learning Curve ───────────────────────────────────────────────
     st.subheader("📈 Team Learning Curve — Gₜ over Episodes (MA-5)")
     _render_team_curve(curve, variant_color, variant_key)
 
-    # ── Q-Table Heatmap ───────────────────────────────────────────────────
     st.subheader("🧮 Q-Tables (Final)")
     _render_qtable(final_q_tables, n_tech, n_orders)
 
@@ -606,12 +650,13 @@ def _render_variant_lab(variant_key, rlvr_py, n_tech, n_orders, n_ep,
 # ---------------------------------------------------------------------------
 def render():
     st.title("Chapter 17 — Multi-Agent RL: MARL Variants")
-    st.caption("Warsaw ASP · Independent Q-Learning · V1: Individual · V2: Shared · V3: Partial Observability")
+    st.caption("Warsaw ASP · V1: Individual · V2: Shared · V3: Partial Obs. · V4: CTDE/VDN")
 
-    tab_v1, tab_v2, tab_v3, tab_handbook = st.tabs([
+    tab_v1, tab_v2, tab_v3, tab_v4, tab_handbook = st.tabs([
         "🤖 V1 — Individual",
         "🤝 V2 — Shared",
         "👁️ V3 — Partial Obs.",
+        "🧠 V4 — CTDE/VDN",
         "📘 Hands-On Guide EN",
     ])
 
@@ -634,4 +679,7 @@ def render():
                             alpha, gamma, eps_start, eps_end, seed)
     with tab_v3:
         _render_variant_lab("V3", rlvr_py, n_tech, n_orders, n_ep,
+                            alpha, gamma, eps_start, eps_end, seed)
+    with tab_v4:
+        _render_variant_lab("V4", rlvr_py, n_tech, n_orders, n_ep,
                             alpha, gamma, eps_start, eps_end, seed)

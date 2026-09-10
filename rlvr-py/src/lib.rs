@@ -941,6 +941,28 @@ fn run_ch18(
 
 
 
+
+#[pyfunction]
+fn run_ch17_v4(
+    py: Python,
+    seed: u64,
+    n_tech: usize,
+    n_orders: usize,
+    n_ep: usize,
+    alpha: f64,
+    gamma: f64,
+    epsilon_start: f64,
+    epsilon_end: f64,
+) -> PyResult<PyObject> {
+    use rlvr_core::ch17_marl::run_ch17_v4;
+    let result = run_ch17_v4(seed, n_tech, n_orders, n_ep, alpha, gamma,
+                              epsilon_start, epsilon_end);
+    let json = serde_json::to_string(&result).map_err(|e| {
+        pyo3::exceptions::PyRuntimeError::new_err(e.to_string())
+    })?;
+    Ok(json.into_py(py))
+}
+
 #[pyfunction]
 fn run_ch17_v3(
     py: Python,
@@ -1022,6 +1044,7 @@ fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch15, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch16, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch17_episode, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch17_v4, m)?);
     m.add_function(wrap_pyfunction!(run_ch17_v3, m)?);
     m.add_function(wrap_pyfunction!(run_ch17_v2, m)?);
 
