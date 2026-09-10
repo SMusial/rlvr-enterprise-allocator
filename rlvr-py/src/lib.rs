@@ -1022,7 +1022,9 @@ fn rlvr_py(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_ch15, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch16, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch17_episode, m)?)?;
-    m.add_function(wrap_pyfunction!(run_ch17_v2, m)?)?;
+    m.add_function(wrap_pyfunction!(run_ch17_v3, m)?);
+    m.add_function(wrap_pyfunction!(run_ch17_v2, m)?);
+
     m.add_function(wrap_pyfunction!(run_ch17, m)?)?;
     m.add_function(wrap_pyfunction!(run_ch18, m)?)?;
     Ok(())
