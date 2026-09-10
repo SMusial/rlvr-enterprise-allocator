@@ -941,8 +941,6 @@ fn run_ch18(
 
 
 #[pyfunction]
-
-#[pyfunction]
 fn run_ch17_v2(
     py: Python,
     seed: u64,
@@ -962,6 +960,7 @@ fn run_ch17_v2(
     Ok(json.into_py(py))
 }
 
+#[pyfunction]
 fn run_ch17_episode(
     py: Python,
     seed: u64,
