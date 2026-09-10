@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0061)file:///C:/Users/EPOSYMU/Downloads/handson_ch17_en%20(3).html -->
+<!-- saved from url=(0061)file:///C:/Users/EPOSYMU/Downloads/handson_ch17_en%20(4).html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -669,50 +669,42 @@ In V1, <span><span class="katex"><span class="katex-mathml"><math xmlns="http://
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <div id="comparison" class="tab-content">
 
-<h2>⚖ V1 vs V2 — Side-by-Side Comparison</h2>
-<div class="card blue">Run both V1 and V2 in the Interactive Lab with identical settings, then return here to compare the theoretical predictions with what you observed.</div>
+<h2>⚖ Dynamic Side-by-Side Comparison</h2>
+<div class="card blue">Choose any two variants to compare. The table and "What to look for" section update automatically.</div>
 
-<table>
-<tbody><tr><th>Property</th><th style="color:#0082F0">V1 — Individual</th><th style="color:#FF8C0A">V2 — Shared</th></tr>
-<tr><td>Reward signal</td><td><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>R</mi><mi>i</mi></msup></mrow><annotation encoding="application/x-tex">R^i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8247em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span></span></span></span></span> — own dispatch only</td><td><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>R</mi><mo>ˉ</mo></mover><mo>=</mo><mfrac><mn>1</mn><mi>n</mi></mfrac><mo>∑</mo><msup><mi>R</mi><mi>i</mi></msup></mrow><annotation encoding="application/x-tex">\bar{R} = \frac{1}{n}\sum R^i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8201em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8201em;"><span class="" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span></span><span class="" style="top: -3.2523em;"><span class="pstrut" style="height: 3em;"></span><span class="accent-body" style="left: -0.1667em;"><span class="mord">ˉ</span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.1901em; vertical-align: -0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.8451em;"><span class="" style="top: -2.655em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="" style="top: -3.23em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="border-bottom-width: 0.04em;"></span></span><span class="" style="top: -3.394em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.345em;"><span class=""></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mop op-symbol small-op" style="position: relative; top: 0em;">∑</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span></span></span></span></span> — team mean</td></tr>
-<tr><td>Q-table update</td><td><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Q</mi><mi>i</mi></msup><mo>←</mo><msup><mi>Q</mi><mi>i</mi></msup><mo>+</mo><mi>α</mi><mo stretchy="false">[</mo><msup><mi>R</mi><mi>i</mi></msup><mo>+</mo><mi>γ</mi><mi>max</mi><mo>⁡</mo><msup><mi>Q</mi><mi>i</mi></msup><mo>−</mo><msup><mi>Q</mi><mi>i</mi></msup><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">Q^i \leftarrow Q^i + \alpha[R^i + \gamma\max Q^i - Q^i]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">←</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0747em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.0037em;">α</span><span class="mopen">[</span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mop">max</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0747em; vertical-align: -0.25em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mclose">]</span></span></span></span></span></td><td><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Q</mi><mi>i</mi></msup><mo>←</mo><msup><mi>Q</mi><mi>i</mi></msup><mo>+</mo><mi>α</mi><mo stretchy="false">[</mo><mover accent="true"><mi>R</mi><mo>ˉ</mo></mover><mo>+</mo><mi>γ</mi><mi>max</mi><mo>⁡</mo><msup><mi>Q</mi><mi>i</mi></msup><mo>−</mo><msup><mi>Q</mi><mi>i</mi></msup><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">Q^i \leftarrow Q^i + \alpha[\bar{R} + \gamma\max Q^i - Q^i]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">←</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0701em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.0037em;">α</span><span class="mopen">[</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8201em;"><span class="" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span></span><span class="" style="top: -3.2523em;"><span class="pstrut" style="height: 3em;"></span><span class="accent-body" style="left: -0.1667em;"><span class="mord">ˉ</span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mop">max</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0747em; vertical-align: -0.25em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mclose">]</span></span></span></span></span></td></tr>
-<tr><td>Credit assignment</td><td>✅ Clear — own reward = own action</td><td>⚠️ Diluted — team reward mixes contributions</td></tr>
-<tr><td>Implicit cooperation</td><td>❌ None — agents are selfish</td><td>✅ Weak — shared reward incentivises team performance</td></tr>
-<tr><td>Learning curve variance</td><td>Higher — individual variance</td><td>Lower — averaged by team</td></tr>
-<tr><td>Q-table diversity</td><td>Higher — agents specialise</td><td>Lower — agents converge to similar values</td></tr>
-<tr><td>Communication</td><td>None</td><td>None</td></tr>
-<tr><td>Architecture</td><td>IQL</td><td>IQL</td></tr>
-</tbody></table>
+<!-- Variant selector -->
+<div style="display:flex;gap:1rem;align-items:center;margin:1rem 0;flex-wrap:wrap">
+  <div>
+    <label style="color:#9ca3af;font-size:.85rem;display:block;margin-bottom:.3rem">First variant</label>
+    <select id="sel-a" onchange="updateComparison()" style="background:#1e2235;color:#e8eaf6;border:1px solid #2d3154;border-radius:6px;padding:.5rem .75rem;font-size:.9rem;cursor:pointer">
+      <option value="V1" selected="">V1 — IQL · Individual · No Comm</option>
+      <option value="V2">V2 — IQL · Shared · No Comm</option>
+      <option value="V3">V3 — IQL · Individual · Partial Obs.</option>
+      <option value="V4">V4 — CTDE/VDN · Shared · Full Obs.</option>
+      <option value="V5">V5 — CTDE · Mixed · Partial (planned)</option>
+      <option value="V6">V6 — Cooperative · Shared · Full (planned)</option>
+    </select>
+  </div>
+  <div style="font-size:1.5rem;color:#8B5CF6;margin-top:1.2rem">⇄</div>
+  <div>
+    <label style="color:#9ca3af;font-size:.85rem;display:block;margin-bottom:.3rem">Second variant</label>
+    <select id="sel-b" onchange="updateComparison()" style="background:#1e2235;color:#e8eaf6;border:1px solid #2d3154;border-radius:6px;padding:.5rem .75rem;font-size:.9rem;cursor:pointer">
+      <option value="V1">V1 — IQL · Individual · No Comm</option>
+      <option value="V2" selected="">V2 — IQL · Shared · No Comm</option>
+      <option value="V3">V3 — IQL · Individual · Partial Obs.</option>
+      <option value="V4">V4 — CTDE/VDN · Shared · Full Obs.</option>
+      <option value="V5">V5 — CTDE · Mixed · Partial (planned)</option>
+      <option value="V6">V6 — Cooperative · Shared · Full (planned)</option>
+    </select>
+  </div>
+</div>
 
+<!-- Dynamic comparison table -->
+<div id="comparison-table"><table><tbody><tr><th>Property</th><th style="color:#0082F0">V1 — IQL</th><th style="color:#FF8C0A">V2 — IQL</th></tr><tr><td>Reward signal</td><td><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>R</mi><mi>i</mi></msup></mrow><annotation encoding="application/x-tex">R^i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8247em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span></span></span></span></span> — own dispatch only</td><td><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>R</mi><mo>ˉ</mo></mover><mo>=</mo><mfrac><mn>1</mn><mi>n</mi></mfrac><mo>∑</mo><msup><mi>R</mi><mi>i</mi></msup></mrow><annotation encoding="application/x-tex">\bar{R} = \frac{1}{n}\sum R^i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8201em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8201em;"><span class="" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span></span><span class="" style="top: -3.2523em;"><span class="pstrut" style="height: 3em;"></span><span class="accent-body" style="left: -0.1667em;"><span class="mord">ˉ</span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.1901em; vertical-align: -0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.8451em;"><span class="" style="top: -2.655em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="" style="top: -3.23em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="border-bottom-width: 0.04em;"></span></span><span class="" style="top: -3.394em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.345em;"><span class=""></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mop op-symbol small-op" style="position: relative; top: 0em;">∑</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span></span></span></span></span> — team mean</td></tr><tr><td>Q-table update</td><td><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Q</mi><mi>i</mi></msup><mo>←</mo><msup><mi>Q</mi><mi>i</mi></msup><mo>+</mo><mi>α</mi><mo stretchy="false">[</mo><msup><mi>R</mi><mi>i</mi></msup><mo>+</mo><mi>γ</mi><mi>max</mi><mo>⁡</mo><msup><mi>Q</mi><mi>i</mi></msup><mo>−</mo><msup><mi>Q</mi><mi>i</mi></msup><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">Q^i \leftarrow Q^i + \alpha[R^i + \gamma\max Q^i - Q^i]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">←</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0747em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.0037em;">α</span><span class="mopen">[</span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mop">max</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0747em; vertical-align: -0.25em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mclose">]</span></span></span></span></span></td><td><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>Q</mi><mi>i</mi></msup><mo>←</mo><msup><mi>Q</mi><mi>i</mi></msup><mo>+</mo><mi>α</mi><mo stretchy="false">[</mo><mover accent="true"><mi>R</mi><mo>ˉ</mo></mover><mo>+</mo><mi>γ</mi><mi>max</mi><mo>⁡</mo><msup><mi>Q</mi><mi>i</mi></msup><mo>−</mo><msup><mi>Q</mi><mi>i</mi></msup><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">Q^i \leftarrow Q^i + \alpha[\bar{R} + \gamma\max Q^i - Q^i]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">←</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0701em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.0037em;">α</span><span class="mopen">[</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8201em;"><span class="" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span></span><span class="" style="top: -3.2523em;"><span class="pstrut" style="height: 3em;"></span><span class="accent-body" style="left: -0.1667em;"><span class="mord">ˉ</span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0191em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.0556em;">γ</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mop">max</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.0747em; vertical-align: -0.25em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8247em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mclose">]</span></span></span></span></span></td></tr><tr><td>Credit assignment</td><td>✅ Clear — own reward = own action</td><td>⚠️ Diluted — team reward mixes contributions</td></tr><tr><td>Implicit cooperation</td><td>❌ None — agents are selfish</td><td>✅ Weak — shared reward incentivises team</td></tr><tr><td>Observability</td><td>None — blind to colleagues</td><td>None — blind to colleagues</td></tr><tr><td>Learning curve variance</td><td>Higher — individual variance</td><td>Lower — averaged by team</td></tr><tr><td>Q-table diversity</td><td>Higher — agents specialise</td><td>Lower — agents converge to similar values</td></tr><tr><td>Architecture</td><td>IQL</td><td>IQL</td></tr><tr><td>Unique feature</td><td>Simplest MARL baseline</td><td>Credit Assignment Problem</td></tr></tbody></table></div>
+
+<!-- Dynamic what to look for -->
 <h2>📊 What to look for when comparing</h2>
-<div class="grid2">
-<div class="card">
-<strong>Learning Curve (MA-5)</strong><br>
-• Is V2 smoother than V1?<br>
-• Does V2 converge to a higher or lower mean <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">G_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8333em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal">G</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span></span></span></span></span>?<br>
-• Which variant shows a clearer upward trend?
-</div>
-<div class="card blue">
-<strong>Per-Agent Curves</strong><br>
-• Are V2 agent curves more similar to each other?<br>
-• In V1, do skill-matched agents outperform others?<br>
-• In V2, does the shared signal equalise performance?
-</div>
-</div>
-<div class="grid2">
-<div class="card orange">
-<strong>Q-Table Heatmap</strong><br>
-• V1: expect diverse Q-values (agents specialise)<br>
-• V2: expect more uniform Q-values across agents<br>
-• Do high Q-values correspond to skill-matched orders?
-</div>
-<div class="card green">
-<strong>TD Error</strong><br>
-• Does V1 or V2 converge faster (TD → 0)?<br>
-• V2 may converge slower due to noisy shared signal<br>
-• Check last episode vs first episode TD error
-</div>
-</div>
+<div id="comparison-hints"><div class="grid2"><div class="card"><strong>Learning Curve (MA-5)</strong><br><span style="color:#0082F0">V1:</span> Expect higher variance. Upward trend as ε decays.<br><span style="color:#FF8C0A">V2:</span> Smoother than V1. Does it converge higher or lower?</div><div class="card"><strong>Per-Agent Curves</strong><br><span style="color:#0082F0">V1:</span> Skill-matched agents outperform others. High diversity.<br><span style="color:#FF8C0A">V2:</span> More uniform across agents — shared signal equalises.</div><div class="card"><strong>Q-Table Heatmap</strong><br><span style="color:#0082F0">V1:</span> Diverse Q-values — agents specialise by skill.<br><span style="color:#FF8C0A">V2:</span> More uniform Q-values — less specialisation.</div><div class="card"><strong>TD Error</strong><br><span style="color:#0082F0">V1:</span> Converges cleanly — individual signal is unambiguous.<br><span style="color:#FF8C0A">V2:</span> May converge slower — noisy shared signal.</div><div class="card"><strong>Avg Distance</strong><br><span style="color:#0082F0">V1:</span> No coordination — may overlap with colleagues.<br><span style="color:#FF8C0A">V2:</span> Same as V1 — no spatial coordination.</div></div></div>
 
 <h2>📋 All Variants Overview</h2>
 <table>
@@ -767,6 +759,197 @@ function resetQuiz(prefix, questions){
   var res=document.getElementById('quiz-result-'+prefix);
   res.style.display='none';res.className='';
 }
+
+// ---------------------------------------------------------------------------
+// Dynamic comparison data
+// ---------------------------------------------------------------------------
+var VDATA = {
+  V1: {
+    color:'#0082F0', label:'V1 — IQL · Individual · No Comm',
+    arch:'IQL', reward:'Individual $R^i$', comm:'None', status:'✅ Done',
+    rows:[
+      ['Reward signal','$R^i$ — own dispatch only'],
+      ['Q-table update','$Q^i \\leftarrow Q^i + \\alpha[R^i + \\gamma\\max Q^i - Q^i]$'],
+      ['Credit assignment','✅ Clear — own reward = own action'],
+      ['Implicit cooperation','❌ None — agents are selfish'],
+      ['Observability','None — blind to colleagues'],
+      ['Learning curve variance','Higher — individual variance'],
+      ['Q-table diversity','Higher — agents specialise'],
+      ['Architecture','IQL'],
+      ['Unique feature','Simplest MARL baseline'],
+    ],
+    hints:[
+      ['Learning Curve (MA-5)','Expect higher variance. Upward trend as ε decays.'],
+      ['Per-Agent Curves','Skill-matched agents outperform others. High diversity.'],
+      ['Q-Table Heatmap','Diverse Q-values — agents specialise by skill.'],
+      ['TD Error','Converges cleanly — individual signal is unambiguous.'],
+      ['Avg Distance','No coordination — may overlap with colleagues.'],
+    ]
+  },
+  V2: {
+    color:'#FF8C0A', label:'V2 — IQL · Shared · No Comm',
+    arch:'IQL', reward:'Shared $\\bar{R}$', comm:'None', status:'✅ Done',
+    rows:[
+      ['Reward signal','$\\bar{R} = \\frac{1}{n}\\sum R^i$ — team mean'],
+      ['Q-table update','$Q^i \\leftarrow Q^i + \\alpha[\\bar{R} + \\gamma\\max Q^i - Q^i]$'],
+      ['Credit assignment','⚠️ Diluted — team reward mixes contributions'],
+      ['Implicit cooperation','✅ Weak — shared reward incentivises team'],
+      ['Observability','None — blind to colleagues'],
+      ['Learning curve variance','Lower — averaged by team'],
+      ['Q-table diversity','Lower — agents converge to similar values'],
+      ['Architecture','IQL'],
+      ['Unique feature','Credit Assignment Problem'],
+    ],
+    hints:[
+      ['Learning Curve (MA-5)','Smoother than V1. Does it converge higher or lower?'],
+      ['Per-Agent Curves','More uniform across agents — shared signal equalises.'],
+      ['Q-Table Heatmap','More uniform Q-values — less specialisation.'],
+      ['TD Error','May converge slower — noisy shared signal.'],
+      ['Avg Distance','Same as V1 — no spatial coordination.'],
+    ]
+  },
+  V3: {
+    color:'#8B5CF6', label:'V3 — IQL · Individual · Partial Obs.',
+    arch:'IQL', reward:'Individual $R^i$', comm:'Partial (positions)', status:'✅ Done',
+    rows:[
+      ['Reward signal','$R^i$ — own dispatch only'],
+      ['Q-table update','$Q^i \\leftarrow Q^i + \\alpha[R^i + \\gamma\\max Q^i - Q^i]$'],
+      ['Credit assignment','✅ Clear — own reward = own action'],
+      ['Implicit cooperation','✅ Spatial — avoids colleague overlap'],
+      ['Observability','Partial — sees all colleague positions'],
+      ['Learning curve variance','Similar to V1'],
+      ['Q-table diversity','Similar to V1'],
+      ['Architecture','IQL + distance-aware selection'],
+      ['Unique feature','score$(t,o) = Q^t(o) + \\lambda \\cdot d_{\\min}(o)$'],
+    ],
+    hints:[
+      ['Learning Curve (MA-5)','Similar to V1 but expect lower avg distance.'],
+      ['Per-Agent Curves','Similar to V1 — individual reward preserved.'],
+      ['Q-Table Heatmap','Similar to V1 — specialisation preserved.'],
+      ['Nearest Colleague Distance','Orange bars = overlap avoided. More orange as ε decays.'],
+      ['Avg Distance','Should be lower than V1 — spatial coordination works.'],
+    ]
+  },
+  V4: {
+    color:'#0FC373', label:'V4 — CTDE/VDN · Individual+dist · Full Obs.',
+    arch:'CTDE/VDN', reward:'Individual + dist bonus', comm:'Full (training)', status:'✅ Done',
+    rows:[
+      ['Reward signal','$R^i$ + distance bonus during selection'],
+      ['Q-table update','Assigned: full $\\alpha$ · Others: soft $0.3\\alpha$'],
+      ['Credit assignment','✅ Better — centralised selection + soft updates'],
+      ['Implicit cooperation','✅ Strong — all agents learn from every dispatch'],
+      ['Observability','Full — all positions visible during training'],
+      ['Learning curve variance','Lower — centralised training stabilises'],
+      ['Q-table diversity','Lower — soft updates homogenise Q-tables'],
+      ['Architecture','CTDE/VDN'],
+      ['Unique feature','$Q_{\\text{joint}} = \\sum Q^i$ · soft updates for all agents'],
+    ],
+    hints:[
+      ['Learning Curve (MA-5)','Expect faster convergence than V1–V3. Higher mean G₀?'],
+      ['Per-Agent Curves','More uniform — soft updates propagate joint experience.'],
+      ['Q-Table Heatmap','More uniform than V1 — centralised training effect.'],
+      ['Joint Q Chart','$Q_{\\text{joint}}$ should grow over episodes as agents learn.'],
+      ['TD Error','Should converge faster — more data per update step.'],
+    ]
+  },
+  V5: {
+    color:'#9ca3af', label:'V5 — CTDE · Mixed · Partial (planned)',
+    arch:'CTDE', reward:'Mixed (individual + team bonus)', comm:'Partial', status:'🔄 Planned',
+    rows:[
+      ['Reward signal','$R^i_{\\text{mixed}} = \\beta R^i + (1-\\beta)\\bar{R}$'],
+      ['Q-table update','CTDE with mixed reward'],
+      ['Credit assignment','✅ Best of both — individual + team signal'],
+      ['Implicit cooperation','✅ Strong — mixed reward + CTDE'],
+      ['Observability','Partial — colleague positions visible'],
+      ['Learning curve variance','Low — mixed signal reduces noise'],
+      ['Q-table diversity','Medium — individual component preserves specialisation'],
+      ['Architecture','CTDE'],
+      ['Unique feature','$\\beta$ controls individual vs team reward balance'],
+    ],
+    hints:[
+      ['Learning Curve (MA-5)','Expected: best of V2 (smooth) + V1 (clear credit).'],
+      ['Per-Agent Curves','Moderate diversity — β controls specialisation.'],
+      ['Q-Table Heatmap','Moderate uniformity — depends on β.'],
+      ['β sensitivity','β=1 → V1 · β=0 → V2 · β=0.5 → balanced'],
+      ['vs V4','V5 adds mixed reward to V4 — better credit assignment.'],
+    ]
+  },
+  V6: {
+    color:'#9ca3af', label:'V6 — Cooperative · Shared · Full (planned)',
+    arch:'Cooperative', reward:'Shared $\\bar{R}$', comm:'Full', status:'🔄 Planned',
+    rows:[
+      ['Reward signal','$\\bar{R}$ — fully shared team reward'],
+      ['Q-table update','Centralised joint Q-function'],
+      ['Credit assignment','⚠️ Hardest — fully shared signal'],
+      ['Implicit cooperation','✅ Maximum — full cooperation'],
+      ['Observability','Full — complete global state'],
+      ['Learning curve variance','Lowest — fully centralised'],
+      ['Q-table diversity','Lowest — fully homogenised'],
+      ['Architecture','Cooperative MARL'],
+      ['Unique feature','Upper bound on team performance'],
+    ],
+    hints:[
+      ['Learning Curve (MA-5)','Expected: highest mean G₀ — theoretical upper bound.'],
+      ['Per-Agent Curves','Most uniform — fully shared signal.'],
+      ['Q-Table Heatmap','Most uniform — centralised joint Q.'],
+      ['vs V4','V6 is the fully cooperative version of V4.'],
+      ['Credit Assignment','Hardest — fully shared reward. Compare with V5.'],
+    ]
+  }
+};
+
+function updateComparison(){
+  var ka = document.getElementById('sel-a').value;
+  var kb = document.getElementById('sel-b').value;
+  var a  = VDATA[ka];
+  var b  = VDATA[kb];
+
+  // Build comparison table
+  var html = '<table><tr>'
+    + '<th>Property</th>'
+    + '<th style="color:'+a.color+'">'+ka+' — '+a.arch+'</th>'
+    + '<th style="color:'+b.color+'">'+kb+' — '+b.arch+'</th>'
+    + '</tr>';
+
+  // Merge all row keys
+  var allKeys = [];
+  a.rows.forEach(function(r){ if(allKeys.indexOf(r[0])<0) allKeys.push(r[0]); });
+  b.rows.forEach(function(r){ if(allKeys.indexOf(r[0])<0) allKeys.push(r[0]); });
+
+  allKeys.forEach(function(key){
+    var av = (a.rows.find(function(r){return r[0]===key;})||[key,'—'])[1];
+    var bv = (b.rows.find(function(r){return r[0]===key;})||[key,'—'])[1];
+    html += '<tr><td>'+key+'</td><td>'+av+'</td><td>'+bv+'</td></tr>';
+  });
+  html += '</table>';
+  document.getElementById('comparison-table').innerHTML = html;
+
+  // Build hints
+  var allHintKeys = [];
+  a.hints.forEach(function(h){ if(allHintKeys.indexOf(h[0])<0) allHintKeys.push(h[0]); });
+  b.hints.forEach(function(h){ if(allHintKeys.indexOf(h[0])<0) allHintKeys.push(h[0]); });
+
+  var hhtml = '<div class="grid2">';
+  allHintKeys.forEach(function(key){
+    var ah = (a.hints.find(function(h){return h[0]===key;})||[key,''])[1];
+    var bh = (b.hints.find(function(h){return h[0]===key;})||[key,''])[1];
+    hhtml += '<div class="card"><strong>'+key+'</strong><br>'
+      + '<span style="color:'+a.color+'">'+ka+':</span> '+ah+'<br>'
+      + '<span style="color:'+b.color+'">'+kb+':</span> '+bh
+      + '</div>';
+  });
+  hhtml += '</div>';
+  document.getElementById('comparison-hints').innerHTML = hhtml;
+
+  // Re-render KaTeX
+  if(typeof renderMathInElement!=='undefined'){
+    renderMathInElement(document.getElementById('comparison-table'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+    renderMathInElement(document.getElementById('comparison-hints'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  }
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', function(){ updateComparison(); });
 </script>
 
 
