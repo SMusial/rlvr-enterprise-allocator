@@ -1,7 +1,7 @@
 //! Ch17 — Multi-Agent Reinforcement Learning (MARL)
-//! Warsaw ASP: Independent Q-Learning (IQL)
-//! Each technician is an independent agent with its own Q-table.
-//! Individual rewards, no communication between agents.
+//! Warsaw ASP: Multiple MARL variants
+//! V1: Independent Q-Learning (IQL) — individual rewards, no communication
+//! V2: IQL — shared reward, no communication
 
 use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
@@ -70,6 +70,139 @@ fn haversine_km(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
     2.0 * r * a.sqrt().atan2((1.0 - a).sqrt())
 }
 
+fn init_environment(n_orders: usize, n_tech: usize) -> (
+    Vec<f64>, Vec<f64>, Vec<String>, Vec<f64>,
+    Vec<f64>, Vec<f64>, Vec<String>
+) {
+    let mut env_rng = StdRng::seed_from_u64(42);
+    let orders_x: Vec<f64> = (0..n_orders).map(|_| 20.90 + env_rng.gen::<f64>() * 0.20).collect();
+    let orders_y: Vec<f64> = (0..n_orders).map(|_| 52.18 + env_rng.gen::<f64>() * 0.14).collect();
+    let order_skills: Vec<String> = (0..n_orders)
+        .map(|_| SKILLS[env_rng.gen_range(0..SKILLS.len())].to_string()).collect();
+    let order_sla: Vec<f64> = (0..n_orders).map(|_| 0.3 + env_rng.gen::<f64>() * 0.5).collect();
+    let init_tech_x: Vec<f64> = (0..n_tech).map(|_| 20.90 + env_rng.gen::<f64>() * 0.20).collect();
+    let init_tech_y: Vec<f64> = (0..n_tech).map(|_| 52.18 + env_rng.gen::<f64>() * 0.14).collect();
+    let tech_skills: Vec<String> = (0..n_tech)
+        .map(|_| SKILLS[env_rng.gen_range(0..SKILLS.len())].to_string()).collect();
+    (orders_x, orders_y, order_skills, order_sla, init_tech_x, init_tech_y, tech_skills)
+}
+
+fn select_tech(
+    q_tables: &[Vec<f64>],
+    order_idx: usize,
+    n_tech: usize,
+    tech_skills: &[String],
+    order_skill: &str,
+    epsilon: f64,
+    rng: &mut StdRng,
+) -> (usize, bool) {
+    let explored = rng.gen::<f64>() < epsilon;
+    let matching: Vec<usize> = (0..n_tech)
+        .filter(|&t| tech_skills[t] == order_skill)
+        .collect();
+    let tech_idx = if explored {
+        if !matching.is_empty() && rng.gen::<f64>() < 0.80 {
+            matching[rng.gen_range(0..matching.len())]
+        } else {
+            rng.gen_range(0..n_tech)
+        }
+    } else {
+        (0..n_tech)
+            .max_by(|&a, &b| q_tables[a][order_idx].partial_cmp(&q_tables[b][order_idx]).unwrap())
+            .unwrap_or(0)
+    };
+    (tech_idx, explored)
+}
+
+fn compute_reward(
+    tech_idx: usize,
+    order_idx: usize,
+    tech_x: &[f64],
+    tech_y: &[f64],
+    orders_x: &[f64],
+    orders_y: &[f64],
+    tech_skills: &[String],
+    order_skills: &[String],
+    order_sla: &[f64],
+) -> (f64, f64, bool, bool) {
+    let tx = tech_x[tech_idx];
+    let ty = tech_y[tech_idx];
+    let ox = orders_x[order_idx];
+    let oy = orders_y[order_idx];
+    let distance_km = haversine_km(ty, tx, oy, ox);
+    let skill_match = tech_skills[tech_idx] == order_skills[order_idx];
+    let sla_met = skill_match && distance_km < order_sla[order_idx] * 20.0;
+    let reward = if sla_met {
+        2.0 - distance_km * 0.05
+    } else if skill_match {
+        0.5 - distance_km * 0.05
+    } else {
+        -1.0 - distance_km * 0.02
+    };
+    (reward, distance_km, sla_met, skill_match)
+}
+
+fn iql_update(
+    q_tables: &mut Vec<Vec<f64>>,
+    tech_idx: usize,
+    order_idx: usize,
+    reward: f64,
+    order_indices: &[usize],
+    step: usize,
+    n_orders: usize,
+    alpha: f64,
+    gamma: f64,
+) -> (f64, f64, f64) {
+    let q_before = q_tables[tech_idx][order_idx];
+    let max_q_next = if step + 1 < n_orders {
+        order_indices[step + 1..].iter()
+            .map(|&o| q_tables[tech_idx][o])
+            .fold(f64::NEG_INFINITY, f64::max)
+    } else {
+        0.0
+    };
+    let td_error = reward + gamma * max_q_next - q_before;
+    let q_after = q_before + alpha * td_error;
+    q_tables[tech_idx][order_idx] = q_after;
+    (q_before, q_after, td_error)
+}
+
+fn build_agent_stats(
+    steps: &[Ch17Step],
+    n_tech: usize,
+    tech_skills: &[String],
+    gamma: f64,
+    agent_curves: &mut Vec<Vec<f64>>,
+) -> Vec<Ch17AgentStats> {
+    let mut stats = Vec::new();
+    for t in 0..n_tech {
+        let ts: Vec<&Ch17Step> = steps.iter().filter(|s| s.tech_idx == t).collect();
+        let nt = ts.len();
+        let agent_gt = if nt == 0 { 0.0 } else {
+            let mut g = 0.0f64;
+            for s in ts.iter().rev() { g = s.reward + gamma * g; }
+            g
+        };
+        let sla_rate   = if nt == 0 { 0.0 } else { ts.iter().filter(|s| s.sla_met).count() as f64 / nt as f64 };
+        let skill_rate = if nt == 0 { 0.0 } else { ts.iter().filter(|s| s.skill_match).count() as f64 / nt as f64 };
+        let avg_dist   = if nt == 0 { 0.0 } else { ts.iter().map(|s| s.distance_km).sum::<f64>() / nt as f64 };
+        agent_curves[t].push(agent_gt);
+        stats.push(Ch17AgentStats {
+            tech_idx: t,
+            tech_skill: tech_skills[t].clone(),
+            total_gt: agent_gt,
+            sla_rate,
+            skill_rate,
+            avg_distance: avg_dist,
+            orders_served: nt,
+        });
+    }
+    stats
+}
+
+// ---------------------------------------------------------------------------
+// V1 — IQL + Individual Reward + No Communication
+// ---------------------------------------------------------------------------
 pub fn run_ch17(
     seed:          u64,
     n_tech:        usize,
@@ -80,37 +213,18 @@ pub fn run_ch17(
     epsilon_start: f64,
     epsilon_end:   f64,
 ) -> Ch17Result {
-    // Fixed environment (seed=42)
-    let mut env_rng = StdRng::seed_from_u64(42);
+    let (orders_x, orders_y, order_skills, order_sla, init_tech_x, init_tech_y, tech_skills) =
+        init_environment(n_orders, n_tech);
 
-    let orders_x: Vec<f64> = (0..n_orders).map(|_| 20.90 + env_rng.gen::<f64>() * 0.20).collect();
-    let orders_y: Vec<f64> = (0..n_orders).map(|_| 52.18 + env_rng.gen::<f64>() * 0.14).collect();
-    let order_skills: Vec<String> = (0..n_orders)
-        .map(|_| SKILLS[env_rng.gen_range(0..SKILLS.len())].to_string())
-        .collect();
-    let order_sla: Vec<f64> = (0..n_orders).map(|_| 0.3 + env_rng.gen::<f64>() * 0.5).collect();
-
-    let init_tech_x: Vec<f64> = (0..n_tech).map(|_| 20.90 + env_rng.gen::<f64>() * 0.20).collect();
-    let init_tech_y: Vec<f64> = (0..n_tech).map(|_| 52.18 + env_rng.gen::<f64>() * 0.14).collect();
-    let tech_skills: Vec<String> = (0..n_tech)
-        .map(|_| SKILLS[env_rng.gen_range(0..SKILLS.len())].to_string())
-        .collect();
-
-    // Independent Q-tables: Q[tech][order] — each agent learns independently
     let mut q_tables: Vec<Vec<f64>> = vec![vec![0.0f64; n_orders]; n_tech];
-
     let mut curve: Vec<f64> = Vec::new();
     let mut agent_curves: Vec<Vec<f64>> = vec![Vec::new(); n_tech];
     let mut episodes: Vec<Ch17EpisodeResult> = Vec::new();
 
     for ep in 0..n_ep {
         let mut rng = StdRng::seed_from_u64(seed + ep as u64);
+        let epsilon = epsilon_start - (epsilon_start - epsilon_end) * (ep as f64 / n_ep.max(1) as f64);
 
-        // Linear epsilon decay
-        let epsilon = epsilon_start
-            - (epsilon_start - epsilon_end) * (ep as f64 / n_ep.max(1) as f64);
-
-        // Shuffle order indices — each order dispatched exactly once
         let mut order_indices: Vec<usize> = (0..n_orders).collect();
         for i in (1..n_orders).rev() {
             let j = rng.gen_range(0..=i);
@@ -123,144 +237,156 @@ pub fn run_ch17(
 
         for step in 0..n_orders {
             let order_idx = order_indices[step];
+            let (tech_idx, explored) = select_tech(
+                &q_tables, order_idx, n_tech, &tech_skills,
+                &order_skills[order_idx], epsilon, &mut rng,
+            );
 
-            // IQL: each agent bids Q[tech][order_idx], highest bid wins
-            // With epsilon-greedy: explore = random (with skill bias), exploit = highest Q
-            let explored = rng.gen::<f64>() < epsilon;
+            let (reward, distance_km, sla_met, skill_match) = compute_reward(
+                tech_idx, order_idx, &tech_x, &tech_y,
+                &orders_x, &orders_y, &tech_skills, &order_skills, &order_sla,
+            );
 
-            let matching_techs: Vec<usize> = (0..n_tech)
-                .filter(|&t| tech_skills[t] == order_skills[order_idx])
-                .collect();
+            // V1: individual reward
+            let (q_before, q_after, td_error) = iql_update(
+                &mut q_tables, tech_idx, order_idx, reward,
+                &order_indices, step, n_orders, alpha, gamma,
+            );
 
-            let tech_idx = if explored {
-                if !matching_techs.is_empty() && rng.gen::<f64>() < 0.80 {
-                    matching_techs[rng.gen_range(0..matching_techs.len())]
-                } else {
-                    rng.gen_range(0..n_tech)
-                }
-            } else {
-                // Exploit: pick tech with highest Q for this order
-                (0..n_tech)
-                    .max_by(|&a, &b| {
-                        q_tables[a][order_idx]
-                            .partial_cmp(&q_tables[b][order_idx])
-                            .unwrap()
-                    })
-                    .unwrap_or(0)
-            };
-
-            let tx = tech_x[tech_idx];
-            let ty = tech_y[tech_idx];
-            let ox = orders_x[order_idx];
-            let oy = orders_y[order_idx];
-
-            let distance_km = haversine_km(ty, tx, oy, ox);
-            let skill_match = tech_skills[tech_idx] == order_skills[order_idx];
-            let sla_met = skill_match && distance_km < order_sla[order_idx] * 20.0;
-
-            let reward = if sla_met {
-                2.0 - distance_km * 0.05
-            } else if skill_match {
-                0.5 - distance_km * 0.05
-            } else {
-                -1.0 - distance_km * 0.02
-            };
-
-            // IQL update: only assigned tech updates its own Q-table
-            let q_before = q_tables[tech_idx][order_idx];
-            let max_q_next = if step + 1 < n_orders {
-                order_indices[step + 1..].iter()
-                    .map(|&o| q_tables[tech_idx][o])
-                    .fold(f64::NEG_INFINITY, f64::max)
-            } else {
-                0.0
-            };
-            let td_error = reward + gamma * max_q_next - q_before;
-            let q_after = q_before + alpha * td_error;
-            q_tables[tech_idx][order_idx] = q_after;
-
-            // Technician moves to order location
-            tech_x[tech_idx] = ox;
-            tech_y[tech_idx] = oy;
+            tech_x[tech_idx] = orders_x[order_idx];
+            tech_y[tech_idx] = orders_y[order_idx];
 
             steps.push(Ch17Step {
-                episode: ep,
-                step,
-                tech_idx,
-                order_idx,
-                tech_x: tx,
-                tech_y: ty,
-                order_x: ox,
-                order_y: oy,
-                distance_km,
-                reward,
-                gt: 0.0,
-                sla_met,
-                skill_match,
-                explored,
-                epsilon,
+                episode: ep, step, tech_idx, order_idx,
+                tech_x: tech_x[tech_idx], tech_y: tech_y[tech_idx],
+                order_x: orders_x[order_idx], order_y: orders_y[order_idx],
+                distance_km, reward, gt: 0.0,
+                sla_met, skill_match, explored, epsilon,
                 tech_skill: tech_skills[tech_idx].clone(),
                 order_skill: order_skills[order_idx].clone(),
-                q_before,
-                q_after,
-                td_error,
+                q_before, q_after, td_error,
             });
         }
 
-        // Compute discounted returns backward
         let n = steps.len();
         let mut gt = 0.0f64;
-        for i in (0..n).rev() {
-            gt = steps[i].reward + gamma * gt;
-            steps[i].gt = gt;
-        }
+        for i in (0..n).rev() { gt = steps[i].reward + gamma * gt; steps[i].gt = gt; }
         let total_gt = steps.first().map(|s| s.gt).unwrap_or(0.0);
 
-        // Per-agent stats
-        let mut agent_stats: Vec<Ch17AgentStats> = Vec::new();
-        for t in 0..n_tech {
-            let ts: Vec<&Ch17Step> = steps.iter().filter(|s| s.tech_idx == t).collect();
-            let nt = ts.len();
-            let agent_gt = if nt == 0 {
-                0.0
-            } else {
-                let mut g = 0.0f64;
-                for s in ts.iter().rev() { g = s.reward + gamma * g; }
-                g
-            };
-            let sla_rate   = if nt == 0 { 0.0 } else { ts.iter().filter(|s| s.sla_met).count() as f64 / nt as f64 };
-            let skill_rate = if nt == 0 { 0.0 } else { ts.iter().filter(|s| s.skill_match).count() as f64 / nt as f64 };
-            let avg_dist   = if nt == 0 { 0.0 } else { ts.iter().map(|s| s.distance_km).sum::<f64>() / nt as f64 };
-            agent_curves[t].push(agent_gt);
-            agent_stats.push(Ch17AgentStats {
-                tech_idx: t,
-                tech_skill: tech_skills[t].clone(),
-                total_gt: agent_gt,
-                sla_rate,
-                skill_rate,
-                avg_distance: avg_dist,
-                orders_served: nt,
+        let agent_stats = build_agent_stats(&steps, n_tech, &tech_skills, gamma, &mut agent_curves);
+        let team_sla = steps.iter().filter(|s| s.sla_met).count() as f64 / steps.len() as f64;
+        curve.push(total_gt);
+        episodes.push(Ch17EpisodeResult { episode: ep, steps, total_gt, agent_stats, team_sla_rate: team_sla });
+    }
+
+    Ch17Result { episodes, curve, agent_curves, final_q_tables: q_tables }
+}
+
+// ---------------------------------------------------------------------------
+// V2 — IQL + Shared Reward + No Communication
+// ---------------------------------------------------------------------------
+pub fn run_ch17_v2(
+    seed:          u64,
+    n_tech:        usize,
+    n_orders:      usize,
+    n_ep:          usize,
+    alpha:         f64,
+    gamma:         f64,
+    epsilon_start: f64,
+    epsilon_end:   f64,
+) -> Ch17Result {
+    let (orders_x, orders_y, order_skills, order_sla, init_tech_x, init_tech_y, tech_skills) =
+        init_environment(n_orders, n_tech);
+
+    let mut q_tables: Vec<Vec<f64>> = vec![vec![0.0f64; n_orders]; n_tech];
+    let mut curve: Vec<f64> = Vec::new();
+    let mut agent_curves: Vec<Vec<f64>> = vec![Vec::new(); n_tech];
+    let mut episodes: Vec<Ch17EpisodeResult> = Vec::new();
+
+    for ep in 0..n_ep {
+        let mut rng = StdRng::seed_from_u64(seed + ep as u64);
+        let epsilon = epsilon_start - (epsilon_start - epsilon_end) * (ep as f64 / n_ep.max(1) as f64);
+
+        let mut order_indices: Vec<usize> = (0..n_orders).collect();
+        for i in (1..n_orders).rev() {
+            let j = rng.gen_range(0..=i);
+            order_indices.swap(i, j);
+        }
+
+        let mut tech_x = init_tech_x.clone();
+        let mut tech_y = init_tech_y.clone();
+
+        // Collect episode data first, then compute shared reward
+        struct StepRaw {
+            tech_idx: usize, order_idx: usize,
+            tx: f64, ty: f64,
+            individual_reward: f64, distance_km: f64,
+            sla_met: bool, skill_match: bool,
+            explored: bool, epsilon: f64,
+            tech_skill: String, order_skill: String,
+        }
+        let mut raw_steps: Vec<StepRaw> = Vec::new();
+
+        for step in 0..n_orders {
+            let order_idx = order_indices[step];
+            let (tech_idx, explored) = select_tech(
+                &q_tables, order_idx, n_tech, &tech_skills,
+                &order_skills[order_idx], epsilon, &mut rng,
+            );
+            let (individual_reward, distance_km, sla_met, skill_match) = compute_reward(
+                tech_idx, order_idx, &tech_x, &tech_y,
+                &orders_x, &orders_y, &tech_skills, &order_skills, &order_sla,
+            );
+            let tx = tech_x[tech_idx];
+            let ty = tech_y[tech_idx];
+            tech_x[tech_idx] = orders_x[order_idx];
+            tech_y[tech_idx] = orders_y[order_idx];
+            raw_steps.push(StepRaw {
+                tech_idx, order_idx, tx, ty,
+                individual_reward, distance_km,
+                sla_met, skill_match, explored, epsilon,
+                tech_skill: tech_skills[tech_idx].clone(),
+                order_skill: order_skills[order_idx].clone(),
             });
         }
 
+        // V2 KEY: shared reward = mean of all individual rewards
+        let shared_reward: f64 = raw_steps.iter().map(|s| s.individual_reward).sum::<f64>()
+            / raw_steps.len() as f64;
+
+        let mut steps: Vec<Ch17Step> = Vec::new();
+        for (step, raw) in raw_steps.iter().enumerate() {
+            // Update Q-table with SHARED reward
+            let (q_before, q_after, td_error) = iql_update(
+                &mut q_tables, raw.tech_idx, raw.order_idx, shared_reward,
+                &order_indices, step, n_orders, alpha, gamma,
+            );
+            steps.push(Ch17Step {
+                episode: ep, step,
+                tech_idx: raw.tech_idx, order_idx: raw.order_idx,
+                tech_x: raw.tx, tech_y: raw.ty,
+                order_x: orders_x[raw.order_idx], order_y: orders_y[raw.order_idx],
+                distance_km: raw.distance_km,
+                reward: shared_reward, // shared reward for all
+                gt: 0.0,
+                sla_met: raw.sla_met, skill_match: raw.skill_match,
+                explored: raw.explored, epsilon: raw.epsilon,
+                tech_skill: raw.tech_skill.clone(),
+                order_skill: raw.order_skill.clone(),
+                q_before, q_after, td_error,
+            });
+        }
+
+        let n = steps.len();
+        let mut gt = 0.0f64;
+        for i in (0..n).rev() { gt = steps[i].reward + gamma * gt; steps[i].gt = gt; }
+        let total_gt = steps.first().map(|s| s.gt).unwrap_or(0.0);
+
+        let agent_stats = build_agent_stats(&steps, n_tech, &tech_skills, gamma, &mut agent_curves);
         let team_sla = steps.iter().filter(|s| s.sla_met).count() as f64 / steps.len() as f64;
         curve.push(total_gt);
-
-        episodes.push(Ch17EpisodeResult {
-            episode: ep,
-            steps,
-            total_gt,
-            agent_stats,
-            team_sla_rate: team_sla,
-        });
+        episodes.push(Ch17EpisodeResult { episode: ep, steps, total_gt, agent_stats, team_sla_rate: team_sla });
     }
 
-    let final_q_tables: Vec<Vec<f64>> = q_tables.clone();
-
-    Ch17Result {
-        episodes,
-        curve,
-        agent_curves,
-        final_q_tables,
-    }
+    Ch17Result { episodes, curve, agent_curves, final_q_tables: q_tables }
 }

@@ -6,34 +6,101 @@ import pandas as pd
 import plotly.graph_objects as go
 import altair as alt
 
+AGENT_COLORS = ["#0082F0", "#FF8C0A", "#8B5CF6", "#0FC373", "#FF4B4B",
+                "#00BCD4", "#E91E63", "#9C27B0", "#4CAF50", "#FF5722"]
+
 # ---------------------------------------------------------------------------
-# Translations
+# Variant descriptors
 # ---------------------------------------------------------------------------
-def _tx():
-    return {
-        "title":          "Chapter 17 — Multi-Agent RL: Independent Q-Learning (IQL)",
-        "subtitle":       "Warsaw ASP · 5 Independent Agents · Individual Rewards · No Communication",
-        "engine_missing": "❌ Rust engine not found. Run: cd rlvr-py && maturin develop --release",
-        "sidebar_title":  "Ch17 Settings",
-        "n_tech":         "Technicians (Agents)",
-        "n_orders":       "Work Orders",
-        "n_episodes":     "Episodes",
-        "alpha":          "α (learning rate)",
-        "gamma":          "γ (discount factor)",
-        "epsilon_start":  "ε start",
-        "epsilon_end":    "ε end",
-        "seed":           "Random seed",
-        "run_btn":        "▶ Run IQL Training",
-        "map_title":      "🗺️ Warsaw Dispatch Map",
-        "map_caption":    "Blue = Technicians · White = Pending · Dark green = SLA met · Red = SLA breach",
-        "step_slider":    "🔍 Highlight step on map",
-        "glass_title":    "🔬 Glass-Box — IQL Step Trace",
-        "curve_title":    "📈 Team Learning Curve — Gₜ over Episodes (MA-5)",
-        "agent_curve_title": "📊 Per-Agent Learning Curves",
-        "summary_title":  "📋 Episode Summary",
-        "agent_title":    "🤖 Agent Stats",
-        "qtable_title":   "🧮 Q-Tables (Final)",
-    }
+VARIANTS = {
+    "V1": {
+        "label":     "V1 — IQL · Individual Reward · No Communication",
+        "arch":      "Independent Q-Learning (IQL)",
+        "reward":    "Individual",
+        "comm":      "None",
+        "color":     "#0082F0",
+        "desc": (
+            "**V1 — IQL / Individual Reward / No Communication** is the simplest MARL baseline. "
+            "Each technician is a fully independent agent with its own Q-table. "
+            "It receives only its own reward and has no knowledge of other agents. "
+            "This is the MARL equivalent of single-agent Q-Learning applied independently to each technician."
+        ),
+        "diff": {
+            "V2": "V2 replaces individual rewards with a **shared team reward** — every agent receives the same mean reward regardless of its own performance.",
+            "V3": "V3 adds **partial observability** — each agent can see the positions of other technicians.",
+            "V4": "V4 uses **CTDE** (Centralised Training, Decentralised Execution) with a shared critic and full observability.",
+            "V5": "V5 combines CTDE with **mixed reward** (individual + team bonus) and partial observability.",
+            "V6": "V6 is full **cooperative MARL** — shared reward, full observability, centralised Q-function.",
+        },
+        "fn": "run_ch17_episode",
+    },
+    "V2": {
+        "label":     "V2 — IQL · Shared Reward · No Communication",
+        "arch":      "Independent Q-Learning (IQL)",
+        "reward":    "Shared (team mean)",
+        "comm":      "None",
+        "color":     "#FF8C0A",
+        "desc": (
+            "**V2 — IQL / Shared Reward / No Communication** differs from V1 in one key way: "
+            "instead of each agent receiving its own individual reward, all agents receive the **same shared reward** — "
+            "the mean of all individual rewards in the episode. "
+            "This encourages agents to implicitly cooperate (better team performance = better reward for everyone) "
+            "even though they cannot communicate. "
+            "The Q-table update rule is identical to V1, but the reward signal is now a team signal."
+        ),
+        "diff": {
+            "V1": "V1 uses **individual rewards** — each agent only learns from its own dispatches. V2 uses the team mean reward.",
+            "V3": "V3 keeps individual rewards but adds **partial observability** (agents see each other's positions).",
+            "V4": "V4 uses **CTDE** with a centralised critic — a fundamentally different training architecture.",
+            "V5": "V5 combines CTDE with **mixed reward** (individual + team bonus) and partial observability.",
+            "V6": "V6 is full **cooperative MARL** — shared reward, full observability, centralised Q-function.",
+        },
+        "fn": "run_ch17_v2",
+    },
+}
+
+
+# ---------------------------------------------------------------------------
+# Variant comparison widget
+# ---------------------------------------------------------------------------
+def _render_variant_comparison(current_key: str):
+    v = VARIANTS[current_key]
+    st.markdown(v["desc"])
+
+    st.markdown("#### How V2 differs from other variants:")
+    cols = st.columns(len(v["diff"]))
+    for i, (key, diff_text) in enumerate(v["diff"].items()):
+        other = VARIANTS.get(key, {})
+        color = other.get("color", "#9ca3af")
+        with cols[i]:
+            st.markdown(
+                f"<div style='background:#1e2235;border-left:4px solid {color};"
+                f"border-radius:6px;padding:.75rem 1rem;font-size:.85rem'>"
+                f"<strong style='color:{color}'>{key}</strong><br>{diff_text}</div>",
+                unsafe_allow_html=True,
+            )
+
+    # Visual comparison table
+    st.markdown("#### All variants at a glance:")
+    rows = []
+    for k, vv in VARIANTS.items():
+        rows.append({
+            "Variant": f"**{k}**" if k == current_key else k,
+            "Architecture": vv["arch"],
+            "Reward": vv["reward"],
+            "Communication": vv["comm"],
+            "Status": "▶ Current" if k == current_key else "—",
+        })
+    df = pd.DataFrame(rows)
+    # Add planned variants
+    planned = [
+        {"Variant": "V3", "Architecture": "IQL", "Reward": "Individual", "Communication": "Partial", "Status": "🔄 Planned"},
+        {"Variant": "V4", "Architecture": "CTDE", "Reward": "Shared", "Communication": "Full", "Status": "🔄 Planned"},
+        {"Variant": "V5", "Architecture": "CTDE", "Reward": "Mixed", "Communication": "Partial", "Status": "🔄 Planned"},
+        {"Variant": "V6", "Architecture": "Cooperative", "Reward": "Shared", "Communication": "Full", "Status": "🔄 Planned"},
+    ]
+    df = pd.concat([df, pd.DataFrame(planned)], ignore_index=True)
+    st.dataframe(df, use_container_width=True, hide_index=True)
 
 
 # ---------------------------------------------------------------------------
@@ -59,7 +126,7 @@ def _render_handbook():
 # ---------------------------------------------------------------------------
 # Map
 # ---------------------------------------------------------------------------
-def _render_map(steps, sel, tx):
+def _render_map(steps, sel, variant_color):
     techs = {}
     for s in steps:
         if s["tech_idx"] not in techs:
@@ -71,25 +138,18 @@ def _render_map(steps, sel, tx):
     for s in steps:
         orders[s["order_idx"]] = (s["order_x"], s["order_y"])
 
-    # Agent colors
-    agent_colors = ["#0082F0", "#FF8C0A", "#8B5CF6", "#0FC373", "#FF4B4B",
-                    "#00BCD4", "#E91E63", "#9C27B0", "#4CAF50", "#FF5722"]
-
     fig = go.Figure()
 
-    # Technicians — each agent has its own color
     for k, v in techs.items():
-        color = agent_colors[k % len(agent_colors)]
+        color = AGENT_COLORS[k % len(AGENT_COLORS)]
         fig.add_trace(go.Scattermapbox(
-            lat=[v[1]], lon=[v[0]],
-            mode="markers+text",
+            lat=[v[1]], lon=[v[0]], mode="markers+text",
             marker=dict(size=17, color=color),
             text=[f"T{k}"], textposition="top right",
             textfont=dict(size=12, color=color),
             name=f"T{k}",
         ))
 
-    # Work orders
     completed  = {}
     dispatched = {}
     for s in steps[:sel + 1]:
@@ -98,11 +158,10 @@ def _render_map(steps, sel, tx):
 
     for k, v in orders.items():
         if k not in completed:
-            # Black outer + white inner
             fig.add_trace(go.Scattermapbox(
                 lat=[v[1]], lon=[v[0]], mode="markers",
                 marker=dict(size=14, color="#000000"),
-                name=f"W{k}_border", showlegend=False,
+                name=f"W{k}_b", showlegend=False,
             ))
             fig.add_trace(go.Scattermapbox(
                 lat=[v[1]], lon=[v[0]], mode="markers+text",
@@ -112,7 +171,6 @@ def _render_map(steps, sel, tx):
                 name=f"W{k}", showlegend=False,
             ))
         elif completed[k]:
-            tech_color = agent_colors[dispatched[k] % len(agent_colors)]
             fig.add_trace(go.Scattermapbox(
                 lat=[v[1]], lon=[v[0]], mode="markers+text",
                 marker=dict(size=12, color="#006400"),
@@ -129,7 +187,6 @@ def _render_map(steps, sel, tx):
                 name=f"W{k}", showlegend=False,
             ))
 
-    # Travel line
     if sel < len(steps):
         s = steps[sel]
         line_color = "#0FC373" if s.get("sla_met") else "#FF4B4B"
@@ -142,7 +199,6 @@ def _render_map(steps, sel, tx):
             name=f"Step {sel}: T{s['tech_idx']}→W{s['order_idx']} ({label})",
         ))
 
-    # Auto-fit zoom
     all_lats = [v[1] for v in techs.values()] + [v[1] for v in orders.values()]
     all_lons = [v[0] for v in techs.values()] + [v[0] for v in orders.values()]
     lat_c = (min(all_lats) + max(all_lats)) / 2
@@ -153,8 +209,7 @@ def _render_map(steps, sel, tx):
 
     fig.update_layout(
         mapbox=dict(style="open-street-map", center=dict(lat=lat_c, lon=lon_c), zoom=zoom),
-        margin=dict(l=0, r=0, t=0, b=0),
-        height=520,
+        margin=dict(l=0, r=0, t=0, b=0), height=520,
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -163,16 +218,15 @@ def _render_map(steps, sel, tx):
 # ---------------------------------------------------------------------------
 # Reward per Step
 # ---------------------------------------------------------------------------
-def _render_reward_per_step(steps, sel):
+def _render_reward_per_step(steps, sel, variant_color):
     rewards = [s["reward"] for s in steps]
     eff_sel = sel if sel < len(rewards) else None
-    colors  = ["#0FC373" if r >= 0 else "#FF4B4B" for r in rewards]
+    colors  = [variant_color if r >= 0 else "#FF4B4B" for r in rewards]
     if eff_sel is not None:
         colors[eff_sel] = "#FFD700"
     fig = go.Figure()
     fig.add_trace(go.Bar(
-        x=list(range(len(steps))),
-        y=rewards,
+        x=list(range(len(steps))), y=rewards,
         marker_color=colors,
         hovertemplate="Step %{x}<br>Reward: %{y:+.3f}<extra></extra>",
     ))
@@ -199,8 +253,7 @@ def _render_td_error(steps, sel):
         colors[eff_sel] = "#FFD700"
     fig = go.Figure()
     fig.add_trace(go.Bar(
-        x=list(range(len(steps))),
-        y=td_errors,
+        x=list(range(len(steps))), y=td_errors,
         marker_color=colors,
         hovertemplate="Step %{x}<br>TD Error: %{y:+.4f}<extra></extra>",
     ))
@@ -220,24 +273,24 @@ def _render_td_error(steps, sel):
 # ---------------------------------------------------------------------------
 # Glass-Box
 # ---------------------------------------------------------------------------
-def _render_glass_box(steps, sel, tx):
+def _render_glass_box(steps, sel):
     rows = []
     for i, s in enumerate(steps):
         rows.append({
-            "Step":            i,
-            "Agent":           f"T{s['tech_idx']}",
-            "Work Order":      f"W{s['order_idx']}",
-            "Action":          "explore" if s.get("explored") else "exploit",
-            "ε":               f"{s.get('epsilon', 0):.3f}",
-            "Reward":          round(s["reward"], 3),
-            "Gₜ":              round(s["gt"], 3),
-            "SLA":             "✅" if s.get("sla_met") else "❌",
-            "Task vs Agent":   f"{s.get('order_skill','?')} vs {s.get('tech_skill','?')}",
-            "Skill Match":     "✅" if s.get("skill_match") else "❌",
-            "Distance":        f"{s.get('distance_km', 0):.1f} km",
-            "Q before":        round(s.get("q_before", 0), 4),
-            "Q after":         round(s.get("q_after", 0), 4),
-            "TD Error":        round(s.get("td_error", 0), 4),
+            "Step":          i,
+            "Agent":         f"T{s['tech_idx']}",
+            "Work Order":    f"W{s['order_idx']}",
+            "Action":        "explore" if s.get("explored") else "exploit",
+            "ε":             f"{s.get('epsilon', 0):.3f}",
+            "Reward":        round(s["reward"], 3),
+            "Gₜ":            round(s["gt"], 3),
+            "SLA":           "✅" if s.get("sla_met") else "❌",
+            "Task vs Agent": f"{s.get('order_skill','?')} vs {s.get('tech_skill','?')}",
+            "Skill Match":   "✅" if s.get("skill_match") else "❌",
+            "Distance":      f"{s.get('distance_km', 0):.1f} km",
+            "Q before":      round(s.get("q_before", 0), 4),
+            "Q after":       round(s.get("q_after", 0), 4),
+            "TD Error":      round(s.get("td_error", 0), 4),
         })
     df = pd.DataFrame(rows)
     eff_sel = sel if sel < len(rows) else len(rows) - 1
@@ -252,34 +305,32 @@ def _render_glass_box(steps, sel, tx):
 # ---------------------------------------------------------------------------
 # Team Learning Curve (MA-5)
 # ---------------------------------------------------------------------------
-def _render_team_curve(curve, tx):
+def _render_team_curve(curve, variant_color, variant_key):
     ma5 = []
     for i in range(len(curve)):
         w = curve[max(0, i - 4):i + 1]
         ma5.append(sum(w) / len(w))
     mean_gt = sum(curve) / len(curve)
     df = pd.DataFrame({"Episode": list(range(len(curve))), "Gₜ": curve, "MA-5": ma5})
-    raw  = alt.Chart(df).mark_line(opacity=0.3, color="#0082F0").encode(
+    raw  = alt.Chart(df).mark_line(opacity=0.3, color=variant_color).encode(
         x="Episode:Q", y=alt.Y("Gₜ:Q", title="Team Gₜ"),
         tooltip=["Episode", alt.Tooltip("Gₜ:Q", format=".3f")])
-    ma   = alt.Chart(df).mark_line(color="#0082F0", strokeWidth=2).encode(
+    ma   = alt.Chart(df).mark_line(color=variant_color, strokeWidth=2).encode(
         x="Episode:Q", y="MA-5:Q",
         tooltip=["Episode", alt.Tooltip("MA-5:Q", format=".3f")])
     mean = alt.Chart(pd.DataFrame({"m": [mean_gt]})).mark_rule(
         color="#FF8C0A", strokeDash=[6, 3]).encode(y="m:Q")
     st.altair_chart((raw + ma + mean).properties(height=260), use_container_width=True)
-    st.caption(
-        f"Blue = raw Gₜ · Bold = MA-5 · Orange = mean {mean_gt:.2f} · "
-        f"📌 IQL: expect upward trend as each agent learns independently"
-    )
+    note = "📌 V2: shared reward — agents implicitly cooperate. Expect smoother curve than V1." \
+        if variant_key == "V2" else \
+        "📌 V1: individual rewards — each agent learns independently. Higher variance."
+    st.caption(f"{note} Mean G₀ = {mean_gt:.2f}")
 
 
 # ---------------------------------------------------------------------------
 # Per-Agent Learning Curves
 # ---------------------------------------------------------------------------
 def _render_agent_curves(agent_curves, n_tech):
-    agent_colors = ["#0082F0", "#FF8C0A", "#8B5CF6", "#0FC373", "#FF4B4B",
-                    "#00BCD4", "#E91E63", "#9C27B0", "#4CAF50", "#FF5722"]
     fig = go.Figure()
     for t in range(n_tech):
         if t < len(agent_curves) and agent_curves[t]:
@@ -288,11 +339,10 @@ def _render_agent_curves(agent_curves, n_tech):
             for i in range(len(curve)):
                 w = curve[max(0, i - 4):i + 1]
                 ma5.append(sum(w) / len(w))
-            color = agent_colors[t % len(agent_colors)]
             fig.add_trace(go.Scatter(
                 x=list(range(len(curve))), y=ma5,
                 mode="lines", name=f"T{t} (MA-5)",
-                line=dict(color=color, width=2),
+                line=dict(color=AGENT_COLORS[t % len(AGENT_COLORS)], width=2),
                 hovertemplate=f"T{t} Ep %{{x}}<br>Gₜ=%{{y:.3f}}<extra></extra>",
             ))
     fig.update_layout(
@@ -303,11 +353,11 @@ def _render_agent_curves(agent_curves, n_tech):
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption("Each line = one independent agent (technician). IQL: agents learn without coordination.")
+    st.caption("Each line = one independent agent. IQL: agents learn without coordination.")
 
 
 # ---------------------------------------------------------------------------
-# Agent Stats Table
+# Agent Stats
 # ---------------------------------------------------------------------------
 def _render_agent_stats(agent_stats):
     rows = []
@@ -321,38 +371,27 @@ def _render_agent_stats(agent_stats):
             "Skill Match":   f"{a['skill_rate']*100:.1f}%",
             "Avg Distance":  f"{a['avg_distance']:.1f} km",
         })
-    df = pd.DataFrame(rows)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
 
 # ---------------------------------------------------------------------------
 # Q-Table Heatmap
 # ---------------------------------------------------------------------------
 def _render_qtable(final_q_tables, n_tech, n_orders):
-    # Reshape flat array back to [n_tech][n_orders]
-    q = []
-    for t in range(n_tech):
-        row = final_q_tables[t * n_orders:(t + 1) * n_orders]
-        q.append(row)
-
     fig = go.Figure(data=go.Heatmap(
-        z=q,
+        z=final_q_tables,
         x=[f"W{i}" for i in range(n_orders)],
         y=[f"T{i}" for i in range(n_tech)],
-        colorscale="RdYlGn",
-        zmid=0,
+        colorscale="RdYlGn", zmid=0,
         hovertemplate="Agent T%{y}<br>Order W%{x}<br>Q = %{z:.4f}<extra></extra>",
     ))
     fig.update_layout(
-        xaxis_title="Work Order",
-        yaxis_title="Agent (Technician)",
-        height=300,
-        margin=dict(l=60, r=20, t=20, b=40),
-        paper_bgcolor="#0f1117",
-        font=dict(color="#e8eaf6"),
+        xaxis_title="Work Order", yaxis_title="Agent (Technician)",
+        height=300, margin=dict(l=60, r=20, t=20, b=40),
+        paper_bgcolor="#0f1117", font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption("Green = high Q-value (agent learned this order is profitable) · Red = low Q-value · Each row = one independent agent's Q-table")
+    st.caption("Green = high Q-value · Red = low Q-value · Each row = one independent agent's Q-table")
 
 
 # ---------------------------------------------------------------------------
@@ -364,7 +403,6 @@ def _render_summary(steps, total_gt, team_sla):
     avg_dist   = sum(s.get("distance_km", 0) for s in steps) / max(n, 1)
     avg_reward = sum(s.get("reward", 0) for s in steps) / max(n, 1)
     exp_rate   = sum(1 for s in steps if s.get("explored")) / max(n, 1)
-
     df = pd.DataFrame([
         {"Metric": "Team Total Gₜ",    "Value": f"{total_gt:.3f}"},
         {"Metric": "Team SLA Rate",    "Value": f"{team_sla*100:.1f}%"},
@@ -378,131 +416,153 @@ def _render_summary(steps, total_gt, team_sla):
 
 
 # ---------------------------------------------------------------------------
+# Shared sidebar params
+# ---------------------------------------------------------------------------
+def _sidebar_params():
+    st.sidebar.header("Ch17 Settings")
+    n_tech        = st.sidebar.slider("Technicians (Agents)", 2, 10, 5)
+    n_orders      = st.sidebar.slider("Work Orders",          4, 20, 10)
+    n_ep          = st.sidebar.slider("Episodes",             5, 200, 50)
+    alpha         = st.sidebar.slider("α (learning rate)",    0.01, 1.0, 0.1, 0.01)
+    gamma         = st.sidebar.slider("γ (discount factor)",  0.5,  1.0, 0.95, 0.01)
+    eps_start     = st.sidebar.slider("ε start",              0.1,  1.0, 1.0, 0.05)
+    eps_end       = st.sidebar.slider("ε end",                0.0,  0.5, 0.05, 0.01)
+    seed          = st.sidebar.number_input("Random seed",    0, 9999, 42)
+    return n_tech, n_orders, n_ep, alpha, gamma, eps_start, eps_end, seed
+
+
+# ---------------------------------------------------------------------------
+# Single variant lab
+# ---------------------------------------------------------------------------
+def _render_variant_lab(variant_key, rlvr_py, n_tech, n_orders, n_ep,
+                         alpha, gamma, eps_start, eps_end, seed):
+    v = VARIANTS[variant_key]
+    variant_color = v["color"]
+    ss_key = f"ch17_{variant_key}_data"
+
+    # ── Variant description + comparison ─────────────────────────────────
+    _render_variant_comparison(variant_key)
+    st.divider()
+
+    # ── Run button ────────────────────────────────────────────────────────
+    if st.button(f"▶ Run {variant_key} Training", type="primary", key=f"run_{variant_key}"):
+        fn = getattr(rlvr_py, v["fn"])
+        with st.spinner(f"Running {n_ep} episodes ({variant_key})..."):
+            raw = fn(int(seed), int(n_tech), int(n_orders), int(n_ep),
+                     float(alpha), float(gamma), float(eps_start), float(eps_end))
+        data = json.loads(raw) if isinstance(raw, str) else raw
+        st.session_state[ss_key]              = data
+        st.session_state[f"ch17_{variant_key}_n_tech"]   = n_tech
+        st.session_state[f"ch17_{variant_key}_n_orders"] = n_orders
+
+    if ss_key not in st.session_state:
+        st.info(f"Configure settings and click **▶ Run {variant_key} Training**.")
+        return
+
+    data     = st.session_state[ss_key]
+    n_tech   = st.session_state[f"ch17_{variant_key}_n_tech"]
+    n_orders = st.session_state[f"ch17_{variant_key}_n_orders"]
+
+    episodes       = data["episodes"]
+    curve          = data["curve"]
+    agent_curves   = data["agent_curves"]
+    final_q_tables = data["final_q_tables"]
+    n_eps          = len(episodes)
+    mean_g0        = sum(curve) / len(curve)
+
+    # ── Info banner ───────────────────────────────────────────────────────
+    st.info(
+        f"**{v['label']}** · {n_tech} agents · {n_eps} episodes · "
+        f"α={alpha:.2f} · γ={gamma:.2f} · ε: {eps_start:.2f}→{eps_end:.2f} · "
+        f"Mean team G₀ = **{mean_g0:.2f}**"
+    )
+
+    # ── Episode selector ──────────────────────────────────────────────────
+    ep_sel   = st.slider("🎬 Select episode", 0, n_eps - 1, n_eps - 1,
+                         key=f"ep_sel_{variant_key}")
+    ep_data  = episodes[ep_sel]
+    ep_steps = ep_data["steps"]
+    ep_gt    = ep_data["total_gt"]
+    ep_sla   = ep_data["team_sla_rate"]
+    ep_eps   = ep_steps[0]["epsilon"] if ep_steps else 0.0
+
+    st.caption(
+        f"Episode {ep_sel + 1}/{n_eps} — "
+        f"Team Gₜ = **{ep_gt:.3f}** · SLA = {ep_sla*100:.1f}% · ε = {ep_eps:.3f}"
+    )
+
+    # ── Step selector ─────────────────────────────────────────────────────
+    n_steps = len(ep_steps)
+    sel = st.slider("🔍 Highlight step on map", 0, n_steps, 0,
+                    key=f"step_sel_{variant_key}")
+    if sel == n_steps:
+        st.caption("📍 All work orders dispatched — no travel line shown.")
+
+    # ── Map ───────────────────────────────────────────────────────────────
+    st.subheader("🗺️ Warsaw Dispatch Map")
+    _render_map(ep_steps, sel, variant_color)
+    st.caption("Blue = Technicians (each agent has its own color) · White = Pending · Dark green = SLA met · Red = SLA breach")
+
+    # ── Reward per Step ───────────────────────────────────────────────────
+    st.subheader("📊 Reward per Step")
+    _render_reward_per_step(ep_steps, sel, variant_color)
+
+    # ── TD Error ──────────────────────────────────────────────────────────
+    st.subheader("📉 TD Error per Step")
+    _render_td_error(ep_steps, sel)
+
+    # ── Glass-Box ─────────────────────────────────────────────────────────
+    st.subheader("🔬 Glass-Box — IQL Step Trace")
+    _render_glass_box(ep_steps, sel)
+
+    # ── Episode Summary ───────────────────────────────────────────────────
+    st.subheader("📋 Episode Summary")
+    _render_summary(ep_steps, ep_gt, ep_sla)
+
+    # ── Agent Stats ───────────────────────────────────────────────────────
+    st.subheader("🤖 Agent Stats")
+    _render_agent_stats(ep_data["agent_stats"])
+
+    # ── Per-Agent Learning Curves ─────────────────────────────────────────
+    st.subheader("📊 Per-Agent Learning Curves (MA-5)")
+    _render_agent_curves(agent_curves, n_tech)
+
+    # ── Team Learning Curve ───────────────────────────────────────────────
+    st.subheader("📈 Team Learning Curve — Gₜ over Episodes (MA-5)")
+    _render_team_curve(curve, variant_color, variant_key)
+
+    # ── Q-Table Heatmap ───────────────────────────────────────────────────
+    st.subheader("🧮 Q-Tables (Final)")
+    _render_qtable(final_q_tables, n_tech, n_orders)
+
+
+# ---------------------------------------------------------------------------
 # Main render
 # ---------------------------------------------------------------------------
 def render():
-    tx = _tx()
-    st.title(tx["title"])
-    st.caption(tx["subtitle"])
+    st.title("Chapter 17 — Multi-Agent RL: MARL Variants")
+    st.caption("Warsaw ASP · Independent Q-Learning · V1: Individual Reward · V2: Shared Reward")
 
-    tab_main, tab_handbook = st.tabs(["🔬 Interactive Lab", "📘 Hands-On Guide EN"])
+    tab_v1, tab_v2, tab_handbook = st.tabs([
+        "🤖 V1 — Individual Reward",
+        "🤝 V2 — Shared Reward",
+        "📘 Hands-On Guide EN",
+    ])
+
     with tab_handbook:
         _render_handbook()
-    with tab_main:
-        try:
-            import rlvr_py
-        except ImportError:
-            st.error(tx["engine_missing"])
-            return
 
-        # ── Sidebar ───────────────────────────────────────────────────────
-        st.sidebar.header(tx["sidebar_title"])
-        n_tech         = st.sidebar.slider(tx["n_tech"],        2, 10,  5)
-        n_orders       = st.sidebar.slider(tx["n_orders"],      4, 20, 10)
-        n_ep           = st.sidebar.slider(tx["n_episodes"],    5, 200, 50)
-        alpha          = st.sidebar.slider(tx["alpha"],         0.01, 1.0, 0.1, 0.01)
-        gamma          = st.sidebar.slider(tx["gamma"],         0.5,  1.0, 0.95, 0.01)
-        epsilon_start  = st.sidebar.slider(tx["epsilon_start"], 0.1,  1.0, 1.0, 0.05)
-        epsilon_end    = st.sidebar.slider(tx["epsilon_end"],   0.0,  0.5, 0.05, 0.01)
-        seed           = st.sidebar.number_input(tx["seed"],    0, 9999, 42)
+    try:
+        import rlvr_py
+    except ImportError:
+        st.error("❌ Rust engine not found. Run: cd rlvr-py && maturin develop --release")
+        return
 
-        st.sidebar.caption(
-            "IQL: each technician is an independent agent. "
-            "ε decays from ε_start to ε_end over all episodes. "
-            "Each agent updates only its own Q-table."
-        )
+    n_tech, n_orders, n_ep, alpha, gamma, eps_start, eps_end, seed = _sidebar_params()
 
-        # ── Run button ────────────────────────────────────────────────────
-        if st.button(tx["run_btn"], type="primary"):
-            with st.spinner(f"Running {n_ep} IQL episodes..."):
-                raw = rlvr_py.run_ch17_episode(
-                    int(seed), int(n_tech), int(n_orders), int(n_ep),
-                    float(alpha), float(gamma),
-                    float(epsilon_start), float(epsilon_end)
-                )
-            data = json.loads(raw) if isinstance(raw, str) else raw
-            st.session_state["ch17_data"]    = data
-            st.session_state["ch17_n_tech"]  = n_tech
-            st.session_state["ch17_n_orders"] = n_orders
-
-        if "ch17_data" not in st.session_state:
-            st.info("Configure settings and click **▶ Run IQL Training**.")
-            return
-
-        data     = st.session_state["ch17_data"]
-        n_tech   = st.session_state["ch17_n_tech"]
-        n_orders = st.session_state["ch17_n_orders"]
-
-        episodes       = data["episodes"]
-        curve          = data["curve"]
-        agent_curves   = data["agent_curves"]
-        final_q_tables = data["final_q_tables"]
-        n_eps          = len(episodes)
-
-        # ── IQL info ──────────────────────────────────────────────────────
-        mean_g0 = sum(curve) / len(curve)
-        st.info(
-            f"**Ch17 — Independent Q-Learning (IQL).** "
-            f"Each of the {n_tech} technicians is an independent agent with its own Q-table. "
-            f"Agents learn without communication. "
-            f"ε decays from {epsilon_start:.2f} → {epsilon_end:.2f} over {n_eps} episodes. "
-            f"Mean team Gₜ = {mean_g0:.2f}"
-        )
-
-        # ── Episode selector ──────────────────────────────────────────────
-        ep_sel   = st.slider("🎬 Select episode to inspect", 0, n_eps - 1, n_eps - 1, key="ep_sel")
-        ep_data  = episodes[ep_sel]
-        ep_steps = ep_data["steps"]
-        ep_gt    = ep_data["total_gt"]
-        ep_sla   = ep_data["team_sla_rate"]
-        ep_eps   = ep_steps[0]["epsilon"] if ep_steps else 0.0
-
-        st.caption(
-            f"Episode {ep_sel + 1}/{n_eps} — "
-            f"Team Gₜ = **{ep_gt:.3f}** · "
-            f"SLA = {ep_sla*100:.1f}% · "
-            f"ε = {ep_eps:.3f}"
-        )
-
-        # ── Step selector ─────────────────────────────────────────────────
-        n_steps = len(ep_steps)
-        sel = st.slider(tx["step_slider"], 0, n_steps, 0, key="step_sel")
-        if sel == n_steps:
-            st.caption("📍 All work orders dispatched — no travel line shown.")
-
-        # ── Map ───────────────────────────────────────────────────────────
-        st.subheader(tx["map_title"])
-        _render_map(ep_steps, sel, tx)
-        st.caption(tx["map_caption"])
-
-        # ── Reward per Step ───────────────────────────────────────────────
-        st.subheader("📊 Reward per Step")
-        _render_reward_per_step(ep_steps, sel)
-
-        # ── TD Error ──────────────────────────────────────────────────────
-        st.subheader("📉 TD Error per Step")
-        _render_td_error(ep_steps, sel)
-
-        # ── Glass-Box ─────────────────────────────────────────────────────
-        st.subheader(tx["glass_title"])
-        _render_glass_box(ep_steps, sel, tx)
-
-        # ── Episode Summary ───────────────────────────────────────────────
-        st.subheader(tx["summary_title"])
-        _render_summary(ep_steps, ep_gt, ep_sla)
-
-        # ── Agent Stats ───────────────────────────────────────────────────
-        st.subheader(tx["agent_title"])
-        _render_agent_stats(ep_data["agent_stats"])
-
-        # ── Per-Agent Learning Curves ─────────────────────────────────────
-        st.subheader(tx["agent_curve_title"])
-        _render_agent_curves(agent_curves, n_tech)
-
-        # ── Team Learning Curve ───────────────────────────────────────────
-        st.subheader(tx["curve_title"])
-        _render_team_curve(curve, tx)
-
-        # ── Q-Table Heatmap ───────────────────────────────────────────────
-        st.subheader(tx["qtable_title"])
-        _render_qtable(final_q_tables, n_tech, n_orders)
+    with tab_v1:
+        _render_variant_lab("V1", rlvr_py, n_tech, n_orders, n_ep,
+                            alpha, gamma, eps_start, eps_end, seed)
+    with tab_v2:
+        _render_variant_lab("V2", rlvr_py, n_tech, n_orders, n_ep,
+                            alpha, gamma, eps_start, eps_end, seed)
