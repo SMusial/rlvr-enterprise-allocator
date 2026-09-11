@@ -69,24 +69,38 @@ VARIANTS = {
         "comm":   "Full (centralised training)",
         "color":  "#0FC373",
         "desc": (
-            "**V4 — CTDE / VDN / Full Observability** is the first variant with a fundamentally "
-            "different training architecture. "
-            "During **training**, a centralised coordinator has access to all agents' Q-tables and positions. "
+            "**V4 — CTDE / VDN / Full Observability** uses a centralised coordinator during training. "
             "It selects the best technician using a **joint Q-score**: "
             "`Q_joint = Q[t][o] + distance_bonus` (VDN decomposition). "
-            "All agents receive a **soft Q-table update** from the joint experience — "
-            "not just the assigned agent. "
+            "All agents receive a **soft Q-table update** from the joint experience. "
             "During **execution**, each agent uses its own Q-table independently (decentralised). "
             "This is the CTDE paradigm: train together, act alone."
         ),
         "fn": "run_ch17_v4",
         "extra_params": {},
     },
+    "V5": {
+        "label":  "V5 — CTDE · Mixed Reward · Partial Observability",
+        "arch":   "CTDE — Centralised Training, Decentralised Execution",
+        "reward": "Mixed (αᵢ·Rⁱ + (1-αᵢ)·R̄)",
+        "comm":   "Partial (positions) + CTDE",
+        "color":  "#FF4B4B",
+        "desc": (
+            "**V5 — CTDE / Mixed Reward / Partial Observability** combines the best of V3 and V4. "
+            "Each agent receives a **mixed reward**: "
+            "`R_mixed = α_ind · Rⁱ + (1 - α_ind) · R̄` — "
+            "a blend of individual and team reward controlled by `α_ind`. "
+            "Selection uses distance-aware scoring (like V3) combined with CTDE distance bonus (like V4). "
+            "Non-assigned agents receive soft Q-updates from the team signal. "
+            "`α_ind = 0` → pure shared (V4-like) · `α_ind = 1` → pure individual (V1-like) · `α_ind = 0.5` → balanced."
+        ),
+        "fn": "run_ch17_v5",
+        "extra_params": {"alpha_ind": 0.5, "lambda": 0.1},
+    },
 }
 
 PLANNED_VARIANTS = [
-    {"Variant": "V5", "Architecture": "CTDE",        "Reward": "Mixed",  "Communication": "Partial", "Status": "🔄 Planned"},
-    {"Variant": "V6", "Architecture": "Cooperative", "Reward": "Shared", "Communication": "Full",    "Status": "🔄 Planned"},
+    {"Variant": "V6", "Architecture": "Cooperative", "Reward": "Shared", "Communication": "Full", "Status": "🔄 Planned"},
 ]
 
 
@@ -140,7 +154,7 @@ def _render_handbook():
 # ---------------------------------------------------------------------------
 # Map
 # ---------------------------------------------------------------------------
-def _render_map(steps, sel, variant_color, is_v4=False):
+def _render_map(steps, sel, variant_color, is_v3=False, is_v4=False, is_v5=False):
     techs = {}
     for s in steps:
         if s["tech_idx"] not in techs:
@@ -207,8 +221,8 @@ def _render_map(steps, sel, variant_color, is_v4=False):
         label = "✅ SLA met" if s.get("sla_met") else "❌ SLA breach"
         if s.get("collision_avoided"):
             label += " 🔀"
-        if is_v4 and not s.get("explored"):
-            label += " 🧠 CTDE"
+        if (is_v4 or is_v5) and not s.get("explored"):
+            label += " 🧠"
         fig.add_trace(go.Scattermapbox(
             lat=[s["tech_y"], s["order_y"]],
             lon=[s["tech_x"], s["order_x"]],
@@ -236,26 +250,52 @@ def _render_map(steps, sel, variant_color, is_v4=False):
 # ---------------------------------------------------------------------------
 # Reward per Step
 # ---------------------------------------------------------------------------
-def _render_reward_per_step(steps, sel, variant_color):
+def _render_reward_per_step(steps, sel, variant_color, show_components=False):
     rewards = [s["reward"] for s in steps]
     eff_sel = sel if sel < len(rewards) else None
     colors  = [variant_color if r >= 0 else "#FF4B4B" for r in rewards]
     if eff_sel is not None:
         colors[eff_sel] = "#FFD700"
+
     fig = go.Figure()
-    fig.add_trace(go.Bar(
-        x=list(range(len(steps))), y=rewards,
-        marker_color=colors,
-        hovertemplate="Step %{x}<br>Reward: %{y:+.3f}<extra></extra>",
-    ))
+    if show_components:
+        # V5: show individual and team components
+        ind_rewards  = [s.get("individual_reward", s["reward"]) for s in steps]
+        team_rewards = [s.get("team_reward", s["reward"]) for s in steps]
+        fig.add_trace(go.Bar(
+            x=list(range(len(steps))), y=ind_rewards,
+            name="Individual Rⁱ", marker_color="#0082F0", opacity=0.6,
+            hovertemplate="Step %{x}<br>Individual: %{y:+.3f}<extra></extra>",
+        ))
+        fig.add_trace(go.Bar(
+            x=list(range(len(steps))), y=team_rewards,
+            name="Team R̄", marker_color="#FF8C0A", opacity=0.6,
+            hovertemplate="Step %{x}<br>Team mean: %{y:+.3f}<extra></extra>",
+        ))
+        fig.add_trace(go.Scatter(
+            x=list(range(len(steps))), y=rewards,
+            name="Mixed R", mode="lines+markers",
+            line=dict(color="#FF4B4B", width=2),
+            marker=dict(color=colors, size=8),
+            hovertemplate="Step %{x}<br>Mixed: %{y:+.3f}<extra></extra>",
+        ))
+        fig.update_layout(barmode="overlay")
+    else:
+        fig.add_trace(go.Bar(
+            x=list(range(len(steps))), y=rewards,
+            marker_color=colors,
+            hovertemplate="Step %{x}<br>Reward: %{y:+.3f}<extra></extra>",
+        ))
+
     fig.add_hline(y=0, line_dash="dash", line_color="#9ca3af")
     if eff_sel is not None:
         fig.add_vline(x=eff_sel, line_dash="dot", line_color="#FFD700", line_width=2)
     fig.update_layout(
         xaxis_title="Step", yaxis_title="Reward R",
-        height=220, margin=dict(l=40, r=20, t=20, b=40),
+        height=240, margin=dict(l=40, r=20, t=20, b=40),
         paper_bgcolor="#0f1117", plot_bgcolor="#0f1117",
         font=dict(color="#e8eaf6"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -289,7 +329,7 @@ def _render_td_error(steps, sel):
 
 
 # ---------------------------------------------------------------------------
-# V3: Nearest Colleague Distance
+# V3/V5: Nearest Colleague Distance
 # ---------------------------------------------------------------------------
 def _render_colleague_distance(steps, sel):
     dists   = [s.get("nearest_colleague_km", 0) for s in steps]
@@ -318,7 +358,7 @@ def _render_colleague_distance(steps, sel):
 
 
 # ---------------------------------------------------------------------------
-# V4: Joint Q per Step
+# V4/V5: Joint Q per Step
 # ---------------------------------------------------------------------------
 def _render_joint_q(steps, sel, mean_joint_q):
     jqs     = [s.get("joint_q", 0) for s in steps]
@@ -342,17 +382,13 @@ def _render_joint_q(steps, sel, mean_joint_q):
         font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption(
-        f"Joint Q = Σ Q^i(order) across all agents · "
-        f"Mean Joint Q this episode = {mean_joint_q:.3f} · "
-        f"VDN: Q_joint grows as agents learn better individual Q-values"
-    )
+    st.caption(f"Joint Q = Σ Q^i(order) · Mean Joint Q = {mean_joint_q:.3f} · Grows as agents learn")
 
 
 # ---------------------------------------------------------------------------
 # Glass-Box
 # ---------------------------------------------------------------------------
-def _render_glass_box(steps, sel, show_v3=False, show_v4=False):
+def _render_glass_box(steps, sel, show_v3=False, show_v4=False, show_v5=False):
     rows = []
     for i, s in enumerate(steps):
         row = {
@@ -371,12 +407,15 @@ def _render_glass_box(steps, sel, show_v3=False, show_v4=False):
             "Q after":       round(s.get("q_after", 0), 4),
             "TD Error":      round(s.get("td_error", 0), 4),
         }
-        if show_v3:
+        if show_v3 or show_v5:
             row["Nearest Coll."] = f"{s.get('nearest_colleague_km', 0):.1f} km"
             row["Avoided"]       = "🔀" if s.get("collision_avoided") else ""
-        if show_v4:
+        if show_v4 or show_v5:
             row["Joint Q"]       = round(s.get("joint_q", 0), 4)
             row["CTDE"]          = "🧠" if not s.get("explored") else ""
+        if show_v5:
+            row["Ind. R"]        = round(s.get("individual_reward", s["reward"]), 3)
+            row["Team R̄"]        = round(s.get("team_reward", s["reward"]), 3)
         rows.append(row)
 
     df = pd.DataFrame(rows)
@@ -412,7 +451,8 @@ def _render_team_curve(curve, variant_color, variant_key):
         "V1": "📌 V1: individual rewards — each agent learns independently. Higher variance.",
         "V2": "📌 V2: shared reward — agents implicitly cooperate. Smoother curve.",
         "V3": "📌 V3: partial observability — agents avoid colleague overlap. Lower avg distance.",
-        "V4": "📌 V4: CTDE/VDN — centralised training, all agents learn from joint experience. Expect faster convergence.",
+        "V4": "📌 V4: CTDE/VDN — centralised training. Expect faster convergence.",
+        "V5": "📌 V5: CTDE + mixed reward + partial obs. — best of V3 and V4 combined.",
     }
     st.caption(f"{notes.get(variant_key, '')} Mean G₀ = {mean_gt:.2f}")
 
@@ -443,7 +483,7 @@ def _render_agent_curves(agent_curves, n_tech):
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption("Each line = one agent. V4: agents should converge more uniformly due to centralised training.")
+    st.caption("Each line = one agent. V5: expect more uniform curves due to CTDE + mixed reward.")
 
 
 # ---------------------------------------------------------------------------
@@ -481,7 +521,7 @@ def _render_qtable(final_q_tables, n_tech, n_orders):
         paper_bgcolor="#0f1117", font=dict(color="#e8eaf6"),
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption("Green = high Q-value · Red = low Q-value · V4: Q-tables should be more uniform (centralised training)")
+    st.caption("Green = high Q-value · Red = low Q-value · Each row = one agent's Q-table")
 
 
 # ---------------------------------------------------------------------------
@@ -504,9 +544,9 @@ def _render_summary(steps, total_gt, team_sla, ep_data=None):
     ]
     if ep_data:
         if ep_data.get("collisions_avoided", 0) > 0:
-            rows.append({"Metric": "Overlaps Avoided (V3)", "Value": str(ep_data["collisions_avoided"])})
+            rows.append({"Metric": "Overlaps Avoided", "Value": str(ep_data["collisions_avoided"])})
         if ep_data.get("mean_joint_q", 0) != 0:
-            rows.append({"Metric": "Mean Joint Q (V4)", "Value": f"{ep_data['mean_joint_q']:.3f}"})
+            rows.append({"Metric": "Mean Joint Q (VDN)", "Value": f"{ep_data['mean_joint_q']:.3f}"})
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
 
@@ -536,16 +576,27 @@ def _render_variant_lab(variant_key, rlvr_py, n_tech, n_orders, n_ep,
     ss_key = f"ch17_{variant_key}_data"
     is_v3  = variant_key == "V3"
     is_v4  = variant_key == "V4"
+    is_v5  = variant_key == "V5"
 
     _render_variant_comparison(variant_key)
     st.divider()
 
-    lam = 0.1
+    lam       = 0.1
+    alpha_ind = 0.5
     if is_v3:
-        lam = st.slider(
-            "λ (collision avoidance weight)", 0.0, 1.0, 0.1, 0.01,
-            help="0 = same as V1, 1 = strong avoidance of colleague overlap",
-            key="v3_lambda"
+        lam = st.slider("λ (collision avoidance weight)", 0.0, 1.0, 0.1, 0.01,
+                        help="0 = same as V1, 1 = strong avoidance", key="v3_lambda")
+    if is_v5:
+        alpha_ind = st.slider(
+            "α_ind (individual reward weight)", 0.0, 1.0, 0.5, 0.05,
+            help="0.0 = pure shared (V4-like) · 1.0 = pure individual (V1-like) · 0.5 = balanced",
+            key="v5_alpha_ind"
+        )
+        lam = st.slider("λ (collision avoidance weight)", 0.0, 1.0, 0.1, 0.01,
+                        help="Distance-aware selection weight", key="v5_lambda")
+        st.caption(
+            f"Mixed reward: `R = {alpha_ind:.2f} · Rⁱ + {1-alpha_ind:.2f} · R̄` — "
+            f"{'closer to individual (V1)' if alpha_ind > 0.7 else 'closer to shared (V4)' if alpha_ind < 0.3 else 'balanced'}"
         )
 
     if st.button(f"▶ Run {variant_key} Training", type="primary", key=f"run_{variant_key}"):
@@ -555,6 +606,10 @@ def _render_variant_lab(variant_key, rlvr_py, n_tech, n_orders, n_ep,
                 raw = fn(int(seed), int(n_tech), int(n_orders), int(n_ep),
                          float(alpha), float(gamma), float(eps_start), float(eps_end),
                          float(lam))
+            elif is_v5:
+                raw = fn(int(seed), int(n_tech), int(n_orders), int(n_ep),
+                         float(alpha), float(gamma), float(eps_start), float(eps_end),
+                         float(alpha_ind), float(lam))
             else:
                 raw = fn(int(seed), int(n_tech), int(n_orders), int(n_ep),
                          float(alpha), float(gamma), float(eps_start), float(eps_end))
@@ -594,9 +649,9 @@ def _render_variant_lab(variant_key, rlvr_py, n_tech, n_orders, n_ep,
 
     caption = (f"Episode {ep_sel + 1}/{n_eps} — "
                f"Team Gₜ = **{ep_gt:.3f}** · SLA = {ep_sla*100:.1f}% · ε = {ep_eps:.3f}")
-    if is_v3:
+    if is_v3 or is_v5:
         caption += f" · Overlaps avoided = {ep_data.get('collisions_avoided', 0)}"
-    if is_v4:
+    if is_v4 or is_v5:
         caption += f" · Mean Joint Q = {ep_mjq:.3f}"
     st.caption(caption)
 
@@ -606,28 +661,30 @@ def _render_variant_lab(variant_key, rlvr_py, n_tech, n_orders, n_ep,
         st.caption("📍 All work orders dispatched — no travel line shown.")
 
     st.subheader("🗺️ Warsaw Dispatch Map")
-    _render_map(ep_steps, sel, variant_color, is_v4=is_v4)
+    _render_map(ep_steps, sel, variant_color, is_v3=is_v3, is_v4=is_v4, is_v5=is_v5)
     caption_map = "Blue = Technicians · White = Pending · Dark green = SLA met · Red = SLA breach"
-    if is_v3: caption_map += " · 🔀 = overlap avoided"
-    if is_v4: caption_map += " · 🧠 = CTDE exploit"
+    if is_v3 or is_v5: caption_map += " · 🔀 = overlap avoided"
+    if is_v4 or is_v5: caption_map += " · 🧠 = CTDE exploit"
     st.caption(caption_map)
 
     st.subheader("📊 Reward per Step")
-    _render_reward_per_step(ep_steps, sel, variant_color)
+    _render_reward_per_step(ep_steps, sel, variant_color, show_components=is_v5)
+    if is_v5:
+        st.caption("Blue bars = individual Rⁱ · Orange bars = team R̄ · Red line = mixed reward used for Q-update")
 
-    if is_v3:
+    if is_v3 or is_v5:
         st.subheader("🔀 Nearest Colleague Distance per Step")
         _render_colleague_distance(ep_steps, sel)
 
-    if is_v4:
+    if is_v4 or is_v5:
         st.subheader("🧠 Joint Q per Step (VDN)")
         _render_joint_q(ep_steps, sel, ep_mjq)
 
     st.subheader("📉 TD Error per Step")
     _render_td_error(ep_steps, sel)
 
-    st.subheader("🔬 Glass-Box — IQL Step Trace")
-    _render_glass_box(ep_steps, sel, show_v3=is_v3, show_v4=is_v4)
+    st.subheader("🔬 Glass-Box — Step Trace")
+    _render_glass_box(ep_steps, sel, show_v3=is_v3, show_v4=is_v4, show_v5=is_v5)
 
     st.subheader("📋 Episode Summary")
     _render_summary(ep_steps, ep_gt, ep_sla, ep_data)
@@ -650,13 +707,14 @@ def _render_variant_lab(variant_key, rlvr_py, n_tech, n_orders, n_ep,
 # ---------------------------------------------------------------------------
 def render():
     st.title("Chapter 17 — Multi-Agent RL: MARL Variants")
-    st.caption("Warsaw ASP · V1: Individual · V2: Shared · V3: Partial Obs. · V4: CTDE/VDN")
+    st.caption("Warsaw ASP · V1–V5 implemented · V6 planned")
 
-    tab_v1, tab_v2, tab_v3, tab_v4, tab_handbook = st.tabs([
+    tab_v1, tab_v2, tab_v3, tab_v4, tab_v5, tab_handbook = st.tabs([
         "🤖 V1 — Individual",
         "🤝 V2 — Shared",
         "👁️ V3 — Partial Obs.",
         "🧠 V4 — CTDE/VDN",
+        "⚗️ V5 — Mixed",
         "📘 Hands-On Guide EN",
     ])
 
@@ -682,4 +740,7 @@ def render():
                             alpha, gamma, eps_start, eps_end, seed)
     with tab_v4:
         _render_variant_lab("V4", rlvr_py, n_tech, n_orders, n_ep,
+                            alpha, gamma, eps_start, eps_end, seed)
+    with tab_v5:
+        _render_variant_lab("V5", rlvr_py, n_tech, n_orders, n_ep,
                             alpha, gamma, eps_start, eps_end, seed)
